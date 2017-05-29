@@ -1,5 +1,6 @@
 #include <cmath>
 #include <set>
+#include <fstream>
 #include <iostream>
 #include <array>
 
@@ -36,7 +37,7 @@ coords_t operator-(const coords_t &a,const coords_t &b)
 
 int norm2(const coords_t &cm)
 {
-  int s=0;
+  int s=cm[0]*cm[0];
   for(auto c : cm) s+=c*c;
   return s;
 }
@@ -49,30 +50,44 @@ int main(int narg,char **arg)
   
   int NM=(2*T+1)*pow(2*L+1,3);
   
-  set<coords_t> list;
+  set<coords_t> list_smom;
+  set<double> list_rimom_norms;
+  set<double> list_smom_norms;
   
   for(int im1=0;im1<NM;im1++)
-    for(int im2=0;im2<NM;im2++)
-      {
-	coords_t cm1=c_of_m(im1);
-	coords_t cm2=c_of_m(im2);
-	coords_t cQ=cm1-cm2;
-	
-	int n1=norm2(cm1);
-	int n2=norm2(cm2);
-	int nQ=norm2(cQ);
-	
-	if(n1==n2 and n1==nQ)
-	  {
-	    list.insert(cm1);
-	    //cout<<cm1<<"    "<<cm2<<"   "<<sqrt(nQ)<<endl;
-	  }
-      }
+    {
+      coords_t cm1=c_of_m(im1);
+      list_rimom_norms.insert(sqrt(norm2(cm1)));
+      
+      for(int im2=0;im2<NM;im2++)
+	{
+	  coords_t cm2=c_of_m(im2);
+	  coords_t cQ=cm1-cm2;
+	  
+	  int n1_2=norm2(cm1);
+	  int n2_2=norm2(cm2);
+	  int nQ_2=norm2(cQ);
+	  
+	  if(n1_2==n2_2 and n1_2==nQ_2)
+	    {
+	      list_smom.insert(cm1);
+	      double nQ=sqrt(nQ_2);
+	      list_smom_norms.insert(nQ);
+	      cout<<cm1<<"    "<<cm2<<"   "<<cQ<<"   "<<nQ<<endl;
+	    }
+	}
+    }
   
-  for(auto c : list) cout<<c<<endl;
+  for(auto c : list_smom) cout<<c<<endl;
   
-  cout<<list.size()<<endl;
+  cout<<list_smom.size()<<endl;
   cout<<NM<<endl;
+  
+  ofstream smom_norms("smom_norms.txt");
+  for(auto c : list_smom_norms) smom_norms<<c<<" "<<c<<endl;
+  
+  ofstream rimom_norms("rimom_norms.txt");
+  for(auto c : list_rimom_norms) rimom_norms<<c<<" "<<c<<endl;
   
   return 0;
 }
