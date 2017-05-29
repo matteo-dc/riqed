@@ -10,3 +10,4 @@
 /configure
 build*
 autom4te.cache
+/bin/config.hpp.in
