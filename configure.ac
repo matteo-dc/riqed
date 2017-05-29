@@ -1,6 +1,6 @@
 AC_INIT([template],[1.0],[fr.sanfilippo@gmail.com])
 
-AC_CONFIG_SRCDIR([lib])
+AC_CONFIG_SRCDIR([bin])
 AC_CONFIG_AUX_DIR([config])
 AM_INIT_AUTOMAKE([1.0 no-define foreign subdir-objects])
 AM_CONFIG_HEADER(include/config.hpp)

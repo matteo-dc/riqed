@@ -1,0 +1,12 @@
+/Makefile.in
+/aclocal.m4
+/bin/Makefile.in
+/config/compile
+/config/config.guess
+/config/config.sub
+/config/depcomp
+/config/install-sh
+/config/missing
+/configure
+build*
+autom4te.cache
