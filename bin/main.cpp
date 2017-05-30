@@ -8,6 +8,7 @@
 #include <vector>
 #include <Eigen/Dense>
 #include <valarray>
+#include <math.h> 
 
 using namespace std;
 using namespace Eigen;
@@ -127,7 +128,7 @@ vprop_t make_gamma()
 	      gam[i_gam](isc(i_row,ic),isc(col[i_gam][i_row],ic))=dcompl(real_part[i_gam][i_row],im_part[i_gam][i_row] );
 	    }
   
-  //gamma_mu*gamma5   --------invertire posizione!
+  //gamma_mu*gamma5
   for(int j=0;j<4;j++)
     {
       gam[6+j]=gam[1+j]*gam[5];
@@ -153,11 +154,12 @@ vprop_t make_vertex(const vprop_t &prop, size_t mom,const vprop_t &gamma)
   vprop_t vert(16);
   for(int mu=0;mu<16;mu++)
     {
-      vert[mu]=prop[mom]*gamma[mu]*prop[mom];  /*it has to be "jackknifed"*/
+      vert[mu]=prop[mom]*gamma[mu]*gamma[5]*prop[mom].adjoint()*gamma[5];  /*it has to be "jackknifed"*/
     }
   return vert;
 }
 
+//create the path-string to the configuration
 string path_to_conf(int i_conf,const char *name)
 {
   char path[1024];
@@ -165,11 +167,141 @@ string path_to_conf(int i_conf,const char *name)
   return path;
 }
 
+//jackknife Propagator
+valarray<valarray<prop_t>> jackknife_prop(  valarray<valarray<prop_t>> jS, int nconf, int clust_size )
+{
+  valarray<prop_t> jSum(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
+
+  //sum of jS
+  for(size_t j=0;j<jS.size();j++) jSum+= jS[j];
+  //jackknife fluctuation
+  for(size_t j=0;j<jS.size();j++)
+    {
+      jS[j]=jSum-jS[j];
+      for(auto &it : jS[j])
+	  it/=nconf-clust_size;
+    }
+
+  return jS;
+}
+
+//jackknife Vertex
+valarray<valarray<qline_t>> jackknife_vertex( valarray<valarray<qline_t>> jVert, int nconf, int clust_size )
+{
+   valarray<qline_t> jSum(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()));
+  
+  //sum of the jVert
+  for(size_t j=0;j<jVert.size();j++) jSum+= jVert[j];
+  //jackknife fluctuation
+  for(size_t j=0;j<jVert.size();j++)
+    {
+      jVert[j]=jSum-jVert[j];
+      for(auto &it : jVert[j])
+	for(auto &jt : it)
+	  jt/=nconf-clust_size;
+    }
+  
+  return jVert;
+}
+
+
+//average Propagator
+valarray<prop_t>  average_prop(  valarray<valarray<prop_t>> jS )
+{
+  int njacks = jS.size();
+  
+  valarray<prop_t> jAverage(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
+  
+  //sum of jS
+  for(int j=0;j<njacks;j++) jAverage+= jS[j];
+  //divide for njacks each component of jAverage (one for each moment)
+  for(auto &it : jAverage)
+    it/=njacks;
+  
+  return jAverage;
+  
+}
+
+//average Vertex
+  valarray<qline_t> average_vertex( valarray<valarray<qline_t>> jVert)
+{
+  int njacks = jVert.size();
+  
+  valarray<qline_t> jAverage(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()));
+  
+  //sum of jVert
+  for(int j=0;j<njacks;j++) jAverage+= jVert[j];
+  //divide for njacks each component of jAverage (one for each moment)
+      for(auto &it : jAverage)
+	for(auto &jt : it)
+	  jt/=njacks;
+  
+  return jAverage;
+}
+
+
+//error Propagator
+valarray<prop_t>  error_prop(  valarray<valarray<prop_t>> jS ,valarray<prop_t> meanS )
+{
+  int njacks = jS.size();
+  valarray<prop_t> jsq_mean(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
+  valarray<prop_t> err;
+  
+  //sum of (jS)^2
+  for(int j=0;j<njacks;j++) jsq_mean+= jS[j]*jS[j];
+  //divide for njacks each component of jsq_mean (one for each moment)
+  for(auto &it : jsq_mean)
+    it/=njacks;
+  
+  err=jsq_mean-meanS*meanS;
+  for(auto &it : err)
+    it=it*(njacks-1);
+  for(auto &ir : err)
+    for(int i=0;i<12;i++)
+	for(int j=0;i<12;i++)
+	    ir(i,j)=sqrt(ir(i,j));
+  
+  return err;
+}
+
+//error Vertex
+valarray<qline_t> error_vertex( valarray<valarray<qline_t>> jVert, valarray<qline_t> meanVert )
+{
+ int njacks = jVert.size();
+ valarray<qline_t> jsq_mean(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()));
+ valarray<qline_t> err;
+
+ //sum of (jVert)^2
+ for(int j=0;j<njacks;j++) jsq_mean+= jVert[j]*jVert[j];
+ //divide for njacks each component of jsq_mean (one for each moment)
+ for(auto &it : jsq_mean)
+   for(auto &jt : it)
+     jt/=njacks;
+ 
+ err=jsq_mean-meanVert*meanVert;
+ for(auto &it : err)
+   for(auto &jt : it)
+     jt=jt*(njacks-1);
+
+ for(auto &ir : err)
+   for(auto &jr : ir)
+     for(int i=0;i<12;i++)
+	for(int j=0;i<12;i++)
+	    jr(i,j)=sqrt(jr(i,j));
+
+ return err;
+}
 
 
 
+
+
+
+
+  
   int main(int narg,char **arg)
 {
+  
   int nconfs=2;
   int njacks=nconfs;
   int clust_size=nconfs/njacks;
@@ -178,28 +310,75 @@ string path_to_conf(int i_conf,const char *name)
   
   //create gamma matrices
   vprop_t GAMMA=make_gamma();
-
+  
   // put to zero jackknife vertex
   valarray<valarray<qline_t>> jVert(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
-  //valarray<qline_t> jS(njacks);
+  valarray<valarray<prop_t>> jS(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
+  
   
   for(int iconf=0;iconf<nconfs;iconf++)
     {
-       int ijack=iconf/clust_size;
-       
-      //create a propagator ----in a given configuration
+      int ijack=iconf/clust_size;
+      
+      //create a propagator in a given configuration
       vprop_t S=read_prop(path_to_conf(iconf+1,"SPECT0"));
       
-       for(size_t imom=0;imom<mom_list.size();imom++)
-	 {
-	   //create vertex functions with the i_mom=0 momentum
-	   qline_t Vert=make_vertex(S,imom,GAMMA);
-	   
-	   jVert[ijack][imom]+=Vert;
-	 }
-       
-      cout<<S.size()<<endl;
+      for(size_t imom=0;imom<mom_list.size();imom++)
+	{
+	  //create vertex functions with the i_mom momentum
+	  qline_t Vert=make_vertex(S,imom,GAMMA);
+	  
+	  //create pre-jackknife propagator
+	  jS[ijack][imom]+=S[imom];
+	  //create pre-jackknife vertex
+	  jVert[ijack][imom]+=Vert;
+	  
+	}
     }
+  
+  //compute fluctuations of the propagator
+  jS=jackknife_prop(jS,nconfs,clust_size);
+  //compute fluctuations of the vertex
+  jVert=jackknife_vertex(jVert,nconfs,clust_size);
+  
+  //compute the average of the propagator
+  valarray<prop_t> S_mean=average_prop(jS);
+  //compute the average of the vertex
+  valarray<qline_t> Vertex_mean=average_vertex(jVert);
 
+  //compute the error on the propagator
+  valarray<prop_t> S_error=error_prop(jS,S_mean);
+  //compute the error on the vertex
+  valarray<qline_t> Vertex_error=error_vertex(jVert,Vertex_mean);
+  
+
+  //inverse of the (average) propagator
+  valarray<prop_t> S_inv=S_mean;
+  for(auto &it : S_inv)
+    it=it.inverse();
+
+  //amputate external legs
+  valarray<qline_t> Lambda(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()));
+  for(size_t imom=0;imom<mom_list.size();imom++)
+    for(int igam=0;igam<16;igam++)
+      {
+	Lambda[imom][igam]=S_inv[imom]*Vertex_mean[imom][igam]*S_inv[imom];
+      }
+
+  //compute p_slash as a vector of prop-type matrices
+  valarray<prop_t> p_slash(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
+  for(size_t imom=0;imom<mom_list.size();imom++)
+    for(int igam=1;igam<5;igam++)
+      p_slash[imom]+=GAMMA[igam]*mom_list[imom][igam-1];
+
+  //compute Zq = Quark field RC (RI'-MOM), one for each momentum
+  valarray<dcompl> Zq(mom_list.size());
+  
+  
+  //  valarray<prop_t> PROVA=S_inv*S_mean;
+  cout<<Lambda[6][0].trace()<<endl; //TEST
+  cout<<p_slash[250].trace()<<endl;
+  
+  
   return 0;
 }
