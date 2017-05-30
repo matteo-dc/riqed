@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <Eigen/Dense>
+#include <valarray>
 
 using namespace std;
 using namespace Eigen;
@@ -21,7 +22,10 @@ using dcompl=complex<double>;
 using prop_t=Matrix<dcompl,12,12>;
 
 //list of propagators
-using vprop_t=vector<prop_t>;
+using vprop_t=valarray<prop_t>;
+
+//list of gamma for a given momentum
+using qline_t=valarray<prop_t>;
 
 //list of momenta
 vector<coords_t> mom_list;
@@ -81,16 +85,121 @@ vprop_t read_prop(const string &path)
   return out;
 }
 
-int main(int narg,char **arg)
+//create Dirac Gamma matrices
+vprop_t make_gamma()
 {
+  int NGamma=16;
+  
+  vprop_t gam(NGamma);
+  vector< vector<int> > col(NGamma, vector<int>(4));
+  vector< vector<int> > real_part(NGamma, vector<int>(4));
+  vector< vector<int> > im_part(NGamma, vector<int>(4));
+    
+  //Identity=gamma0
+  col[0]={0,1,2,3};
+  real_part[0]={1,1,1,1};
+  im_part[0]={0,0,0,0};
+  //gamma1
+  col[1]={3,2,1,0};
+  real_part[1]={0,0,0,0};
+  im_part[1]={-1,-1,1,1};
+  //gamma2
+  col[2]={3,2,1,0};
+  real_part[2]={-1,1,1,-1};
+  im_part[2]={0,0,0,0};
+  //gamma3
+  col[3]={2,3,0,1};
+  real_part[3]={0,0,0,0};
+  im_part[3]={-1,1,1,-1};
+  //gamma4
+  col[4]={2,3,0,1};
+  real_part[4]={1,1,1,1};
+  im_part[4]={0,0,0,0};
+  //gamma5
+  col[5]={0,1,2,3};
+  real_part[5]={1,1,-1,-1};
+  im_part[5]={0,0,0,0};
+
+  for(int i_gam=0;i_gam<6;i_gam++)
+    for(int i_row=0;i_row<4;i_row++)
+      for(int ic=0;ic<3;ic++)
+	    {
+	      gam[i_gam](isc(i_row,ic),isc(col[i_gam][i_row],ic))=dcompl(real_part[i_gam][i_row],im_part[i_gam][i_row] );
+	    }
+  
+  //gamma_mu*gamma5   --------invertire posizione!
+  for(int j=0;j<4;j++)
+    {
+      gam[6+j]=gam[1+j]*gam[5];
+    }
+  
+  //sigma23-31-12
+  for(int i=0;i<3;i++)
+    {
+      gam[10+i]=0.5*(gam[(2+i)%3]*gam[(3+i)%3]-gam[(3+i)%3]*gam[(2+i)%3]);
+    }
+  //sigma01-02-03
+      for(int i=0;i<3;i++)
+    {
+      gam[13+i]=0.5*(gam[0]*gam[1+i]-gam[1+i]*gam[0]);
+    }
+ 
+  return gam;
+}
+
+//calculate the vertex function in a given configuration for the given equal momenta
+vprop_t make_vertex(const vprop_t &prop, size_t mom,const vprop_t &gamma)
+{
+  vprop_t vert(16);
+  for(int mu=0;mu<16;mu++)
+    {
+      vert[mu]=prop[mom]*gamma[mu]*prop[mom];  /*it has to be "jackknifed"*/
+    }
+  return vert;
+}
+
+string path_to_conf(int i_conf,const char *name)
+{
+  char path[1024];
+  sprintf(path,"out%d/fft_%s",i_conf,name);
+  return path;
+}
+
+
+
+
+  int main(int narg,char **arg)
+{
+  int nconfs=2;
+  int njacks=nconfs;
+  int clust_size=nconfs/njacks;
+  
   read_mom_list("mom_list.txt");
   
-  vprop_t S=read_prop("out/fft_SPECT0");
-  cout<<S[16]<<endl;
+  //create gamma matrices
+  vprop_t GAMMA=make_gamma();
+
+  // put to zero jackknife vertex
+  valarray<valarray<qline_t>> jVert(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),mom_list.size()),16),njacks);
+  //valarray<qline_t> jS(njacks);
   
-  S[0].inverse();
-  
-  S[0]*S[16];
-  
+  for(int iconf=0;iconf<nconfs;iconf++)
+    {
+       int ijack=iconf/clust_size;
+       
+      //create a propagator ----in a given configuration
+      vprop_t S=read_prop(path_to_conf(iconf+1,"SPECT0"));
+      
+       for(size_t imom=0;imom<mom_list.size();imom++)
+	 {
+	   //create vertex functions with the i_mom=0 momentum
+	   qline_t Vert=make_vertex(S,imom,GAMMA);
+      
+	   jVert[ijack][imom]+=Vert;
+	 }
+       
+      cout<<S.size()<<endl;
+    }
+
   return 0;
 }
