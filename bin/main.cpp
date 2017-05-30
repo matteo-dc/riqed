@@ -180,7 +180,7 @@ string path_to_conf(int i_conf,const char *name)
   vprop_t GAMMA=make_gamma();
 
   // put to zero jackknife vertex
-  valarray<valarray<qline_t>> jVert(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),mom_list.size()),16),njacks);
+  valarray<valarray<qline_t>> jVert(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
   //valarray<qline_t> jS(njacks);
   
   for(int iconf=0;iconf<nconfs;iconf++)
@@ -194,7 +194,7 @@ string path_to_conf(int i_conf,const char *name)
 	 {
 	   //create vertex functions with the i_mom=0 momentum
 	   qline_t Vert=make_vertex(S,imom,GAMMA);
-      
+	   
 	   jVert[ijack][imom]+=Vert;
 	 }
        
