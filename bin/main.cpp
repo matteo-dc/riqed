@@ -58,7 +58,7 @@ size_t isc(size_t is,size_t ic)
 //read a propagator file
 vprop_t read_prop(const string &path)
 {
-  vprop_t out(mom_list.size());
+  vprop_t out(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
   
   ifstream input(path,ios::binary);
   if(!input.good())
@@ -292,10 +292,73 @@ valarray<qline_t> error_vertex( valarray<valarray<qline_t>> jVert, valarray<qlin
  return err;
 }
 
+//compute Zq
+valarray<dcompl> compute_Zq(vprop_t GAMMA, valarray<prop_t> S_inv)
+{
+  //compute p_slash as a vector of prop-type matrices
+  valarray<prop_t> p_slash(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
+  for(size_t imom=0;imom<mom_list.size();imom++)
+    for(int igam=1;igam<5;igam++)
+      p_slash[imom]+=GAMMA[igam]*mom_list[imom][igam-1];
+  
+  //compute p^2
+  valarray<double> p2(valarray<double>(0.0,mom_list.size()));
+  for(size_t imom=0;imom<mom_list.size();imom++)
+    for(int coord=0;coord<4;coord++)
+      p2[imom]+=mom_list[imom][coord]*mom_list[imom][coord];
+  
+  //compute Zq = Quark field RC (RI'-MOM), one for each momentum
+  valarray<dcompl> Zq(mom_list.size());
+  complex<double> I(0,1);
+  
+  for(size_t imom=0;imom<mom_list.size();imom++)
+    Zq[imom]=(p_slash[imom]*S_inv[imom]).trace();
+  for(auto &it : Zq)
+    it=-I*it/12.;
+  for(size_t imom=0;imom<mom_list.size();imom++)
+    Zq[imom]/=p2[imom];
+  
+  return Zq;
+  
+}
 
+//project the amputated green function
+  valarray<valarray<complex<double>>> project(vprop_t GAMMA, valarray<qline_t> Lambda)
+{
 
-
-
+  //L_proj has 5 components: S(0), V(1), P(2), A(3), T(4)
+  valarray<qline_t> L_proj(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),5),mom_list.size()));
+  valarray<valarray<complex<double>>> G(valarray<dcompl>(0.0,5),mom_list.size());
+  vprop_t P(valarray<prop_t>(prop_t::Zero(),16));
+  
+  //create projectors such that tr(GAMMA*P)=Identity
+  P[0]=GAMMA[0]; //scalar
+  for(int igam=1;igam<5;igam++)  //vector
+    P[igam]=GAMMA[igam].adjoint()/4.; 
+  P[5]=GAMMA[5];  //pseudoscalar
+  for(int igam=6;igam<10;igam++)  //axial
+    P[igam]=GAMMA[igam].adjoint()/4.;
+  for(int igam=10;igam<16;igam++)  //tensor
+    P[igam]=GAMMA[igam].adjoint();
+  
+  for(size_t imom=0;imom<mom_list.size();imom++)
+    {
+      L_proj[imom][0]=Lambda[imom][0]*P[0];
+      for(int igam=1;igam<5;igam++)
+	L_proj[imom][1]+=Lambda[imom][igam]*P[igam];
+      L_proj[imom][2]=Lambda[imom][5]*P[5];
+      for(int igam=6;igam<10;igam++)  
+	L_proj[imom][3]+=Lambda[imom][igam]*P[igam];
+      for(int igam=10;igam<16;igam++)  
+	L_proj[imom][4]+=Lambda[imom][igam]*P[igam];
+      
+      for(int j=0;j<5;j++)
+	G[imom][j]=L_proj[imom][j].trace()/12.;
+    }
+  
+  return G;
+  
+}
 
 
   
@@ -322,6 +385,8 @@ valarray<qline_t> error_vertex( valarray<valarray<qline_t>> jVert, valarray<qlin
       
       //create a propagator in a given configuration
       vprop_t S=read_prop(path_to_conf(iconf+1,"SPECT0"));
+
+      // cout<<S[255]<<endl;
       
       for(size_t imom=0;imom<mom_list.size();imom++)
 	{
@@ -335,6 +400,7 @@ valarray<qline_t> error_vertex( valarray<valarray<qline_t>> jVert, valarray<qlin
 	  
 	}
     }
+
   
   //compute fluctuations of the propagator
   jS=jackknife_prop(jS,nconfs,clust_size);
@@ -357,6 +423,8 @@ valarray<qline_t> error_vertex( valarray<valarray<qline_t>> jVert, valarray<qlin
   for(auto &it : S_inv)
     it=it.inverse();
 
+  
+
   //amputate external legs
   valarray<qline_t> Lambda(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()));
   for(size_t imom=0;imom<mom_list.size();imom++)
@@ -365,20 +433,19 @@ valarray<qline_t> error_vertex( valarray<valarray<qline_t>> jVert, valarray<qlin
 	Lambda[imom][igam]=S_inv[imom]*Vertex_mean[imom][igam]*S_inv[imom];
       }
 
-  //compute p_slash as a vector of prop-type matrices
-  valarray<prop_t> p_slash(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
-  for(size_t imom=0;imom<mom_list.size();imom++)
-    for(int igam=1;igam<5;igam++)
-      p_slash[imom]+=GAMMA[igam]*mom_list[imom][igam-1];
+  //compute Zq according to RI'-MOM, one for each momentum
+  valarray<dcompl> Zq=compute_Zq(GAMMA,S_inv);
 
-  //compute Zq = Quark field RC (RI'-MOM), one for each momentum
-  valarray<dcompl> Zq(mom_list.size());
+  //compute the projected green function as a vector (S,V,P,A,T)
+  valarray<valarray<complex<double>>> G=project(GAMMA,Lambda);
+
+  //compute Z's according to RI-MOM, one for each momentum
+  valarray<valarray<dcompl>> Z(valarray<dcompl>(5),mom_list.size());
   
-  
-  //  valarray<prop_t> PROVA=S_inv*S_mean;
-  cout<<Lambda[6][0].trace()<<endl; //TEST
-  cout<<p_slash[250].trace()<<endl;
-  
+  for(size_t imom=0;imom<mom_list.size();imom++)
+    for(int k=0;k<5;k++)
+      Z[imom][k]=Zq[imom]/G[imom][k];
+
   
   return 0;
 }
