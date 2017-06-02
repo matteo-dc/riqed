@@ -1,5 +1,5 @@
 #ifdef HAVE_CONFIG_H
- #include <config.hpp>
+#include <config.hpp>
 #endif
 
 #include <complex>
@@ -114,7 +114,7 @@ vprop_t make_gamma()
   im_part[3]={-1,1,1,-1};
   //gamma4
   col[4]={2,3,0,1};
-  real_part[4]={1,1,1,1};
+  real_part[4]={-1,-1,-1,-1};
   im_part[4]={0,0,0,0};
   //gamma5
   col[5]={0,1,2,3};
@@ -124,9 +124,9 @@ vprop_t make_gamma()
   for(int i_gam=0;i_gam<6;i_gam++)
     for(int i_row=0;i_row<4;i_row++)
       for(int ic=0;ic<3;ic++)
-	    {
-	      gam[i_gam](isc(i_row,ic),isc(col[i_gam][i_row],ic))=dcompl(real_part[i_gam][i_row],im_part[i_gam][i_row] );
-	    }
+	{
+	  gam[i_gam](isc(i_row,ic),isc(col[i_gam][i_row],ic))=dcompl(real_part[i_gam][i_row],im_part[i_gam][i_row] );
+	}
   
   //gamma_mu*gamma5
   for(int j=0;j<4;j++)
@@ -140,7 +140,7 @@ vprop_t make_gamma()
       gam[10+i]=0.5*(gam[(2+i)%3]*gam[(3+i)%3]-gam[(3+i)%3]*gam[(2+i)%3]);
     }
   //sigma01-02-03
-      for(int i=0;i<3;i++)
+  for(int i=0;i<3;i++)
     {
       gam[13+i]=0.5*(gam[0]*gam[1+i]-gam[1+i]*gam[0]);
     }
@@ -153,19 +153,31 @@ vprop_t make_vertex(const vprop_t &prop, size_t mom,const vprop_t &gamma)
 {
   vprop_t vert(16);
   for(int mu=0;mu<16;mu++)
-    {
+    {      
       vert[mu]=prop[mom]*gamma[mu]*gamma[5]*prop[mom].adjoint()*gamma[5];  /*it has to be "jackknifed"*/
     }
   return vert;
 }
 
 //create the path-string to the configuration
+
+//OLD CONFIGURATIONS
 string path_to_conf(int i_conf,const char *name)
 {
   char path[1024];
   sprintf(path,"out%d/fft_%s",i_conf,name);
   return path;
 }
+
+//NEW CONFIGURATIONS
+/*string path_to_conf(int i_conf,const char *name)
+{
+  char path[1024];
+  sprintf(path,"out/%04d/fft_%s",i_conf,name);
+  return path;
+}
+*/
+
 
 //jackknife Propagator
 valarray<valarray<prop_t>> jackknife_prop(  valarray<valarray<prop_t>> jS, int nconf, int clust_size )
@@ -179,7 +191,7 @@ valarray<valarray<prop_t>> jackknife_prop(  valarray<valarray<prop_t>> jS, int n
     {
       jS[j]=jSum-jS[j];
       for(auto &it : jS[j])
-	  it/=nconf-clust_size;
+	it/=nconf-clust_size;
     }
 
   return jS;
@@ -188,7 +200,7 @@ valarray<valarray<prop_t>> jackknife_prop(  valarray<valarray<prop_t>> jS, int n
 //jackknife Vertex
 valarray<valarray<qline_t>> jackknife_vertex( valarray<valarray<qline_t>> jVert, int nconf, int clust_size )
 {
-   valarray<qline_t> jSum(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()));
+  valarray<qline_t> jSum(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()));
   
   //sum of the jVert
   for(size_t j=0;j<jVert.size();j++) jSum+= jVert[j];
@@ -223,7 +235,7 @@ valarray<prop_t>  average_prop(  valarray<valarray<prop_t>> jS )
 }
 
 //average Vertex
-  valarray<qline_t> average_vertex( valarray<valarray<qline_t>> jVert)
+valarray<qline_t> average_vertex( valarray<valarray<qline_t>> jVert)
 {
   int njacks = jVert.size();
   
@@ -232,9 +244,9 @@ valarray<prop_t>  average_prop(  valarray<valarray<prop_t>> jS )
   //sum of jVert
   for(int j=0;j<njacks;j++) jAverage+= jVert[j];
   //divide for njacks each component of jAverage (one for each moment)
-      for(auto &it : jAverage)
-	for(auto &jt : it)
-	  jt/=njacks;
+  for(auto &it : jAverage)
+    for(auto &jt : it)
+      jt/=njacks;
   
   return jAverage;
 }
@@ -258,8 +270,8 @@ valarray<prop_t>  error_prop(  valarray<valarray<prop_t>> jS ,valarray<prop_t> m
     it=it*(njacks-1);
   for(auto &ir : err)
     for(int i=0;i<12;i++)
-	for(int j=0;i<12;i++)
-	    ir(i,j)=sqrt(ir(i,j));
+      for(int j=0;i<12;i++)
+	ir(i,j)=sqrt(ir(i,j));
   
   return err;
 }
@@ -267,65 +279,79 @@ valarray<prop_t>  error_prop(  valarray<valarray<prop_t>> jS ,valarray<prop_t> m
 //error Vertex
 valarray<qline_t> error_vertex( valarray<valarray<qline_t>> jVert, valarray<qline_t> meanVert )
 {
- int njacks = jVert.size();
- valarray<qline_t> jsq_mean(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()));
- valarray<qline_t> err;
+  int njacks = jVert.size();
+  valarray<qline_t> jsq_mean(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()));
+  valarray<qline_t> err;
 
- //sum of (jVert)^2
- for(int j=0;j<njacks;j++) jsq_mean+= jVert[j]*jVert[j];
- //divide for njacks each component of jsq_mean (one for each moment)
- for(auto &it : jsq_mean)
-   for(auto &jt : it)
-     jt/=njacks;
+  //sum of (jVert)^2
+  for(int j=0;j<njacks;j++) jsq_mean+= jVert[j]*jVert[j];
+  //divide for njacks each component of jsq_mean (one for each moment)
+  for(auto &it : jsq_mean)
+    for(auto &jt : it)
+      jt/=njacks;
  
- err=jsq_mean-meanVert*meanVert;
- for(auto &it : err)
-   for(auto &jt : it)
-     jt=jt*(njacks-1);
+  err=jsq_mean-meanVert*meanVert;
+  for(auto &it : err)
+    for(auto &jt : it)
+      jt=jt*(njacks-1);
 
- for(auto &ir : err)
-   for(auto &jr : ir)
-     for(int i=0;i<12;i++)
+  for(auto &ir : err)
+    for(auto &jr : ir)
+      for(int i=0;i<12;i++)
 	for(int j=0;i<12;i++)
-	    jr(i,j)=sqrt(jr(i,j));
+	  jr(i,j)=sqrt(jr(i,j));
 
- return err;
+  return err;
 }
 
 //compute Zq
 valarray<dcompl> compute_Zq(vprop_t GAMMA, valarray<prop_t> S_inv)
 {
+  double V=4*4*4*8;
+  
   //compute p_slash as a vector of prop-type matrices
+  valarray<valarray<double>> p(valarray<double>(0.0,4),mom_list.size());
+  valarray<valarray<double>> p_tilde(valarray<double>(0.0,4),mom_list.size());
+  for(size_t imom=0;imom<mom_list.size();imom++)
+    {
+      p[imom]={2*M_PI*mom_list[imom][1]/4.,2*M_PI*mom_list[imom][2]/4.,2*M_PI*mom_list[imom][3]/4.,2*M_PI*(mom_list[imom][0]+0.5)/8.};
+      p_tilde[imom]={sin(p[imom][0]),sin(p[imom][1]),sin(p[imom][2]),sin(p[imom][3])};
+    }
+  
   valarray<prop_t> p_slash(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
   for(size_t imom=0;imom<mom_list.size();imom++)
     for(int igam=1;igam<5;igam++)
-      p_slash[imom]+=GAMMA[igam]*mom_list[imom][igam-1];
+      //    p_slash[imom]+=GAMMA[igam]*p[imom][igam-1];
+      p_slash[imom]+=GAMMA[igam]*p_tilde[imom][igam-1];
+  
+  /*  Note that: p_slash*p_slash=p2*GAMMA[0]  */
   
   //compute p^2
   valarray<double> p2(valarray<double>(0.0,mom_list.size()));
   for(size_t imom=0;imom<mom_list.size();imom++)
     for(int coord=0;coord<4;coord++)
-      p2[imom]+=mom_list[imom][coord]*mom_list[imom][coord];
+      //p2[imom]+=p[imom][coord]*p[imom][coord];
+      p2[imom]+=p_tilde[imom][coord]*p_tilde[imom][coord];
   
   //compute Zq = Quark field RC (RI'-MOM), one for each momentum
   valarray<dcompl> Zq(mom_list.size());
   complex<double> I(0,1);
   
   for(size_t imom=0;imom<mom_list.size();imom++)
-    Zq[imom]=(p_slash[imom]*S_inv[imom]).trace();
-  for(auto &it : Zq)
-    it=-I*it/12.;
-  for(size_t imom=0;imom<mom_list.size();imom++)
-    Zq[imom]/=p2[imom];
-  
+    { Zq[imom]=(p_slash[imom]*S_inv[imom]).trace();
+      
+      Zq[imom]/=p2[imom];
+      
+      Zq[imom]=-I*Zq[imom]/12./V;
+    }
   return Zq;
   
 }
 
 //project the amputated green function
-  valarray<valarray<complex<double>>> project(vprop_t GAMMA, valarray<qline_t> Lambda)
+valarray<valarray<complex<double>>> project(vprop_t GAMMA, valarray<qline_t> Lambda)
 {
-
+  
   //L_proj has 5 components: S(0), V(1), P(2), A(3), T(4)
   valarray<qline_t> L_proj(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),5),mom_list.size()));
   valarray<valarray<complex<double>>> G(valarray<dcompl>(0.0,5),mom_list.size());
@@ -360,16 +386,51 @@ valarray<dcompl> compute_Zq(vprop_t GAMMA, valarray<prop_t> S_inv)
   
 }
 
+prop_t propagator_test(vprop_t GAMMA, coords_t n)
+{
+  double mu=0.4;
+  double k=0.125;
+  double r=-1.;
+  double V=4.*4.*4.*8.;
+  double p[4]={2*M_PI*n[1]/4.,2*M_PI*n[2]/4.,2*M_PI*n[3]/4.,2*M_PI*(n[0]+0.5)/8.};
+  
+  double p_tilde[4]={sin(p[0]),sin(p[1]),sin(p[2]),sin(p[3])};
+  double p_hat[4]={2*sin(p[0]/2),2*sin(p[1]/2),2*sin(p[2]/2),2*sin(p[3]/2)};
+  complex<double> I(0,1);
+
+  double p_tilde_2=0.;
+  double p_hat_2=0.;
+
+  double M=1/(2.*k)-4.;
+
+  prop_t p_tilde_slash(prop_t::Zero());
+
+  for(int ip=0;ip<4;ip++)
+    {
+      p_tilde_slash+=GAMMA[ip+1]*p_tilde[ip];
+      p_tilde_2+=p_tilde[ip]*p_tilde[ip];
+      p_hat_2+=p_hat[ip]*p_hat[ip];
+    }
+
+  double Mp=M+0.5*p_hat_2;
+
+  prop_t S=(1/V)*(-I*p_tilde_slash + mu*GAMMA[0] + I*Mp*GAMMA[5]*r)/(Mp*Mp + mu*mu + p_tilde_2);
+
+  return S;
+}
+
 
   
-  int main(int narg,char **arg)
+int main(int narg,char **arg)
 {
-  
-  int nconfs=2;
+  int nconfs=2; //OLD CONFS
+  // int nconfs=15; //NEW CONFS
   int njacks=nconfs;
   int clust_size=nconfs/njacks;
-  
-  read_mom_list("mom_list.txt");
+  int conf_id[nconfs]={700,710,720,730,740,750,760,770,780,790,800,810,820,830,840};
+
+  //read_mom_list("mom_list.txt");  //NEW CONFS!!
+  read_mom_list("mom_list_OLD.txt"); //OLD CONFS!!
   
   //create gamma matrices
   vprop_t GAMMA=make_gamma();
@@ -378,15 +439,15 @@ valarray<dcompl> compute_Zq(vprop_t GAMMA, valarray<prop_t> S_inv)
   valarray<valarray<qline_t>> jVert(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
   valarray<valarray<prop_t>> jS(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
   
-  
   for(int iconf=0;iconf<nconfs;iconf++)
     {
       int ijack=iconf/clust_size;
       
       //create a propagator in a given configuration
-      vprop_t S=read_prop(path_to_conf(iconf+1,"SPECT0"));
+      
+      vprop_t S=read_prop(path_to_conf(iconf+1,"SPECT0")); //OLD CONFS!!!
+      //vprop_t S=read_prop(path_to_conf(conf_id[iconf],"SPECT0"));  //NEW CONFS!!!
 
-      // cout<<S[255]<<endl;
       
       for(size_t imom=0;imom<mom_list.size();imom++)
 	{
@@ -400,7 +461,7 @@ valarray<dcompl> compute_Zq(vprop_t GAMMA, valarray<prop_t> S_inv)
 	  
 	}
     }
-
+  
   
   //compute fluctuations of the propagator
   jS=jackknife_prop(jS,nconfs,clust_size);
@@ -419,20 +480,20 @@ valarray<dcompl> compute_Zq(vprop_t GAMMA, valarray<prop_t> S_inv)
   
 
   //inverse of the (average) propagator
-  valarray<prop_t> S_inv=S_mean;
-  for(auto &it : S_inv)
-    it=it.inverse();
+  valarray<prop_t> S_inv(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
+  for(size_t imom=0;imom<mom_list.size();imom++)
+    S_inv[imom]=S_mean[imom].inverse();
 
   
-
   //amputate external legs
   valarray<qline_t> Lambda(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()));
   for(size_t imom=0;imom<mom_list.size();imom++)
     for(int igam=0;igam<16;igam++)
       {
-	Lambda[imom][igam]=S_inv[imom]*Vertex_mean[imom][igam]*S_inv[imom];
+	Lambda[imom][igam]=S_inv[imom]*Vertex_mean[imom][igam]*GAMMA[5]*S_inv[imom].adjoint()*GAMMA[5];
       }
-
+  
+   
   //compute Zq according to RI'-MOM, one for each momentum
   valarray<dcompl> Zq=compute_Zq(GAMMA,S_inv);
 
@@ -445,6 +506,13 @@ valarray<dcompl> compute_Zq(vprop_t GAMMA, valarray<prop_t> S_inv)
   for(size_t imom=0;imom<mom_list.size();imom++)
     for(int k=0;k<5;k++)
       Z[imom][k]=Zq[imom]/G[imom][k];
+
+ 
+
+  //printf
+  for(size_t imom=0;imom<mom_list.size();imom++)
+    cout<<imom+1<<"    Zq= "<<Zq[imom].real()<<" Zs= "<<Z[imom][0].real()<<" Zv= "<<Z[imom][1].real()<<" Zp= "<<Z[imom][2].real()<<" Za= "<<Z[imom][3].real()<<" Zt= "<<Z[imom][4].real()<<endl;
+
 
   
   return 0;
