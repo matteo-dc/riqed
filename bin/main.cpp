@@ -557,6 +557,7 @@ int main(int narg,char **arg)
   valarray<valarray<double>> p(valarray<double>(0.0,4),mom_list.size());
   valarray<valarray<double>> p_tilde(valarray<double>(0.0,4),mom_list.size());
   valarray<double> p2(valarray<double>(0.0,mom_list.size()));
+  valarray<double> p2_space(valarray<double>(0.0,mom_list.size()));
   double L=24.,T=48.;
 
   for(size_t imom=0;imom<mom_list.size();imom++)
@@ -566,6 +567,8 @@ int main(int narg,char **arg)
 
 	  for(int coord=0;coord<4;coord++)
 	    p2[imom]+=p_tilde[imom][coord]*p_tilde[imom][coord];
+	  for(int coord=0;coord<3;coord++)
+	    p2_space[imom]+=p_tilde[imom][coord]*p_tilde[imom][coord];
 	}
   
   //Create new extended vector
@@ -579,18 +582,16 @@ int main(int narg,char **arg)
  
   //Assign the tag
   int tag=0;
-  double eps=1.0e-7;  //Precision: is it correct?
+  double eps=1.0e-15;  //Precision: is it correct?
   for(size_t imom=0;imom<mom_list.size();imom++)
     {
       size_t count=0;
       for(size_t i=0;i<imom;i++)
 	{
-	  if(abs(new_mom_list[i][4]-new_mom_list[imom][4])<eps/* && ( new_mom_list[i][1]==-new_mom_list[imom][1] || \
-								    new_mom_list[i][2]==-new_mom_list[imom][2] || \
-								    new_mom_list[i][3]==-new_mom_list[imom][3] || \
-								    new_mom_list[i][0]==-new_mom_list[imom][0] || \
-								    abs(new_mom_list[i][1])+abs(new_mom_list[i][2])+abs(new_mom_list[i][3])== \
-								    abs(new_mom_list[imom][1])+abs(new_mom_list[imom][2])+abs(new_mom_list[imom][3]) )*/)
+	  if((abs(new_mom_list[i][4]-new_mom_list[imom][4])<eps && abs(p2_space[i]-p2_space[imom])<eps && abs(new_mom_list[i][0]-new_mom_list[imom][0])<eps &&\
+	      abs(abs(new_mom_list[i][1])*abs(new_mom_list[i][2])*abs(new_mom_list[i][3])-(abs(new_mom_list[imom][1])*abs(new_mom_list[imom][2])*abs(new_mom_list[imom][3])))<eps ) || \
+	     (abs(new_mom_list[i][4]-new_mom_list[imom][4])<eps && abs(p2_space[i]-p2_space[imom])<eps && abs(new_mom_list[i][0]+new_mom_list[imom][0]+1.)<eps&&\
+	      abs(abs(new_mom_list[i][1])*abs(new_mom_list[i][2])*abs(new_mom_list[i][3])-(abs(new_mom_list[imom][1])*abs(new_mom_list[imom][2])*abs(new_mom_list[imom][3])))<eps  )  )
 	    {
 	      new_mom_list[imom][5]=new_mom_list[i][5];
 	    }else{
@@ -605,7 +606,9 @@ int main(int narg,char **arg)
 	}
     }
 
-  //Average of Z corresponding to equivalent momenta (same tag) and print on file
+  cout<<tag+1<<endl;
+  
+  //Average of Z's corresponding to equivalent momenta (same tag) and print on file
   valarray<double> p2_eq(valarray<double>(0.0,tag));
   valarray<valarray<double>> Z_average(valarray<valarray<double>>(valarray<double>(0.0,6),tag));
   
