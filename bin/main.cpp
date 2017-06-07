@@ -219,6 +219,62 @@ valarray<valarray<qline_t>> jackknife_vertex( valarray<valarray<qline_t>> &jVert
   return jVert;
 }
 
+//jackknife Zq
+valarray<valarray<dcompl>> jackknife_Zq( valarray<valarray<dcompl>> &jZq, int nconf, int clust_size )
+{
+  valarray<dcompl> jSum(valarray<dcompl>(0.0,mom_list.size()));
+    
+  for(size_t j=0;j<jZq.size();j++) jSum+= jZq[j];
+
+  for(size_t j=0;j<jZq.size();j++)
+    {
+      jZq[j]=jSum-jZq[j];
+      for(auto &it : jZq[j])
+	it/=nconf-clust_size;
+    }
+
+  return jZq;
+  
+}
+
+//jackknife G
+valarray<valarray<valarray<complex<double>>>> jackknife_G(valarray<valarray<valarray<complex<double>>>> &jG, int nconf, int clust_size)
+{
+  valarray<valarray<complex<double>>> jSum(valarray<complex<double>>(0.0,5),mom_list.size());
+
+  for(size_t j=0;j<jG.size();j++) jSum+=jG[j];
+
+  for(size_t j=0;j<jG.size();j++)
+    {
+      jG[j]=jSum-jG[j];
+       for(auto &it : jG[j])
+	 for(auto &jt : it)
+	   jt/=nconf-clust_size;
+    }
+
+  return jG;
+  
+}
+
+//jackknife Z
+valarray<valarray<valarray<dcompl>>> jackknife_Z(valarray<valarray<valarray<dcompl>>> &jZ, int nconf, int clust_size)
+{
+  valarray<valarray<complex<double>>> jSum(valarray<complex<double>>(0.0,5),mom_list.size());
+
+  for(size_t j=0;j<jZ.size();j++) jSum+= jZ[j];
+
+  for(size_t j=0;j<jZ.size();j++)
+    {
+      jZ[j]=jSum-jZ[j];
+       for(auto &it : jZ[j])
+	 for(auto &jt : it)
+	   jt/=nconf-clust_size;
+    }
+
+  return jZ;
+}
+
+
 
 //average Propagator
 valarray<prop_t>  average_prop( const valarray<valarray<prop_t>> &jS )
@@ -307,8 +363,8 @@ valarray<qline_t> error_vertex(const valarray<valarray<qline_t>> &jVert, valarra
   return err;
 }
 
-//compute Zq
-valarray<dcompl> compute_Zq(vprop_t GAMMA, valarray<prop_t> S_inv, double L, double T)
+//compute jZq
+valarray<valarray<dcompl>> compute_jZq(vprop_t GAMMA, valarray<valarray<prop_t>> jS_inv, double L, double T, int nconfs, int njacks, int cluster_size)
 {
   //double Lx=24,Ly=24,Lz=24,Lt=48;
   double V=L*L*L*T;
@@ -318,8 +374,10 @@ valarray<dcompl> compute_Zq(vprop_t GAMMA, valarray<prop_t> S_inv, double L, dou
   valarray<valarray<double>> p_tilde(valarray<double>(0.0,4),mom_list.size());
   valarray<prop_t> p_slash(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
   valarray<double> p2(valarray<double>(0.0,mom_list.size()));
-  valarray<dcompl> Zq(mom_list.size());
+  valarray<valarray<dcompl>> jZq(valarray<dcompl>(mom_list.size()),njacks);
   complex<double> I(0,1);
+
+  
 
   for(size_t imom=0;imom<mom_list.size();imom++)
     {
@@ -337,24 +395,28 @@ valarray<dcompl> compute_Zq(vprop_t GAMMA, valarray<prop_t> S_inv, double L, dou
 	//	p2[imom]+=p[imom][coord]*p[imom][coord];
 	p2[imom]+=p_tilde[imom][coord]*p_tilde[imom][coord];
       
-      //compute Zq = Quark field RC (RI'-MOM), one for each momentum  
-      Zq[imom]=(p_slash[imom]*S_inv[imom]).trace();
-      Zq[imom]/=p2[imom];    
-      Zq[imom]=-I*Zq[imom]/12./V;
     }
+      for(int ijack=0;ijack<njacks;ijack++)
+	for(size_t imom=0;imom<mom_list.size();imom++)
+	  { 
+	    //compute jZq = Quark field RC (RI'-MOM), one for each momentum and jackknife 
+	    jZq[ijack][imom]+=-I*((p_slash[imom]*jS_inv[ijack][imom]).trace())/p2[imom]/12./V;
+	  }
   
-  return Zq;
+  return jZq;
   
 }
 
 //project the amputated green function
-valarray<valarray<complex<double>>> project(vprop_t GAMMA, valarray<qline_t> Lambda)
+valarray<valarray<valarray<complex<double>>>> project_jLambda(vprop_t GAMMA, const valarray<valarray<qline_t>> &jLambda, int nconfs, int njacks,  int clust_size)
 {
+
+  // valarray<valarray<valarray<complex<double>>>> jG=project_jLambda(GAMMA,jLambda,nconfs,njacks,clust_size);
   
   //L_proj has 5 components: S(0), V(1), P(2), A(3), T(4)
-  valarray<qline_t> L_proj(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),5),mom_list.size()));
-  valarray<valarray<complex<double>>> G(valarray<dcompl>(0.0,5),mom_list.size());
-  vprop_t P(valarray<prop_t>(prop_t::Zero(),16));
+  valarray<valarray<valarray<prop_t>>> L_proj(valarray<valarray<prop_t>>(valarray<prop_t>(prop_t::Zero(),5),mom_list.size()),njacks);
+  valarray<valarray<valarray<complex<double>>>> jG(valarray<valarray<complex<double>>>(valarray<dcompl>(0.0,5),mom_list.size()),njacks);
+  vprop_t P(prop_t::Zero(),16);
   
   //create projectors such that tr(GAMMA*P)=Identity
   P[0]=GAMMA[0]; //scalar
@@ -366,23 +428,32 @@ valarray<valarray<complex<double>>> project(vprop_t GAMMA, valarray<qline_t> Lam
   for(int igam=10;igam<16;igam++)  //tensor
     P[igam]=GAMMA[igam].adjoint();
   
-  for(size_t imom=0;imom<mom_list.size();imom++)
-    {
-      L_proj[imom][0]=Lambda[imom][0]*P[0];
-      for(int igam=1;igam<5;igam++)
-	L_proj[imom][1]+=Lambda[imom][igam]*P[igam];
-      L_proj[imom][2]=Lambda[imom][5]*P[5];
-      for(int igam=6;igam<10;igam++)  
-	L_proj[imom][3]+=Lambda[imom][igam]*P[igam];
-      for(int igam=10;igam<16;igam++)  
-	L_proj[imom][4]+=Lambda[imom][igam]*P[igam];
-      
-      for(int j=0;j<5;j++)
-	G[imom][j]=L_proj[imom][j].trace()/12.;
-    }
-  
-  return G;
-  
+ for(int ijack=0;ijack<njacks;ijack++)
+   {
+     for(size_t imom=0;imom<mom_list.size();imom++)
+       {
+	 L_proj[ijack][imom][0]=jLambda[ijack][imom][0]*P[0];
+	 
+	 for(int igam=1;igam<5;igam++)
+	   L_proj[ijack][imom][1]+=jLambda[ijack][imom][igam]*P[igam];
+	 
+	 L_proj[imom][2]=jLambda[ijack][imom][5]*P[5];
+	 
+	 for(int igam=6;igam<10;igam++)  
+	   L_proj[ijack][imom][3]+=jLambda[ijack][imom][igam]*P[igam];
+	 
+	 
+	 for(int igam=10;igam<16;igam++)  
+	   L_proj[ijack][imom][4]+=jLambda[ijack][imom][igam]*P[igam];
+	 
+	 for(int j=0;j<5;j++)
+	   jG[ijack][imom][j]=L_proj[ijack][imom][j].trace()/12.;
+	 
+       }	  
+   }
+ 
+ return jG;
+ 
 }
 
 prop_t propagator_test(vprop_t GAMMA, coords_t n)
@@ -470,8 +541,8 @@ int main(int narg,char **arg)
   vprop_t GAMMA=make_gamma();
   
   // put to zero jackknife vertex
-  valarray<valarray<qline_t>> jVert(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
   valarray<valarray<prop_t>> jS(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
+  valarray<valarray<qline_t>> jVert(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
 
   cout<<"Reading propagators from the files, creating the vertices and preparing the jackknife..."<<endl; /*****/
   
@@ -500,8 +571,8 @@ int main(int narg,char **arg)
 
   cout<<"Applying the jackknife resampling to propagators and vertices..."<<endl;
   
-  valarray<prop_t> S_inv(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
-  valarray<qline_t> Lambda(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()));
+  valarray<valarray<prop_t>> jS_inv(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
+  valarray<valarray<qline_t>>jLambda(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
   
   cout<<"   Jackknife of propagators (1/6)"<<endl;
   //compute fluctuations of the propagator
@@ -509,8 +580,8 @@ int main(int narg,char **arg)
   cout<<"   Jackknife of vertices (2/6)"<<endl;
   //compute fluctuations of the vertex
   jVert=jackknife_vertex(jVert,nconfs,clust_size);
-  
-  cout<<"   Average of propagators (3/6)"<<endl;
+  /* 
+  cout<<"   Average of propagators (3/6)"<<endl; 
   //compute the average of the propagator
   valarray<prop_t> S_mean=average_prop(jS);
   cout<<"   Average of vertices (4/6)"<<endl;
@@ -523,46 +594,62 @@ int main(int narg,char **arg)
   cout<<"   Error on vertices (6/6)"<<endl;
   //compute the error on the vertex
   valarray<qline_t> Vertex_error=error_vertex(jVert,Vertex_mean);
-  
+  */
   cout<<"Inverting the propagators..."<<endl;
   
-  //inverse of the (average) propagator
-      
-  for(size_t imom=0;imom<mom_list.size();imom++)
-    S_inv[imom]=S_mean[imom].inverse();
-      
+  //inverse of the propagator
+
+   for(int ijack=0;ijack<njacks;ijack++)
+    {
+      for(size_t imom=0;imom<mom_list.size();imom++)
+	jS_inv[ijack][imom]+=jS[ijack][imom].inverse();
+    }
+
+   jS_inv=jackknife_prop(jS_inv,nconfs,clust_size);
   
   
   cout<<"Amputating the external legs..."<<endl;
   
   //amputate external legs
+  for(int ijack=0;ijack<njacks;ijack++)
+    { 
+      for(size_t imom=0;imom<mom_list.size();imom++)
+	for(int igam=0;igam<16;igam++)
+	  {
+	    jLambda[ijack][imom][igam]+=jS_inv[ijack][imom]*jVert[ijack][imom][igam]*GAMMA[5]*jS_inv[ijack][imom].adjoint()*GAMMA[5];
+	  }
+    }
 
-  for(size_t imom=0;imom<mom_list.size();imom++)
-    for(int igam=0;igam<16;igam++)
-      {
-	Lambda[imom][igam]=S_inv[imom]*Vertex_mean[imom][igam]*GAMMA[5]*S_inv[imom].adjoint()*GAMMA[5];
-      }
+  jLambda=jackknife_vertex(jLambda,nconfs,clust_size);
   
   cout<<"Computing Zq..."<<endl;
   
   //compute Zq according to RI'-MOM, one for each momentum
-  valarray<dcompl> Zq=compute_Zq(GAMMA,S_inv,L,T);
+  valarray<valarray<dcompl>> jZq=compute_jZq(GAMMA,jS_inv,L,T,nconfs,njacks,clust_size);
+
+  jZq=jackknife_Zq(jZq,nconfs,clust_size);
+  
 
   cout<<"Projecting the Green functions..."<<endl;
   
   //compute the projected green function as a vector (S,V,P,A,T)
-  valarray<valarray<complex<double>>> G=project(GAMMA,Lambda);
+  valarray<valarray<valarray<complex<double>>>> jG=project_jLambda(GAMMA,jLambda,nconfs,njacks,clust_size);
+
+  cout<<"---------"<<endl;
+  
+  jG=jackknife_G(jG,nconfs,clust_size);
 
   cout<<"Computing the Z's..."<<endl;
   
   //compute Z's according to RI-MOM, one for each momentum
-  valarray<valarray<dcompl>> Z(valarray<dcompl>(5),mom_list.size());
+  valarray<valarray<valarray<dcompl>>> jZ(valarray<valarray<dcompl>>(valarray<dcompl>(0.0,5),mom_list.size()),njacks);
+
+  for(int ijack=0;ijack<njacks;ijack++)
+    for(size_t imom=0;imom<mom_list.size();imom++)
+      for(int k=0;k<5;k++)
+	jZ[ijack][imom][k]+=jZq[ijack][imom]/jG[ijack][imom][k];
   
-  for(size_t imom=0;imom<mom_list.size();imom++)
-    for(int k=0;k<5;k++)
-      Z[imom][k]=Zq[imom]/G[imom][k];
-  
-  
+  jZ=jackknife_Z(jZ,nconfs,clust_size);
 
   //create p_tilde vector  
   valarray<valarray<double>> p(valarray<double>(0.0,4),mom_list.size());
@@ -582,15 +669,24 @@ int main(int narg,char **arg)
 	}
   
   //Create new extended vector
+  
   cout<<"Creating Z average vector..."<<endl;
   
-  valarray<valarray<double>> new_mom_list(valarray<double>(0.0,12),mom_list.size());
-  
-  for(size_t imom=0;imom<mom_list.size();imom++)
-    new_mom_list[imom]=create_extended_vector(p2,imom,Zq,Z);
+  valarray<valarray<valarray<double>>> new_mom_list(valarray<valarray<double>>(valarray<double>(0.0,12),mom_list.size()),njacks);
 
+  for(int ijack=0;ijack<njacks;ijack++)
+    for(size_t imom=0;imom<mom_list.size();imom++)
+      {
+	for(int i=0;i<4;i++)
+	  new_mom_list[ijack][imom][i]=mom_list[imom][i];
+	new_mom_list[ijack][imom][4]=p2[imom];
+	new_mom_list[ijack][imom][6]=jZq[ijack][imom].real();
+	for(int i=0;i<5;i++)
+	  new_mom_list[ijack][imom][7+i]=jZ[ijack][imom][0+i].real();
+	
+      }
  
-  //Assign the tag
+  //Assign the tag for fixed ijack
   int tag=0;
   double eps=1.0e-15;  //Precision: is it correct?
   for(size_t imom=0;imom<mom_list.size();imom++)
@@ -598,12 +694,12 @@ int main(int narg,char **arg)
       size_t count=0;
       for(size_t i=0;i<imom;i++)
 	{
-	  if((abs(new_mom_list[i][4]-new_mom_list[imom][4])<eps/* && abs(p2_space[i]-p2_space[imom])<eps && abs(new_mom_list[i][0]-new_mom_list[imom][0])<eps*/ && \
-	      abs(abs(new_mom_list[i][1])*abs(new_mom_list[i][2])*abs(new_mom_list[i][3])-(abs(new_mom_list[imom][1])*abs(new_mom_list[imom][2])*abs(new_mom_list[imom][3])))<eps ) || \
-	     (abs(new_mom_list[i][4]-new_mom_list[imom][4])<eps/* && abs(p2_space[i]-p2_space[imom])<eps && abs(new_mom_list[i][0]+new_mom_list[imom][0]+1.)<eps*/ && \
-	      abs(abs(new_mom_list[i][1])*abs(new_mom_list[i][2])*abs(new_mom_list[i][3])-(abs(new_mom_list[imom][1])*abs(new_mom_list[imom][2])*abs(new_mom_list[imom][3])))<eps  )  )
+	  if((abs(new_mom_list[0][i][4]-new_mom_list[0][imom][4])<eps/* && abs(p2_space[i]-p2_space[imom])<eps && abs(new_mom_list[i][0]-new_mom_list[imom][0])<eps*/ && \
+	      abs(abs(new_mom_list[0][i][1])*abs(new_mom_list[0][i][2])*abs(new_mom_list[0][i][3])-(abs(new_mom_list[0][imom][1])*abs(new_mom_list[0][imom][2])*abs(new_mom_list[0][imom][3])))<eps ) || \
+	     (abs(new_mom_list[0][i][4]-new_mom_list[0][imom][4])<eps/* && abs(p2_space[i]-p2_space[imom])<eps && abs(new_mom_list[i][0]+new_mom_list[imom][0]+1.)<eps*/ && \
+	      abs(abs(new_mom_list[0][i][1])*abs(new_mom_list[0][i][2])*abs(new_mom_list[0][i][3])-(abs(new_mom_list[0][imom][1])*abs(new_mom_list[0][imom][2])*abs(new_mom_list[0][imom][3])))<eps  )  )
 	    {
-	      new_mom_list[imom][5]=new_mom_list[i][5];
+	      new_mom_list[0][imom][5]=new_mom_list[0][i][5];
 	    }else{
 	    count++;
 	  }
@@ -611,80 +707,97 @@ int main(int narg,char **arg)
 	  if(count==imom)
 	    {
 	      tag++;
-	      new_mom_list[imom][5]=tag;
+	      new_mom_list[0][imom][5]=tag;
 	    }
 	}
     }
+  for(size_t imom=0;imom<mom_list.size();imom++)
+    for(int ijack=1;ijack<njacks;ijack++)
+      new_mom_list[ijack][imom][5]=new_mom_list[0][imom][5];
 
-  cout<<tag+1<<endl;
+  cout<<"Number of equivalent momenta: "<<tag+1<<endl;
   
   //Average of Z's corresponding to equivalent momenta (same tag) and print on file
   valarray<double> p2_eq(valarray<double>(0.0,tag));
-  valarray<valarray<double>> Z_sum(valarray<valarray<double>>(valarray<double>(0.0,6),tag));
+  /*
+  valarray<valarray<valarray<double>>> jZ_tag(valarray<valarray<valarray<double>>>(valarray<valarray<double>>(valarray<double>(0.0,6),tag)),njacks);
+  
   valarray<valarray<double>> Z_average(valarray<valarray<double>>(valarray<double>(0.0,6),tag));
   valarray<valarray<double>> Z2_average(valarray<valarray<double>>(valarray<double>(0.0,6),tag));
   valarray<valarray<double>> Z_error(valarray<valarray<double>>(valarray<double>(0.0,6),tag));
-
-  valarray<valarray<vector<double>>> jZ(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag));
-  
+  */
+  valarray<valarray<valarray<vector<double>>>> jZ_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag),njacks);
+  valarray<valarray<valarray<double>>> jZ_average(valarray<valarray<double>>(valarray<double>(0.0,6),tag),njacks);
+ 
   cout<<"Averaging the Z's corresponding to equivalent momenta and printing on the output file..."<<endl;
+
+  for(int ijack=0;ijack<njacks;ijack++)
+    for(int t=0;t<tag;t++)
+      {
+	int count_equivalent=0;
+	for(size_t imom=0;imom<mom_list.size();imom++)
+	  { 
+	    if(t==new_mom_list[ijack][imom][5])
+	      {
+		count_equivalent++;
+		p2_eq[t]=new_mom_list[0][imom][4];
+		
+		jZ_same_tag[ijack][t][0].push_back(new_mom_list[ijack][imom][6]);
+		jZ_same_tag[ijack][t][1].push_back(new_mom_list[ijack][imom][7]);
+		jZ_same_tag[ijack][t][2].push_back(new_mom_list[ijack][imom][8]);
+		jZ_same_tag[ijack][t][3].push_back(new_mom_list[ijack][imom][9]);
+		jZ_same_tag[ijack][t][4].push_back(new_mom_list[ijack][imom][10]);
+		jZ_same_tag[ijack][t][5].push_back(new_mom_list[ijack][imom][11]);
+		
+	      }
+	  }
+	for(int i=0;i<count_equivalent;i++)
+	  {
+	    /* jZ[t][0][i]=(Z_sum[t][0]-jZ[t][0][i])/((double)(count_equivalent-1));
+	    jZ[t][1][i]=(Z_sum[t][1]-jZ[t][1][i])/((double)(count_equivalent-1));
+	    jZ[t][2][i]=(Z_sum[t][2]-jZ[t][2][i])/((double)(count_equivalent-1));
+	    jZ[t][3][i]=(Z_sum[t][3]-jZ[t][3][i])/((double)(count_equivalent-1));
+	    jZ[t][4][i]=(Z_sum[t][4]-jZ[t][4][i])/((double)(count_equivalent-1));
+	    jZ[t][5][i]=(Z_sum[t][5]-jZ[t][5][i])/((double)(count_equivalent-1));*/
+	    
+	    jZ_average[ijack][t][0]+=jZ_same_tag[ijack][t][0][i]/count_equivalent;
+	    jZ_average[ijack][t][1]+=jZ_same_tag[ijack][t][1][i]/count_equivalent;
+	    jZ_average[ijack][t][2]+=jZ_same_tag[ijack][t][2][i]/count_equivalent;
+	    jZ_average[ijack][t][3]+=jZ_same_tag[ijack][t][3][i]/count_equivalent;
+	    jZ_average[ijack][t][4]+=jZ_same_tag[ijack][t][4][i]/count_equivalent;
+	    jZ_average[ijack][t][5]+=jZ_same_tag[ijack][t][5][i]/count_equivalent;
+	    /*  
+	    Z2_average[t][0]+=jZ[t][0][i]*jZ[t][0][i]/count_equivalent;
+	    Z2_average[t][1]+=jZ[t][1][i]*jZ[t][1][i]/count_equivalent;
+	    Z2_average[t][2]+=jZ[t][2][i]*jZ[t][2][i]/count_equivalent;
+	    Z2_average[t][3]+=jZ[t][3][i]*jZ[t][3][i]/count_equivalent;
+	    Z2_average[t][4]+=jZ[t][4][i]*jZ[t][4][i]/count_equivalent;
+	    Z2_average[t][5]+=jZ[t][5][i]*jZ[t][5][i]/count_equivalent;
+	    */
+	  }
+	/*
+	for(int iz=0;iz<6;iz++)
+	  {
+	    Z_error[t][iz]=sqrt((double)(count_equivalent-1.))*sqrt(Z2_average[t][iz]-Z_average[t][iz]*Z_average[t][iz]);
+	  }
+	*/
+    }
+
+
+  valarray<valarray<double>> Z_mean_value(valarray<double>(0.0,6),tag);
+  valarray<valarray<double>> Z2_mean_value(valarray<double>(0.0,6),tag);
+  valarray<valarray<double>> Z_error(valarray<double>(0.0,6),tag);
   
   for(int t=0;t<tag;t++)
-    {
-      int count_equivalent=0;
-      for(size_t imom=0;imom<mom_list.size();imom++)
-	{ 
-	  if(t==new_mom_list[imom][5])
-	    {
-	      count_equivalent++;
-	      p2_eq[t]=new_mom_list[imom][4];
-	      
-	      Z_sum[t][0]+=new_mom_list[imom][6]; //Zq
-	      Z_sum[t][1]+=new_mom_list[imom][7]; //Zs
-	      Z_sum[t][2]+=new_mom_list[imom][8]; //Zv (a)
-	      Z_sum[t][3]+=new_mom_list[imom][9]; //Zp
-	      Z_sum[t][4]+=new_mom_list[imom][10];//Za  (v)
-	      Z_sum[t][5]+=new_mom_list[imom][11];//Zt
-
-	      jZ[t][0].push_back(new_mom_list[imom][6]);
-	      jZ[t][1].push_back(new_mom_list[imom][7]);
-	      jZ[t][2].push_back(new_mom_list[imom][8]);
-	      jZ[t][3].push_back(new_mom_list[imom][9]);
-	      jZ[t][4].push_back(new_mom_list[imom][10]);
-	      jZ[t][5].push_back(new_mom_list[imom][11]);
-	    }
-	}
-      for(int i=0;i<count_equivalent;i++)
-	{
-	  jZ[t][0][i]=(Z_sum[t][0]-jZ[t][0][i])/((double)(count_equivalent-1));
-	  jZ[t][1][i]=(Z_sum[t][1]-jZ[t][1][i])/((double)(count_equivalent-1));
-	  jZ[t][2][i]=(Z_sum[t][2]-jZ[t][2][i])/((double)(count_equivalent-1));
-	  jZ[t][3][i]=(Z_sum[t][3]-jZ[t][3][i])/((double)(count_equivalent-1));
-	  jZ[t][4][i]=(Z_sum[t][4]-jZ[t][4][i])/((double)(count_equivalent-1));
-	  jZ[t][5][i]=(Z_sum[t][5]-jZ[t][5][i])/((double)(count_equivalent-1));
-	  
-	  Z_average[t][0]+=jZ[t][0][i]/count_equivalent;
-	  Z_average[t][1]+=jZ[t][1][i]/count_equivalent;
-	  Z_average[t][2]+=jZ[t][2][i]/count_equivalent;
-	  Z_average[t][3]+=jZ[t][3][i]/count_equivalent;
-	  Z_average[t][4]+=jZ[t][4][i]/count_equivalent;
-	  Z_average[t][5]+=jZ[t][5][i]/count_equivalent;
-
-	  Z2_average[t][0]+=jZ[t][0][i]*jZ[t][0][i]/count_equivalent;
-	  Z2_average[t][1]+=jZ[t][1][i]*jZ[t][1][i]/count_equivalent;
-	  Z2_average[t][2]+=jZ[t][2][i]*jZ[t][2][i]/count_equivalent;
-	  Z2_average[t][3]+=jZ[t][3][i]*jZ[t][3][i]/count_equivalent;
-	  Z2_average[t][4]+=jZ[t][4][i]*jZ[t][4][i]/count_equivalent;
-	  Z2_average[t][5]+=jZ[t][5][i]*jZ[t][5][i]/count_equivalent;
-	  
-       	}
-
-       for(int iz=0;iz<6;iz++)
-	{
-       	  Z_error[t][iz]=sqrt((double)(count_equivalent-1.))*sqrt(Z2_average[t][iz]-Z_average[t][iz]*Z_average[t][iz]);
-	}
-       
-    }
+    for(int i=0;i<6;i++)
+      {
+	for(int ijack=0;ijack<njacks;ijack++)
+	  {
+	    Z_mean_value[t][i]+=jZ_average[ijack][t][i]/njacks;
+	    Z2_mean_value[t][i]+=jZ_average[ijack][t][i]*jZ_average[ijack][t][i]/njacks;
+	  }
+	Z_error[t][i]=sqrt(njacks-1)*sqrt(Z2_mean_value[t][i]-Z_mean_value[t][i]*Z_mean_value[t][i]);
+      }
   
   //output file
   ofstream outfile ("Z_average.txt");
@@ -693,8 +806,8 @@ int main(int narg,char **arg)
       outfile<<"##p2_tilde\t Zq\t Zq_err\t Zs\t Zs_err\t Zv(a)\t Zv(a)_err\t Zp\t Zp_err\t Za(v)\t Za(v)_err\t Zt\t Zt_err "<<endl;
       for(int t=0;t<tag;t++)
 	{
-	  outfile<<p2_eq[t]<<"\t"<<Z_average[t][0]<<"\t"<<Z_error[t][0]<<"\t"<<Z_average[t][1]<<"\t"<<Z_error[t][1]<<"\t"<<Z_average[t][2]<<"\t"<<Z_error[t][2] \
-		 <<"\t"<<Z_average[t][3]<<"\t"<<Z_error[t][3]<<"\t"<<Z_average[t][4]<<"\t"<<Z_error[t][4]<<"\t"<<Z_average[t][5]<<"\t"<<Z_error[t][5]<<endl;
+	  outfile<<p2_eq[t]<<"\t"<<Z_mean_value[t][0]<<"\t"<<Z_error[t][0]<<"\t"<<Z_mean_value[t][1]<<"\t"<<Z_error[t][1]<<"\t"<<Z_mean_value[t][2]<<"\t"<<Z_error[t][2] \
+		 <<"\t"<<Z_mean_value[t][3]<<"\t"<<Z_error[t][3]<<"\t"<<Z_mean_value[t][4]<<"\t"<<Z_error[t][4]<<"\t"<<Z_mean_value[t][5]<<"\t"<<Z_error[t][5]<<endl;
 	}
       outfile.close();
     }
