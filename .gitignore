@@ -12,3 +12,6 @@ build*
 autom4te.cache
 /bin/config.hpp.in
 /Makefile
+/GPATH
+/GRTAGS
+/GTAGS

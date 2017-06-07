@@ -437,7 +437,7 @@ valarray<valarray<valarray<complex<double>>>> project_jLambda(vprop_t GAMMA, con
 	 for(int igam=1;igam<5;igam++)
 	   L_proj[ijack][imom][1]+=jLambda[ijack][imom][igam]*P[igam];
 	 
-	 L_proj[imom][2]=jLambda[ijack][imom][5]*P[5];
+	 L_proj[ijack][imom][2]=jLambda[ijack][imom][5]*P[5];
 	 
 	 for(int igam=6;igam<10;igam++)  
 	   L_proj[ijack][imom][3]+=jLambda[ijack][imom][igam]*P[igam];
