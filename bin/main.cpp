@@ -308,10 +308,10 @@ valarray<qline_t> error_vertex(const valarray<valarray<qline_t>> &jVert, valarra
 }
 
 //compute Zq
-valarray<dcompl> compute_Zq(vprop_t GAMMA, valarray<prop_t> S_inv)
+valarray<dcompl> compute_Zq(vprop_t GAMMA, valarray<prop_t> S_inv, double L, double T)
 {
-  double Lx=24,Ly=24,Lz=24,Lt=48;
-  double V=Lx*Ly*Lz*Lt;
+  //double Lx=24,Ly=24,Lz=24,Lt=48;
+  double V=L*L*L*T;
   
   //compute p_slash as a vector of prop-type matrices
   valarray<valarray<double>> p(valarray<double>(0.0,4),mom_list.size());
@@ -323,7 +323,7 @@ valarray<dcompl> compute_Zq(vprop_t GAMMA, valarray<prop_t> S_inv)
 
   for(size_t imom=0;imom<mom_list.size();imom++)
     {
-      p[imom]={2*M_PI*mom_list[imom][1]/Lx,2*M_PI*mom_list[imom][2]/Ly,2*M_PI*mom_list[imom][3]/Lz,2*M_PI*(mom_list[imom][0]+0.5)/Lt};
+      p[imom]={2*M_PI*mom_list[imom][1]/L,2*M_PI*mom_list[imom][2]/L,2*M_PI*mom_list[imom][3]/L,2*M_PI*(mom_list[imom][0]+0.5)/T};
       p_tilde[imom]={sin(p[imom][0]),sin(p[imom][1]),sin(p[imom][2]),sin(p[imom][3])};
       
       for(int igam=1;igam<5;igam++)
@@ -440,16 +440,27 @@ valarray<double> create_extended_vector(const valarray<double> &p2, size_t imom,
   
 int main(int narg,char **arg)
 {
+  
+  if (narg!=6){
+    cout<<"Number of arguments not valid: <mom file> <nconfs> <njacks> <L> <T>"<<endl;
+    exit(0);
+  }
+  
   //int nconfs=2; //OLD CONFS
-  int nconfs=15; //NEW CONFS
-  int njacks=nconfs;
+  int nconfs=stoi(arg[2]); //NEW CONFS
+  int njacks=stoi(arg[3]);
   int clust_size=nconfs/njacks;
-  int conf_id[nconfs]={700,710,720,730,740,750,760,770,780,790,800,810,820,830,840};
+  int conf_id[nconfs];
+  double L=stod(arg[4]),T=stod(arg[5]);
+  
+  for(int iconf=0;iconf<nconfs;iconf++)
+    conf_id[iconf]=700+iconf*10;
+  
 
   cout<<"Reading the list of momenta..."<<endl; /******/
 
 
-  read_mom_list("mom_list_free.txt");  //NEW CONFS FREE!!
+  read_mom_list(arg[1]);  //NEW CONFS FREE!!
   // read_mom_list("mom_list.txt");  //NEW CONFS!!
   // read_mom_list("mom_list_OLD.txt"); //OLD CONFS!!
 
@@ -535,7 +546,7 @@ int main(int narg,char **arg)
   cout<<"Computing Zq..."<<endl;
   
   //compute Zq according to RI'-MOM, one for each momentum
-  valarray<dcompl> Zq=compute_Zq(GAMMA,S_inv);
+  valarray<dcompl> Zq=compute_Zq(GAMMA,S_inv,L,T);
 
   cout<<"Projecting the Green functions..."<<endl;
   
@@ -558,7 +569,6 @@ int main(int narg,char **arg)
   valarray<valarray<double>> p_tilde(valarray<double>(0.0,4),mom_list.size());
   valarray<double> p2(valarray<double>(0.0,mom_list.size()));
   valarray<double> p2_space(valarray<double>(0.0,mom_list.size()));
-  double L=24.,T=48.;
 
   for(size_t imom=0;imom<mom_list.size();imom++)
 	{
@@ -588,9 +598,9 @@ int main(int narg,char **arg)
       size_t count=0;
       for(size_t i=0;i<imom;i++)
 	{
-	  if((abs(new_mom_list[i][4]-new_mom_list[imom][4])<eps && abs(p2_space[i]-p2_space[imom])<eps && abs(new_mom_list[i][0]-new_mom_list[imom][0])<eps &&\
+	  if((abs(new_mom_list[i][4]-new_mom_list[imom][4])<eps/* && abs(p2_space[i]-p2_space[imom])<eps && abs(new_mom_list[i][0]-new_mom_list[imom][0])<eps*/ && \
 	      abs(abs(new_mom_list[i][1])*abs(new_mom_list[i][2])*abs(new_mom_list[i][3])-(abs(new_mom_list[imom][1])*abs(new_mom_list[imom][2])*abs(new_mom_list[imom][3])))<eps ) || \
-	     (abs(new_mom_list[i][4]-new_mom_list[imom][4])<eps && abs(p2_space[i]-p2_space[imom])<eps && abs(new_mom_list[i][0]+new_mom_list[imom][0]+1.)<eps&&\
+	     (abs(new_mom_list[i][4]-new_mom_list[imom][4])<eps/* && abs(p2_space[i]-p2_space[imom])<eps && abs(new_mom_list[i][0]+new_mom_list[imom][0]+1.)<eps*/ && \
 	      abs(abs(new_mom_list[i][1])*abs(new_mom_list[i][2])*abs(new_mom_list[i][3])-(abs(new_mom_list[imom][1])*abs(new_mom_list[imom][2])*abs(new_mom_list[imom][3])))<eps  )  )
 	    {
 	      new_mom_list[imom][5]=new_mom_list[i][5];
@@ -610,7 +620,12 @@ int main(int narg,char **arg)
   
   //Average of Z's corresponding to equivalent momenta (same tag) and print on file
   valarray<double> p2_eq(valarray<double>(0.0,tag));
+  valarray<valarray<double>> Z_sum(valarray<valarray<double>>(valarray<double>(0.0,6),tag));
   valarray<valarray<double>> Z_average(valarray<valarray<double>>(valarray<double>(0.0,6),tag));
+  valarray<valarray<double>> Z2_average(valarray<valarray<double>>(valarray<double>(0.0,6),tag));
+  valarray<valarray<double>> Z_error(valarray<valarray<double>>(valarray<double>(0.0,6),tag));
+
+  valarray<valarray<vector<double>>> jZ(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag));
   
   cout<<"Averaging the Z's corresponding to equivalent momenta and printing on the output file..."<<endl;
   
@@ -623,32 +638,68 @@ int main(int narg,char **arg)
 	    {
 	      count_equivalent++;
 	      p2_eq[t]=new_mom_list[imom][4];
-	      Z_average[t][0]+=new_mom_list[imom][6]; //Zq
-	      Z_average[t][1]+=new_mom_list[imom][7]; //Zs
-	      Z_average[t][2]+=new_mom_list[imom][8]; //Zv (a)
-	      Z_average[t][3]+=new_mom_list[imom][9]; //Zp
-	      Z_average[t][4]+=new_mom_list[imom][10];//Za  (v)
-	      Z_average[t][5]+=new_mom_list[imom][11];//Zt
 	      
+	      Z_sum[t][0]+=new_mom_list[imom][6]; //Zq
+	      Z_sum[t][1]+=new_mom_list[imom][7]; //Zs
+	      Z_sum[t][2]+=new_mom_list[imom][8]; //Zv (a)
+	      Z_sum[t][3]+=new_mom_list[imom][9]; //Zp
+	      Z_sum[t][4]+=new_mom_list[imom][10];//Za  (v)
+	      Z_sum[t][5]+=new_mom_list[imom][11];//Zt
+
+	      jZ[t][0].push_back(new_mom_list[imom][6]);
+	      jZ[t][1].push_back(new_mom_list[imom][7]);
+	      jZ[t][2].push_back(new_mom_list[imom][8]);
+	      jZ[t][3].push_back(new_mom_list[imom][9]);
+	      jZ[t][4].push_back(new_mom_list[imom][10]);
+	      jZ[t][5].push_back(new_mom_list[imom][11]);
 	    }
 	}
-      for(int i=0;i<6;i++)
-	Z_average[t][i]/=(double)count_equivalent;
-      
-      
-      //output file
-      ofstream outfile ("Z_average.txt");
-      if (outfile.is_open())
-	{	  
-	  outfile<<"##p2_tilde\t Zq\t Zs\t Zv(a)\t Zp\t Za(v)\t Zt "<<endl;
-	  for(int t=0;t<tag;t++)
-	    {
-	      outfile<<p2_eq[t]<<"\t"<<Z_average[t][0]<<"\t"<<Z_average[t][1]<<"\t"<<Z_average[t][2]<<"\t"<<Z_average[t][3]<<"\t"<<Z_average[t][4]<<"\t"<<Z_average[t][5]<<endl;
-	    }
-	  outfile.close();
+      for(int i=0;i<count_equivalent;i++)
+	{
+	  jZ[t][0][i]=(Z_sum[t][0]-jZ[t][0][i])/((double)(count_equivalent-1));
+	  jZ[t][1][i]=(Z_sum[t][1]-jZ[t][1][i])/((double)(count_equivalent-1));
+	  jZ[t][2][i]=(Z_sum[t][2]-jZ[t][2][i])/((double)(count_equivalent-1));
+	  jZ[t][3][i]=(Z_sum[t][3]-jZ[t][3][i])/((double)(count_equivalent-1));
+	  jZ[t][4][i]=(Z_sum[t][4]-jZ[t][4][i])/((double)(count_equivalent-1));
+	  jZ[t][5][i]=(Z_sum[t][5]-jZ[t][5][i])/((double)(count_equivalent-1));
+	  
+	  Z_average[t][0]+=jZ[t][0][i]/count_equivalent;
+	  Z_average[t][1]+=jZ[t][1][i]/count_equivalent;
+	  Z_average[t][2]+=jZ[t][2][i]/count_equivalent;
+	  Z_average[t][3]+=jZ[t][3][i]/count_equivalent;
+	  Z_average[t][4]+=jZ[t][4][i]/count_equivalent;
+	  Z_average[t][5]+=jZ[t][5][i]/count_equivalent;
+
+	  Z2_average[t][0]+=jZ[t][0][i]*jZ[t][0][i]/count_equivalent;
+	  Z2_average[t][1]+=jZ[t][1][i]*jZ[t][1][i]/count_equivalent;
+	  Z2_average[t][2]+=jZ[t][2][i]*jZ[t][2][i]/count_equivalent;
+	  Z2_average[t][3]+=jZ[t][3][i]*jZ[t][3][i]/count_equivalent;
+	  Z2_average[t][4]+=jZ[t][4][i]*jZ[t][4][i]/count_equivalent;
+	  Z2_average[t][5]+=jZ[t][5][i]*jZ[t][5][i]/count_equivalent;
+	  
+       	}
+
+       for(int iz=0;iz<6;iz++)
+	{
+       	  Z_error[t][iz]=sqrt((double)(count_equivalent-1.))*sqrt(Z2_average[t][iz]-Z_average[t][iz]*Z_average[t][iz]);
 	}
-      else cout << "Unable to open the output file"<<endl;
+       
     }
+  
+  //output file
+  ofstream outfile ("Z_average.txt");
+  if (outfile.is_open())
+    {	  
+      outfile<<"##p2_tilde\t Zq\t Zq_err\t Zs\t Zs_err\t Zv(a)\t Zv(a)_err\t Zp\t Zp_err\t Za(v)\t Za(v)_err\t Zt\t Zt_err "<<endl;
+      for(int t=0;t<tag;t++)
+	{
+	  outfile<<p2_eq[t]<<"\t"<<Z_average[t][0]<<"\t"<<Z_error[t][0]<<"\t"<<Z_average[t][1]<<"\t"<<Z_error[t][1]<<"\t"<<Z_average[t][2]<<"\t"<<Z_error[t][2] \
+		 <<"\t"<<Z_average[t][3]<<"\t"<<Z_error[t][3]<<"\t"<<Z_average[t][4]<<"\t"<<Z_error[t][4]<<"\t"<<Z_average[t][5]<<"\t"<<Z_error[t][5]<<endl;
+	}
+      outfile.close();
+    }
+  else cout << "Unable to open the output file"<<endl;
+  
   
   cout<<"End of the program."<<endl;
   
