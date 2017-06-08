@@ -219,62 +219,6 @@ valarray<valarray<qline_t>> jackknife_vertex( valarray<valarray<qline_t>> &jVert
   return jVert;
 }
 
-//jackknife Zq
-valarray<valarray<dcompl>> jackknife_Zq( valarray<valarray<dcompl>> &jZq, int nconf, int clust_size )
-{
-  valarray<dcompl> jSum(valarray<dcompl>(0.0,mom_list.size()));
-    
-  for(size_t j=0;j<jZq.size();j++) jSum+= jZq[j];
-
-  for(size_t j=0;j<jZq.size();j++)
-    {
-      jZq[j]=jSum-jZq[j];
-      for(auto &it : jZq[j])
-	it/=nconf-clust_size;
-    }
-
-  return jZq;
-  
-}
-
-//jackknife G
-valarray<valarray<valarray<complex<double>>>> jackknife_G(valarray<valarray<valarray<complex<double>>>> &jG, int nconf, int clust_size)
-{
-  valarray<valarray<complex<double>>> jSum(valarray<complex<double>>(0.0,5),mom_list.size());
-
-  for(size_t j=0;j<jG.size();j++) jSum+=jG[j];
-
-  for(size_t j=0;j<jG.size();j++)
-    {
-      jG[j]=jSum-jG[j];
-       for(auto &it : jG[j])
-	 for(auto &jt : it)
-	   jt/=nconf-clust_size;
-    }
-
-  return jG;
-  
-}
-
-//jackknife Z
-valarray<valarray<valarray<dcompl>>> jackknife_Z(valarray<valarray<valarray<dcompl>>> &jZ, int nconf, int clust_size)
-{
-  valarray<valarray<complex<double>>> jSum(valarray<complex<double>>(0.0,5),mom_list.size());
-
-  for(size_t j=0;j<jZ.size();j++) jSum+= jZ[j];
-
-  for(size_t j=0;j<jZ.size();j++)
-    {
-      jZ[j]=jSum-jZ[j];
-       for(auto &it : jZ[j])
-	 for(auto &jt : it)
-	   jt/=nconf-clust_size;
-    }
-
-  return jZ;
-}
-
-
 
 //average Propagator
 valarray<prop_t>  average_prop( const valarray<valarray<prop_t>> &jS )
@@ -400,7 +344,7 @@ valarray<valarray<dcompl>> compute_jZq(vprop_t GAMMA, valarray<valarray<prop_t>>
 	for(size_t imom=0;imom<mom_list.size();imom++)
 	  { 
 	    //compute jZq = Quark field RC (RI'-MOM), one for each momentum and jackknife 
-	    jZq[ijack][imom]+=-I*((p_slash[imom]*jS_inv[ijack][imom]).trace())/p2[imom]/12./V;
+	    jZq[ijack][imom]=-I*((p_slash[imom]*jS_inv[ijack][imom]).trace())/p2[imom]/12./V;
 	  }
   
   return jZq;
@@ -409,10 +353,7 @@ valarray<valarray<dcompl>> compute_jZq(vprop_t GAMMA, valarray<valarray<prop_t>>
 
 //project the amputated green function
 valarray<valarray<valarray<complex<double>>>> project_jLambda(vprop_t GAMMA, const valarray<valarray<qline_t>> &jLambda, int nconfs, int njacks,  int clust_size)
-{
-
-  // valarray<valarray<valarray<complex<double>>>> jG=project_jLambda(GAMMA,jLambda,nconfs,njacks,clust_size);
-  
+{  
   //L_proj has 5 components: S(0), V(1), P(2), A(3), T(4)
   valarray<valarray<valarray<prop_t>>> L_proj(valarray<valarray<prop_t>>(valarray<prop_t>(prop_t::Zero(),5),mom_list.size()),njacks);
   valarray<valarray<valarray<complex<double>>>> jG(valarray<valarray<complex<double>>>(valarray<dcompl>(0.0,5),mom_list.size()),njacks);
@@ -531,9 +472,7 @@ int main(int narg,char **arg)
   cout<<"Reading the list of momenta..."<<endl; /******/
 
 
-  read_mom_list(arg[1]);  //NEW CONFS FREE!!
-  // read_mom_list("mom_list.txt");  //NEW CONFS!!
-  // read_mom_list("mom_list_OLD.txt"); //OLD CONFS!!
+  read_mom_list(arg[1]);
 
   cout<<"Creating Dirac gamma matrices..."<<endl; /******/
   
@@ -552,7 +491,6 @@ int main(int narg,char **arg)
       
       //create a propagator in a given configuration
       
-      //vprop_t S=read_prop(path_to_conf(iconf+1,"SPECT0")); //OLD CONFS!!!
       vprop_t S=read_prop(path_to_conf(conf_id[iconf],"SPECT0"));  //NEW CONFS!!!
 
       
@@ -580,33 +518,14 @@ int main(int narg,char **arg)
   cout<<"   Jackknife of vertices (2/6)"<<endl;
   //compute fluctuations of the vertex
   jVert=jackknife_vertex(jVert,nconfs,clust_size);
-  /* 
-  cout<<"   Average of propagators (3/6)"<<endl; 
-  //compute the average of the propagator
-  valarray<prop_t> S_mean=average_prop(jS);
-  cout<<"   Average of vertices (4/6)"<<endl;
-  //compute the average of the vertex
-  valarray<qline_t> Vertex_mean=average_vertex(jVert);
-      
-  cout<<"   Error on propagators (5/6)"<<endl;
-  //compute the error on the propagator
-  valarray<prop_t> S_error=error_prop(jS,S_mean);
-  cout<<"   Error on vertices (6/6)"<<endl;
-  //compute the error on the vertex
-  valarray<qline_t> Vertex_error=error_vertex(jVert,Vertex_mean);
-  */
+
   cout<<"Inverting the propagators..."<<endl;
   
   //inverse of the propagator
 
    for(int ijack=0;ijack<njacks;ijack++)
-    {
       for(size_t imom=0;imom<mom_list.size();imom++)
-	jS_inv[ijack][imom]+=jS[ijack][imom].inverse();
-    }
-
-   jS_inv=jackknife_prop(jS_inv,nconfs,clust_size);
-  
+	jS_inv[ijack][imom]=jS[ijack][imom].inverse();
   
   cout<<"Amputating the external legs..."<<endl;
   
@@ -622,13 +541,10 @@ int main(int narg,char **arg)
 
   jLambda=jackknife_vertex(jLambda,nconfs,clust_size);
   
-  cout<<"Computing Zq..."<<endl;
+  cout<<"Compuing Zq..."<<endl;
   
   //compute Zq according to RI'-MOM, one for each momentum
-  valarray<valarray<dcompl>> jZq=compute_jZq(GAMMA,jS_inv,L,T,nconfs,njacks,clust_size);
-
-  jZq=jackknife_Zq(jZq,nconfs,clust_size);
-  
+  valarray<valarray<dcompl>> jZq=compute_jZq(GAMMA,jS_inv,L,T,nconfs,njacks,clust_size); 
 
   cout<<"Projecting the Green functions..."<<endl;
   
@@ -637,7 +553,6 @@ int main(int narg,char **arg)
 
   cout<<"---------"<<endl;
   
-  jG=jackknife_G(jG,nconfs,clust_size);
 
   cout<<"Computing the Z's..."<<endl;
   
@@ -647,9 +562,7 @@ int main(int narg,char **arg)
   for(int ijack=0;ijack<njacks;ijack++)
     for(size_t imom=0;imom<mom_list.size();imom++)
       for(int k=0;k<5;k++)
-	jZ[ijack][imom][k]+=jZq[ijack][imom]/jG[ijack][imom][k];
-  
-  jZ=jackknife_Z(jZ,nconfs,clust_size);
+	jZ[ijack][imom][k]=jZq[ijack][imom]/jG[ijack][imom][k];
 
   //create p_tilde vector  
   valarray<valarray<double>> p(valarray<double>(0.0,4),mom_list.size());
@@ -718,16 +631,9 @@ int main(int narg,char **arg)
   cout<<"Number of equivalent momenta: "<<tag+1<<endl;
   
   //Average of Z's corresponding to equivalent momenta (same tag) and print on file
-  valarray<double> p2_eq(valarray<double>(0.0,tag));
-  /*
-  valarray<valarray<valarray<double>>> jZ_tag(valarray<valarray<valarray<double>>>(valarray<valarray<double>>(valarray<double>(0.0,6),tag)),njacks);
-  
-  valarray<valarray<double>> Z_average(valarray<valarray<double>>(valarray<double>(0.0,6),tag));
-  valarray<valarray<double>> Z2_average(valarray<valarray<double>>(valarray<double>(0.0,6),tag));
-  valarray<valarray<double>> Z_error(valarray<valarray<double>>(valarray<double>(0.0,6),tag));
-  */
-  valarray<valarray<valarray<vector<double>>>> jZ_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag),njacks);
-  valarray<valarray<valarray<double>>> jZ_average(valarray<valarray<double>>(valarray<double>(0.0,6),tag),njacks);
+  valarray<double> p2_eq(valarray<double>(0.0,tag+1));
+  valarray<valarray<valarray<vector<double>>>> jZ_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks);
+  valarray<valarray<valarray<double>>> jZ_average(valarray<valarray<double>>(valarray<double>(0.0,6),tag+1),njacks);
  
   cout<<"Averaging the Z's corresponding to equivalent momenta and printing on the output file..."<<endl;
 
@@ -751,42 +657,23 @@ int main(int narg,char **arg)
 		
 	      }
 	  }
-	for(int i=0;i<count_equivalent;i++)
-	  {
-	    /* jZ[t][0][i]=(Z_sum[t][0]-jZ[t][0][i])/((double)(count_equivalent-1));
-	    jZ[t][1][i]=(Z_sum[t][1]-jZ[t][1][i])/((double)(count_equivalent-1));
-	    jZ[t][2][i]=(Z_sum[t][2]-jZ[t][2][i])/((double)(count_equivalent-1));
-	    jZ[t][3][i]=(Z_sum[t][3]-jZ[t][3][i])/((double)(count_equivalent-1));
-	    jZ[t][4][i]=(Z_sum[t][4]-jZ[t][4][i])/((double)(count_equivalent-1));
-	    jZ[t][5][i]=(Z_sum[t][5]-jZ[t][5][i])/((double)(count_equivalent-1));*/
-	    
+	for(int i=0;i<count_equivalent;i++)  //media aritmetica delle Z equivalenti in ogni jackknife
+	  { 
 	    jZ_average[ijack][t][0]+=jZ_same_tag[ijack][t][0][i]/count_equivalent;
 	    jZ_average[ijack][t][1]+=jZ_same_tag[ijack][t][1][i]/count_equivalent;
 	    jZ_average[ijack][t][2]+=jZ_same_tag[ijack][t][2][i]/count_equivalent;
 	    jZ_average[ijack][t][3]+=jZ_same_tag[ijack][t][3][i]/count_equivalent;
 	    jZ_average[ijack][t][4]+=jZ_same_tag[ijack][t][4][i]/count_equivalent;
 	    jZ_average[ijack][t][5]+=jZ_same_tag[ijack][t][5][i]/count_equivalent;
-	    /*  
-	    Z2_average[t][0]+=jZ[t][0][i]*jZ[t][0][i]/count_equivalent;
-	    Z2_average[t][1]+=jZ[t][1][i]*jZ[t][1][i]/count_equivalent;
-	    Z2_average[t][2]+=jZ[t][2][i]*jZ[t][2][i]/count_equivalent;
-	    Z2_average[t][3]+=jZ[t][3][i]*jZ[t][3][i]/count_equivalent;
-	    Z2_average[t][4]+=jZ[t][4][i]*jZ[t][4][i]/count_equivalent;
-	    Z2_average[t][5]+=jZ[t][5][i]*jZ[t][5][i]/count_equivalent;
-	    */
+	 
 	  }
-	/*
-	for(int iz=0;iz<6;iz++)
-	  {
-	    Z_error[t][iz]=sqrt((double)(count_equivalent-1.))*sqrt(Z2_average[t][iz]-Z_average[t][iz]*Z_average[t][iz]);
-	  }
-	*/
-    }
+
+      }
 
 
-  valarray<valarray<double>> Z_mean_value(valarray<double>(0.0,6),tag);
-  valarray<valarray<double>> Z2_mean_value(valarray<double>(0.0,6),tag);
-  valarray<valarray<double>> Z_error(valarray<double>(0.0,6),tag);
+  valarray<valarray<double>> Z_mean_value(valarray<double>(0.0,6),tag+1);
+  valarray<valarray<double>> Z2_mean_value(valarray<double>(0.0,6),tag+1);
+  valarray<valarray<double>> Z_error(valarray<double>(0.0,6),tag+1);
   
   for(int t=0;t<tag;t++)
     for(int i=0;i<6;i++)
@@ -796,7 +683,7 @@ int main(int narg,char **arg)
 	    Z_mean_value[t][i]+=jZ_average[ijack][t][i]/njacks;
 	    Z2_mean_value[t][i]+=jZ_average[ijack][t][i]*jZ_average[ijack][t][i]/njacks;
 	  }
-	Z_error[t][i]=sqrt(njacks-1)*sqrt(Z2_mean_value[t][i]-Z_mean_value[t][i]*Z_mean_value[t][i]);
+	Z_error[t][i]=sqrt((double)(njacks-1))*sqrt(Z2_mean_value[t][i]-Z_mean_value[t][i]*Z_mean_value[t][i]);
       }
   
   //output file
