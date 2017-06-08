@@ -133,18 +133,12 @@ vprop_t make_gamma()
     {
       gam[6+j]=gam[1+j]*gam[5];
     }
-  
-  //sigma23-31-12
-  for(int i=0;i<3;i++)
-    {
-      gam[10+i]=0.5*(gam[(2+i)%3]*gam[(3+i)%3]-gam[(3+i)%3]*gam[(2+i)%3]);
-    }
-  //sigma01-02-03
-  for(int i=0;i<3;i++)
-    {
-      gam[13+i]=0.5*(gam[0]*gam[1+i]-gam[1+i]*gam[0]);
-    }
- 
+
+  size_t ind1[6]={2,3,1,4,4,4};
+  size_t ind2[6]={3,1,2,1,2,3}; 
+  for(int i=0;i<6;i++)
+      gam[10+i]=0.5*(gam[ind1[i]]*gam[ind2[i]]-gam[ind2[i]]*gam[ind1[i]]);
+
   return gam;
 }
 
@@ -154,7 +148,8 @@ vprop_t make_vertex(const vprop_t &prop, size_t mom,const vprop_t &gamma)
   vprop_t vert(16);
   for(int mu=0;mu<16;mu++)
     {      
-      vert[mu]=prop[mom]*gamma[mu]*gamma[5]*prop[mom].adjoint()*gamma[5];  /*it has to be "jackknifed"*/
+      //vert[mu]=prop[mom]*gamma[mu]*gamma[5]*prop[mom].adjoint()*gamma[5];  /*it has to be "jackknifed"*/
+      vert[mu]=prop[mom]*gamma[mu]*gamma[5]*prop[mom].adjoint()*gamma[5]; //PROVA
     }
   return vert;
 }
@@ -185,7 +180,7 @@ string path_to_conf(int i_conf,const char *name)
 //jackknife Propagator
 valarray<valarray<prop_t>> jackknife_prop(  valarray<valarray<prop_t>> &jS, int nconf, int clust_size )
 {
-  valarray<prop_t> jSum(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
+  valarray<prop_t> jSum(prop_t::Zero(),mom_list.size());
 
   //sum of jS
   for(size_t j=0;j<jS.size();j++) jSum+= jS[j];
@@ -203,7 +198,7 @@ valarray<valarray<prop_t>> jackknife_prop(  valarray<valarray<prop_t>> &jS, int 
 //jackknife Vertex
 valarray<valarray<qline_t>> jackknife_vertex( valarray<valarray<qline_t>> &jVert, int nconf, int clust_size )
 {
-  valarray<qline_t> jSum(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()));
+  valarray<qline_t> jSum(valarray<prop_t>(prop_t::Zero(),16),mom_list.size());
   
   //sum of the jVert
   for(size_t j=0;j<jVert.size();j++) jSum+= jVert[j];
@@ -365,7 +360,7 @@ valarray<valarray<valarray<complex<double>>>> project_jLambda(vprop_t GAMMA, con
   for(int igam=6;igam<10;igam++)  //axial
     P[igam]=GAMMA[igam].adjoint()/4.;
   for(int igam=10;igam<16;igam++)  //tensor
-    P[igam]=GAMMA[igam].adjoint();
+    P[igam]=GAMMA[igam].adjoint()/6.;
   
  for(int ijack=0;ijack<njacks;ijack++)
      for(size_t imom=0;imom<mom_list.size();imom++)
@@ -385,8 +380,8 @@ valarray<valarray<valarray<complex<double>>>> project_jLambda(vprop_t GAMMA, con
 	   L_proj[ijack][imom][4]+=jLambda[ijack][imom][igam]*P[igam];
 	 
 	 for(int j=0;j<5;j++)
-	   jG[ijack][imom][j]=L_proj[ijack][imom][j].trace()/12.;
-	 
+	  jG[ijack][imom][j]=L_proj[ijack][imom][j].trace()/12.;
+	  
        }
  
  return jG;
@@ -530,7 +525,7 @@ int main(int narg,char **arg)
     for(size_t imom=0;imom<mom_list.size();imom++)
 	for(int igam=0;igam<16;igam++)
 	  jLambda[ijack][imom][igam]=jS_inv[ijack][imom]*jVert[ijack][imom][igam]*GAMMA[5]*jS_inv[ijack][imom].adjoint()*GAMMA[5];
-	 
+	  
   cout<<"Compuing Zq..."<<endl;
   
   //compute Zq according to RI'-MOM, one for each momentum
@@ -573,7 +568,7 @@ int main(int narg,char **arg)
   
   //Create new extended vector
   
-  cout<<"Creating Z average vector..."<<endl;
+  cout<<"Creating the extended vector..."<<endl;
   
   valarray<valarray<valarray<double>>> new_mom_list(valarray<valarray<double>>(valarray<double>(0.0,12),mom_list.size()),njacks);
 
@@ -588,6 +583,8 @@ int main(int narg,char **arg)
 	  new_mom_list[ijack][imom][7+i]=jZ[ijack][imom][0+i].real();
 	
       }
+
+  
  
   //Assign the tag for fixed ijack
   int tag=0;
@@ -679,7 +676,7 @@ int main(int narg,char **arg)
   outfile<<fixed;
   if (outfile.is_open())
     {	  
-      outfile<<"##p2_tilde \t Zq \t Zq_err \t Zs \t Zs_err \t Zv(a) \t Zv(a)_err \t Zp \t Zp_err \t Za(v) \t Za(v)_err \t Zt \t Zt_err "<<endl;
+      outfile<<"##p2_tilde \t Zq \t Zq_err \t Zs \t Zs_err \t Za \t Za_err \t Zp \t Zp_err \t Zv \t Zv_err \t Zt \t Zt_err "<<endl;
       for(int t=0;t<=tag;t++)
 	{
 	  outfile<<p2_eq[t]<<"\t"<<Z_mean_value[t][0]<<"\t"<<Z_error[t][0]<<"\t"<<Z_mean_value[t][1]<<"\t"<<Z_error[t][1]<<"\t"<<Z_mean_value[t][2]<<"\t"<<Z_error[t][2] \
