@@ -554,6 +554,8 @@ int main(int narg,char **arg)
   valarray<valarray<double>> p_tilde(valarray<double>(0.0,4),mom_list.size());
   valarray<double> p2(valarray<double>(0.0,mom_list.size()));
   valarray<double> p2_space(valarray<double>(0.0,mom_list.size()));
+  valarray<double> p4(valarray<double>(0.0,mom_list.size()));
+    
 
   for(size_t imom=0;imom<mom_list.size();imom++)
 	{
@@ -564,13 +566,15 @@ int main(int narg,char **arg)
 	    p2[imom]+=p_tilde[imom][coord]*p_tilde[imom][coord];
 	  for(int coord=0;coord<3;coord++)
 	    p2_space[imom]+=p_tilde[imom][coord]*p_tilde[imom][coord];
+	  for(int coord=0;coord<4;coord++)
+	    p4[imom]+=p_tilde[imom][coord]*p_tilde[imom][coord]*p_tilde[imom][coord]*p_tilde[imom][coord];
 	}
   
   //Create new extended vector
   
   cout<<"Creating the extended vector..."<<endl;
   
-  valarray<valarray<valarray<double>>> new_mom_list(valarray<valarray<double>>(valarray<double>(0.0,12),mom_list.size()),njacks);
+  valarray<valarray<valarray<double>>> new_mom_list(valarray<valarray<double>>(valarray<double>(0.0,13),mom_list.size()),njacks);
 
   for(int ijack=0;ijack<njacks;ijack++)
     for(size_t imom=0;imom<mom_list.size();imom++)
@@ -581,6 +585,8 @@ int main(int narg,char **arg)
 	new_mom_list[ijack][imom][6]=jZq[ijack][imom].real();
 	for(int i=0;i<5;i++)
 	  new_mom_list[ijack][imom][7+i]=jZ[ijack][imom][0+i].real();
+
+	new_mom_list[ijack][imom][12]=p4[imom];//FILTRO DEMOCRATICO!
 	
       }
 
@@ -619,6 +625,7 @@ int main(int narg,char **arg)
   
   //Average of Z's corresponding to equivalent momenta (same tag) and print on file
   valarray<double> p2_eq(valarray<double>(0.0,tag+1));
+  valarray<double> p4_eq(valarray<double>(0.0,tag+1));//FILTRO DEMOCRATICO
   valarray<valarray<valarray<vector<double>>>> jZ_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks);
   valarray<valarray<valarray<double>>> jZ_average(valarray<valarray<double>>(valarray<double>(0.0,6),tag+1),njacks);
  
@@ -634,6 +641,7 @@ int main(int narg,char **arg)
 	      {
 		count_equivalent++;
 		p2_eq[t]=new_mom_list[0][imom][4];
+		p4_eq[t]=new_mom_list[0][imom][12];
 		
 		jZ_same_tag[ijack][t][0].push_back(new_mom_list[ijack][imom][6]);
 		jZ_same_tag[ijack][t][1].push_back(new_mom_list[ijack][imom][7]);
@@ -683,6 +691,25 @@ int main(int narg,char **arg)
 		 <<"\t"<<Z_mean_value[t][3]<<"\t"<<Z_error[t][3]<<"\t"<<Z_mean_value[t][4]<<"\t"<<Z_error[t][4]<<"\t"<<Z_mean_value[t][5]<<"\t"<<Z_error[t][5]<<endl;
 	}
       outfile.close();
+    }
+  else cout << "Unable to open the output file"<<endl;
+
+ //output file filtered
+  ofstream outfile2 ("Z_average_filtered.txt");
+  outfile2.precision(8);
+  outfile2<<fixed;
+  if (outfile2.is_open())
+    {
+      
+      outfile2<<"##p2_tilde \t Zq \t Zq_err \t Zs \t Zs_err \t Za \t Za_err \t Zp \t Zp_err \t Zv \t Zv_err \t Zt \t Zt_err "<<endl;
+      for(int t=0;t<=tag;t++)
+	{
+	  if(p4_eq[t]/(p2_eq[t]*p2_eq[t])<0.28)
+	    outfile2<<p2_eq[t]<<"\t"<<Z_mean_value[t][0]<<"\t"<<Z_error[t][0]<<"\t"<<Z_mean_value[t][1]<<"\t"<<Z_error[t][1]<<"\t"<<Z_mean_value[t][2]<<"\t"<<Z_error[t][2] \
+		    <<"\t"<<Z_mean_value[t][3]<<"\t"<<Z_error[t][3]<<"\t"<<Z_mean_value[t][4]<<"\t"<<Z_error[t][4]<<"\t"<<Z_mean_value[t][5]<<"\t"<<Z_error[t][5]<<endl;
+	  
+	}
+      outfile2.close();
     }
   else cout << "Unable to open the output file"<<endl;
   
