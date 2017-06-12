@@ -143,38 +143,23 @@ vprop_t make_gamma()
 }
 
 //calculate the vertex function in a given configuration for the given equal momenta
-vprop_t make_vertex(const vprop_t &prop, size_t mom,const vprop_t &gamma)
+vprop_t make_vertex(const vprop_t &prop1, const vprop_t &prop2, size_t mom,const vprop_t &gamma)
 {
   vprop_t vert(16);
   for(int mu=0;mu<16;mu++)
     {      
-      //vert[mu]=prop[mom]*gamma[mu]*gamma[5]*prop[mom].adjoint()*gamma[5];  /*it has to be "jackknifed"*/
-      vert[mu]=prop[mom]*gamma[mu]*gamma[5]*prop[mom].adjoint()*gamma[5]; //PROVA
+      vert[mu]=prop1[mom]*gamma[mu]*gamma[5]*prop2[mom].adjoint()*gamma[5];  /*it has to be "jackknifed"*/
     }
   return vert;
 }
 
 //create the path-string to the configuration
-
-//OLD CONFIGURATIONS
-/*
-string path_to_conf(int i_conf,const char *name)
-{
-  char path[1024];
-  sprintf(path,"out%d/fft_%s",i_conf,name);
-  return path;
-}
-*/
-
-//NEW CONFIGURATIONS
-///*
 string path_to_conf(int i_conf,const char *name)
 {
   char path[1024];
   sprintf(path,"out/%04d/fft_%s",i_conf,name);
   return path;
 }
-//*/
 
 
 //jackknife Propagator
@@ -474,7 +459,7 @@ int main(int narg,char **arg)
   valarray<valarray<prop_t>> jS(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
   valarray<valarray<qline_t>> jVert(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
 
-  cout<<"Reading propagators from the files, creating the vertices and preparing the jackknife..."<<endl; /*****/
+  cout<<"Reading propagators from the files, creating the vertices and preparing the jackknife..."<<endl;
   
   for(int iconf=0;iconf<nconfs;iconf++)
     {
@@ -482,13 +467,13 @@ int main(int narg,char **arg)
       
       //create a propagator in a given configuration
       
-      vprop_t S=read_prop(path_to_conf(conf_id[iconf],"SPECT0"));  //NEW CONFS!!!
+      vprop_t S=read_prop(path_to_conf(conf_id[iconf],"SPECT0"));
 
       
       for(size_t imom=0;imom<mom_list.size();imom++)
 	{
 	  //create vertex functions with the i_mom momentum
-	  qline_t Vert=make_vertex(S,imom,GAMMA);
+	  qline_t Vert=make_vertex(S,S,imom,GAMMA);
 	  
 	  //create pre-jackknife propagator
 	  jS[ijack][imom]+=S[imom];
