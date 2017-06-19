@@ -405,8 +405,8 @@ valarray< valarray< valarray<double> > > compute_fit_parameters(valarray<double>
 	  }
       for(int ijack=0;ijack<njacks;ijack++)  // y = m*x + q
 	{
-	  fit_parameter[ijack][iZ][1]=(S[iZ]*Sxy[iZ][ijack]-Sx[iZ]*Sy[iZ][ijack])/(S[iZ]*Sxx[iZ]-Sx[iZ]*Sx[iZ]); //m
-	  fit_parameter[ijack][iZ][2]=(Sxx[iZ]*Sy[iZ][ijack]-Sx[iZ]*Sxy[iZ][ijack])/(S[iZ]*Sxx[iZ]-Sx[iZ]*Sx[iZ]); //q
+	  fit_parameter[ijack][iZ][0]=(S[iZ]*Sxy[iZ][ijack]-Sx[iZ]*Sy[iZ][ijack])/(S[iZ]*Sxx[iZ]-Sx[iZ]*Sx[iZ]); //m
+	  fit_parameter[ijack][iZ][1]=(Sxx[iZ]*Sy[iZ][ijack]-Sx[iZ]*Sxy[iZ][ijack])/(S[iZ]*Sxx[iZ]-Sx[iZ]*Sx[iZ]); //q
 	}
     }
   
@@ -940,16 +940,16 @@ int main(int narg,char **arg)
     {
       for(int ijack=0;ijack<njacks;ijack++)
 	{
-	  A[iZ]+=jfit_parameters[ijack][iZ][1]/njacks;
-	  A2[iZ]+=jfit_parameters[ijack][iZ][1]*jfit_parameters[ijack][iZ][1]/njacks;
-	  B[iZ]+=jfit_parameters[ijack][iZ][2]/njacks;
-	  B2[iZ]+=jfit_parameters[ijack][iZ][2]*jfit_parameters[ijack][iZ][2]/njacks;
+	  A[iZ]+=jfit_parameters[ijack][iZ][0]/njacks;
+	  A2[iZ]+=jfit_parameters[ijack][iZ][0]*jfit_parameters[ijack][iZ][0]/njacks;
+	  B[iZ]+=jfit_parameters[ijack][iZ][1]/njacks;
+	  B2[iZ]+=jfit_parameters[ijack][iZ][1]*jfit_parameters[ijack][iZ][1]/njacks;
 	  
 	  
-	  A_corr[iZ]+=jfit_parameters_corr[ijack][iZ][1]/njacks;
-	  A2_corr[iZ]+=jfit_parameters_corr[ijack][iZ][1]*jfit_parameters_corr[ijack][iZ][1]/njacks;
-	  B_corr[iZ]+=jfit_parameters_corr[ijack][iZ][2]/njacks;
-	  B2_corr[iZ]+=jfit_parameters_corr[ijack][iZ][2]*jfit_parameters_corr[ijack][iZ][2]/njacks;
+	  A_corr[iZ]+=jfit_parameters_corr[ijack][iZ][0]/njacks;
+	  A2_corr[iZ]+=jfit_parameters_corr[ijack][iZ][0]*jfit_parameters_corr[ijack][iZ][0]/njacks;
+	  B_corr[iZ]+=jfit_parameters_corr[ijack][iZ][1]/njacks;
+	  B2_corr[iZ]+=jfit_parameters_corr[ijack][iZ][1]*jfit_parameters_corr[ijack][iZ][1]/njacks;
 	}
       A_error[iZ]=sqrt((double)(njacks-1))*sqrt(A2[iZ]-A[iZ]*A[iZ]);
       B_error[iZ]=sqrt((double)(njacks-1))*sqrt(B2[iZ]-B[iZ]*B[iZ]);
