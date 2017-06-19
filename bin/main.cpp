@@ -170,7 +170,7 @@ string path_to_conf(int i_conf,const char *name)
 
 
 //jackknife Propagator
-valarray<valarray<prop_t>> jackknife_prop(  valarray<valarray<prop_t>> &jS, int nconf, int clust_size )
+valarray< valarray<prop_t> > jackknife_prop(  valarray< valarray<prop_t> > &jS, int nconf, int clust_size )
 {
   valarray<prop_t> jSum(prop_t::Zero(),mom_list.size());
 
@@ -188,7 +188,7 @@ valarray<valarray<prop_t>> jackknife_prop(  valarray<valarray<prop_t>> &jS, int 
 }
 
 //jackknife Vertex
-valarray<valarray<qline_t>> jackknife_vertex( valarray<valarray<qline_t>> &jVert, int nconf, int clust_size )
+valarray< valarray<qline_t> > jackknife_vertex( valarray< valarray<qline_t> > &jVert, int nconf, int clust_size )
 {
   valarray<qline_t> jSum(valarray<prop_t>(prop_t::Zero(),16),mom_list.size());
   
@@ -206,9 +206,37 @@ valarray<valarray<qline_t>> jackknife_vertex( valarray<valarray<qline_t>> &jVert
   return jVert;
 }
 
+//invert the propagator
+valarray< valarray<prop_t> > inverse_jprop( const valarray< valarray<prop_t> > &jprop, int njacks){
+
+  valarray< valarray<prop_t> > jprop_inv(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
+  
+  for(int ijack=0;ijack<njacks;ijack++)
+    for(size_t imom=0;imom<mom_list.size();imom++)
+      jprop_inv[ijack][imom]=jprop[ijack][imom].inverse();
+  
+  return jprop_inv;
+}
+
+//amputate external legs
+
+valarray< valarray<qline_t> > amputate( const valarray< valarray<prop_t> >  &jprop1_inv, const valarray< valarray<qline_t> > &jV, const valarray< valarray<prop_t> >  &jprop2_inv, vprop_t GAMMA, int njacks ){
+  
+  valarray< valarray<qline_t> > jLambda(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
+  
+  for(int ijack=0;ijack<njacks;ijack++)
+    for(size_t imom=0;imom<mom_list.size();imom++)
+      for(int igam=0;igam<16;igam++)
+	jLambda[ijack][imom][igam]=jprop1_inv[ijack][imom]*jV[ijack][imom][igam]*GAMMA[5]*jprop2_inv[ijack][imom].adjoint()*GAMMA[5];
+  
+  return jLambda;
+}
+
+
+
 
 //compute jZq
-valarray<valarray<dcompl>> compute_jZq(vprop_t GAMMA, valarray<valarray<prop_t>> jS_inv, double L, double T, int nconfs, int njacks, int cluster_size)
+valarray< valarray<dcompl> > compute_jZq(vprop_t GAMMA, valarray< valarray<prop_t> > jS_inv, double L, double T, int nconfs, int njacks, int cluster_size)
 {
   double V=L*L*L*T;
   
@@ -258,7 +286,7 @@ valarray<valarray<dcompl>> compute_jZq(vprop_t GAMMA, valarray<valarray<prop_t>>
 }
 
 //compute jSigma1
-valarray<valarray<dcompl>> compute_jSigma1(vprop_t GAMMA, valarray<valarray<prop_t>> jS_inv, double L, double T, int nconfs, int njacks, int cluster_size)
+valarray< valarray<dcompl> > compute_jSigma1(vprop_t GAMMA, valarray<valarray<prop_t>> jS_inv, double L, double T, int nconfs, int njacks, int cluster_size)
 {
   double V=L*L*L*T;
   
@@ -387,7 +415,7 @@ valarray< valarray< valarray<double> > > compute_fit_parameters(valarray<double>
 }
 
 
-void print_file(string name_file, valarray<double> p2, valarray< valarray<double> > Z, valarray< valarray<double> > Z_err, int tag)
+void print_file(const char* name_file, valarray<double> p2, valarray< valarray<double> > Z, valarray< valarray<double> > Z_err, int tag)
 {
   ofstream outfile (name_file);
   outfile.precision(8);
@@ -405,7 +433,7 @@ void print_file(string name_file, valarray<double> p2, valarray< valarray<double
   else cout << "Unable to open the output file "<<name_file<<endl;
 }
 
-void print_file_filtered(string name_file, valarray<double> p2, valarray<double> p4, valarray< valarray<double> > Z, valarray< valarray<double> > Z_err, int tag)
+void print_file_filtered(const char* name_file, valarray<double> p2, valarray<double> p4, valarray< valarray<double> > Z, valarray< valarray<double> > Z_err, int tag)
 {
   ofstream outfile (name_file);
   outfile.precision(8);
@@ -501,31 +529,56 @@ int main(int narg,char **arg)
   
   //create gamma matrices
   vprop_t GAMMA=make_gamma();
-  
-  // put to zero jackknife vertex
-  valarray<valarray<prop_t>> jS(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
-  valarray<valarray<qline_t>> jVert(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
 
   cout<<"Reading propagators from the files, creating the vertices and preparing the jackknife..."<<endl;
+  
+  // put to zero jackknife vertex
+  valarray< valarray<prop_t> > jS_0(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
+  valarray< valarray<qline_t> > jVert(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
   
   for(int iconf=0;iconf<nconfs;iconf++)
     {
       int ijack=iconf/clust_size;
       
-      //create a propagator in a given configuration
-      
-      vprop_t S=read_prop(path_to_conf(conf_id[iconf],"SPECT0"));
+    
+      //read QCD prop
+      vprop_t S_0 = read_prop(path_to_conf(conf_id[iconf],"SPECT0"));
+      //read QCD prop + 1 photon insertion
+      vprop_t S_1ph = read_prop(path_to_conf(conf_id[iconf],"SPECT0_F"));
+      //read QCD prop + 2 photons insertion
+      vprop_t S_2ph = read_prop(path_to_conf(conf_id[iconf],"SPECT0_FF"));
+      //read QCD prop + scalar insertion
+      vprop_t S_s = read_prop(path_to_conf(conf_id[iconf],"SPECT0_S"));
+      //read QCD prop + pseudoscalar insertion
+      vprop_t S_p = read_prop(path_to_conf(conf_id[iconf],"SPECT0_P"));
+      //read QCD prop + tadpole insertion
+      vprop_t S_t = read_prop(path_to_conf(conf_id[iconf],"SPECT0_T"));
 
       
       for(size_t imom=0;imom<mom_list.size();imom++)
 	{
 	  //create vertex functions with the i_mom momentum
-	  qline_t Vert=make_vertex(S,S,imom,GAMMA);
+	  qline_t Vert_0 = make_vertex(S_0, S_0, imom, GAMMA);
+	  
+	  qline_t Vert_11 = make_vertex(S_1ph, S_1ph, imom, GAMMA);
+	  
+	  qline_t Vert_02 = make_vertex(S_0, S_2ph, imom, GAMMA);
+	  qline_t Vert_20 = make_vertex(S_2ph, S_0, imom, GAMMA);
+	  
+	  qline_t Vert_0t = make_vertex(S_0, S_t, imom, GAMMA);
+	  qline_t Vert_t0 = make_vertex(S_t, S_0, imom, GAMMA);
+	  
+	  qline_t Vert_0p = make_vertex(S_0, S_p, imom, GAMMA);
+	  qline_t Vert_p0 = make_vertex(S_p, S_0, imom, GAMMA);
+	  
+	  qline_t Vert_0s = make_vertex(S_0, S_s, imom, GAMMA);
+	  qline_t Vert_s0 = make_vertex(S_s, S_0, imom, GAMMA);
+
 	  
 	  //create pre-jackknife propagator
-	  jS[ijack][imom]+=S[imom];
+	  jS_0[ijack][imom] += S_0[imom];
 	  //create pre-jackknife vertex
-	  jVert[ijack][imom]+=Vert;
+	  jVert[ijack][imom] += Vert_0;
 	  
 	}
     }
@@ -534,39 +587,34 @@ int main(int narg,char **arg)
   
   cout<<"   Jackknife of propagators (1/2)"<<endl;
   //compute fluctuations of the propagator
-  jS=jackknife_prop(jS,nconfs,clust_size);
+  jS_0=jackknife_prop(jS_0,nconfs,clust_size);
   cout<<"   Jackknife of vertices (2/2)"<<endl;
   //compute fluctuations of the vertex
   jVert=jackknife_vertex(jVert,nconfs,clust_size);
 
   cout<<"Inverting the propagators..."<<endl;
   
-  valarray<valarray<prop_t>> jS_inv(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
-  valarray<valarray<qline_t>>jLambda(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
+  //  valarray< valarray<prop_t> > jS_0_inv(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
+ 
   
   //inverse of the propagator
-
-   for(int ijack=0;ijack<njacks;ijack++)
-      for(size_t imom=0;imom<mom_list.size();imom++)
-	jS_inv[ijack][imom]=jS[ijack][imom].inverse();
-  
+  valarray< valarray<prop_t> >  jS_0_inv = inverse_jprop(jS_0, njacks);
+   
   cout<<"Amputating the external legs..."<<endl;
   
   //amputate external legs
-  for(int ijack=0;ijack<njacks;ijack++)
-    for(size_t imom=0;imom<mom_list.size();imom++)
-	for(int igam=0;igam<16;igam++)
-	  jLambda[ijack][imom][igam]=jS_inv[ijack][imom]*jVert[ijack][imom][igam]*GAMMA[5]*jS_inv[ijack][imom].adjoint()*GAMMA[5];
-	  
+  valarray< valarray<qline_t> > jLambda=amputate(jS_0_inv, jVert, jS_0_inv, GAMMA, njacks);
+
+  	  
   cout<<"Computing Zq..."<<endl;
   
   //compute Zq according to RI'-MOM, one for each momentum
-  valarray<valarray<dcompl>> jZq=compute_jZq(GAMMA,jS_inv,L,T,nconfs,njacks,clust_size);
+  valarray<valarray<dcompl>> jZq=compute_jZq(GAMMA,jS_0_inv,L,T,nconfs,njacks,clust_size);
 
   //////////////////////////////////
   ////
   ////
-  valarray<valarray<dcompl>> jSigma1=compute_jSigma1(GAMMA,jS_inv,L,T,nconfs,njacks,clust_size);  //PROVA
+  valarray<valarray<dcompl>> jSigma1=compute_jSigma1(GAMMA,jS_0_inv,L,T,nconfs,njacks,clust_size);  //PROVA
   ////
   ////
   /////////////////////////////////
