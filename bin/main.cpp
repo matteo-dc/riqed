@@ -28,13 +28,35 @@ using vprop_t=valarray<prop_t>;
 //list of gamma for a given momentum
 using qline_t=valarray<prop_t>;
 
+//list of jackknife propagators
+using jprop_t=valarray< valarray<prop_t> >;
+
+//list of jackknife vertices
+using jvert_t=valarray< valarray<qline_t> >;
+
+//valarray of complex double
+using vd_t=valarray<double>;
+
+//valarray of valarray of complex double
+using vvd_t=valarray< valarray<double> > ;
+
+//valarray of valarray of valarray of complex double
+using vvvd_t=valarray< valarray< valarray<double> > >;
+
+//valarray of complex double
+using vdcompl_t=valarray<dcompl>;
+
+//valarray of valarray of complex double
+using vvdcompl_t=valarray< valarray<dcompl> > ;
+
+//valarray of valarray of valarray of complex double
+using vvvdcompl_t=valarray< valarray< valarray<dcompl> > >;
+
 //list of momenta
 vector<coords_t> mom_list;
 
 //list of N(p)
 vector<int> Np;
-
-
 
 
 
@@ -170,7 +192,7 @@ string path_to_conf(int i_conf,const char *name)
 
 
 //jackknife Propagator
-valarray< valarray<prop_t> > jackknife_prop(  valarray< valarray<prop_t> > &jS, int nconf, int clust_size )
+jprop_t jackknife_prop(  jprop_t &jS, int nconf, int clust_size )
 {
   valarray<prop_t> jSum(prop_t::Zero(),mom_list.size());
 
@@ -188,7 +210,7 @@ valarray< valarray<prop_t> > jackknife_prop(  valarray< valarray<prop_t> > &jS, 
 }
 
 //jackknife Vertex
-valarray< valarray<qline_t> > jackknife_vertex( valarray< valarray<qline_t> > &jVert, int nconf, int clust_size )
+jvert_t jackknife_vertex( jvert_t &jVert, int nconf, int clust_size )
 {
   valarray<qline_t> jSum(valarray<prop_t>(prop_t::Zero(),16),mom_list.size());
   
@@ -207,9 +229,9 @@ valarray< valarray<qline_t> > jackknife_vertex( valarray< valarray<qline_t> > &j
 }
 
 //invert the propagator
-valarray< valarray<prop_t> > inverse_jprop( const valarray< valarray<prop_t> > &jprop, int njacks){
+jprop_t inverse_jprop( const jprop_t &jprop, int njacks){
 
-  valarray< valarray<prop_t> > jprop_inv(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
+  jprop_t jprop_inv(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
   
   for(int ijack=0;ijack<njacks;ijack++)
     for(size_t imom=0;imom<mom_list.size();imom++)
@@ -220,9 +242,9 @@ valarray< valarray<prop_t> > inverse_jprop( const valarray< valarray<prop_t> > &
 
 //amputate external legs
 
-valarray< valarray<qline_t> > amputate( const valarray< valarray<prop_t> >  &jprop1_inv, const valarray< valarray<qline_t> > &jV, const valarray< valarray<prop_t> >  &jprop2_inv, vprop_t GAMMA, int njacks ){
+jvert_t amputate( const jprop_t  &jprop1_inv, const jvert_t &jV, const jprop_t  &jprop2_inv, vprop_t GAMMA, int njacks ){
   
-  valarray< valarray<qline_t> > jLambda(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
+  jvert_t jLambda(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
   
   for(int ijack=0;ijack<njacks;ijack++)
     for(size_t imom=0;imom<mom_list.size();imom++)
@@ -236,17 +258,17 @@ valarray< valarray<qline_t> > amputate( const valarray< valarray<prop_t> >  &jpr
 
 
 //compute jZq
-valarray< valarray<dcompl> > compute_jZq(vprop_t GAMMA, valarray< valarray<prop_t> > jS_inv, double L, double T, int nconfs, int njacks, int cluster_size)
+vvdcompl_t compute_jZq(vprop_t GAMMA, jprop_t jS_inv, double L, double T, int nconfs, int njacks, int cluster_size)
 {
   double V=L*L*L*T;
   
   //compute p_slash as a vector of prop-type matrices
-  valarray<valarray<double>> p(valarray<double>(0.0,4),mom_list.size());
-  valarray<valarray<double>> p_tilde(valarray<double>(0.0,4),mom_list.size());
-  valarray<prop_t> p_slash(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
-  valarray<double> p2(valarray<double>(0.0,mom_list.size()));
-  valarray<valarray<dcompl>> jZq(valarray<dcompl>(mom_list.size()),njacks);
-  complex<double> I(0,1);
+  vvd_t p(vd_t(0.0,4),mom_list.size());
+  vvd_t p_tilde(vd_t(0.0,4),mom_list.size());
+  vprop_t p_slash(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
+  vd_t p2(vd_t(0.0,mom_list.size()));
+  vvdcompl_t jZq(vdcompl_t(mom_list.size()),njacks);
+  dcompl I(0,1);
 
   
 
@@ -286,17 +308,17 @@ valarray< valarray<dcompl> > compute_jZq(vprop_t GAMMA, valarray< valarray<prop_
 }
 
 //compute jSigma1
-valarray< valarray<dcompl> > compute_jSigma1(vprop_t GAMMA, valarray<valarray<prop_t>> jS_inv, double L, double T, int nconfs, int njacks, int cluster_size)
+vvdcompl_t compute_jSigma1(vprop_t GAMMA, jprop_t jS_inv, double L, double T, int nconfs, int njacks, int cluster_size)
 {
   double V=L*L*L*T;
   
   //compute p_slash as a vector of prop-type matrices
-  valarray<valarray<double>> p(valarray<double>(0.0,4),mom_list.size());
-  valarray<valarray<double>> p_tilde(valarray<double>(0.0,4),mom_list.size());
-  valarray<prop_t> p_slash(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
-  valarray<double> p2(valarray<double>(0.0,mom_list.size()));
-  valarray<valarray<dcompl>> jSigma1(valarray<dcompl>(mom_list.size()),njacks);
-  complex<double> I(0,1);
+  vvd_t p(vd_t(0.0,4),mom_list.size());
+  vvd_t p_tilde(vd_t(0.0,4),mom_list.size());
+  vprop_t p_slash(valarray<prop_t>(prop_t::Zero(),mom_list.size()));
+  vd_t p2(vd_t(0.0,mom_list.size()));
+  vvdcompl_t jSigma1(valarray<dcompl>(mom_list.size()),njacks);
+  dcompl I(0,1);
 
   valarray<valarray<prop_t>> A(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
 
@@ -327,11 +349,11 @@ valarray< valarray<dcompl> > compute_jSigma1(vprop_t GAMMA, valarray<valarray<pr
 
 
 //project the amputated green function
-valarray<valarray<valarray<complex<double>>>> project_jLambda(vprop_t GAMMA, const valarray<valarray<qline_t>> &jLambda, int nconfs, int njacks,  int clust_size)
+vvvdcompl_t project(vprop_t GAMMA, const valarray<valarray<qline_t>> &jLambda, int nconfs, int njacks,  int clust_size)
 {  
   //L_proj has 5 components: S(0), V(1), P(2), A(3), T(4)
-  valarray<valarray<valarray<prop_t>>> L_proj(valarray<valarray<prop_t>>(valarray<prop_t>(prop_t::Zero(),5),mom_list.size()),njacks);
-  valarray<valarray<valarray<complex<double>>>> jG(valarray<valarray<complex<double>>>(valarray<dcompl>(0.0,5),mom_list.size()),njacks);
+  valarray< valarray< valarray<prop_t> > > L_proj(valarray< valarray<prop_t> >(valarray<prop_t>(prop_t::Zero(),5),mom_list.size()),njacks);
+  vvvdcompl_t jG(vvdcompl_t(vdcompl_t(0.0,5),mom_list.size()),njacks);
   vprop_t P(prop_t::Zero(),16);
   
   //create projectors such that tr(GAMMA*P)=Identity
@@ -381,12 +403,12 @@ double subtract(vector<double> c, double f, double p2, double p4, double g2_tild
 }
 
 //compute fit parameters
-valarray< valarray< valarray<double> > > compute_fit_parameters(valarray<double> x, valarray<double> p4, valarray< valarray< valarray< double > > > y, valarray< valarray< double > > sigma, int tag, int njacks, double x_min, double x_max)
+vvvd_t compute_fit_parameters(vd_t x, vd_t p4, vvvd_t y, vvd_t sigma, int tag, int njacks, double x_min, double x_max)
 {
   
-  valarray<double> S(0.0,6),Sx(0.0,6),Sxx(0.0,6);
-  valarray< valarray<double> > Sy(valarray<double>(0.0,njacks),6), Sxy(valarray<double>(0.0,njacks),6);
-  valarray< valarray< valarray<double> > > fit_parameter(valarray< valarray<double> >(valarray<double>(0.0,2),6),njacks); 
+  vd_t S(0.0,6),Sx(0.0,6),Sxx(0.0,6);
+  vvd_t Sy(vd_t(0.0,njacks),6), Sxy(vd_t(0.0,njacks),6);
+  vvvd_t fit_parameter(vvd_t(vd_t(0.0,2),6),njacks); 
   
   for(int iZ=0;iZ<6;iZ++)
     {
@@ -415,7 +437,7 @@ valarray< valarray< valarray<double> > > compute_fit_parameters(valarray<double>
 }
 
 
-void print_file(const char* name_file, valarray<double> p2, valarray< valarray<double> > Z, valarray< valarray<double> > Z_err, int tag)
+void print_file(const char* name_file, vd_t p2, vvd_t Z, vvd_t Z_err, int tag)
 {
   ofstream outfile (name_file);
   outfile.precision(8);
@@ -433,7 +455,7 @@ void print_file(const char* name_file, valarray<double> p2, valarray< valarray<d
   else cout << "Unable to open the output file "<<name_file<<endl;
 }
 
-void print_file_filtered(const char* name_file, valarray<double> p2, valarray<double> p4, valarray< valarray<double> > Z, valarray< valarray<double> > Z_err, int tag)
+void print_file_filtered(const char* name_file, vd_t p2, vd_t p4, vvd_t Z, vvd_t Z_err, int tag)
 {
   ofstream outfile (name_file);
   outfile.precision(8);
@@ -479,9 +501,6 @@ int main(int narg,char **arg)
 
   double beta=0.0, plaquette=0.0;
   vector<double> c_v(3), c_a(3), c_s(3), c_p(3), c_t(3);
- 
-  
-
   
   //beta & plaquette
   if(strcmp(arg[10],"iwa")==0)  //Nf=4 (Iwasaki)
@@ -520,6 +539,12 @@ int main(int narg,char **arg)
    double g2=6.0/beta;
    double g2_tilde=g2/plaquette;
 
+   //delta m_cr
+   double deltam_cr = 0.23;
+
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
   cout<<"Reading the list of momenta..."<<endl;
 
@@ -531,123 +556,153 @@ int main(int narg,char **arg)
   vprop_t GAMMA=make_gamma();
 
   cout<<"Reading propagators from the files, creating the vertices and preparing the jackknife..."<<endl;
+
+   // put to zero jackknife vertex
+  jprop_t jS_0(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks), \
+    jS_self_tad(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks), \
+    jS_p(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
   
-  // put to zero jackknife vertex
-  valarray< valarray<prop_t> > jS_0(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
-  valarray< valarray<qline_t> > jVert(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
+  jvert_t jVert_0(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks),	\
+    jVert_11_self_tad(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks), \
+    jVert_p(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
+  
+  jprop_t jS_em(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
+  jvert_t jVert_em(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
   
   for(int iconf=0;iconf<nconfs;iconf++)
     {
       int ijack=iconf/clust_size;
       
-    
-      //read QCD prop
-      vprop_t S_0 = read_prop(path_to_conf(conf_id[iconf],"SPECT0"));
-      //read QCD prop + 1 photon insertion
-      vprop_t S_1ph = read_prop(path_to_conf(conf_id[iconf],"SPECT0_F"));
-      //read QCD prop + 2 photons insertion
-      vprop_t S_2ph = read_prop(path_to_conf(conf_id[iconf],"SPECT0_FF"));
-      //read QCD prop + scalar insertion
-      vprop_t S_s = read_prop(path_to_conf(conf_id[iconf],"SPECT0_S"));
-      //read QCD prop + pseudoscalar insertion
-      vprop_t S_p = read_prop(path_to_conf(conf_id[iconf],"SPECT0_P"));
-      //read QCD prop + tadpole insertion
-      vprop_t S_t = read_prop(path_to_conf(conf_id[iconf],"SPECT0_T"));
-
+      //read props
+      vprop_t S_0 = read_prop(path_to_conf(conf_id[iconf],"SPECT0")); //QCD
+      
+      vprop_t S_1ph = read_prop(path_to_conf(conf_id[iconf],"SPECT0_F")); //QCD + 1 photon insertion
+      vprop_t S_2ph = read_prop(path_to_conf(conf_id[iconf],"SPECT0_FF")); //QCD + 2 photons insertion
+      vprop_t S_t = read_prop(path_to_conf(conf_id[iconf],"SPECT0_T")); //QCD + tadpole insertion
+      vprop_t S_p = read_prop(path_to_conf(conf_id[iconf],"SPECT0_P")); //QCD + pseudoscalar insertion
+      //vprop_t S_s = read_prop(path_to_conf(conf_id[iconf],"SPECT0_S")); //QCD + scalar insertion
+      
+      for(auto &p : S_p) p*=complex<double>(0.0,-1.0);
       
       for(size_t imom=0;imom<mom_list.size();imom++)
 	{
 	  //create vertex functions with the i_mom momentum
-	  qline_t Vert_0 = make_vertex(S_0, S_0, imom, GAMMA);
+	  qline_t Vert_0=make_vertex(S_0, S_0, imom, GAMMA);
 	  
-	  qline_t Vert_11 = make_vertex(S_1ph, S_1ph, imom, GAMMA);
+	  qline_t Vert_11=make_vertex(S_1ph, S_1ph, imom, GAMMA);
 	  
-	  qline_t Vert_02 = make_vertex(S_0, S_2ph, imom, GAMMA);
-	  qline_t Vert_20 = make_vertex(S_2ph, S_0, imom, GAMMA);
+	  qline_t Vert_02=make_vertex(S_0, S_2ph, imom, GAMMA);
+	  qline_t Vert_20=make_vertex(S_2ph, S_0, imom, GAMMA);
 	  
-	  qline_t Vert_0t = make_vertex(S_0, S_t, imom, GAMMA);
-	  qline_t Vert_t0 = make_vertex(S_t, S_0, imom, GAMMA);
+	  qline_t Vert_0t=make_vertex(S_0, S_t, imom, GAMMA);
+	  qline_t Vert_t0=make_vertex(S_t, S_0, imom, GAMMA);
 	  
-	  qline_t Vert_0p = make_vertex(S_0, S_p, imom, GAMMA);
-	  qline_t Vert_p0 = make_vertex(S_p, S_0, imom, GAMMA);
+	  qline_t Vert_0p=make_vertex(S_0, S_p, imom, GAMMA);
+	  qline_t Vert_p0=make_vertex(S_p, S_0, imom, GAMMA);
 	  
-	  qline_t Vert_0s = make_vertex(S_0, S_s, imom, GAMMA);
-	  qline_t Vert_s0 = make_vertex(S_s, S_0, imom, GAMMA);
-
+	  // qline_t Vert_0s = make_vertex(S_0, S_s, imom, GAMMA);
+	  // qline_t Vert_s0 = make_vertex(S_s, S_0, imom, GAMMA);
+	  
 	  
 	  //create pre-jackknife propagator
 	  jS_0[ijack][imom] += S_0[imom];
+	  jS_self_tad[ijack][imom] += S_2ph[imom] + S_t[imom];
+	  jS_p[ijack][imom] += S_p[imom];
+	  
 	  //create pre-jackknife vertex
-	  jVert[ijack][imom] += Vert_0;
+	  jVert_0[ijack][imom] += Vert_0;
+	  jVert_11_self_tad[ijack][imom] += Vert_11 + Vert_02 + Vert_20 + Vert_0t + Vert_t0;
+	  jVert_p[ijack][imom] += Vert_0p + Vert_p0;
 	  
 	}
     }
-
+  
   cout<<"Applying the jackknife resampling to propagators and vertices..."<<endl;
   
   cout<<"   Jackknife of propagators (1/2)"<<endl;
   //compute fluctuations of the propagator
-  jS_0=jackknife_prop(jS_0,nconfs,clust_size);
+  jS_0 = jackknife_prop(jS_0,nconfs,clust_size);
+  jS_self_tad = jackknife_prop(jS_self_tad,nconfs,clust_size);
+  jS_p = jackknife_prop(jS_p,nconfs,clust_size);
+  
   cout<<"   Jackknife of vertices (2/2)"<<endl;
   //compute fluctuations of the vertex
-  jVert=jackknife_vertex(jVert,nconfs,clust_size);
+  jVert_0 = jackknife_vertex(jVert_0,nconfs,clust_size);
+  jVert_11_self_tad = jackknife_vertex(jVert_11_self_tad,nconfs,clust_size);
+  jVert_p = jackknife_vertex(jVert_p,nconfs,clust_size);
+
+  //define em propagator and vertex
+  for(int ijack=0;ijack<njacks;ijack++)
+    for(size_t imom=0;imom<mom_list.size();imom++)
+      {
+	jS_em[ijack][imom] = jS_self_tad[ijack][imom] - deltam_cr*jS_p[ijack][imom];
+	for(int igam=0;igam<16;igam++)
+	  jVert_em[ijack][imom][igam] = jVert_11_self_tad[ijack][imom][igam] - deltam_cr*jVert_p[ijack][imom][igam];
+      }
+    
+  
 
   cout<<"Inverting the propagators..."<<endl;
-  
-  //  valarray< valarray<prop_t> > jS_0_inv(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks);
- 
-  
-  //inverse of the propagator
-  valarray< valarray<prop_t> >  jS_0_inv = inverse_jprop(jS_0, njacks);
+   
+  //inverse of the propagators
+  jprop_t jS_0_inv = inverse_jprop(jS_0, njacks);
+  jprop_t jS_em_inv = jS_0_inv*jS_em*jS_0_inv;
    
   cout<<"Amputating the external legs..."<<endl;
   
   //amputate external legs
-  valarray< valarray<qline_t> > jLambda=amputate(jS_0_inv, jVert, jS_0_inv, GAMMA, njacks);
+  jvert_t jLambda_0 = amputate(jS_0_inv, jVert_0, jS_0_inv, GAMMA, njacks);
+  jvert_t jLambda_em = amputate(jS_0_inv, jVert_em, jS_0_inv, GAMMA, njacks);
+  jvert_t jLambda_a = amputate(jS_em_inv, jVert_0, jS_0_inv, GAMMA, njacks);
+  jvert_t jLambda_b = amputate(jS_0_inv, jVert_0, jS_em_inv, GAMMA, njacks);
 
   	  
   cout<<"Computing Zq..."<<endl;
   
   //compute Zq according to RI'-MOM, one for each momentum
-  valarray<valarray<dcompl>> jZq=compute_jZq(GAMMA,jS_0_inv,L,T,nconfs,njacks,clust_size);
-
-  //////////////////////////////////
-  ////
-  ////
-  valarray<valarray<dcompl>> jSigma1=compute_jSigma1(GAMMA,jS_0_inv,L,T,nconfs,njacks,clust_size);  //PROVA
-  ////
-  ////
-  /////////////////////////////////
+  vvdcompl_t jZq = compute_jZq(GAMMA,jS_0_inv,L,T,nconfs,njacks,clust_size);
+  vvdcompl_t jZq_em = - compute_jZq(GAMMA,jS_em_inv,L,T,nconfs,njacks,clust_size);
+  //compute Zq according to Sigma1-way
+  vvdcompl_t jSigma1 = compute_jSigma1(GAMMA,jS_0_inv,L,T,nconfs,njacks,clust_size);
+  vvdcompl_t jSigma1_em = - compute_jSigma1(GAMMA,jS_em_inv,L,T,nconfs,njacks,clust_size);
 
   cout<<"Projecting the Green functions..."<<endl;
   
   //compute the projected green function as a vector (S,V,P,A,T)
-  valarray<valarray<valarray<complex<double>>>> jG=project_jLambda(GAMMA,jLambda,nconfs,njacks,clust_size);
-  
+  vvvdcompl_t jG_0 = project(GAMMA,jLambda_0,nconfs,njacks,clust_size);
+  vvvdcompl_t jG_em = project(GAMMA,jLambda_em,nconfs,njacks,clust_size);
+  vvvdcompl_t jG_a = project(GAMMA,jLambda_a,nconfs,njacks,clust_size);
+  vvvdcompl_t jG_b = project(GAMMA,jLambda_b,nconfs,njacks,clust_size);
+ 
 
   cout<<"Computing the Z's..."<<endl;
   
-  //compute Z's according to RI-MOM, one for each momentum
-  valarray<valarray<valarray<dcompl>>> jZ(valarray<valarray<dcompl>>(valarray<dcompl>(0.0,5),mom_list.size()),njacks);
-  valarray<valarray<valarray<dcompl>>> jZ1(valarray<valarray<dcompl>>(valarray<dcompl>(0.0,5),mom_list.size()),njacks); //PROVA: sigma1
+  //compute Z's according to RI-MOM and to Sigma1-way, one for each momentum
+  vvvdcompl_t jZ(vvdcompl_t(vdcompl_t(0.0,5),mom_list.size()),njacks);
+  vvvdcompl_t jZ1(vvdcompl_t(vdcompl_t(0.0,5),mom_list.size()),njacks);
+  
+  vvvdcompl_t jZ_em(vvdcompl_t(vdcompl_t(0.0,5),mom_list.size()),njacks);
+  vvvdcompl_t jZ1_em(vvdcompl_t(vdcompl_t(0.0,5),mom_list.size()),njacks);
 
   for(int ijack=0;ijack<njacks;ijack++)
     for(size_t imom=0;imom<mom_list.size();imom++)
       for(int k=0;k<5;k++)
 	{
-	  jZ[ijack][imom][k]=jZq[ijack][imom]/jG[ijack][imom][k];
-	  jZ1[ijack][imom][k]=jSigma1[ijack][imom]/jG[ijack][imom][k]; //PROVA
+	  jZ[ijack][imom][k] = jZq[ijack][imom]/jG_0[ijack][imom][k];
+	  jZ1[ijack][imom][k] = jSigma1[ijack][imom]/jG_0[ijack][imom][k];
+
+	  jZ_em[ijack][imom][k] = (-jG_em[ijack][imom][k]+jG_a[ijack][imom][k]+jG_b[ijack][imom][k])/jG_0[ijack][imom][k] + jZq_em[ijack][imom]/jZq[ijack][imom];
+	  jZ1_em[ijack][imom][k] = (-jG_em[ijack][imom][k]+jG_a[ijack][imom][k]+jG_b[ijack][imom][k])/jG_0[ijack][imom][k] + jSigma1_em[ijack][imom]/jSigma1[ijack][imom];
 
 	}
 	  
   //create p_tilde vector  
-  valarray<valarray<double>> p(valarray<double>(0.0,4),mom_list.size());
-  valarray<valarray<double>> p_tilde(valarray<double>(0.0,4),mom_list.size());
-  valarray<double> p2(valarray<double>(0.0,mom_list.size()));
-  valarray<double> p2_space(valarray<double>(0.0,mom_list.size()));
-  valarray<double> p4(valarray<double>(0.0,mom_list.size()));  //for the democratic filter
+  vvd_t p(vd_t(0.0,4),mom_list.size());
+  vvd_t p_tilde(vd_t(0.0,4),mom_list.size());
+  vd_t p2(vd_t(0.0,mom_list.size()));
+  vd_t p2_space(vd_t(0.0,mom_list.size()));
+  vd_t p4(vd_t(0.0,mom_list.size()));  //for the democratic filter
     
-
   for(size_t imom=0;imom<mom_list.size();imom++)
 	{
 	  p[imom]={2*M_PI*mom_list[imom][1]/L,2*M_PI*mom_list[imom][2]/L,2*M_PI*mom_list[imom][3]/L,2*M_PI*(mom_list[imom][0]+0.5)/T};
@@ -665,23 +720,23 @@ int main(int narg,char **arg)
   
   cout<<"Creating the extended vector..."<<endl;
   
-  valarray<valarray<valarray<double>>> new_mom_list(valarray<valarray<double>>(valarray<double>(0.0,19),mom_list.size()),njacks);
+  vvvd_t new_list(vvd_t(vd_t(0.0,19),mom_list.size()),njacks);
 
   for(int ijack=0;ijack<njacks;ijack++)
     for(size_t imom=0;imom<mom_list.size();imom++)
       {
 	for(int i=0;i<4;i++)
-	  new_mom_list[ijack][imom][i]=mom_list[imom][i];
-	new_mom_list[ijack][imom][4]=p2[imom];
-	new_mom_list[ijack][imom][6]=jZq[ijack][imom].real();
+	  new_list[ijack][imom][i]=mom_list[imom][i];
+	new_list[ijack][imom][4]=p2[imom];
+	new_list[ijack][imom][6]=jZq[ijack][imom].real();
 	for(int i=0;i<5;i++)
-	  new_mom_list[ijack][imom][7+i]=jZ[ijack][imom][0+i].real();
+	  new_list[ijack][imom][7+i]=jZ[ijack][imom][0+i].real();
 
-	new_mom_list[ijack][imom][12]=p4[imom]; //for the democratic filter
+	new_list[ijack][imom][12]=p4[imom]; //for the democratic filter
 
-	new_mom_list[ijack][imom][13]=jSigma1[ijack][imom].real();  //PROVA: sigma1
+	new_list[ijack][imom][13]=jSigma1[ijack][imom].real();  //PROVA: sigma1
 	for(int i=0;i<5;i++)
-	  new_mom_list[ijack][imom][14+i]=jZ1[ijack][imom][0+i].real(); //PROVA: sigma1
+	  new_list[ijack][imom][14+i]=jZ1[ijack][imom][0+i].real(); //PROVA: sigma1
 	
 	
       }
@@ -696,12 +751,12 @@ int main(int narg,char **arg)
       size_t count=0;
       for(size_t i=0;i<imom;i++)
 	{
-	  if((abs(new_mom_list[0][i][4]-new_mom_list[0][imom][4])<eps/* && abs(p2_space[i]-p2_space[imom])<eps && abs(new_mom_list[i][0]-new_mom_list[imom][0])<eps*/ && \
-	      abs(abs(new_mom_list[0][i][1])*abs(new_mom_list[0][i][2])*abs(new_mom_list[0][i][3])-(abs(new_mom_list[0][imom][1])*abs(new_mom_list[0][imom][2])*abs(new_mom_list[0][imom][3])))<eps ) || \
-	     (abs(new_mom_list[0][i][4]-new_mom_list[0][imom][4])<eps/* && abs(p2_space[i]-p2_space[imom])<eps && abs(new_mom_list[i][0]+new_mom_list[imom][0]+1.)<eps*/ && \
-	      abs(abs(new_mom_list[0][i][1])*abs(new_mom_list[0][i][2])*abs(new_mom_list[0][i][3])-(abs(new_mom_list[0][imom][1])*abs(new_mom_list[0][imom][2])*abs(new_mom_list[0][imom][3])))<eps  )  )
+	  if((abs(new_list[0][i][4]-new_list[0][imom][4])<eps/* && abs(p2_space[i]-p2_space[imom])<eps && abs(new_list[i][0]-new_list[imom][0])<eps*/ && \
+	      abs(abs(new_list[0][i][1])*abs(new_list[0][i][2])*abs(new_list[0][i][3])-(abs(new_list[0][imom][1])*abs(new_list[0][imom][2])*abs(new_list[0][imom][3])))<eps ) || \
+	     (abs(new_list[0][i][4]-new_list[0][imom][4])<eps/* && abs(p2_space[i]-p2_space[imom])<eps && abs(new_list[i][0]+new_list[imom][0]+1.)<eps*/ && \
+	      abs(abs(new_list[0][i][1])*abs(new_list[0][i][2])*abs(new_list[0][i][3])-(abs(new_list[0][imom][1])*abs(new_list[0][imom][2])*abs(new_list[0][imom][3])))<eps  )  )
 	    {
-	      new_mom_list[0][imom][5]=new_mom_list[0][i][5];
+	      new_list[0][imom][5]=new_list[0][i][5];
 	    }else{
 	    count++;
 	  }
@@ -709,29 +764,29 @@ int main(int narg,char **arg)
 	  if(count==imom)
 	    {
 	      tag++;
-	      new_mom_list[0][imom][5]=tag;
+	      new_list[0][imom][5]=tag;
 	    }
 	}
     }
   for(size_t imom=0;imom<mom_list.size();imom++)
     for(int ijack=1;ijack<njacks;ijack++)
-      new_mom_list[ijack][imom][5]=new_mom_list[0][imom][5];
+      new_list[ijack][imom][5]=new_list[0][imom][5];
 
   cout<<"Number of equivalent momenta: "<<tag+1<<endl;
 
   
 
   //Subtraction of discretization effects O(a^2)
-  valarray<valarray<valarray<double>>> new_mom_list_corr(valarray<valarray<double>>(valarray<double>(0.0,13),mom_list.size()),njacks);
-  valarray<valarray<valarray<double>>> jG_new(valarray<valarray<double>>(valarray<double>(0.0,5),mom_list.size()),njacks);
+  vvvd_t new_list_corr(vvd_t(vd_t(0.0,13),mom_list.size()),njacks);
+  vvvd_t jG_new(vvd_t(vd_t(0.0,5),mom_list.size()),njacks);
   vector< vector<double> > c_q (mom_list.size(),vector<double>(3));
   
   for(int ijack=0;ijack<njacks;ijack++)
     for(size_t imom=0;imom<mom_list.size();imom++)
       {
 	for(int i=0;i<6;i++)
-	  new_mom_list_corr[ijack][imom][i]=new_mom_list[ijack][imom][i];
-	new_mom_list_corr[ijack][imom][12]=new_mom_list[ijack][imom][12];
+	  new_list_corr[ijack][imom][i]=new_list[ijack][imom][i];
+	new_list_corr[ijack][imom][12]=new_list[ijack][imom][12];
 
 
 	
@@ -739,47 +794,47 @@ int main(int narg,char **arg)
 	if(strcmp(arg[10],"iwa")==0) c_q[imom]={0.6202244+1.8490436/(double)Np[imom],-0.0748167-0.963033/(double)Np[imom],0.0044};      //Iwasaki action
 	
 	/*
-	  new_mom_list_corr[ijack][imom][6]=subtract(c_q,new_mom_list[ijack][imom][6],new_mom_list[ijack][imom][4],new_mom_list[ijack][imom][12],g2_tilde);   //Zq (RI'-MOM)
+	  new_list_corr[ijack][imom][6]=subtract(c_q,new_list[ijack][imom][6],new_list[ijack][imom][4],new_list[ijack][imom][12],g2_tilde);   //Zq (RI'-MOM)
 	  
-	  jG_new[ijack][imom][0]=subtract(c_s,jG[ijack][imom][0].real(),new_mom_list[ijack][imom][4],new_mom_list[ijack][imom][12],g2_tilde);//G_s
-	  jG_new[ijack][imom][1]=subtract(c_a,jG[ijack][imom][1].real(),new_mom_list[ijack][imom][4],new_mom_list[ijack][imom][12],g2_tilde);//G_a
-	  jG_new[ijack][imom][2]=subtract(c_p,jG[ijack][imom][2].real(),new_mom_list[ijack][imom][4],new_mom_list[ijack][imom][12],g2_tilde);//G_p
-	  jG_new[ijack][imom][3]=subtract(c_v,jG[ijack][imom][3].real(),new_mom_list[ijack][imom][4],new_mom_list[ijack][imom][12],g2_tilde);//G_v
-	  jG_new[ijack][imom][4]=subtract(c_t,jG[ijack][imom][4].real(),new_mom_list[ijack][imom][4],new_mom_list[ijack][imom][12],g2_tilde);//G_t
+	  jG_new[ijack][imom][0]=subtract(c_s,jG[ijack][imom][0].real(),new_list[ijack][imom][4],new_list[ijack][imom][12],g2_tilde);//G_s
+	  jG_new[ijack][imom][1]=subtract(c_a,jG[ijack][imom][1].real(),new_list[ijack][imom][4],new_list[ijack][imom][12],g2_tilde);//G_a
+	  jG_new[ijack][imom][2]=subtract(c_p,jG[ijack][imom][2].real(),new_list[ijack][imom][4],new_list[ijack][imom][12],g2_tilde);//G_p
+	  jG_new[ijack][imom][3]=subtract(c_v,jG[ijack][imom][3].real(),new_list[ijack][imom][4],new_list[ijack][imom][12],g2_tilde);//G_v
+	  jG_new[ijack][imom][4]=subtract(c_t,jG[ijack][imom][4].real(),new_list[ijack][imom][4],new_list[ijack][imom][12],g2_tilde);//G_t
 	  
-	  new_mom_list_corr[ijack][imom][7]=new_mom_list_corr[ijack][imom][6]/jG_new[ijack][imom][0]; //Zs
-	  new_mom_list_corr[ijack][imom][8]=new_mom_list_corr[ijack][imom][6]/jG_new[ijack][imom][1]; //Za
-	  new_mom_list_corr[ijack][imom][9]=new_mom_list_corr[ijack][imom][6]/jG_new[ijack][imom][2]; //Zp
-	  new_mom_list_corr[ijack][imom][10]=new_mom_list_corr[ijack][imom][6]/jG_new[ijack][imom][3]; //Zv
-	  new_mom_list_corr[ijack][imom][11]=new_mom_list_corr[ijack][imom][6]/jG_new[ijack][imom][4]; //Zt
+	  new_list_corr[ijack][imom][7]=new_list_corr[ijack][imom][6]/jG_new[ijack][imom][0]; //Zs
+	  new_list_corr[ijack][imom][8]=new_list_corr[ijack][imom][6]/jG_new[ijack][imom][1]; //Za
+	  new_list_corr[ijack][imom][9]=new_list_corr[ijack][imom][6]/jG_new[ijack][imom][2]; //Zp
+	  new_list_corr[ijack][imom][10]=new_list_corr[ijack][imom][6]/jG_new[ijack][imom][3]; //Zv
+	  new_list_corr[ijack][imom][11]=new_list_corr[ijack][imom][6]/jG_new[ijack][imom][4]; //Zt
 	*/
 	
-	new_mom_list_corr[ijack][imom][6]=subtract(c_q[imom],new_mom_list[ijack][imom][13],new_mom_list[ijack][imom][4],new_mom_list[ijack][imom][12],g2_tilde); //Zq    (Sigma1)
+	new_list_corr[ijack][imom][6]=subtract(c_q[imom],new_list[ijack][imom][13],new_list[ijack][imom][4],new_list[ijack][imom][12],g2_tilde); //Zq    (Sigma1)
 	
-	jG_new[ijack][imom][0]=subtract(c_s,jG[ijack][imom][0].real(),new_mom_list[ijack][imom][4],new_mom_list[ijack][imom][12],g2_tilde);//G_s
-	jG_new[ijack][imom][1]=subtract(c_a,jG[ijack][imom][1].real(),new_mom_list[ijack][imom][4],new_mom_list[ijack][imom][12],g2_tilde);//G_a
-	jG_new[ijack][imom][2]=subtract(c_p,jG[ijack][imom][2].real(),new_mom_list[ijack][imom][4],new_mom_list[ijack][imom][12],g2_tilde);//G_p
-	jG_new[ijack][imom][3]=subtract(c_v,jG[ijack][imom][3].real(),new_mom_list[ijack][imom][4],new_mom_list[ijack][imom][12],g2_tilde);//G_v
-	jG_new[ijack][imom][4]=subtract(c_t,jG[ijack][imom][4].real(),new_mom_list[ijack][imom][4],new_mom_list[ijack][imom][12],g2_tilde);//G_t
+	jG_new[ijack][imom][0]=subtract(c_s,jG_0[ijack][imom][0].real(),new_list[ijack][imom][4],new_list[ijack][imom][12],g2_tilde);//G_s
+	jG_new[ijack][imom][1]=subtract(c_a,jG_0[ijack][imom][1].real(),new_list[ijack][imom][4],new_list[ijack][imom][12],g2_tilde);//G_a
+	jG_new[ijack][imom][2]=subtract(c_p,jG_0[ijack][imom][2].real(),new_list[ijack][imom][4],new_list[ijack][imom][12],g2_tilde);//G_p
+	jG_new[ijack][imom][3]=subtract(c_v,jG_0[ijack][imom][3].real(),new_list[ijack][imom][4],new_list[ijack][imom][12],g2_tilde);//G_v
+	jG_new[ijack][imom][4]=subtract(c_t,jG_0[ijack][imom][4].real(),new_list[ijack][imom][4],new_list[ijack][imom][12],g2_tilde);//G_t
 	
-	new_mom_list_corr[ijack][imom][7]=new_mom_list_corr[ijack][imom][6]/jG_new[ijack][imom][0]; //Zs
-	new_mom_list_corr[ijack][imom][8]=new_mom_list_corr[ijack][imom][6]/jG_new[ijack][imom][1]; //Za
-	new_mom_list_corr[ijack][imom][9]=new_mom_list_corr[ijack][imom][6]/jG_new[ijack][imom][2]; //Zp
-	new_mom_list_corr[ijack][imom][10]=new_mom_list_corr[ijack][imom][6]/jG_new[ijack][imom][3]; //Zv
-	new_mom_list_corr[ijack][imom][11]=new_mom_list_corr[ijack][imom][6]/jG_new[ijack][imom][4]; //Zt	
+	new_list_corr[ijack][imom][7]=new_list_corr[ijack][imom][6]/jG_new[ijack][imom][0]; //Zs
+	new_list_corr[ijack][imom][8]=new_list_corr[ijack][imom][6]/jG_new[ijack][imom][1]; //Za
+	new_list_corr[ijack][imom][9]=new_list_corr[ijack][imom][6]/jG_new[ijack][imom][2]; //Zp
+	new_list_corr[ijack][imom][10]=new_list_corr[ijack][imom][6]/jG_new[ijack][imom][3]; //Zv
+	new_list_corr[ijack][imom][11]=new_list_corr[ijack][imom][6]/jG_new[ijack][imom][4]; //Zt	
 	
 	
       }
   
   //Average of Z's corresponding to equivalent momenta (same tag) and print on file
-  valarray<double> p2_eq(valarray<double>(0.0,tag+1));
-  valarray<double> p4_eq(valarray<double>(0.0,tag+1)); //for the democratic filter
+  vd_t p2_eq(vd_t(0.0,tag+1));
+  vd_t p4_eq(vd_t(0.0,tag+1)); //for the democratic filter
   
   valarray< valarray< valarray< vector<double> > > > jZ_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks); //Zq RI'-MOM
-  valarray< valarray< valarray<double> > > jZ_average(valarray<valarray<double>>(valarray<double>(0.0,6),tag+1),njacks);
+  vvvd_t jZ_average(vvd_t(vd_t(0.0,6),tag+1),njacks);
   
   valarray< valarray< valarray< vector<double> > > > jZ1_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks);  //PROVA: sigma1
-  valarray< valarray< valarray<double> > > jZ1_average(valarray<valarray<double>>(valarray<double>(0.0,6),tag+1),njacks);  //PROVA
+  vvvd_t jZ1_average(vvd_t(vd_t(0.0,6),tag+1),njacks);  //PROVA
   
   cout<<"Averaging the Z's corresponding to equivalent momenta and printing on the output file..."<<endl;
 
@@ -789,25 +844,25 @@ int main(int narg,char **arg)
 	int count_equivalent=0;
 	for(size_t imom=0;imom<mom_list.size();imom++)
 	  { 
-	    if(t==new_mom_list[ijack][imom][5])
+	    if(t==new_list[ijack][imom][5])
 	      {
 		count_equivalent++;
-		p2_eq[t]=new_mom_list[0][imom][4];
-		p4_eq[t]=new_mom_list[0][imom][12];
+		p2_eq[t]=new_list[0][imom][4];
+		p4_eq[t]=new_list[0][imom][12];
 		
-		jZ_same_tag[ijack][t][0].push_back(new_mom_list[ijack][imom][6]);
-		jZ_same_tag[ijack][t][1].push_back(new_mom_list[ijack][imom][7]);
-		jZ_same_tag[ijack][t][2].push_back(new_mom_list[ijack][imom][8]);
-		jZ_same_tag[ijack][t][3].push_back(new_mom_list[ijack][imom][9]);
-		jZ_same_tag[ijack][t][4].push_back(new_mom_list[ijack][imom][10]);
-		jZ_same_tag[ijack][t][5].push_back(new_mom_list[ijack][imom][11]);
+		jZ_same_tag[ijack][t][0].push_back(new_list[ijack][imom][6]);
+		jZ_same_tag[ijack][t][1].push_back(new_list[ijack][imom][7]);
+		jZ_same_tag[ijack][t][2].push_back(new_list[ijack][imom][8]);
+		jZ_same_tag[ijack][t][3].push_back(new_list[ijack][imom][9]);
+		jZ_same_tag[ijack][t][4].push_back(new_list[ijack][imom][10]);
+		jZ_same_tag[ijack][t][5].push_back(new_list[ijack][imom][11]);
 
-		jZ1_same_tag[ijack][t][0].push_back(new_mom_list[ijack][imom][13]);  //PROVA: sigma1
-		jZ1_same_tag[ijack][t][1].push_back(new_mom_list[ijack][imom][14]);
-		jZ1_same_tag[ijack][t][2].push_back(new_mom_list[ijack][imom][15]);
-		jZ1_same_tag[ijack][t][3].push_back(new_mom_list[ijack][imom][16]);
-		jZ1_same_tag[ijack][t][4].push_back(new_mom_list[ijack][imom][17]);
-		jZ1_same_tag[ijack][t][5].push_back(new_mom_list[ijack][imom][18]);			
+		jZ1_same_tag[ijack][t][0].push_back(new_list[ijack][imom][13]);  //PROVA: sigma1
+		jZ1_same_tag[ijack][t][1].push_back(new_list[ijack][imom][14]);
+		jZ1_same_tag[ijack][t][2].push_back(new_list[ijack][imom][15]);
+		jZ1_same_tag[ijack][t][3].push_back(new_list[ijack][imom][16]);
+		jZ1_same_tag[ijack][t][4].push_back(new_list[ijack][imom][17]);
+		jZ1_same_tag[ijack][t][5].push_back(new_list[ijack][imom][18]);			
 	      }
 	  }
 	
@@ -830,13 +885,13 @@ int main(int narg,char **arg)
 	  }
       }
 
-  valarray<valarray<double>> Z_mean_value(valarray<double>(0.0,6),tag+1);
-  valarray<valarray<double>> Z2_mean_value(valarray<double>(0.0,6),tag+1);
-  valarray<valarray<double>> Z_error(valarray<double>(0.0,6),tag+1);
+  vvd_t Z_mean_value(vd_t(0.0,6),tag+1);
+  vvd_t Z2_mean_value(vd_t(0.0,6),tag+1);
+  vvd_t Z_error(vd_t(0.0,6),tag+1);
 
-  valarray<valarray<double>> Z1_mean_value(valarray<double>(0.0,6),tag+1);  //PROVA: sigma1
-  valarray<valarray<double>> Z21_mean_value(valarray<double>(0.0,6),tag+1);
-  valarray<valarray<double>> Z1_error(valarray<double>(0.0,6),tag+1);
+  vvd_t Z1_mean_value(vd_t(0.0,6),tag+1);  //PROVA: sigma1
+  vvd_t Z21_mean_value(vd_t(0.0,6),tag+1);
+  vvd_t Z1_error(vd_t(0.0,6),tag+1);
   
   for(int t=0;t<=tag;t++)
     for(int i=0;i<6;i++)
@@ -872,8 +927,8 @@ int main(int narg,char **arg)
 
  cout<<"Averaging the corrected Z's corresponding to equivalent momenta and printing on the output file..."<<endl;
 
-  valarray<valarray<valarray<vector<double>>>> jZ_corr_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks);
-  valarray<valarray<valarray<double>>> jZ_corr_average(valarray<valarray<double>>(valarray<double>(0.0,6),tag+1),njacks);
+  valarray< valarray< valarray< vector<double> > > > jZ_corr_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks);
+  vvvd_t jZ_corr_average(vvd_t(vd_t(0.0,6),tag+1),njacks);
 
   for(int ijack=0;ijack<njacks;ijack++)
     for(int t=0;t<=tag;t++)
@@ -881,18 +936,18 @@ int main(int narg,char **arg)
 	int count_equivalent=0;
 	for(size_t imom=0;imom<mom_list.size();imom++)
 	  { 
-	    if(t==new_mom_list[ijack][imom][5])
+	    if(t==new_list[ijack][imom][5])
 	      {
 		count_equivalent++;
-		p2_eq[t]=new_mom_list[0][imom][4];
-		p4_eq[t]=new_mom_list[0][imom][12];
+		p2_eq[t]=new_list[0][imom][4];
+		p4_eq[t]=new_list[0][imom][12];
 		
-		jZ_corr_same_tag[ijack][t][0].push_back(new_mom_list_corr[ijack][imom][6]);
-		jZ_corr_same_tag[ijack][t][1].push_back(new_mom_list_corr[ijack][imom][7]);
-		jZ_corr_same_tag[ijack][t][2].push_back(new_mom_list_corr[ijack][imom][8]);
-		jZ_corr_same_tag[ijack][t][3].push_back(new_mom_list_corr[ijack][imom][9]);
-		jZ_corr_same_tag[ijack][t][4].push_back(new_mom_list_corr[ijack][imom][10]);
-		jZ_corr_same_tag[ijack][t][5].push_back(new_mom_list_corr[ijack][imom][11]);	
+		jZ_corr_same_tag[ijack][t][0].push_back(new_list_corr[ijack][imom][6]);
+		jZ_corr_same_tag[ijack][t][1].push_back(new_list_corr[ijack][imom][7]);
+		jZ_corr_same_tag[ijack][t][2].push_back(new_list_corr[ijack][imom][8]);
+		jZ_corr_same_tag[ijack][t][3].push_back(new_list_corr[ijack][imom][9]);
+		jZ_corr_same_tag[ijack][t][4].push_back(new_list_corr[ijack][imom][10]);
+		jZ_corr_same_tag[ijack][t][5].push_back(new_list_corr[ijack][imom][11]);	
 	      }
 	  }
 	
@@ -907,9 +962,9 @@ int main(int narg,char **arg)
 	  }
       }
 
-  valarray<valarray<double>> Z_corr_mean_value(valarray<double>(0.0,6),tag+1);
-  valarray<valarray<double>> Z2_corr_mean_value(valarray<double>(0.0,6),tag+1);
-  valarray<valarray<double>> Z_corr_error(valarray<double>(0.0,6),tag+1);
+  vvd_t Z_corr_mean_value(vd_t(0.0,6),tag+1);
+  vvd_t Z2_corr_mean_value(vd_t(0.0,6),tag+1);
+  vvd_t Z_corr_error(vd_t(0.0,6),tag+1);
   
   for(int t=0;t<=tag;t++)
     for(int i=0;i<6;i++)
@@ -930,11 +985,11 @@ int main(int narg,char **arg)
   //Fit parameters before and after the correction
   
     
-  valarray< valarray< valarray<double> > > jfit_parameters=compute_fit_parameters(p2_eq,p4_eq,jZ_average,Z_error,tag,njacks,p2fit_min,p2fit_max);
-  valarray< valarray< valarray<double> > > jfit_parameters_corr=compute_fit_parameters(p2_eq,p4_eq,jZ_corr_average,Z_corr_error,tag,njacks,p2fit_min,p2fit_max);
+  vvvd_t jfit_parameters=compute_fit_parameters(p2_eq,p4_eq,jZ_average,Z_error,tag,njacks,p2fit_min,p2fit_max);
+  vvvd_t jfit_parameters_corr=compute_fit_parameters(p2_eq,p4_eq,jZ_corr_average,Z_corr_error,tag,njacks,p2fit_min,p2fit_max);
 
-  valarray<double> A(0.0,6), B(0.0,6), A_error(0.0,6), B_error(0.0,6), A2(0.0,6), B2(0.0,6);
-  valarray<double> A_corr(0.0,6), B_corr(0.0,6), A_corr_error(0.0,6), B_corr_error(0.0,6), A2_corr(0.0,6), B2_corr(0.0,6);
+  vd_t A(0.0,6), B(0.0,6), A_error(0.0,6), B_error(0.0,6), A2(0.0,6), B2(0.0,6);
+  vd_t A_corr(0.0,6), B_corr(0.0,6), A_corr_error(0.0,6), B_corr_error(0.0,6), A2_corr(0.0,6), B2_corr(0.0,6);
   
   for(int iZ=0;iZ<6;iZ++)
     {
