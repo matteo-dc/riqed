@@ -486,8 +486,11 @@ int main(int narg,char **arg)
     cerr<<"Number of arguments not valid: <mom file> <nconfs> <njacks> <L> <T> <initial conf_id> <step conf_id> <p2fit min> <p2fit max> <action=sym/iwa>"<<endl;
     exit(0);
   }
+
+  system("clear");
+  cout<<endl<<endl;
   
-  int nconfs=stoi(arg[2]);
+  int nconfs=stoi(arg[2]); 
   int njacks=stoi(arg[3]);
   int clust_size=nconfs/njacks;
   int conf_id[nconfs];
@@ -498,6 +501,13 @@ int main(int narg,char **arg)
   
   double p2fit_min=stod(arg[8]);
   double p2fit_max=stod(arg[9]);
+
+  cout<<"N confs = "<<nconfs<<endl;
+  cout<<"N jacks = "<<njacks<<endl;
+  cout<<"Clust size = "<<clust_size<<endl;
+  cout<<"L = "<<L<<"\t T = "<<T<<endl;
+  cout<<"Fit range = ["<<p2fit_min<<":"<<p2fit_max<<"]"<<endl;
+  
 
   double beta=0.0, plaquette=0.0;
   vector<double> c_v(3), c_a(3), c_s(3), c_p(3), c_t(3);
@@ -542,20 +552,21 @@ int main(int narg,char **arg)
    //delta m_cr
    double deltam_cr = 0.23;
 
-
+   cout<<"Beta = "<<beta<<endl;
+   cout<<"Plaquette = "<<plaquette<<endl;
+   cout<<"g2_tilde = "<<g2_tilde<<endl<<endl;
+   
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-  cout<<"Reading the list of momenta..."<<endl;
 
   read_mom_list(arg[1]);
 
-  cout<<"Creating Dirac gamma matrices..."<<endl;
+  cout<<"Read: "<<mom_list.size()<<" momenta."<<endl<<endl;
+
   
   //create gamma matrices
   vprop_t GAMMA=make_gamma();
 
-  cout<<"Reading propagators from the files, creating the vertices and preparing the jackknife..."<<endl;
+  cout<<"Reading propagators from the files, creating the vertices and preparing the jackknife: "<<endl;
 
    // put to zero jackknife vertex
   jprop_t jS_0(valarray<prop_t>(prop_t::Zero(),mom_list.size()),njacks), \
@@ -571,6 +582,8 @@ int main(int narg,char **arg)
   
   for(int iconf=0;iconf<nconfs;iconf++)
     {
+      cout<<"\r \t "<<(iconf+1)*100/nconfs<<"%"<<flush; //print percent progress
+
       int ijack=iconf/clust_size;
       
       //read props
@@ -613,9 +626,11 @@ int main(int narg,char **arg)
 	  jVert_0[ijack][imom] += Vert_0;
 	  jVert_11_self_tad[ijack][imom] += Vert_11 + Vert_02 + Vert_20 + Vert_0t + Vert_t0;
 	  jVert_p[ijack][imom] += Vert_0p + Vert_p0;
-	  
+
 	}
     }
+  
+  cout<<endl;
   
   cout<<"Applying the jackknife resampling to propagators and vertices..."<<endl;
   
@@ -639,8 +654,6 @@ int main(int narg,char **arg)
 	for(int igam=0;igam<16;igam++)
 	  jVert_em[ijack][imom][igam] = jVert_11_self_tad[ijack][imom][igam] - deltam_cr*jVert_p[ijack][imom][igam];
       }
-    
-  
 
   cout<<"Inverting the propagators..."<<endl;
    
@@ -721,6 +734,12 @@ int main(int narg,char **arg)
   cout<<"Creating the extended vector..."<<endl;
   
   vvvd_t new_list(vvd_t(vd_t(0.0,19),mom_list.size()),njacks);
+  vvvd_t new_list_em(vvd_t(vd_t(0.0,19),mom_list.size()),njacks);
+  
+  //****************************************************************************************//
+  //---0---1---2---3---4---5---6---7---8---9---10---11---12---13---14---15---16---17---18---//
+  //---nT--nx--ny--nz--p2--tag-Zq--ZS--ZA--ZP--ZV---ZT---p4---Sig1-ZS1--ZA1--ZP1--ZV1--ZT1--//
+  //****************************************************************************************//  
 
   for(int ijack=0;ijack<njacks;ijack++)
     for(size_t imom=0;imom<mom_list.size();imom++)
@@ -729,23 +748,31 @@ int main(int narg,char **arg)
 	  new_list[ijack][imom][i]=mom_list[imom][i];
 	new_list[ijack][imom][4]=p2[imom];
 	new_list[ijack][imom][6]=jZq[ijack][imom].real();
-	for(int i=0;i<5;i++)
-	  new_list[ijack][imom][7+i]=jZ[ijack][imom][0+i].real();
-
-	new_list[ijack][imom][12]=p4[imom]; //for the democratic filter
-
-	new_list[ijack][imom][13]=jSigma1[ijack][imom].real();  //PROVA: sigma1
-	for(int i=0;i<5;i++)
-	  new_list[ijack][imom][14+i]=jZ1[ijack][imom][0+i].real(); //PROVA: sigma1
-	
-	
+	for(int i=0;i<5;i++) new_list[ijack][imom][7+i]=jZ[ijack][imom][0+i].real();
+	new_list[ijack][imom][12]=p4[imom];
+	new_list[ijack][imom][13]=jSigma1[ijack][imom].real();
+	for(int i=0;i<5;i++) new_list[ijack][imom][14+i]=jZ1[ijack][imom][0+i].real();	
       }
 
-  
+   for(int ijack=0;ijack<njacks;ijack++)
+    for(size_t imom=0;imom<mom_list.size();imom++)
+      {
+	for(int i=0;i<4;i++)
+	  new_list_em[ijack][imom][i]=mom_list[imom][i];
+	new_list_em[ijack][imom][4]=p2[imom];
+	new_list_em[ijack][imom][6]=jZq_em[ijack][imom].real();
+	for(int i=0;i<5;i++) new_list_em[ijack][imom][7+i]=jZ_em[ijack][imom][0+i].real();
+	new_list_em[ijack][imom][12]=p4[imom];
+	new_list_em[ijack][imom][13]=jSigma1_em[ijack][imom].real();
+	for(int i=0;i<5;i++) new_list_em[ijack][imom][14+i]=jZ1_em[ijack][imom][0+i].real();	
+      }
+ 
  
   //Assign the tag for fixed ijack
   int tag=0;
   double eps=1.0e-15;  //Precision: is it correct?
+  
+  //LO
   for(size_t imom=0;imom<mom_list.size();imom++)
     {
       size_t count=0;
@@ -754,12 +781,10 @@ int main(int narg,char **arg)
 	  if((abs(new_list[0][i][4]-new_list[0][imom][4])<eps/* && abs(p2_space[i]-p2_space[imom])<eps && abs(new_list[i][0]-new_list[imom][0])<eps*/ && \
 	      abs(abs(new_list[0][i][1])*abs(new_list[0][i][2])*abs(new_list[0][i][3])-(abs(new_list[0][imom][1])*abs(new_list[0][imom][2])*abs(new_list[0][imom][3])))<eps ) || \
 	     (abs(new_list[0][i][4]-new_list[0][imom][4])<eps/* && abs(p2_space[i]-p2_space[imom])<eps && abs(new_list[i][0]+new_list[imom][0]+1.)<eps*/ && \
-	      abs(abs(new_list[0][i][1])*abs(new_list[0][i][2])*abs(new_list[0][i][3])-(abs(new_list[0][imom][1])*abs(new_list[0][imom][2])*abs(new_list[0][imom][3])))<eps  )  )
+	      abs(abs(new_list[0][i][1])*abs(new_list[0][i][2])*abs(new_list[0][i][3])-(abs(new_list[0][imom][1])*abs(new_list[0][imom][2])*abs(new_list[0][imom][3])))<eps ))
 	    {
 	      new_list[0][imom][5]=new_list[0][i][5];
-	    }else{
-	    count++;
-	  }
+	    }else count++;
 	  
 	  if(count==imom)
 	    {
@@ -768,10 +793,38 @@ int main(int narg,char **arg)
 	    }
 	}
     }
+  
   for(size_t imom=0;imom<mom_list.size();imom++)
     for(int ijack=1;ijack<njacks;ijack++)
       new_list[ijack][imom][5]=new_list[0][imom][5];
-
+  
+  //em corrections
+  int tag_em=0;
+   for(size_t imom=0;imom<mom_list.size();imom++)
+    {
+      size_t count=0;
+      for(size_t i=0;i<imom;i++)
+	{
+	  if((abs(new_list_em[0][i][4]-new_list_em[0][imom][4])<eps/* && abs(p2_space[i]-p2_space[imom])<eps && abs(new_list_em[i][0]-new_list_em[imom][0])<eps*/ && \
+	      abs(abs(new_list_em[0][i][1])*abs(new_list_em[0][i][2])*abs(new_list_em[0][i][3])-(abs(new_list_em[0][imom][1])*abs(new_list_em[0][imom][2])*abs(new_list_em[0][imom][3])))<eps ) || \
+	     (abs(new_list_em[0][i][4]-new_list_em[0][imom][4])<eps/* && abs(p2_space[i]-p2_space[imom])<eps && abs(new_list_em[i][0]+new_list_em[imom][0]+1.)<eps*/ && \
+	      abs(abs(new_list_em[0][i][1])*abs(new_list_em[0][i][2])*abs(new_list_em[0][i][3])-(abs(new_list_em[0][imom][1])*abs(new_list_em[0][imom][2])*abs(new_list_em[0][imom][3])))<eps ))
+	    {
+	      new_list_em[0][imom][5]=new_list_em[0][i][5];
+	    }else count++;
+	  
+	  if(count==imom)
+	    {
+	      tag_em++;
+	      new_list_em[0][imom][5]=tag_em;
+	    }
+	}
+    }
+  
+  for(size_t imom=0;imom<mom_list.size();imom++)
+    for(int ijack=1;ijack<njacks;ijack++)
+      new_list_em[ijack][imom][5]=new_list_em[0][imom][5];
+  
   cout<<"Number of equivalent momenta: "<<tag+1<<endl;
 
   
@@ -784,12 +837,9 @@ int main(int narg,char **arg)
   for(int ijack=0;ijack<njacks;ijack++)
     for(size_t imom=0;imom<mom_list.size();imom++)
       {
-	for(int i=0;i<6;i++)
-	  new_list_corr[ijack][imom][i]=new_list[ijack][imom][i];
+	for(int i=0;i<6;i++) new_list_corr[ijack][imom][i]=new_list[ijack][imom][i];
 	new_list_corr[ijack][imom][12]=new_list[ijack][imom][12];
 
-
-	
 	if(strcmp(arg[10],"sym")==0) c_q[imom]={1.14716212+2.07733285/(double)Np[imom],-73./360.-157./180./(double)Np[imom],7./240.};   //Symanzik action
 	if(strcmp(arg[10],"iwa")==0) c_q[imom]={0.6202244+1.8490436/(double)Np[imom],-0.0748167-0.963033/(double)Np[imom],0.0044};      //Iwasaki action
 	
@@ -833,8 +883,14 @@ int main(int narg,char **arg)
   valarray< valarray< valarray< vector<double> > > > jZ_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks); //Zq RI'-MOM
   vvvd_t jZ_average(vvd_t(vd_t(0.0,6),tag+1),njacks);
   
-  valarray< valarray< valarray< vector<double> > > > jZ1_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks);  //PROVA: sigma1
-  vvvd_t jZ1_average(vvd_t(vd_t(0.0,6),tag+1),njacks);  //PROVA
+  valarray< valarray< valarray< vector<double> > > > jZ1_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks);  // sigma1
+  vvvd_t jZ1_average(vvd_t(vd_t(0.0,6),tag+1),njacks);
+
+   valarray< valarray< valarray< vector<double> > > > jZ_em_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks); //Zq RI'-MOM
+  vvvd_t jZ_em_average(vvd_t(vd_t(0.0,6),tag+1),njacks);
+  
+  valarray< valarray< valarray< vector<double> > > > jZ1_em_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks);  // sigma1
+  vvvd_t jZ1_em_average(vvd_t(vd_t(0.0,6),tag+1),njacks);
   
   cout<<"Averaging the Z's corresponding to equivalent momenta and printing on the output file..."<<endl;
 
@@ -850,48 +906,86 @@ int main(int narg,char **arg)
 		p2_eq[t]=new_list[0][imom][4];
 		p4_eq[t]=new_list[0][imom][12];
 		
-		jZ_same_tag[ijack][t][0].push_back(new_list[ijack][imom][6]);
+		jZ_same_tag[ijack][t][0].push_back(new_list[ijack][imom][6]);  //LO
 		jZ_same_tag[ijack][t][1].push_back(new_list[ijack][imom][7]);
 		jZ_same_tag[ijack][t][2].push_back(new_list[ijack][imom][8]);
 		jZ_same_tag[ijack][t][3].push_back(new_list[ijack][imom][9]);
 		jZ_same_tag[ijack][t][4].push_back(new_list[ijack][imom][10]);
 		jZ_same_tag[ijack][t][5].push_back(new_list[ijack][imom][11]);
 
-		jZ1_same_tag[ijack][t][0].push_back(new_list[ijack][imom][13]);  //PROVA: sigma1
+		jZ1_same_tag[ijack][t][0].push_back(new_list[ijack][imom][13]);  
 		jZ1_same_tag[ijack][t][1].push_back(new_list[ijack][imom][14]);
 		jZ1_same_tag[ijack][t][2].push_back(new_list[ijack][imom][15]);
 		jZ1_same_tag[ijack][t][3].push_back(new_list[ijack][imom][16]);
 		jZ1_same_tag[ijack][t][4].push_back(new_list[ijack][imom][17]);
-		jZ1_same_tag[ijack][t][5].push_back(new_list[ijack][imom][18]);			
+		jZ1_same_tag[ijack][t][5].push_back(new_list[ijack][imom][18]);
+
+		jZ_em_same_tag[ijack][t][0].push_back(new_list_em[ijack][imom][6]);  //em
+		jZ_em_same_tag[ijack][t][1].push_back(new_list_em[ijack][imom][7]);
+		jZ_em_same_tag[ijack][t][2].push_back(new_list_em[ijack][imom][8]);
+		jZ_em_same_tag[ijack][t][3].push_back(new_list_em[ijack][imom][9]);
+		jZ_em_same_tag[ijack][t][4].push_back(new_list_em[ijack][imom][10]);
+		jZ_em_same_tag[ijack][t][5].push_back(new_list_em[ijack][imom][11]);
+
+		jZ1_em_same_tag[ijack][t][0].push_back(new_list_em[ijack][imom][13]); 
+		jZ1_em_same_tag[ijack][t][1].push_back(new_list_em[ijack][imom][14]);
+		jZ1_em_same_tag[ijack][t][2].push_back(new_list_em[ijack][imom][15]);
+		jZ1_em_same_tag[ijack][t][3].push_back(new_list_em[ijack][imom][16]);
+		jZ1_em_same_tag[ijack][t][4].push_back(new_list_em[ijack][imom][17]);
+		jZ1_em_same_tag[ijack][t][5].push_back(new_list_em[ijack][imom][18]);	
+
+		
 	      }
 	  }
 	
 	for(int i=0;i<count_equivalent;i++)  //average over the equivalent Z's in each jackknife
 	  { 
-	    jZ_average[ijack][t][0]+=jZ_same_tag[ijack][t][0][i]/count_equivalent;
+	    jZ_average[ijack][t][0]+=jZ_same_tag[ijack][t][0][i]/count_equivalent; //LO
 	    jZ_average[ijack][t][1]+=jZ_same_tag[ijack][t][1][i]/count_equivalent;
 	    jZ_average[ijack][t][2]+=jZ_same_tag[ijack][t][2][i]/count_equivalent;
 	    jZ_average[ijack][t][3]+=jZ_same_tag[ijack][t][3][i]/count_equivalent;
 	    jZ_average[ijack][t][4]+=jZ_same_tag[ijack][t][4][i]/count_equivalent;
 	    jZ_average[ijack][t][5]+=jZ_same_tag[ijack][t][5][i]/count_equivalent;
 
-
-	    jZ1_average[ijack][t][0]+=jZ1_same_tag[ijack][t][0][i]/count_equivalent;  //PROVA: sigma1
+	    jZ1_average[ijack][t][0]+=jZ1_same_tag[ijack][t][0][i]/count_equivalent; 
 	    jZ1_average[ijack][t][1]+=jZ1_same_tag[ijack][t][1][i]/count_equivalent;
 	    jZ1_average[ijack][t][2]+=jZ1_same_tag[ijack][t][2][i]/count_equivalent;
 	    jZ1_average[ijack][t][3]+=jZ1_same_tag[ijack][t][3][i]/count_equivalent;
 	    jZ1_average[ijack][t][4]+=jZ1_same_tag[ijack][t][4][i]/count_equivalent;
-	    jZ1_average[ijack][t][5]+=jZ1_same_tag[ijack][t][5][i]/count_equivalent;	    
+	    jZ1_average[ijack][t][5]+=jZ1_same_tag[ijack][t][5][i]/count_equivalent;
+
+	    
+	    jZ_em_average[ijack][t][0]+=jZ_em_same_tag[ijack][t][0][i]/count_equivalent;  //em
+	    jZ_em_average[ijack][t][1]+=jZ_em_same_tag[ijack][t][1][i]/count_equivalent;
+	    jZ_em_average[ijack][t][2]+=jZ_em_same_tag[ijack][t][2][i]/count_equivalent;
+	    jZ_em_average[ijack][t][3]+=jZ_em_same_tag[ijack][t][3][i]/count_equivalent;
+	    jZ_em_average[ijack][t][4]+=jZ_em_same_tag[ijack][t][4][i]/count_equivalent;
+	    jZ_em_average[ijack][t][5]+=jZ_em_same_tag[ijack][t][5][i]/count_equivalent;
+
+	    jZ1_em_average[ijack][t][0]+=jZ1_em_same_tag[ijack][t][0][i]/count_equivalent; 
+	    jZ1_em_average[ijack][t][1]+=jZ1_em_same_tag[ijack][t][1][i]/count_equivalent;
+	    jZ1_em_average[ijack][t][2]+=jZ1_em_same_tag[ijack][t][2][i]/count_equivalent;
+	    jZ1_em_average[ijack][t][3]+=jZ1_em_same_tag[ijack][t][3][i]/count_equivalent;
+	    jZ1_em_average[ijack][t][4]+=jZ1_em_same_tag[ijack][t][4][i]/count_equivalent;
+	    jZ1_em_average[ijack][t][5]+=jZ1_em_same_tag[ijack][t][5][i]/count_equivalent;	    
 	  }
       }
 
-  vvd_t Z_mean_value(vd_t(0.0,6),tag+1);
+  vvd_t Z_mean_value(vd_t(0.0,6),tag+1);    //LO
   vvd_t Z2_mean_value(vd_t(0.0,6),tag+1);
   vvd_t Z_error(vd_t(0.0,6),tag+1);
 
-  vvd_t Z1_mean_value(vd_t(0.0,6),tag+1);  //PROVA: sigma1
+  vvd_t Z1_mean_value(vd_t(0.0,6),tag+1);  
   vvd_t Z21_mean_value(vd_t(0.0,6),tag+1);
   vvd_t Z1_error(vd_t(0.0,6),tag+1);
+
+  vvd_t Z_em_mean_value(vd_t(0.0,6),tag+1);    //em
+  vvd_t Z2_em_mean_value(vd_t(0.0,6),tag+1);
+  vvd_t Z_em_error(vd_t(0.0,6),tag+1);
+
+  vvd_t Z1_em_mean_value(vd_t(0.0,6),tag+1); 
+  vvd_t Z21_em_mean_value(vd_t(0.0,6),tag+1);
+  vvd_t Z1_em_error(vd_t(0.0,6),tag+1);
   
   for(int t=0;t<=tag;t++)
     for(int i=0;i<6;i++)
@@ -915,14 +1009,39 @@ int main(int narg,char **arg)
 	Z1_error[t][i]=sqrt((double)(njacks-1))*sqrt(Z21_mean_value[t][i]-Z1_mean_value[t][i]*Z1_mean_value[t][i]);
       }
 
+  for(int t=0;t<=tag;t++)
+    for(int i=0;i<6;i++)
+      {
+	for(int ijack=0;ijack<njacks;ijack++)
+	  {
+	    Z_em_mean_value[t][i]+=jZ_em_average[ijack][t][i]/njacks;
+	    Z2_em_mean_value[t][i]+=jZ_em_average[ijack][t][i]*jZ_em_average[ijack][t][i]/njacks;
+	  }
+	Z_em_error[t][i]=sqrt((double)(njacks-1))*sqrt(Z2_em_mean_value[t][i]-Z_em_mean_value[t][i]*Z_em_mean_value[t][i]);
+      }
+
+  for(int t=0;t<=tag;t++)  //PROVA: sigma1
+    for(int i=0;i<6;i++)
+      {
+	for(int ijack=0;ijack<njacks;ijack++)
+	  {
+	    Z1_em_mean_value[t][i]+=jZ1_em_average[ijack][t][i]/njacks;
+	    Z21_em_mean_value[t][i]+=jZ1_em_average[ijack][t][i]*jZ1_em_average[ijack][t][i]/njacks;
+	  }
+	Z1_em_error[t][i]=sqrt((double)(njacks-1))*sqrt(Z21_em_mean_value[t][i]-Z1_em_mean_value[t][i]*Z1_em_mean_value[t][i]);
+      }
+
   //print on file
   
-  print_file("Z_average.txt",p2_eq,Z_mean_value,Z_error,tag);
-  print_file_filtered("Z_average_filtered.txt",p2_eq,p4_eq,Z_mean_value,Z_error,tag);
-  print_file("Z_average_sigma1.txt",p2_eq,Z1_mean_value,Z1_error,tag);
-  print_file_filtered("Z_average_filtered_sigma1.txt",p2_eq,p4_eq,Z1_mean_value,Z1_error,tag);
+  print_file("Z.txt",p2_eq,Z_mean_value,Z_error,tag);
+  print_file_filtered("Z_filtered.txt",p2_eq,p4_eq,Z_mean_value,Z_error,tag);
+  print_file("Z_sigma1.txt",p2_eq,Z1_mean_value,Z1_error,tag);
+  print_file_filtered("Z_filtered_sigma1.txt",p2_eq,p4_eq,Z1_mean_value,Z1_error,tag);
 
-  
+  print_file("Z_em.txt",p2_eq,Z_em_mean_value,Z_em_error,tag);
+  print_file_filtered("Z_em_filtered.txt",p2_eq,p4_eq,Z_em_mean_value,Z_em_error,tag);
+  print_file("Z_em_sigma1.txt",p2_eq,Z1_em_mean_value,Z1_em_error,tag);
+  print_file_filtered("Z_em_filtered_sigma1.txt",p2_eq,p4_eq,Z1_em_mean_value,Z1_em_error,tag);
   
 
  cout<<"Averaging the corrected Z's corresponding to equivalent momenta and printing on the output file..."<<endl;
@@ -978,8 +1097,8 @@ int main(int narg,char **arg)
       }
 
   //print on file
-  print_file("Z_average_corrected.txt",p2_eq,Z_corr_mean_value,Z_corr_error,tag);
-  print_file_filtered("Z_average_corrected_filtered.txt",p2_eq,p4_eq,Z_corr_mean_value,Z_corr_error,tag);
+  print_file("Z_corrected.txt",p2_eq,Z_corr_mean_value,Z_corr_error,tag);
+  print_file_filtered("Z_corrected_filtered.txt",p2_eq,p4_eq,Z_corr_mean_value,Z_corr_error,tag);
   
 
   //Fit parameters before and after the correction
