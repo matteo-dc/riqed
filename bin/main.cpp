@@ -503,6 +503,8 @@ int main(int narg,char **arg)
   double p2fit_min=stod(arg[8]);
   double p2fit_max=stod(arg[9]);
 
+  const double use_tad = 1.0;
+
   cout<<"N confs = "<<nconfs<<endl;
   cout<<"N jacks = "<<njacks<<endl;
   cout<<"Clust size = "<<clust_size<<endl;
@@ -585,11 +587,11 @@ int main(int narg,char **arg)
     for(size_t ihit=0;ihit<nhits;ihit++)
       {
 	cout<<"\r \t "<<(iconf+1)*100/nconfs<<"%"<<flush; //print percent progress
-	
+	  
 	int ijack=iconf/clust_size;
 
-	string hit_suffix = "";
-	if(nhits>1) string hit_suffix = "_hit_"+to_string(ihit);
+	string hit_suffix = "a";
+	if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
 	
 	//read props
 	vprop_t S_0 = read_prop(path_to_conf(conf_id[iconf],"SPECT0"+hit_suffix)); //QCD
@@ -624,12 +626,12 @@ int main(int narg,char **arg)
 	    
 	    //create pre-jackknife propagator
 	    jS_0[ijack][imom] += S_0[imom];
-	    jS_self_tad[ijack][imom] += S_2ph[imom] + S_t[imom];
+	    jS_self_tad[ijack][imom] += S_2ph[imom] + use_tad*S_t[imom];
 	    jS_p[ijack][imom] += S_p[imom];
 	    
 	    //create pre-jackknife vertex
 	    jVert_0[ijack][imom] += Vert_0;
-	    jVert_11_self_tad[ijack][imom] += Vert_11 + Vert_02 + Vert_20 + Vert_0t + Vert_t0;
+	    jVert_11_self_tad[ijack][imom] += Vert_11 + Vert_02 + Vert_20 + use_tad*Vert_0t + use_tad*Vert_t0;
 	    jVert_p[ijack][imom] += Vert_0p + Vert_p0;
 	    
 	  }
