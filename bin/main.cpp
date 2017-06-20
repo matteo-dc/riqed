@@ -183,16 +183,16 @@ vprop_t make_vertex(const vprop_t &prop1, const vprop_t &prop2, size_t mom,const
 }
 
 //create the path-string to the configuration
-string path_to_conf(int i_conf,const char *name)
+string path_to_conf(int i_conf,const string &name)
 {
   char path[1024];
-  sprintf(path,"out/%04d/fft_%s",i_conf,name);
+  sprintf(path,"out/%04d/fft_%s",i_conf,name.c_str());
   return path;
 }
 
 
 //jackknife Propagator
-jprop_t jackknife_prop(  jprop_t &jS, int nconf, int clust_size )
+jprop_t jackknife_prop(  jprop_t &jS, int nconf, int clust_size, size_t nhits )
 {
   valarray<prop_t> jSum(prop_t::Zero(),mom_list.size());
 
@@ -203,14 +203,14 @@ jprop_t jackknife_prop(  jprop_t &jS, int nconf, int clust_size )
     {
       jS[j]=jSum-jS[j];
       for(auto &it : jS[j])
-      it/=nconf-clust_size;
+	it/=(nconf-clust_size)/nhits;
     }
 
   return jS;
 }
 
 //jackknife Vertex
-jvert_t jackknife_vertex( jvert_t &jVert, int nconf, int clust_size )
+jvert_t jackknife_vertex( jvert_t &jVert, int nconf, int clust_size, size_t nhits )
 {
   valarray<qline_t> jSum(valarray<prop_t>(prop_t::Zero(),16),mom_list.size());
   
@@ -222,7 +222,7 @@ jvert_t jackknife_vertex( jvert_t &jVert, int nconf, int clust_size )
       jVert[j]=jSum-jVert[j];
       for(auto &it : jVert[j])
 	for(auto &jt : it)
-	  jt/=nconf-clust_size;
+	  jt/=(nconf-clust_size)*nhits;
     }
   
   return jVert;
@@ -495,6 +495,7 @@ int main(int narg,char **arg)
   int clust_size=nconfs/njacks;
   int conf_id[nconfs];
   double L=stod(arg[4]),T=stod(arg[5]);
+  size_t nhits=2; //!!!
   
   for(int iconf=0;iconf<nconfs;iconf++)
     conf_id[iconf]=stoi(arg[6])+iconf*stoi(arg[7]);
@@ -550,7 +551,7 @@ int main(int narg,char **arg)
    double g2_tilde=g2/plaquette;
 
    //delta m_cr
-   double deltam_cr = 0.23;
+   double deltam_cr = 0.230697;
 
    cout<<"Beta = "<<beta<<endl;
    cout<<"Plaquette = "<<plaquette<<endl;
@@ -581,54 +582,58 @@ int main(int narg,char **arg)
   jvert_t jVert_em(valarray<qline_t>(valarray<prop_t>(prop_t::Zero(),16),mom_list.size()),njacks);
   
   for(int iconf=0;iconf<nconfs;iconf++)
-    {
-      cout<<"\r \t "<<(iconf+1)*100/nconfs<<"%"<<flush; //print percent progress
+    for(size_t ihit=0;ihit<nhits;ihit++)
+      {
+	cout<<"\r \t "<<(iconf+1)*100/nconfs<<"%"<<flush; //print percent progress
+	
+	int ijack=iconf/clust_size;
 
-      int ijack=iconf/clust_size;
-      
-      //read props
-      vprop_t S_0 = read_prop(path_to_conf(conf_id[iconf],"SPECT0")); //QCD
-      
-      vprop_t S_1ph = read_prop(path_to_conf(conf_id[iconf],"SPECT0_F")); //QCD + 1 photon insertion
-      vprop_t S_2ph = read_prop(path_to_conf(conf_id[iconf],"SPECT0_FF")); //QCD + 2 photons insertion
-      vprop_t S_t = read_prop(path_to_conf(conf_id[iconf],"SPECT0_T")); //QCD + tadpole insertion
-      vprop_t S_p = read_prop(path_to_conf(conf_id[iconf],"SPECT0_P")); //QCD + pseudoscalar insertion
-      //vprop_t S_s = read_prop(path_to_conf(conf_id[iconf],"SPECT0_S")); //QCD + scalar insertion
-      
-      for(auto &p : S_p) p*=complex<double>(0.0,-1.0);
-      
-      for(size_t imom=0;imom<mom_list.size();imom++)
-	{
-	  //create vertex functions with the i_mom momentum
-	  qline_t Vert_0=make_vertex(S_0, S_0, imom, GAMMA);
-	  
-	  qline_t Vert_11=make_vertex(S_1ph, S_1ph, imom, GAMMA);
-	  
-	  qline_t Vert_02=make_vertex(S_0, S_2ph, imom, GAMMA);
-	  qline_t Vert_20=make_vertex(S_2ph, S_0, imom, GAMMA);
-	  
-	  qline_t Vert_0t=make_vertex(S_0, S_t, imom, GAMMA);
-	  qline_t Vert_t0=make_vertex(S_t, S_0, imom, GAMMA);
-	  
-	  qline_t Vert_0p=make_vertex(S_0, S_p, imom, GAMMA);
-	  qline_t Vert_p0=make_vertex(S_p, S_0, imom, GAMMA);
-	  
-	  // qline_t Vert_0s = make_vertex(S_0, S_s, imom, GAMMA);
-	  // qline_t Vert_s0 = make_vertex(S_s, S_0, imom, GAMMA);
-	  
-	  
-	  //create pre-jackknife propagator
-	  jS_0[ijack][imom] += S_0[imom];
-	  jS_self_tad[ijack][imom] += S_2ph[imom] + S_t[imom];
-	  jS_p[ijack][imom] += S_p[imom];
-	  
-	  //create pre-jackknife vertex
-	  jVert_0[ijack][imom] += Vert_0;
-	  jVert_11_self_tad[ijack][imom] += Vert_11 + Vert_02 + Vert_20 + Vert_0t + Vert_t0;
-	  jVert_p[ijack][imom] += Vert_0p + Vert_p0;
-
-	}
-    }
+	string hit_suffix = "";
+	if(nhits>1) string hit_suffix = "_hit_"+to_string(ihit);
+	
+	//read props
+	vprop_t S_0 = read_prop(path_to_conf(conf_id[iconf],"SPECT0"+hit_suffix)); //QCD
+	
+	vprop_t S_1ph = read_prop(path_to_conf(conf_id[iconf],"SPECT0_F"+hit_suffix)); //QCD + 1 photon insertion
+	vprop_t S_2ph = read_prop(path_to_conf(conf_id[iconf],"SPECT0_FF"+hit_suffix)); //QCD + 2 photons insertion
+	vprop_t S_t = read_prop(path_to_conf(conf_id[iconf],"SPECT0_T"+hit_suffix)); //QCD + tadpole insertion
+	vprop_t S_p = read_prop(path_to_conf(conf_id[iconf],"SPECT0_P"+hit_suffix)); //QCD + pseudoscalar insertion
+	//vprop_t S_s = read_prop(path_to_conf(conf_id[iconf],"SPECT0_S")); //QCD + scalar insertion
+	
+	for(auto &p : S_p) p*=complex<double>(0.0,-1.0);
+	
+	for(size_t imom=0;imom<mom_list.size();imom++)
+	  {
+	    //create vertex functions with the i_mom momentum
+	    qline_t Vert_0=make_vertex(S_0, S_0, imom, GAMMA);
+	    
+	    qline_t Vert_11=make_vertex(S_1ph, S_1ph, imom, GAMMA);
+	    
+	    qline_t Vert_02=make_vertex(S_0, S_2ph, imom, GAMMA);
+	    qline_t Vert_20=make_vertex(S_2ph, S_0, imom, GAMMA);
+	    
+	    qline_t Vert_0t=make_vertex(S_0, S_t, imom, GAMMA);
+	    qline_t Vert_t0=make_vertex(S_t, S_0, imom, GAMMA);
+	    
+	    qline_t Vert_0p=make_vertex(S_0, S_p, imom, GAMMA);
+	    qline_t Vert_p0=make_vertex(S_p, S_0, imom, GAMMA);
+	    
+	    // qline_t Vert_0s = make_vertex(S_0, S_s, imom, GAMMA);
+	    // qline_t Vert_s0 = make_vertex(S_s, S_0, imom, GAMMA);
+	    
+	    
+	    //create pre-jackknife propagator
+	    jS_0[ijack][imom] += S_0[imom];
+	    jS_self_tad[ijack][imom] += S_2ph[imom] + S_t[imom];
+	    jS_p[ijack][imom] += S_p[imom];
+	    
+	    //create pre-jackknife vertex
+	    jVert_0[ijack][imom] += Vert_0;
+	    jVert_11_self_tad[ijack][imom] += Vert_11 + Vert_02 + Vert_20 + Vert_0t + Vert_t0;
+	    jVert_p[ijack][imom] += Vert_0p + Vert_p0;
+	    
+	  }
+      }
   
   cout<<endl;
   
@@ -636,15 +641,15 @@ int main(int narg,char **arg)
   
   cout<<"   Jackknife of propagators (1/2)"<<endl;
   //compute fluctuations of the propagator
-  jS_0 = jackknife_prop(jS_0,nconfs,clust_size);
-  jS_self_tad = jackknife_prop(jS_self_tad,nconfs,clust_size);
-  jS_p = jackknife_prop(jS_p,nconfs,clust_size);
+  jS_0 = jackknife_prop(jS_0,nconfs,clust_size,nhits);
+  jS_self_tad = jackknife_prop(jS_self_tad,nconfs,clust_size,nhits);
+  jS_p = jackknife_prop(jS_p,nconfs,clust_size,nhits);
   
   cout<<"   Jackknife of vertices (2/2)"<<endl;
   //compute fluctuations of the vertex
-  jVert_0 = jackknife_vertex(jVert_0,nconfs,clust_size);
-  jVert_11_self_tad = jackknife_vertex(jVert_11_self_tad,nconfs,clust_size);
-  jVert_p = jackknife_vertex(jVert_p,nconfs,clust_size);
+  jVert_0 = jackknife_vertex(jVert_0,nconfs,clust_size,nhits);
+  jVert_11_self_tad = jackknife_vertex(jVert_11_self_tad,nconfs,clust_size,nhits);
+  jVert_p = jackknife_vertex(jVert_p,nconfs,clust_size,nhits);
 
   //define em propagator and vertex
   for(int ijack=0;ijack<njacks;ijack++)
