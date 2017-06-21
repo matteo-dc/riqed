@@ -429,8 +429,54 @@ double subtract(vector<double> c, double f, double p2, double p4, double g2_tild
   return f_new;  
 }
 
+//compute fit parameters for deltam_cr
+  vvd_t compute_deltam_cr_fit_parameters(vvd_t y, vd_t error, int njacks, double t_min, double t_max)
+{
+  //int T=(int)y[0].size();
+  
+  double S=0.0,Sx=0.0,Sxx=0.0;
+  vd_t Sy(0.0,njacks), Sxy(0.0,njacks);
+  vvd_t fit_parameter(vd_t(0.0,2),njacks); 
+  
+  for(int t=t_min;t<t_max;t++)
+    {
+      S+=1/(error[t]*error[t]);
+      Sx+= t/(error[t]*error[t]);
+      Sxx+= t*t/(error[t]*error[t]);
+      
+      for(int ijack=0;ijack<njacks;ijack++)
+	{	     
+	  Sy[ijack]+= y[ijack][t]/(error[t]*error[t]);
+	  Sxy[ijack]+= t*y[ijack][t]/(error[t]*error[t]);
+	}
+    }
+
+   for(int t=t_max+1;t<t_max+t_min+1;t++)
+    {
+      S+=1/(error[t]*error[t]);
+      Sx+= t/(error[t]*error[t]);
+      Sxx+= t*t/(error[t]*error[t]);
+      
+      for(int ijack=0;ijack<njacks;ijack++)
+	{	     
+	  Sy[ijack]+= y[ijack][t]/(error[t]*error[t]);
+	  Sxy[ijack]+= t*y[ijack][t]/(error[t]*error[t]);
+	}
+    }
+  
+  for(int ijack=0;ijack<njacks;ijack++)  // y = m*x + q
+    {
+      fit_parameter[ijack][0]=(S*Sxy[ijack]-Sx*Sy[ijack])/(S*Sxx-Sx*Sx); //m
+      fit_parameter[ijack][1]=(Sxx*Sy[ijack]-Sx*Sxy[ijack])/(S*Sxx-Sx*Sx); //q
+    }
+  
+  
+  return fit_parameter;
+  
+}
+
 //compute fit parameters
-vvvd_t compute_fit_parameters(vd_t x, vd_t p4, vvvd_t y, vvd_t sigma, int tag, int njacks, double x_min, double x_max)
+vvvd_t compute_fit_parameters_filtered(vd_t x, vd_t p4, vvvd_t y, vvd_t sigma, int tag, int njacks, double x_min, double x_max)
 {
   
   vd_t S(0.0,6),Sx(0.0,6),Sxx(0.0,6);
@@ -541,24 +587,26 @@ vvd_t get_contraction(const string &name, const string &ID, const string &reim, 
 	  infile>>data_P5P5_real[t];
 	  infile>>data_P5P5_imag[t];	   
 	}
-       
-      for(int t=0; t<T; t++) jP5P5_real[ijack][t]+=data_P5P5_real[t];
-      for(int t=0; t<T; t++) jP5P5_imag[ijack][t]+=data_P5P5_imag[t];
+
       for(int t=0; t<T; t++) jV0P5_real[ijack][t]+=data_V0P5_real[t];
       for(int t=0; t<T; t++) jV0P5_imag[ijack][t]+=data_V0P5_imag[t];
-       
+      for(int t=0; t<T; t++) jP5P5_real[ijack][t]+=data_P5P5_real[t];
+      for(int t=0; t<T; t++) jP5P5_imag[ijack][t]+=data_P5P5_imag[t];
+
+      
       infile.close(); 
     }
-
+  
+  jV0P5_real=jackknife_double(jV0P5_real,T,nconfs,clust_size);
+  jV0P5_imag=jackknife_double(jV0P5_imag,T,nconfs,clust_size);
   jP5P5_real=jackknife_double(jP5P5_real,T,nconfs,clust_size);
   jP5P5_imag=jackknife_double(jP5P5_imag,T,nconfs,clust_size);
-  jV0P5_real=jackknife_double(jV0P5_real,T,nconfs,clust_size);
-  jV0P5_real=jackknife_double(jV0P5_imag,T,nconfs,clust_size);
 
-  vd_t mean_value(0.0,T), sqr_mean_value(0.0,T), error(0.0,T);
+  // vd_t mean_value(0.0,T), sqr_mean_value(0.0,T), error(0.0,T);
 
   vvd_t jvec(vd_t(0.0,T),njacks);
-  // vvd_t result(vd_t(0.0,2),T);
+  // vvvd_t jvec_and_error(vvd_t(vd_t(0.0,2),T),njacks);
+
 
   if(ID=="P5P5" and reim=="RE") jvec=jP5P5_real;
   if(ID=="P5P5" and reim=="IM") jvec=jP5P5_imag;
@@ -573,14 +621,17 @@ vvd_t get_contraction(const string &name, const string &ID, const string &reim, 
 	  sqr_mean_value[t]+=jvec[ijack][t]*jvec[ijack][t]/njacks;
 	}
       error[t]=sqrt((double)(njacks-1))*sqrt(sqr_mean_value[t]-mean_value[t]*mean_value[t]);
+    }   
 
-      //	cout<< t+1<<"\t" <<P5P5_real_mean_value[t] <<"\t"<< P5P5_real_error[t] <<endl;
-      result[t][0]=mean_value[t];
-      result[t][1]=error[t];
-      }   
-
-      return result;*/
+  for(int ijack=0;ijack<njacks;ijack++)
+     for(int t=0;t<T;t++)
+       {
+	 jvec_and_error[ijack][t][0]=jvec[ijack][t];
+	 jvec_and_error[ijack][t][1]=error[t];
+       }
   
+       return jvec_and_error;*/
+
   return jvec;
 
 }
@@ -670,11 +721,95 @@ int main(int narg,char **arg)
 
 
    vvd_t jP5P5_00=get_contraction("Spect0_Spect0","P5P5","RE",T,nconfs,njacks,conf_id);
-  
-     for(int i=0;i<T;i++)
-       cout<<i+1<<"\t"<<jP5P5_00[0][i]<<endl;
    
 
+   vd_t jP5P5_00_average(0.0,T), j2P5P5_00_average(0.0,T), jP5P5_00_error(0.0,T);
+   
+   for(int t=0; t<T; t++)
+     {
+       for(int ijack=0;ijack<njacks;ijack++)
+	 {
+	   jP5P5_00_average[t]+=jP5P5_00[ijack][t]/njacks;
+	   j2P5P5_00_average[t]+=jP5P5_00[ijack][t]*jP5P5_00[ijack][t]/njacks;
+	 }
+       jP5P5_00_error[t]=sqrt((double)(njacks-1))*sqrt(j2P5P5_00_average[t]- jP5P5_00_average[t]*jP5P5_00_average[t]);
+     }
+       
+   cout<<endl<<endl;
+   cout<<"p5p5"<<endl;
+   for(int t=0;t<T;t++)
+     cout<<t<<"\t"<<jP5P5_00_average[t]<<"\t"<< jP5P5_00_error[t]<<endl;
+   cout<<endl<<endl;
+  
+
+   
+   //load corrections
+   vvd_t jV0P5_LL=get_contraction("Spect0_F_Spect0_F","V0P5","IM",T,nconfs,njacks,conf_id);
+   vvd_t jV0P5_0M=get_contraction("Spect0_Spect0_FF","V0P5","IM",T,nconfs,njacks,conf_id);
+   vvd_t jV0P5_M0=get_contraction("Spect0_FF_Spect0","V0P5","IM",T,nconfs,njacks,conf_id);
+   vvd_t jV0P5_0T=get_contraction("Spect0_Spect0_T","V0P5","IM",T,nconfs,njacks,conf_id);
+   vvd_t jV0P5_T0=get_contraction("Spect0_T_Spect0","V0P5","IM",T,nconfs,njacks,conf_id);
+   //load the derivative wrt counterterm
+   vvd_t jV0P5_0P=get_contraction("Spect0_Spect0_P","V0P5","RE",T,nconfs,njacks,conf_id);
+   vvd_t jV0P5_P0=get_contraction("Spect0_P_Spect0","V0P5","RE",T,nconfs,njacks,conf_id);
+
+   vvd_t num_deltam_cr_corr(vd_t(0.0,T),njacks);
+   vvd_t den_deltam_cr_corr(vd_t(0.0,T),njacks);
+
+   vvd_t deltam_cr_corr(vd_t(0.0,T),njacks);
+   for(int ijack=0;ijack<njacks;ijack++)
+       for(int t=0;t<T;t++)
+	 {
+	   num_deltam_cr_corr[ijack][t]=jV0P5_LL[ijack][t]+jV0P5_0M[ijack][t]+jV0P5_M0[ijack][t]+jV0P5_0T[ijack][t]+jV0P5_T0[ijack][t]+jV0P5_0P[ijack][t]+jV0P5_P0[ijack][t];
+	   den_deltam_cr_corr[ijack][t]=-jV0P5_P0[ijack][t]+jV0P5_0P[ijack][t];
+	   deltam_cr_corr[ijack][t]=-num_deltam_cr_corr[ijack][t]/den_deltam_cr_corr[ijack][t];
+	 }
+
+    vd_t mean_value(0.0,T), sqr_mean_value(0.0,T), error(0.0,T);
+    int t_min=12;
+    int t_max=24;
+    
+    for(int t=0;t<T;t++)
+    {
+      for(int ijack=0;ijack<njacks;ijack++)
+	{
+	  mean_value[t]+=deltam_cr_corr[ijack][t]/njacks;
+	  sqr_mean_value[t]+=deltam_cr_corr[ijack][t]*deltam_cr_corr[ijack][t]/njacks;
+	}
+      error[t]=sqrt((double)(njacks-1))*sqrt(sqr_mean_value[t]-mean_value[t]*mean_value[t]);
+    }   
+
+  vvd_t deltam_cr_fit_parameters=compute_deltam_cr_fit_parameters(deltam_cr_corr,error,njacks,t_min,t_max);
+
+  cout<<"  "<<endl<<endl;
+  for(int t=t_min;t<t_max;t++)
+    {
+      cout<<t<<"\t"<<deltam_cr_corr[0][t]<<"\t"<<error[t]<<endl;
+    }
+  cout<<"  "<<endl<<endl;
+ for(int t=t_min;t<t_max;t++)
+    {
+      cout<<t<<"\t"<<mean_value[t]<<"\t"<<error[t]<<endl;
+    }
+   cout<<"  "<<endl<<endl;
+   
+  
+  double m=0.0, m2=0.0, q=0.0, q2=0.0, m_error=0.0, q_error=0.0;
+
+   for(int ijack=0;ijack<njacks;ijack++)
+	{
+	  m+=deltam_cr_fit_parameters[ijack][0]/njacks;
+	  m2+=deltam_cr_fit_parameters[ijack][0]*deltam_cr_fit_parameters[ijack][0]/njacks;
+	  q+=deltam_cr_fit_parameters[ijack][1]/njacks;
+	  q2+=deltam_cr_fit_parameters[ijack][1]*deltam_cr_fit_parameters[ijack][1]/njacks;
+	}
+   // m_error=sqrt((double)(njacks-1))*sqrt(m2-m*m);
+      q_error=sqrt((double)(njacks-1))*sqrt(q2-q*q);
+
+      cout<<"deltam_cd: "<<q<<" +- "<<q_error<<endl;
+  
+      //  for(int t=0;t<T;t++) cout<<t<<"\t"<< deltam_cr_corr[0][t]<<endl;
+   
    //delta m_cr
    double deltam_cr = 0.230697;
 
@@ -1235,8 +1370,8 @@ int main(int narg,char **arg)
   //Fit parameters before and after the correction
   
     
-  vvvd_t jfit_parameters=compute_fit_parameters(p2_eq,p4_eq,jZ_average,Z_error,tag,njacks,p2fit_min,p2fit_max);
-  vvvd_t jfit_parameters_corr=compute_fit_parameters(p2_eq,p4_eq,jZ_corr_average,Z_corr_error,tag,njacks,p2fit_min,p2fit_max);
+  vvvd_t jfit_parameters=compute_fit_parameters_filtered(p2_eq,p4_eq,jZ_average,Z_error,tag,njacks,p2fit_min,p2fit_max);
+  vvvd_t jfit_parameters_corr=compute_fit_parameters_filtered(p2_eq,p4_eq,jZ_corr_average,Z_corr_error,tag,njacks,p2fit_min,p2fit_max);
 
   vd_t A(0.0,6), B(0.0,6), A_error(0.0,6), B_error(0.0,6), A2(0.0,6), B2(0.0,6);
   vd_t A_corr(0.0,6), B_corr(0.0,6), A_corr_error(0.0,6), B_corr_error(0.0,6), A2_corr(0.0,6), B2_corr(0.0,6);
