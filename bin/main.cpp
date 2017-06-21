@@ -190,6 +190,33 @@ string path_to_conf(int i_conf,const string &name)
   return path;
 }
 
+//create the path-string to the contraction
+string path_to_contr(int i_conf,const string &name)
+{
+  char path[1024];
+  sprintf(path,"out/%04d/mes_contr_%s",i_conf,name.c_str());
+  return path;
+}
+
+//jackknife Propagator
+vvd_t jackknife_double(  vvd_t &jd, int size, int nconf, int clust_size )
+{
+  vd_t jSum(0.0,size);
+
+  //sum of jd
+  for(size_t j=0;j<jd.size();j++) jSum+= jd[j];
+  //jackknife fluctuation
+  for(size_t j=0;j<jd.size();j++)
+    {
+      jd[j]=jSum-jd[j];
+      for(auto &it : jd[j])
+	it/=(nconf-clust_size);
+    }
+
+  return jd;
+}
+
+
 
 //jackknife Propagator
 jprop_t jackknife_prop(  jprop_t &jS, int nconf, int clust_size, size_t nhits )
@@ -474,6 +501,95 @@ void print_file_filtered(const char* name_file, vd_t p2, vd_t p4, vvd_t Z, vvd_t
   else cout << "Unable to open the output file "<<name_file<<endl;
 }
 
+
+
+vvd_t get_contraction(const string &name, const string &ID, const string &reim, const int T, const int nconfs, const int njacks , const int* conf_id)
+{
+   
+  vd_t data_V0P5_real(0.0,T);
+  vd_t data_V0P5_imag(0.0,T);
+  vd_t data_P5P5_real(0.0,T);
+  vd_t data_P5P5_imag(0.0,T);
+  
+  vvd_t jP5P5_real(vd_t(0.0,T),njacks);
+  vvd_t jP5P5_imag(vd_t(0.0,T),njacks);
+  vvd_t jV0P5_real(vd_t(0.0,T),njacks);
+  vvd_t jV0P5_imag(vd_t(0.0,T),njacks);
+
+  int clust_size=nconfs/njacks;
+   
+  for(int iconf=0;iconf<nconfs;iconf++)
+    {
+      int ijack=iconf/clust_size;
+       
+      ifstream infile;
+      infile.open(path_to_contr(conf_id[iconf],name.c_str()));
+      infile.ignore(256,'5');
+      
+       
+      for(int t=0; t<T; t++)
+	{
+	  infile>>data_V0P5_real[t];
+	  infile>>data_V0P5_imag[t];	   
+	}
+       
+      infile.ignore(256,'5');
+      infile.ignore(256,'5');
+       
+      for(int t=0; t<T; t++)
+	{
+	  infile>>data_P5P5_real[t];
+	  infile>>data_P5P5_imag[t];	   
+	}
+       
+      for(int t=0; t<T; t++) jP5P5_real[ijack][t]+=data_P5P5_real[t];
+      for(int t=0; t<T; t++) jP5P5_imag[ijack][t]+=data_P5P5_imag[t];
+      for(int t=0; t<T; t++) jV0P5_real[ijack][t]+=data_V0P5_real[t];
+      for(int t=0; t<T; t++) jV0P5_imag[ijack][t]+=data_V0P5_imag[t];
+       
+      infile.close(); 
+    }
+
+  jP5P5_real=jackknife_double(jP5P5_real,T,nconfs,clust_size);
+  jP5P5_imag=jackknife_double(jP5P5_imag,T,nconfs,clust_size);
+  jV0P5_real=jackknife_double(jV0P5_real,T,nconfs,clust_size);
+  jV0P5_real=jackknife_double(jV0P5_imag,T,nconfs,clust_size);
+
+  vd_t mean_value(0.0,T), sqr_mean_value(0.0,T), error(0.0,T);
+
+  vvd_t jvec(vd_t(0.0,T),njacks);
+  // vvd_t result(vd_t(0.0,2),T);
+
+  if(ID=="P5P5" and reim=="RE") jvec=jP5P5_real;
+  if(ID=="P5P5" and reim=="IM") jvec=jP5P5_imag;
+  if(ID=="V0P5" and reim=="RE") jvec=jV0P5_real;
+  if(ID=="V0P5" and reim=="IM") jvec=jV0P5_imag;
+   
+  /* for(int t=0;t<T;t++)
+    {
+      for(int ijack=0;ijack<njacks;ijack++)
+	{
+	  mean_value[t]+=jvec[ijack][t]/njacks;
+	  sqr_mean_value[t]+=jvec[ijack][t]*jvec[ijack][t]/njacks;
+	}
+      error[t]=sqrt((double)(njacks-1))*sqrt(sqr_mean_value[t]-mean_value[t]*mean_value[t]);
+
+      //	cout<< t+1<<"\t" <<P5P5_real_mean_value[t] <<"\t"<< P5P5_real_error[t] <<endl;
+      result[t][0]=mean_value[t];
+      result[t][1]=error[t];
+      }   
+
+      return result;*/
+  
+  return jvec;
+
+}
+
+
+
+
+
+
 /***********************************************************/
 /*************************** main **************************/
 /***********************************************************/
@@ -503,7 +619,7 @@ int main(int narg,char **arg)
   double p2fit_min=stod(arg[8]);
   double p2fit_max=stod(arg[9]);
 
-  const double use_tad = 1.0;
+  // const double use_tad = 1.0;
 
   cout<<"N confs = "<<nconfs<<endl;
   cout<<"N jacks = "<<njacks<<endl;
@@ -552,6 +668,13 @@ int main(int narg,char **arg)
    double g2=6.0/beta;
    double g2_tilde=g2/plaquette;
 
+
+   vvd_t jP5P5_00=get_contraction("Spect0_Spect0","P5P5","RE",T,nconfs,njacks,conf_id);
+  
+     for(int i=0;i<T;i++)
+       cout<<i+1<<"\t"<<jP5P5_00[0][i]<<endl;
+   
+
    //delta m_cr
    double deltam_cr = 0.230697;
 
@@ -561,6 +684,7 @@ int main(int narg,char **arg)
    
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+   
   read_mom_list(arg[1]);
 
   cout<<"Read: "<<mom_list.size()<<" momenta."<<endl<<endl;
@@ -626,12 +750,12 @@ int main(int narg,char **arg)
 	    
 	    //create pre-jackknife propagator
 	    jS_0[ijack][imom] += S_0[imom];
-	    jS_self_tad[ijack][imom] += S_2ph[imom] + use_tad*S_t[imom];
+	    jS_self_tad[ijack][imom] += S_2ph[imom] + S_t[imom];
 	    jS_p[ijack][imom] += S_p[imom];
 	    
 	    //create pre-jackknife vertex
 	    jVert_0[ijack][imom] += Vert_0;
-	    jVert_11_self_tad[ijack][imom] += Vert_11 + Vert_02 + Vert_20 + use_tad*Vert_0t + use_tad*Vert_t0;
+	    jVert_11_self_tad[ijack][imom] += Vert_11 + Vert_02 + Vert_20 + Vert_0t + Vert_t0;
 	    jVert_p[ijack][imom] += Vert_0p + Vert_p0;
 	    
 	  }
