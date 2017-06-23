@@ -166,7 +166,7 @@ vprop_t make_gamma()
   size_t ind1[6]={2,3,1,4,4,4};
   size_t ind2[6]={3,1,2,1,2,3}; 
   for(int i=0;i<6;i++)
-      gam[10+i]=0.5*(gam[ind1[i]]*gam[ind2[i]]-gam[ind2[i]]*gam[ind1[i]]);
+    gam[10+i]=0.5*(gam[ind1[i]]*gam[ind2[i]]-gam[ind2[i]]*gam[ind1[i]]);
 
   return gam;
 }
@@ -393,29 +393,29 @@ vvvdcompl_t project(vprop_t GAMMA, const valarray< valarray<qline_t> > &jLambda,
   for(int igam=10;igam<16;igam++)  //tensor
     P[igam]=GAMMA[igam].adjoint()/6.;
   
- for(int ijack=0;ijack<njacks;ijack++)
-     for(size_t imom=0;imom<mom_list.size();imom++)
-       {
-	 L_proj[ijack][imom][0]=jLambda[ijack][imom][0]*P[0];
+  for(int ijack=0;ijack<njacks;ijack++)
+    for(size_t imom=0;imom<mom_list.size();imom++)
+      {
+	L_proj[ijack][imom][0]=jLambda[ijack][imom][0]*P[0];
 	 
-	 for(int igam=1;igam<5;igam++)
-	   L_proj[ijack][imom][1]+=jLambda[ijack][imom][igam]*P[igam];
+	for(int igam=1;igam<5;igam++)
+	  L_proj[ijack][imom][1]+=jLambda[ijack][imom][igam]*P[igam];
 	 
-	 L_proj[ijack][imom][2]=jLambda[ijack][imom][5]*P[5];
+	L_proj[ijack][imom][2]=jLambda[ijack][imom][5]*P[5];
 	 
-	 for(int igam=6;igam<10;igam++)  
-	   L_proj[ijack][imom][3]+=jLambda[ijack][imom][igam]*P[igam];
+	for(int igam=6;igam<10;igam++)  
+	  L_proj[ijack][imom][3]+=jLambda[ijack][imom][igam]*P[igam];
 	 
 	 
-	 for(int igam=10;igam<16;igam++)  
-	   L_proj[ijack][imom][4]+=jLambda[ijack][imom][igam]*P[igam];
+	for(int igam=10;igam<16;igam++)  
+	  L_proj[ijack][imom][4]+=jLambda[ijack][imom][igam]*P[igam];
 	 
-	 for(int j=0;j<5;j++)
+	for(int j=0;j<5;j++)
 	  jG[ijack][imom][j]=L_proj[ijack][imom][j].trace()/12.;
 	  
-       }
+      }
  
- return jG;
+  return jG;
  
 }
 
@@ -429,8 +429,63 @@ double subtract(vector<double> c, double f, double p2, double p4, double g2_tild
   return f_new;  
 }
 
+//compute fit parameters for a generic function f(x)=A+B*x+C*y(x)+D*z(x)+... 
+vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int range_min, const int range_max)
+{
+  int n_par = coord.size();
+  int njacks = y.size(); 
+
+  MatrixXd S(n_par,n_par);
+  valarray<VectorXd> Sy(VectorXd(n_par),njacks);
+  valarray<VectorXd> jpars(VectorXd(n_par),njacks);
+
+  //initialization
+  S=MatrixXd::Zero(n_par,n_par);
+  for(int ijack=0; ijack<njacks; ijack++)
+    {
+      Sy[ijack]=VectorXd::Zero(n_par);
+      jpars[ijack]=VectorXd::Zero(n_par);
+    }
+
+  //definition
+  for(int i=range_min; i<=range_max; i++)
+    {
+      for(int j=0; j<n_par; j++)
+	for(int k=0; k<n_par; k++)
+	  S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
+
+      for(int ijack=0; ijack<njacks; ijack++)
+	for(int k=0; k<n_par; k++)
+	  Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]); 
+    }
+
+  for(int ijack=0; ijack<njacks; ijack++)
+    jpars[ijack] = S.colPivHouseholderQr().solve(Sy[ijack]);
+
+  vvd_t par_array(vd_t(0.0,2),n_par);
+
+  vd_t par_ave(0.0,n_par), par2_ave(0.0,n_par), par_err(0.0,n_par);
+
+  for(int k=0; k<n_par; k++)
+    {
+      for(int ijack=0;ijack<njacks;ijack++)
+	{
+	  par_ave[k]+=jpars[ijack](k)/njacks;
+	  par2_ave[k]+=jpars[ijack](k)*jpars[ijack](k)/njacks;
+	}
+      par_err[k]=sqrt((double)(njacks-1))*sqrt(par2_ave[k]-par_ave[k]*par_ave[k]);
+      
+      par_array[k][0] = par_ave[k];
+      par_array[k][1] = par_err[k];
+    }
+
+  return par_array;
+  
+}
+
+
 //compute fit parameters for deltam_cr
-  vvd_t compute_correlator_fit_parameters(vvd_t y, vd_t error, int njacks, double t_min, double t_max)
+vvd_t compute_correlator_fit_parameters(vvd_t y, vd_t error, int njacks, double t_min, double t_max)
 {
   //int T=(int)y[0].size();
   
@@ -452,23 +507,23 @@ double subtract(vector<double> c, double f, double p2, double p4, double g2_tild
     }
 
   /*  for(int t=t_max+1;t<t_max+t_min+1;t++)
-    {
+      {
       S+=1/(error[t]*error[t]);
       Sx+= t/(error[t]*error[t]);
       Sxx+= t*t/(error[t]*error[t]);
       
       for(int ijack=0;ijack<njacks;ijack++)
-	{	     
-	  Sy[ijack]+= y[ijack][t]/(error[t]*error[t]);
-	  Sxy[ijack]+= t*y[ijack][t]/(error[t]*error[t]);
-	}
-	}*/
+      {	     
+      Sy[ijack]+= y[ijack][t]/(error[t]*error[t]);
+      Sxy[ijack]+= t*y[ijack][t]/(error[t]*error[t]);
+      }
+      }*/
   
   for(int ijack=0;ijack<njacks;ijack++)  // y = m*x + q
     {
       fit_parameter[ijack][0]=(S*Sxy[ijack]-Sx*Sy[ijack])/(S*Sxx-Sx*Sx); //m
       fit_parameter[ijack][1]=(Sxx*Sy[ijack]-Sx*Sxy[ijack])/(S*Sxx-Sx*Sx); //q
-      }
+    }
   
   
   return fit_parameter;
@@ -600,10 +655,7 @@ vvd_t get_contraction(const string &name, const string &ID, const string &reim, 
   jP5P5_real=jackknife_double(jP5P5_real,T,nconfs,clust_size);
   jP5P5_imag=jackknife_double(jP5P5_imag,T,nconfs,clust_size);
 
-  // vd_t mean_value(0.0,T), sqr_mean_value(0.0,T), error(0.0,T);
-
   vvd_t jvec(vd_t(0.0,T),njacks);
-  // vvvd_t jvec_and_error(vvd_t(vd_t(0.0,2),T),njacks);
 
   if(ID=="P5P5" and reim=="RE") jvec=jP5P5_real;
   if(ID=="P5P5" and reim=="IM") jvec=jP5P5_imag;
@@ -625,25 +677,6 @@ vvd_t get_contraction(const string &name, const string &ID, const string &reim, 
       for(int t=0;t<T/2+1;t++)
 	jvec_par[ijack][t]=(jvec[ijack][t]+par*jvec_sym[ijack][t])/2.0;
     }
-
-  /* for(int t=0;t<T;t++)
-    {
-      for(int ijack=0;ijack<njacks;ijack++)
-	{
-	  mean_value[t]+=jvec[ijack][t]/njacks;
-	  sqr_mean_value[t]+=jvec[ijack][t]*jvec[ijack][t]/njacks;
-	}
-      error[t]=sqrt((double)(njacks-1))*sqrt(sqr_mean_value[t]-mean_value[t]*mean_value[t]);
-    }   
-
-  for(int ijack=0;ijack<njacks;ijack++)
-     for(int t=0;t<T;t++)
-       {
-	 jvec_and_error[ijack][t][0]=jvec[ijack][t];
-	 jvec_and_error[ijack][t][1]=error[t];
-       }
-  
-       return jvec_and_error;*/
 
   return jvec_par;
 
@@ -700,13 +733,13 @@ double solve_Newton (vvd_t C, int ijack, int t, const int T)
   //   cerr<<"Newton's method did not converge for the jackknife n. "<<ijack<<" in "<<max_iteration<<" iterations. The value is "<<x1<<endl;
   // else cout<<"Jackknife n. "<<ijack<<" has converged with success to the value "<<x1<<" in "<<count_iteration<<" iterations"<<endl;
   
-   return x1;
+  return x1;
   
 }
 
 //compute delta m_cr
- vd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const int* conf_id)
- {
+vd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const int* conf_id)
+{
   
   //load corrections
   vvd_t jV0P5_LL=get_contraction("Spect0_F_Spect0_F","V0P5","IM","ODD",T,nconfs,njacks,conf_id);
@@ -722,6 +755,7 @@ double solve_Newton (vvd_t C, int ijack, int t, const int T)
   vvd_t den_deltam_cr_corr(vd_t(0.0,T/2+1),njacks);
   
   vvd_t deltam_cr_corr(vd_t(0.0,T/2+1),njacks);
+  
   for(int ijack=0;ijack<njacks;ijack++)
     for(int t=0;t<T/2+1;t++)
       {
@@ -731,8 +765,6 @@ double solve_Newton (vvd_t C, int ijack, int t, const int T)
       }
   
   vd_t mean_value(0.0,T/2+1), sqr_mean_value(0.0,T/2+1), error(0.0,T/2+1);
-  int t_min=12;
-  int t_max=24;
   
   for(int t=0;t<T/2+1;t++)
     {
@@ -742,40 +774,24 @@ double solve_Newton (vvd_t C, int ijack, int t, const int T)
 	  sqr_mean_value[t]+=deltam_cr_corr[ijack][t]*deltam_cr_corr[ijack][t]/njacks;
 	}
       error[t]=sqrt((double)(njacks-1))*sqrt(sqr_mean_value[t]-mean_value[t]*mean_value[t]);
-    }   
-  
-  vvd_t deltam_cr_fit_parameters = compute_correlator_fit_parameters(deltam_cr_corr,error,njacks,t_min,t_max);
-  
-  /*cout<<"  "<<endl<<endl;
-  for(int t=t_min;t<t_max;t++)
-    {
-      cout<<t<<"\t"<<deltam_cr_corr[0][t]<<"\t"<<error[t]<<endl;
-    }
-  cout<<"  "<<endl<<endl;
-  for(int t=t_min;t<t_max;t++)
-    {
-      cout<<t<<"\t"<<mean_value[t]<<"\t"<<error[t]<<endl;
-    }
-    cout<<"  "<<endl<<endl;*/
-  
-  //double m=0.0, m2=0.0, m_error=0.0;
-  double q=0.0, q2=0.0, q_error=0.0;
-  
-  for(int ijack=0;ijack<njacks;ijack++)
-    {
-      //m+=deltam_cr_fit_parameters[ijack][0]/njacks;
-      //m2+=deltam_cr_fit_parameters[ijack][0]*deltam_cr_fit_parameters[ijack][0]/njacks;
-      q+=deltam_cr_fit_parameters[ijack][1]/njacks;
-      q2+=deltam_cr_fit_parameters[ijack][1]*deltam_cr_fit_parameters[ijack][1]/njacks;
     }
 
-  // m_error=sqrt((double)(njacks-1))*sqrt(m2-m*m);
-  q_error=sqrt((double)(njacks-1))*sqrt(q2-q*q);
+  //t-range for the fit
+  int t_min=12;
+  int t_max=23;
+  
+  vvd_t coord(vd_t(0.0,T/2+1),1);
+  for(int j=0; j<T/2+1; j++)
+    {
+      coord[0][j] = 1.0;  //fit a costante
+    }
 
+  vvd_t deltam_cr_fit_parameters=fit_par(coord,error,deltam_cr_corr,t_min,t_max); 
+  
   vd_t deltam_cr(2);
-  deltam_cr[0]=q;
-  deltam_cr[1]=q_error;
-
+  deltam_cr[0]=deltam_cr_fit_parameters[0][0]; 
+  deltam_cr[1]=deltam_cr_fit_parameters[0][1]; 
+  
   return deltam_cr;
 }
 
@@ -789,8 +805,6 @@ vd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const int
   for(int ijack=0; ijack<njacks;ijack++)
     for(int t=0;t<T/2;t++)
       M_eff[ijack][t] = solve_Newton (jP5P5,ijack,t,T);
-  
-  //for(int t=0;t<T/2-1;t++) cout<<t<<"\t"<<M_eff[0][t]<<endl;
   
   vd_t mass_ave(0.0,T/2), sqr_mass_ave(0.0,T/2), mass_err(0.0,T/2);
   
@@ -806,38 +820,25 @@ vd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const int
       cout<<t<<"\t"<<mass_ave[t]<<"\t"<<mass_err[t]<<endl;
       
     }
+
+  //t-range for the fit
+  int t_min=12;
+  int t_max=23;
   
-   int t_min=23;
-   int t_max=24;
-   vvd_t eff_mass_fit_parameters = compute_correlator_fit_parameters(M_eff,mass_err,njacks,t_min,t_max);
-   
-   //double m_mass=0.0, m2_mass=0.0, m_mass_error=0.0;
-   double q_mass=0.0, q2_mass=0.0, q_mass_error=0.0;
-   
-   for(int ijack=0;ijack<njacks;ijack++)
-     {
-       //m_mass+=eff_mass_fit_parameters[ijack][0]/njacks;
-       //m2_mass+=eff_mass_fit_parameters[ijack][0]*eff_mass_fit_parameters[ijack][0]/njacks;
-      q_mass+=eff_mass_fit_parameters[ijack][1]/njacks;
-      q2_mass+=eff_mass_fit_parameters[ijack][1]*eff_mass_fit_parameters[ijack][1]/njacks;
-     }
-   
-   // m_mass_error=sqrt((double)(njacks-1))*sqrt(m2-m*m);
-  q_mass_error=sqrt((double)(njacks-1))*sqrt(q2_mass-q_mass*q_mass);
+  vvd_t coord(vd_t(0.0,T/2),1);
+  for(int j=0; j<T/2; j++)
+    {
+      coord[0][j] = 1.0;  //fit a costante
+    }
+ 
+  vvd_t eff_mass_fit_parameters=fit_par(coord,mass_err,M_eff,t_min,t_max); 
   
   vd_t eff_mass(2);
-  eff_mass[0]=q_mass;
-  eff_mass[1]=q_mass_error;
+  eff_mass[0]=eff_mass_fit_parameters[0][0]; //A_average
+  eff_mass[1]=eff_mass_fit_parameters[0][1]; //A_error
 
   return eff_mass;
 }
-
-
-
-
-
-
-
 
 
 /***********************************************************/
@@ -930,12 +931,12 @@ int main(int narg,char **arg)
   cout<<"Plaquette = "<<plaquette<<endl;
   cout<<"g2_tilde = "<<g2_tilde<<endl<<endl;
   
-  
+ 
  
   
   //Computation of the Effective Mass
   
- vd_t eff_mass_array = compute_eff_mass(T,nconfs,njacks,conf_id);
+  vd_t eff_mass_array = compute_eff_mass(T,nconfs,njacks,conf_id);
 
   cout<<"eff_mass: "<<eff_mass_array[0]<<" +- "<<eff_mass_array[1]<<endl;
   
@@ -1115,17 +1116,17 @@ int main(int narg,char **arg)
   vd_t p4(vd_t(0.0,mom_list.size()));  //for the democratic filter
     
   for(size_t imom=0;imom<mom_list.size();imom++)
-	{
-	  p[imom]={2*M_PI*mom_list[imom][1]/L,2*M_PI*mom_list[imom][2]/L,2*M_PI*mom_list[imom][3]/L,2*M_PI*(mom_list[imom][0]+0.5)/T};
-	  p_tilde[imom]={sin(p[imom][0]),sin(p[imom][1]),sin(p[imom][2]),sin(p[imom][3])};
+    {
+      p[imom]={2*M_PI*mom_list[imom][1]/L,2*M_PI*mom_list[imom][2]/L,2*M_PI*mom_list[imom][3]/L,2*M_PI*(mom_list[imom][0]+0.5)/T};
+      p_tilde[imom]={sin(p[imom][0]),sin(p[imom][1]),sin(p[imom][2]),sin(p[imom][3])};
 
-	  for(int coord=0;coord<4;coord++)
-	    p2[imom]+=p_tilde[imom][coord]*p_tilde[imom][coord];
-	  for(int coord=0;coord<3;coord++)
-	    p2_space[imom]+=p_tilde[imom][coord]*p_tilde[imom][coord];
-	  for(int coord=0;coord<4;coord++)
-	    p4[imom]+=p_tilde[imom][coord]*p_tilde[imom][coord]*p_tilde[imom][coord]*p_tilde[imom][coord]; //for the democratic filter
-	}
+      for(int coord=0;coord<4;coord++)
+	p2[imom]+=p_tilde[imom][coord]*p_tilde[imom][coord];
+      for(int coord=0;coord<3;coord++)
+	p2_space[imom]+=p_tilde[imom][coord]*p_tilde[imom][coord];
+      for(int coord=0;coord<4;coord++)
+	p4[imom]+=p_tilde[imom][coord]*p_tilde[imom][coord]*p_tilde[imom][coord]*p_tilde[imom][coord]; //for the democratic filter
+    }
   
   //Create new extended vector
   
@@ -1152,7 +1153,7 @@ int main(int narg,char **arg)
 	for(int i=0;i<5;i++) new_list[ijack][imom][14+i]=jZ1[ijack][imom][0+i].real();	
       }
 
-   for(int ijack=0;ijack<njacks;ijack++)
+  for(int ijack=0;ijack<njacks;ijack++)
     for(size_t imom=0;imom<mom_list.size();imom++)
       {
 	for(int i=0;i<4;i++)
@@ -1198,7 +1199,7 @@ int main(int narg,char **arg)
   
   //em corrections
   int tag_em=0;
-   for(size_t imom=0;imom<mom_list.size();imom++)
+  for(size_t imom=0;imom<mom_list.size();imom++)
     {
       size_t count=0;
       for(size_t i=0;i<imom;i++)
@@ -1283,7 +1284,7 @@ int main(int narg,char **arg)
   valarray< valarray< valarray< vector<double> > > > jZ1_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks);  // sigma1
   vvvd_t jZ1_average(vvd_t(vd_t(0.0,6),tag+1),njacks);
 
-   valarray< valarray< valarray< vector<double> > > > jZ_em_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks); //Zq RI'-MOM
+  valarray< valarray< valarray< vector<double> > > > jZ_em_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks); //Zq RI'-MOM
   vvvd_t jZ_em_average(vvd_t(vd_t(0.0,6),tag+1),njacks);
   
   valarray< valarray< valarray< vector<double> > > > jZ1_em_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks);  // sigma1
@@ -1441,7 +1442,7 @@ int main(int narg,char **arg)
   print_file_filtered("Z_em_filtered_sigma1.txt",p2_eq,p4_eq,Z1_em_mean_value,Z1_em_error,tag);
   
 
- cout<<"Averaging the corrected Z's corresponding to equivalent momenta and printing on the output file..."<<endl;
+  cout<<"Averaging the corrected Z's corresponding to equivalent momenta and printing on the output file..."<<endl;
 
   valarray< valarray< valarray< vector<double> > > > jZ_corr_same_tag(valarray<valarray<vector<double>>>(valarray<vector<double>>(6),tag+1),njacks);
   vvvd_t jZ_corr_average(vvd_t(vd_t(0.0,6),tag+1),njacks);
