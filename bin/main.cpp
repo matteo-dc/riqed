@@ -1435,11 +1435,11 @@ int main(int narg,char **arg)
 	     ieq++;  //ieq={00,01,02,03,11,12,13,22,23,33}
 	   }
 
-       for(int mA=0; mA<nm; mA++)
-       	 for(int mB=0; mB<nm; mB++)
-	   for(int ijack=0;ijack<njacks;ijack++)
-	     cout<<eff_mass[0+nr*mA][0+nr*mB]*eff_mass[0+nr*mA][0+nr*mB]<<"\t"<<jG_0[ijack][0+nr*mA][0+nr*mB][2]<<endl;
-       cout<<endl;
+       // for(int mA=0; mA<nm; mA++)
+       // 	 for(int mB=0; mB<nm; mB++)
+       // 	   for(int ijack=0;ijack<njacks;ijack++)
+       // 	     cout<<eff_mass[0+nr*mA][0+nr*mB]*eff_mass[0+nr*mA][0+nr*mB]<<"\t"<<jG_0[ijack][0+nr*mA][0+nr*mB][2]<<endl;
+       // cout<<endl;
        
        // for(int mA=0; mA<nm; mA++)
        // 	 for(int mB=0; mB<nm; mB++)
@@ -1492,8 +1492,8 @@ int main(int narg,char **arg)
 	   C_s[ijack]=jack_Gs_pars[ijack][2];
 	 }
 
-       // for(int ijack=0;ijack<njacks;ijack++) cout<<jack_Gp_pars[ijack][0]<<"  "<<jack_Gp_pars[ijack][1]<<"  "<<C_p[ijack]<<endl;
-       // cout<<endl;
+       for(int ijack=0;ijack<njacks;ijack++) cout<<jack_Gp_pars[ijack][0]<<"  "<<jack_Gp_pars[ijack][1]<<"  "<<C_p[ijack]<<endl;
+       cout<<endl;
   
        vvd_t jG_p_subpole(vd_t(neq),njacks), jG_s_subpole(vd_t(neq),njacks);
 
@@ -1529,9 +1529,9 @@ int main(int narg,char **arg)
   
   //jG_0[ijack][r+nr*mA][r+nr*mB][2]+jG_0[ijack][r+nr*mB][r+nr*mA][2]
   
-       // for(int i=0; i<neq; i++)
-       // 	 cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< jG_p_equivalent[0][i]<<"\t"<< jG_p_subpole[0][i]<<endl;
-       // cout<<endl;
+       for(int i=0; i<neq; i++)
+       	 cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< jG_p_equivalent[0][i]<<"\t"<< jG_p_subpole[0][i]<<endl;
+       cout<<endl;
     
    
   //  cout<<"\t"<<jZq_sub[0][0]<<endl<<endl;
