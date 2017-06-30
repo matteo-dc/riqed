@@ -103,7 +103,7 @@ void read_mom_list(const string &path)
 string path_to_conf(int i_conf,const string &name)
 {
   char path[1024];
-  sprintf(path,"out/%04d/fft_%s",i_conf,name.c_str());
+  sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/fft_%s",i_conf,name.c_str());
   return path;
 }
 
