@@ -1481,9 +1481,9 @@ int main(int narg,char **arg)
 	   Gs_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gs_ave[i]-Gs_ave[i]*Gs_ave[i]);      
 	 }
 
-
-       // for(int i=0;i<neq;i++) cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"  "<<Gp_ave[i]<<"  "<<Gp_err[i]<<endl; //////////
-       // cout<<endl;
+       cout<<"----- G_p average + error vs M^2 (for each jackknife) : error used for the fit ------"<<endl;
+       for(int i=0;i<neq;i++) cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"  "<<Gp_ave[i]<<"  "<<Gp_err[i]<<endl; //////////
+       cout<<endl;
       
        //range for the fit
        int t_min=0;
@@ -1508,6 +1508,7 @@ int main(int narg,char **arg)
 	   C_s[ijack]=jack_Gs_pars[ijack][2];
 	 }
 
+       cout<<"----- Goldstone fit parameters (for each jackknife) ------"<<endl;
        for(int ijack=0;ijack<njacks;ijack++) cout<<jack_Gp_pars[ijack][0]<<"  "<<jack_Gp_pars[ijack][1]<<"  "<<C_p[ijack]<<endl;
        cout<<endl;
   
@@ -1544,9 +1545,14 @@ int main(int narg,char **arg)
   //     }
   
   //jG_0[ijack][r+nr*mA][r+nr*mB][2]+jG_0[ijack][r+nr*mB][r+nr*mA][2]
-  
-       for(int i=0; i<neq; i++)
-       	 cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< jG_p_equivalent[0][i]<<"\t"<< jG_p_subpole[0][i]<<endl;
+       
+       cout<<"---- M^2  ---- jG_p ---- jG_p_SUB --- (for each jackknife)"<<endl;
+       for(int ijack=0; ijack<njacks; ijack++)
+	 {
+	   for(int i=0; i<neq; i++)
+	     cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< jG_p_equivalent[ijack][i]<<"\t"<< jG_p_subpole[ijack][i]<<endl;
+	   cout<<endl;
+	 }
        cout<<endl;
     
    
