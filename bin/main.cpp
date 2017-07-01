@@ -103,7 +103,7 @@ void read_mom_list(const string &path)
 string path_to_conf(int i_conf,const string &name)
 {
   char path[1024];
-  sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/fft_%s",i_conf,name.c_str());
+  sprintf(path,/*"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/*/"out/%04d/fft_%s",i_conf,name.c_str());
   return path;
 }
 
@@ -962,18 +962,18 @@ vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const i
 	eff_mass[mr_fw][mr_bw][1]=eff_mass_fit_parameters[mr_fw][mr_bw][0][1];
       }
 
-  //  cout<<"********DEBUG*****************************"<<endl; 
-  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-  //     {
-  // 	int r1 = mr_fw%nr;
-  // 	int m1 = (mr_fw-r1)/nr;
-  // 	int r2 = mr_bw%nr;
-  // 	int m2 = (mr_bw-r2)/nr;
+  cout<<"********DEBUG*****************************"<<endl; 
+  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+      {
+  	int r1 = mr_fw%nr;
+  	int m1 = (mr_fw-r1)/nr;
+  	int r2 = mr_bw%nr;
+  	int m2 = (mr_bw-r2)/nr;
   
-  // 	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  eff_mass: "<<eff_mass[mr_fw][mr_bw][0]<<" +- "<<eff_mass[mr_fw][mr_bw][1]<<endl;
-  //     }
-  // cout<<"********DEBUG*****************************"<<endl; 
+  	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  eff_mass: "<<eff_mass[mr_fw][mr_bw][0]<<" +- "<<eff_mass[mr_fw][mr_bw][1]<<endl;
+      }
+  cout<<"********DEBUG*****************************"<<endl; 
   
   return eff_mass;
 }
@@ -1067,21 +1067,25 @@ int main(int narg,char **arg)
   cout<<"g2_tilde = "<<g2_tilde<<endl<<endl;
 
   //delta m_cr
+
+   //DEBUG
+  cout<<"Computing deltam_cr. "<<endl;
+  //DEBUG
+  
   vvvd_t deltam_cr_array= compute_deltam_cr(T,nconfs,njacks,conf_id);
   
- 
-  // cout<<"********DEBUG*****************************"<<endl; 
-  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-  //     {
-  // 	int r1 = mr_fw%nr;
-  // 	int m1 = (mr_fw-r1)/nr;
-  // 	int r2 = mr_bw%nr;
-  // 	int m2 = (mr_bw-r2)/nr;
+  cout<<"********DEBUG*****************************"<<endl; 
+  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+      {
+  	int r1 = mr_fw%nr;
+  	int m1 = (mr_fw-r1)/nr;
+  	int r2 = mr_bw%nr;
+  	int m2 = (mr_bw-r2)/nr;
 	
-  // 	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  deltam_cr "<<deltam_cr_array[mr_fw][mr_bw][0]<<"+-"<<deltam_cr_array[mr_fw][mr_bw][1]<<endl;
-  //     }
-  // cout<<"********DEBUG*****************************"<<endl<<endl; 
+  	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  deltam_cr "<<deltam_cr_array[mr_fw][mr_bw][0]<<"+-"<<deltam_cr_array[mr_fw][mr_bw][1]<<endl;
+      }
+  cout<<"********DEBUG*****************************"<<endl<<endl; 
     
   
   vvd_t deltam_cr(vd_t(0.0,nmr),nmr);
@@ -1092,7 +1096,12 @@ int main(int narg,char **arg)
   //double deltam_cr = 0.230697;
   
   //Effective Mass
-  vvvd_t eff_mass_array = compute_eff_mass(T,nconfs,njacks,conf_id); 
+
+  //DEBUG
+  cout<<"Computing effective mass. "<<endl;
+  //DEBUG
+  
+  vvvd_t eff_mass_array = compute_eff_mass(T,nconfs,njacks,conf_id);
 
   vvd_t eff_mass(vd_t(0.0,nmr),nmr);
   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -1148,6 +1157,10 @@ int main(int narg,char **arg)
 		 string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
 		 
 		 input[icombo].open(path,ios::binary);
+
+		 //DEBUG
+		 cout<<"  Opening file "<<path<<endl;
+		 //DEBUG
 		 
 		 if(!input[icombo].good())
 		   {cerr<<"Unable to open file "<<path<<" combo "<<icombo<<endl;
@@ -1156,7 +1169,7 @@ int main(int narg,char **arg)
        }
    
    
-   for(size_t imom=0; imom<10; imom++)
+   for(size_t imom=0; imom<1; imom++)
      {
        // put to zero jackknife props and verts
        jprop_t jS_0(valarray<prop_t>(prop_t::Zero(),nmr),njacks);		
@@ -1193,13 +1206,11 @@ int main(int narg,char **arg)
 		       icombo++;
 		       string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
 		       
-		       // input[icombo].open(path,ios::binary);
-		       
-		       // if(!input[icombo].good())
-		       // 	 {cerr<<"Unable to open file "<<path<<endl;
-		       // exit(1);}
-		       
 		       int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
+
+		       //DEBUG
+		       cout<<"  Reading propagator from "<<path<<endl;
+		       //DEBUG
 		       
 		       //create all the propagators in a given conf and a given mom
 		       S[t][mr] = read_prop(input[icombo],path);
