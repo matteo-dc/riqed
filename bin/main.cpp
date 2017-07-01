@@ -9,9 +9,11 @@
 #include <Eigen/Dense>
 #include <valarray>
 #include <math.h>
+#include <chrono>
 
 using namespace std;
 using namespace Eigen;
+using namespace std::chrono;
 
 //coordinates in the lattice
 using coords_t=array<int,4>;
@@ -103,7 +105,7 @@ void read_mom_list(const string &path)
 string path_to_conf(int i_conf,const string &name)
 {
   char path[1024];
-  sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/fft_%s",i_conf,name.c_str());
+  sprintf(path,/*"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/*/"out/%04d/fft_%s",i_conf,name.c_str());
   return path;
 }
 
@@ -219,7 +221,7 @@ string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, 
   int m2 = (mr2-r2)/nr;
   
   char path[1024];
-  sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
+  sprintf(path,/*"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/*/"out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
 
   // cout<<path<<endl;
   
@@ -651,8 +653,12 @@ vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const stri
       
       infile.open(path_to_contr(conf_id[iconf],mr1,T1,mr2,T2));
 
+      if(!infile.good())
+	{cerr<<"Unable to open file "<<path_to_contr(conf_id[iconf],mr1,T1,mr2,T2)<<endl;
+	  exit(1);}
+
       //DEBUG
-      cout<<"  Reading contraction from "<<path_to_contr(conf_id[iconf],mr1,T1,mr2,T2)<<endl;
+      // cout<<"  Reading contraction from "<<path_to_contr(conf_id[iconf],mr1,T1,mr2,T2)<<endl;
       //DEBUG
       
       infile.ignore(256,'5');
@@ -967,18 +973,18 @@ vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const i
 	eff_mass[mr_fw][mr_bw][1]=eff_mass_fit_parameters[mr_fw][mr_bw][0][1];
       }
 
-  cout<<"********DEBUG*****************************"<<endl; 
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      {
-  	int r1 = mr_fw%nr;
-  	int m1 = (mr_fw-r1)/nr;
-  	int r2 = mr_bw%nr;
-  	int m2 = (mr_bw-r2)/nr;
+  // cout<<"********DEBUG*****************************"<<endl; 
+  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+  //     {
+  // 	int r1 = mr_fw%nr;
+  // 	int m1 = (mr_fw-r1)/nr;
+  // 	int r2 = mr_bw%nr;
+  // 	int m2 = (mr_bw-r2)/nr;
   
-  	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  eff_mass: "<<eff_mass[mr_fw][mr_bw][0]<<" +- "<<eff_mass[mr_fw][mr_bw][1]<<endl;
-      }
-  cout<<"********DEBUG*****************************"<<endl; 
+  // 	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  eff_mass: "<<eff_mass[mr_fw][mr_bw][0]<<" +- "<<eff_mass[mr_fw][mr_bw][1]<<endl;
+  //     }
+  // cout<<"********DEBUG*****************************"<<endl; 
   
   return eff_mass;
 }
@@ -991,6 +997,7 @@ vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const i
   
 int main(int narg,char **arg)
 {
+  high_resolution_clock::time_point t0=high_resolution_clock::now();
   
   if (narg!=11){
     cerr<<"Number of arguments not valid: <mom file> <nconfs> <njacks> <L> <T> <initial conf_id> <step conf_id> <p2fit min> <p2fit max> <action=sym/iwa>"<<endl;
@@ -1071,27 +1078,36 @@ int main(int narg,char **arg)
   cout<<"Plaquette = "<<plaquette<<endl;
   cout<<"g2_tilde = "<<g2_tilde<<endl<<endl;
 
+  high_resolution_clock::time_point t1=high_resolution_clock::now();
+  duration<double> t_span = duration_cast<duration<double>>(t1-t0);
+  cout<<"***** Assigned input values in  "<<t_span.count()<<" s ******"<<endl<<endl;
+
   //delta m_cr
 
    //DEBUG
   cout<<"Computing deltam_cr. "<<endl;
   //DEBUG
+
+  t0=high_resolution_clock::now();
   
   vvvd_t deltam_cr_array= compute_deltam_cr(T,nconfs,njacks,conf_id);
   
-  cout<<"********DEBUG*****************************"<<endl; 
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      {
-  	int r1 = mr_fw%nr;
-  	int m1 = (mr_fw-r1)/nr;
-  	int r2 = mr_bw%nr;
-  	int m2 = (mr_bw-r2)/nr;
+  // cout<<"********DEBUG*****************************"<<endl; 
+  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+  //     {
+  // 	int r1 = mr_fw%nr;
+  // 	int m1 = (mr_fw-r1)/nr;
+  // 	int r2 = mr_bw%nr;
+  // 	int m2 = (mr_bw-r2)/nr;
 	
-  	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  deltam_cr "<<deltam_cr_array[mr_fw][mr_bw][0]<<"+-"<<deltam_cr_array[mr_fw][mr_bw][1]<<endl;
-      }
-  cout<<"********DEBUG*****************************"<<endl<<endl; 
-    
+  // 	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  deltam_cr "<<deltam_cr_array[mr_fw][mr_bw][0]<<"+-"<<deltam_cr_array[mr_fw][mr_bw][1]<<endl;
+  //     }
+  // cout<<"********DEBUG*****************************"<<endl<<endl;
+
+  t1=high_resolution_clock::now();
+  t_span = duration_cast<duration<double>>(t1-t0);
+  cout<<"***** Computed Deltam_cr in  "<<t_span.count()<<" s ******"<<endl<<endl;
   
   vvd_t deltam_cr(vd_t(0.0,nmr),nmr);
   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -1105,8 +1121,15 @@ int main(int narg,char **arg)
   //DEBUG
   cout<<"Computing effective mass. "<<endl;
   //DEBUG
+
+  t0=high_resolution_clock::now();
   
   vvvd_t eff_mass_array = compute_eff_mass(T,nconfs,njacks,conf_id);
+
+  t1=high_resolution_clock::now();
+  t_span = duration_cast<duration<double>>(t1-t0);
+  cout<<endl;
+  cout<<"***** Computed Effective Mass in "<<t_span.count()<<" s ******"<<endl<<endl;
 
   vvd_t eff_mass(vd_t(0.0,nmr),nmr);
   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -1148,6 +1171,8 @@ int main(int narg,char **arg)
 
    int icombo=-1;
 
+   t0=high_resolution_clock::now();
+
    for(int iconf=0;iconf<nconfs;iconf++)
      for(size_t ihit=0;ihit<nhits;ihit++)
        {
@@ -1164,7 +1189,7 @@ int main(int narg,char **arg)
 		 input[icombo].open(path,ios::binary);
 
 		 //DEBUG
-		 cout<<"  Opening file "<<path<<endl;
+		 //cout<<"  Opening file "<<path<<endl;
 		 //DEBUG
 		 
 		 if(!input[icombo].good())
@@ -1172,6 +1197,10 @@ int main(int narg,char **arg)
 		     exit(1);}
 	       }
        }
+   
+   t1=high_resolution_clock::now();
+   t_span = duration_cast<duration<double>>(t1-t0);
+   cout<<"***** Opened all the files to read props in "<<t_span.count()<<" s ******"<<endl<<endl;
    
    
    for(size_t imom=0; imom<1; imom++)
@@ -1192,6 +1221,8 @@ int main(int narg,char **arg)
        
 
        icombo=-1;
+
+       t0=high_resolution_clock::now();
        
        for(int iconf=0;iconf<nconfs;iconf++)
 	 {
@@ -1214,7 +1245,7 @@ int main(int narg,char **arg)
 		       int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
 
 		       //DEBUG
-		       cout<<"  Reading propagator from "<<path<<endl;
+		       // cout<<"  Reading propagator from "<<path<<endl;
 		       //DEBUG
 		       
 		       //create all the propagators in a given conf and a given mom
@@ -1223,7 +1254,7 @@ int main(int narg,char **arg)
 		       if(t==4) S[t][mr]*=dcompl(0.0,-1.0);
 		       if(t==5) S[t][mr]*=dcompl(1.0,0.0);  
 		     }
-	       
+
 	       //create vertex functions with fixed momentum
 	       
 	       vert_t Vert_0=make_vertex(S[0], S[0], GAMMA);  //Vert_0[mr_fw][mr_bw][gamma]
@@ -1253,9 +1284,17 @@ int main(int narg,char **arg)
 	       jVert_11_self_tad[ijack] += Vert_11 + Vert_02 + Vert_20 + Vert_0t + Vert_t0;
 	       jVert_p[ijack] += Vert_0p + Vert_p0;
 	       // jVert_s[ijack] += Vert_0s + Vert_s0;
+
+	       
 	       
 	     } //close hits loop
 	 } //close confs loop
+
+       high_resolution_clock::time_point t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Read propagators and created vertices (and jackknives) in "<<t_span.count()<<" s ******"<<endl<<endl;
+
+       t0=high_resolution_clock::now();
        
        //jackknife of propagators
        jS_0 = jackknife_prop(jS_0,nconfs,clust_size,nhits);
@@ -1266,8 +1305,14 @@ int main(int narg,char **arg)
        jVert_0 = jackknife_vertex(jVert_0,nconfs,clust_size,nhits);
        jVert_11_self_tad = jackknife_vertex(jVert_11_self_tad,nconfs,clust_size,nhits);
        jVert_p = jackknife_vertex(jVert_p,nconfs,clust_size,nhits);
+
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Computed jackknives averages (prop&vert) in "<<t_span.count()<<" s ******"<<endl<<endl;
        
        //define em propagator and vertex
+       t0=high_resolution_clock::now();
+       
        for(int ijack=0;ijack<njacks;ijack++)
 	 for(int mr=0;mr<nmr;mr++)
 	   {
@@ -1276,37 +1321,67 @@ int main(int narg,char **arg)
 	       for(int igam=0;igam<16;igam++)
 		 jVert_em[ijack][mr][mr2][igam] = jVert_11_self_tad[ijack][mr][mr2][igam] - deltam_cr[mr][mr2]*jVert_p[ijack][mr][mr2][igam]; // + scalar correction
 	   }
+
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Created Electromagnetic props&verts in "<<t_span.count()<<" s ******"<<endl<<endl;
        
        //inverse of the propagators
+       t0=high_resolution_clock::now();
+       
        jprop_t jS_0_inv = invert_jprop(jS_0);         //jS_0_inv[ijack][mr]
        jprop_t jS_em_inv = jS_0_inv*jS_em*jS_0_inv;
+
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Inverted propagators in "<<t_span.count()<<" s ******"<<endl<<endl;
        
        //amputate external legs
+       t0=high_resolution_clock::now();
+       
        jvert_t jLambda_0 = amputate(jS_0_inv, jVert_0, jS_0_inv, GAMMA);     //jLambda_0[ijack][mr_fw][mr_bw][gamma]
        jvert_t jLambda_em = amputate(jS_0_inv, jVert_em, jS_0_inv, GAMMA);
        jvert_t jLambda_a = amputate(jS_em_inv, jVert_0, jS_0_inv, GAMMA);
        jvert_t jLambda_b = amputate(jS_0_inv, jVert_0, jS_em_inv, GAMMA);
+
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Amputated external legs in "<<t_span.count()<<" s ******"<<endl<<endl;
        
-       //compute Zq according to RI'-MOM, one for each momentum               //<----------------------------------------------------! QUI COMPARE imom (!!!)
+       //compute Zq according to RI'-MOM, one for each momentum
+       t0=high_resolution_clock::now();
+       
        jZ_t jZq = compute_jZq(GAMMA,jS_0_inv,L,T,imom);     //jZq[ijack][mr]
        jZ_t jZq_em = - compute_jZq(GAMMA,jS_em_inv,L,T,imom);
        //compute Zq according to Sigma1-way
        jZ_t jSigma1 = compute_jSigma1(GAMMA,jS_0_inv,L,T,imom);
        jZ_t jSigma1_em = - compute_jSigma1(GAMMA,jS_em_inv,L,T,imom);
+
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Computed Zq&Sigma1 in "<<t_span.count()<<" s ******"<<endl<<endl;
        
        //compute the projected green function as a vector (S,V,P,A,T)
+       t0=high_resolution_clock::now();
+       
        jproj_t jG_0 = project(GAMMA,jLambda_0);    //jG_0[ijack][mr_fw][mr_bw][i] (i=S,V,P,A,T)
        jproj_t jG_em = project(GAMMA,jLambda_em);
        jproj_t jG_a = project(GAMMA,jLambda_a);
        jproj_t jG_b = project(GAMMA,jLambda_b);
+
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Projected Green Functions in "<<t_span.count()<<" s ******"<<endl<<endl;
        
        //compute Z's according to RI-MOM and to Sigma1-way, one for each momentum
+       t0=high_resolution_clock::now();
+       
        jZbil_t jZ(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks);
        jZbil_t jZ1(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks);
        
        jZbil_t jZ_em(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks);
        jZbil_t jZ1_em(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks);
-       
+        
        for(int ijack=0;ijack<njacks;ijack++)  // according to 'riqed.pdf'
 	 for(int mr_fw=0;mr_fw<nmr;mr_fw++)
 	   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
@@ -1320,6 +1395,10 @@ int main(int narg,char **arg)
 		 jZ1_em[ijack][mr_fw][mr_bw][k] = (-jG_em[ijack][mr_fw][mr_bw][k]+jG_a[ijack][mr_fw][mr_bw][k]+jG_b[ijack][mr_fw][mr_bw][k])/jG_0[ijack][mr_fw][mr_bw][k] + \
 		   0.5*(jSigma1_em[ijack][mr_fw]/jSigma1[ijack][mr_fw] + jSigma1_em[ijack][mr_bw]/jSigma1[ijack][mr_bw]);
 	       }
+      
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Computed Zbil in "<<t_span.count()<<" s ******"<<endl<<endl;
        
        // cout<<"********DEBUG*************"<<endl;
        // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -1364,6 +1443,8 @@ int main(int narg,char **arg)
        jZ_t jZq_em_sub(vd_t(nmr),njacks), jSigma1_em_sub(vd_t(nmr),njacks);
        jproj_t jG_em_sub(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks), jG_a_sub(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks), jG_b_sub(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks);
        jZbil_t jZ_em_sub(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks), jZ1_em_sub(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks);
+
+       t0=high_resolution_clock::now();
       
        for(int ijack=0;ijack<njacks;ijack++)
 	 for(int mr=0; mr<nmr; mr++)
@@ -1419,9 +1500,14 @@ int main(int narg,char **arg)
 		   } 
 	       }
 	   }
-      
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Subtraction O(g2a2) and O(e2a2) in "<<t_span.count()<<" s ******"<<endl<<endl;
+
+       
        
        //Goldstone pole subtraction from jG_p and jG_s
+        t0=high_resolution_clock::now();
        
        int neq = fact(nm+nr-1)/fact(nr)/fact(nm-1);
        vd_t m_eff_equivalent(neq);
@@ -1439,11 +1525,11 @@ int main(int narg,char **arg)
 	     for(int ijack=0;ijack<njacks;ijack++) Gp_average[ijack]=0.0;
 	     for(int ijack=0;ijack<njacks;ijack++) Gs_average[ijack]=0.0;
 	     
-	     for(int r=0; r<1; r++)
+	     for(int r=0; r<nr; r++)
 	       {
-		 M_average += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*1);
-		 for(int ijack=0;ijack<njacks;ijack++) Gp_average[ijack] += (jG_0[ijack][r+nr*mA][r+nr*mB][2]+jG_0[ijack][r+nr*mB][r+nr*mA][2])/(2.0*1);
-		 for(int ijack=0;ijack<njacks;ijack++) Gs_average[ijack] += (jG_0[ijack][r+nr*mA][r+nr*mB][0]+jG_0[ijack][r+nr*mB][r+nr*mA][0])/(2.0*1);
+		 M_average += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr);
+		 for(int ijack=0;ijack<njacks;ijack++) Gp_average[ijack] += (jG_0[ijack][r+nr*mA][r+nr*mB][2]+jG_0[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
+		 for(int ijack=0;ijack<njacks;ijack++) Gs_average[ijack] += (jG_0[ijack][r+nr*mA][r+nr*mB][0]+jG_0[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
 	       }
 	     m_eff_equivalent[ieq]=M_average;
 	     for(int ijack=0;ijack<njacks;ijack++) jG_p_equivalent[ijack][ieq]=Gp_average[ijack];
@@ -1511,40 +1597,16 @@ int main(int narg,char **arg)
        cout<<"----- Goldstone fit parameters (for each jackknife) ------"<<endl;
        for(int ijack=0;ijack<njacks;ijack++) cout<<jack_Gp_pars[ijack][0]<<"  "<<jack_Gp_pars[ijack][1]<<"  "<<C_p[ijack]<<endl;
        cout<<endl;
-  
+       
        vvd_t jG_p_subpole(vd_t(neq),njacks), jG_s_subpole(vd_t(neq),njacks);
-
+       
        for(int ijack=0;ijack<njacks;ijack++)
 	 for(int i=0; i<neq; i++)
-	   jG_p_subpole[ijack][i] = jG_p_equivalent[ijack][i] - C_p[ijack]/(m_eff_equivalent[i]*m_eff_equivalent[i]);
-
-
-
-  // for(int mA=0; mA<nm; mA++)
-  //   for(int mB=mA; mB<nm; mB++)
-  //     {
-  // 	cout<<"m"<<mA<<" m"<<mB<<"   ";
-  // 	for(int r=0;r<nr;r++)
-  // 	  {
-  // 	    cout<<"m"<<mA<<"r"<<r<<" "<<eff_mass[r+nr*mA][r+nr*mB]<<"  ";
-  // 	    cout<<"m"<<mB<<"r"<<r<<" "<<eff_mass[r+nr*mB][r+nr*mA]<<"  ";
-  // 	    cout<<"m"<<mA<<"r"<<"MIX"<<" "<<eff_mass[r+nr*mA][(r+1)%2+nr*mB]<<"  ";
-  // 	    cout<<"m"<<mB<<"r"<<"MIX"<<" "<<eff_mass[r+nr*mB][(r+1)%2+nr*mA]<<"  ";
-  // 	  }
-  // 	cout<<endl<<endl;
-  //     }
-  
-
-  // for(int mA=0; mA<nm; mA++)
-  //   for(int mB=mA; mB<nm; mB++)
-  //     {
-  // 	cout<<"m"<<mA<<" m"<<mB<<"  ";
-  // 	for(int r=0;r<nr;r++)
-  // 	 cout<<eff_mass[r+nr*mA][(r+1)%2+nr*mB]<<"  "<<eff_mass[r+nr*mB][(r+1)%2+nr*mA]<<"  ";
-  // 	cout<<endl<<endl;
-  //     }
-  
-  //jG_0[ijack][r+nr*mA][r+nr*mB][2]+jG_0[ijack][r+nr*mB][r+nr*mA][2]
+	   {
+	     jG_p_subpole[ijack][i] = jG_p_equivalent[ijack][i] - C_p[ijack]/(m_eff_equivalent[i]*m_eff_equivalent[i]);
+	     jG_s_subpole[ijack][i] = jG_s_equivalent[ijack][i] - C_s[ijack]/(m_eff_equivalent[i]*m_eff_equivalent[i]);
+	   }
+       
        
        cout<<"---- M^2  ---- jG_p ---- jG_p_SUB --- (for each jackknife)"<<endl;
        for(int ijack=0; ijack<njacks; ijack++)
@@ -1554,42 +1616,21 @@ int main(int narg,char **arg)
 	   cout<<endl;
 	 }
        cout<<endl;
-    
-   
-  //  cout<<"\t"<<jZq_sub[0][0]<<endl<<endl;
+       
 
-  // for(int ijack=0;ijack<njacks;ijack++)
-  //   cout<< jG_0[ijack][0][0][2]<<endl;
-
-  // vd_t Gp_subpole(neq);
-
-  // for(int i=0;i<neq;i++)
-  //   for(int ijack=0; ijack<njacks; ijack++)
-  //     Gp_subpole[i]+=jG_p_subpole[ijack][i]/njacks;
-    
-  // for(int i=0;i<neq;i++)  cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< Gp_subpole[i]<<endl;
-
+       vd_t Gp_subpole(neq);
+       
+       for(int i=0;i<neq;i++)
+	 for(int ijack=0; ijack<njacks; ijack++)
+	   Gp_subpole[i]+=jG_p_subpole[ijack][i]/njacks;
+       
+       cout<<"---- M^2 ---- Gp_SUB average ---"<<endl;
+       for(int i=0;i<neq;i++)  cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< Gp_subpole[i]<<endl;
+       
   
-       // for(int ijack=0;ijack<njacks;ijack++)
-       // 	 for(int j=0; j<neq; j++)
-	   
-       // // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-       // // 	 for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-
-       // 	   jG_p_fit_parameters[ijack][i]=fit_par(coord,error[mr_fw][mr_bw],jG_p_equivalent[mr_fw][mr_bw],t_min,t_max); 
-
-       // for(int j=0; j<nmr*nmr; j++)
-       // 	 cout<<j<<"  "<<j%nmr<<"  "<<(j-(j%nmr))/nmr<<endl;
-
-       // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-       // 	 for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-       // 	   if(mr_bw%nr==mr_fw%nr)
-       // 	     cout<<eff_mass[mr_fw][mr_bw]*eff_mass[mr_fw][mr_bw]<<"\t"<<jG_0_sub[0][mr_fw][mr_bw][2]<<"\t"<<jG_0_sub[1][mr_fw][mr_bw][2]<<endl;
-
-       // cout<<eff_mass[0+4*0][0+4*0]<<"   "<<eff_mass[1+4*0][1+4*0]<<"     m0r0_m0r0  m0r1_m0r1"<<endl;
-       // cout<<eff_mass[0+4*1][0+4*0]<<"   "<<eff_mass[0+4*0][0+4*1]<<"     m1r0_m0r0  m0r0_m1r0"<<endl;
-       // cout<<eff_mass[0+4*1][0+4*0]<<"   "<<eff_mass[1+4*0][1+4*1]<<"     m1r0_m0r0  m0r1_m1r1"<<endl;
-       // cout<<eff_mass[0+4*1][0+4*0]<<"   "<<eff_mass[1+4*1][1+4*0]<<"     m1r0_m0r0  m1r1_m0r1"<<endl;
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Goldstone pole subtraction in "<<t_span.count()<<" s ******"<<endl<<endl;
        
        
 
