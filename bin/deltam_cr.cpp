@@ -82,7 +82,7 @@ string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, 
   int m2 = (mr2-r2)/nr;
   
   char path[1024];
-  sprintf(path,/*"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/*/"out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
+  sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
 
   // cout<<path<<endl;
   
@@ -349,8 +349,8 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
 int main(int narg,char **arg)
 {
 
-  int nconfs=5;
-  int njacks=5;
+  int nconfs=240;
+  int njacks=15;
   int clust_size=nconfs/njacks;
   int conf_id[nconfs];
   double L=24,T=48;
