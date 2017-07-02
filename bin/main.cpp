@@ -419,42 +419,46 @@ jproj_t project(vprop_t GAMMA, const jvert_t &jLambda)
 {
   int njacks=jLambda.size();
   int nmr=jLambda[0].size();
-  
   //L_proj has 5 components: S(0), V(1), P(2), A(3), T(4)
   jvert_t L_proj(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),5),nmr),nmr),njacks);
   vvvvdcompl_t jG(vvvdcompl_t(vvdcompl_t(vdcompl_t(0.0,5),nmr),nmr),njacks);
   jproj_t jG_real(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks);
   vprop_t P(prop_t::Zero(),16);
-  
-  //create projectors such that tr(GAMMA*P)=Identity
-  P[0]=GAMMA[0]; //scalar
-  for(int igam=1;igam<5;igam++)  //vector
-    P[igam]=GAMMA[igam].adjoint()/4.; 
-  P[5]=GAMMA[5];  //pseudoscalar
-  for(int igam=6;igam<10;igam++)  //axial
-    P[igam]=GAMMA[igam].adjoint()/4.;
-  for(int igam=10;igam<16;igam++)  //tensor
-    P[igam]=GAMMA[igam].adjoint()/6.;
-  
-  for(int ijack=0;ijack<njacks;ijack++)
-    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-      for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-	{
-	  L_proj[ijack][mr_fw][mr_bw][0]=jLambda[ijack][mr_fw][mr_bw][0]*P[0];
-	  for(int igam=1;igam<5;igam++)
-	    L_proj[ijack][mr_fw][mr_bw][1]+=jLambda[ijack][mr_fw][mr_bw][igam]*P[igam];
-	  L_proj[ijack][mr_fw][mr_bw][2]=jLambda[ijack][mr_fw][mr_bw][5]*P[5];
-	  for(int igam=6;igam<10;igam++)  
-	    L_proj[ijack][mr_fw][mr_bw][3]+=jLambda[ijack][mr_fw][mr_bw][igam]*P[igam];
-	  for(int igam=10;igam<16;igam++)  
-	    L_proj[ijack][mr_fw][mr_bw][4]+=jLambda[ijack][mr_fw][mr_bw][igam]*P[igam];
+
+#pragma omp parallel shared(GAMMA,jLambda,L_proj,jG,jG_real,P,njacks,nmr)
+  {
+ 
+    //create projectors such that tr(GAMMA*P)=Identity
+    P[0]=GAMMA[0]; //scalar
+    for(int igam=1;igam<5;igam++)  //vector
+      P[igam]=GAMMA[igam].adjoint()/4.; 
+    P[5]=GAMMA[5];  //pseudoscalar
+    for(int igam=6;igam<10;igam++)  //axial
+      P[igam]=GAMMA[igam].adjoint()/4.;
+    for(int igam=10;igam<16;igam++)  //tensor
+      P[igam]=GAMMA[igam].adjoint()/6.;
+
+#pragma omp for collapse(3)
+    for(int ijack=0;ijack<njacks;ijack++)
+      for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+	for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+	  {
+	    L_proj[ijack][mr_fw][mr_bw][0]=jLambda[ijack][mr_fw][mr_bw][0]*P[0];
+	    for(int igam=1;igam<5;igam++)
+	      L_proj[ijack][mr_fw][mr_bw][1]+=jLambda[ijack][mr_fw][mr_bw][igam]*P[igam];
+	    L_proj[ijack][mr_fw][mr_bw][2]=jLambda[ijack][mr_fw][mr_bw][5]*P[5];
+	    for(int igam=6;igam<10;igam++)  
+	      L_proj[ijack][mr_fw][mr_bw][3]+=jLambda[ijack][mr_fw][mr_bw][igam]*P[igam];
+	    for(int igam=10;igam<16;igam++)  
+	      L_proj[ijack][mr_fw][mr_bw][4]+=jLambda[ijack][mr_fw][mr_bw][igam]*P[igam];
 	  
-	  for(int j=0;j<5;j++)
-	    {
-	      jG[ijack][mr_fw][mr_bw][j]=L_proj[ijack][mr_fw][mr_bw][j].trace()/12.;
-	      jG_real[ijack][mr_fw][mr_bw][j]=jG[ijack][mr_fw][mr_bw][j].real();
-	    }
-	}
+	    for(int j=0;j<5;j++)
+	      {
+		jG[ijack][mr_fw][mr_bw][j]=L_proj[ijack][mr_fw][mr_bw][j].trace()/12.;
+		jG_real[ijack][mr_fw][mr_bw][j]=jG[ijack][mr_fw][mr_bw][j].real();
+	      }
+	  }
+  }
   
   return jG_real;
 }
