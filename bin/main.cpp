@@ -911,7 +911,7 @@ int main(int narg,char **arg)
 
        t0=high_resolution_clock::now();
 
-       
+#pragma omp parallel for
        for(int iconf=0;iconf<nconfs;iconf++)
 	 {
 	   vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);  // S[type][mr] e.g.: S[1][0]=S_M0_R0_F, S[2][1]=S_M0_R1_FF
@@ -923,7 +923,6 @@ int main(int narg,char **arg)
 	       string hit_suffix = "";
 	       if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
 	       
-            #pragma omp parallel for
 	       for(int t=0;t<nt;t++)
 		 for(int m=0;m<nm;m++)
 		   for(int r=0;r<nr;r++)
