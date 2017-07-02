@@ -306,12 +306,12 @@ jprop_t invert_jprop( const jprop_t &jprop){
 
 jvert_t amputate( const jprop_t  &jprop1_inv, const jvert_t &jV, const jprop_t  &jprop2_inv, vprop_t GAMMA){
 
+  int njacks = jV.size();
+  int nmr = jV[0].size();
   jvert_t jLambda(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
   
-#pragma omp parallel shared(jLambda,jprop1_inv,jV,jprop2_inv,GAMMA)
+#pragma omp parallel shared(jLambda,jprop1_inv,jV,jprop2_inv,GAMMA,njacks,nmr)
   {
-    int njacks = jV.size();
-    int nmr = jV[0].size();
     
 #pragma omp for collapse(4)
     for(int ijack=0;ijack<njacks;ijack++)
