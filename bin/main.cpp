@@ -927,7 +927,7 @@ int main(int narg,char **arg)
 		 for(int m=0;m<nm;m++)
 		   for(int r=0;r<nr;r++)
 		     {
-		       icombo++;
+		       icombo=r+nr*m+nr*nm*t+nr*nm*nt*ihit+nr*nm*nt*nhits*iconf;
 		       string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
 		       
 		       int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
