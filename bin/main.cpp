@@ -1117,9 +1117,9 @@ int main(int narg,char **arg)
 	{
 	  double temp;
 	    input_deltam.read((char*)&temp,sizeof(double));
-	    if(not input.good())
+	    if(not input_deltam.good())
 	      {
-		cerr<<"Unable to read from "<<path<<" id_so: "<<id_so<<", ic_so: "<<ic_so<<", id_si: "<<id_si<<", ic_si:"<<ic_si<<endl;
+		cerr<<"Unable to read from deltam_cr_array mr_fw: "<<mr_fw<<", mr_bw: "<<mr_bw<<", i: "<<i<<endl;
 		exit(1);
 	      }
 	    deltam_cr_array[mr_fw][mr_bw][i]=temp; //store
