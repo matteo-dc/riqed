@@ -931,7 +931,7 @@ int main(int narg,char **arg)
 
        t0=high_resolution_clock::now();
 
-      #pragma omp parallel for
+       //  #pragma omp parallel for
        for(int iconf=0;iconf<nconfs;iconf++)
 	 {
 	   //vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);  // S[type][mr] e.g.: S[1][0]=S_M0_R0_F, S[2][1]=S_M0_R1_FF
@@ -965,6 +965,9 @@ int main(int narg,char **arg)
 		     }
 
 	       //create vertex functions with fixed momentum
+
+	       #pragma omp parallel
+	       {
 	       
 	       Vert_0=make_vertex(S[0], S[0], GAMMA);  //Vert_0[mr_fw][mr_bw][gamma]
 	       
@@ -981,6 +984,7 @@ int main(int narg,char **arg)
 	       
 	       //  Vert_0s = make_vertex(S[0], S[5], GAMMA);
 	       //  Vert_s0 = make_vertex(S[5], S[0], GAMMA);
+	       }
 	       
 	       //create pre-jackknife propagator:  jS_0[ijack][mr]
 	       jS_0[ijack] += S[0];
