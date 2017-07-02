@@ -878,7 +878,7 @@ int main(int narg,char **arg)
 	     for(int m=0;m<nm;m++)
 	       for(int r=0;r<nr;r++)
 		 {
-		   icombo++;		 
+		   icombo=r + nr*m + nr*nm*t + nr*nm*nt*ihit + nr*nm*nt*nhits*iconf;		 
 		   string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
 		 
 		   input[icombo].open(path,ios::binary);
