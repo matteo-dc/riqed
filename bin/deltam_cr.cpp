@@ -365,11 +365,6 @@ int main(int narg,char **arg)
     conf_id[iconf]=100+iconf*1;
 
   vvvd_t deltam_cr_array= compute_deltam_cr(T,nconfs,njacks,conf_id); //deltam_cr_array[mr_fw][mr_bw][i] with i=0 AVERAGE and i=1 ERROR
-
-  vvd_t deltam_cr(vd_t(0.0,nmr),nmr);
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      deltam_cr[mr_fw][mr_bw] = deltam_cr_array[mr_fw][mr_bw][0];
   
   ofstream outfile;
   outfile.open("deltam_cr_array", ios::out | ios::binary);
