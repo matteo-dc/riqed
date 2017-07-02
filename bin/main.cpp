@@ -1105,7 +1105,7 @@ int main(int narg,char **arg)
   //     }
   // cout<<"********DEBUG*****************************"<<endl<<endl;
 
-  vvvd_t deltam_cr_array= compute_deltam_cr(T,nconfs,njacks,conf_id);
+  vvvd_t deltam_cr_array(vvd_t(vd_t(0.0,2),nmr),nmr);
 
 
   ifstream input_deltam;
