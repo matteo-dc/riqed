@@ -309,7 +309,8 @@ jvert_t amputate( const jprop_t  &jprop1_inv, const jvert_t &jV, const jprop_t  
   int njacks = jV.size();
   int nmr = jV[0].size();
   jvert_t jLambda(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
-  
+
+#pragma omp parallel for collapse (4) private(jLambda)
   for(int ijack=0;ijack<njacks;ijack++)
     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
       for(int mr_bw=0;mr_bw<nmr;mr_bw++)
