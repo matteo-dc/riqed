@@ -943,80 +943,78 @@ int main(int narg,char **arg)
 
 #pragma omp parallel shared(jS_0,jS_self_tad,jS_p,jVert_0,jVert_11_self_tad,jVert_p) private(icombo)
        {
+	 vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);  // S[type][mr] e.g.: S[1][0]=S_M0_R0_F, S[2][1]=S_M0_R1_FF
+	 
+	 vert_t Vert_0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);  //Vert_0[mr_fw][mr_bw][gamma]	 
+	 vert_t Vert_11(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+	 vert_t Vert_02(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+	 vert_t Vert_20(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);	       
+	 vert_t Vert_0t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+	 vert_t Vert_t0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);	       
+	 vert_t Vert_0p(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+	 vert_t Vert_p0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);	       
+	 // vert_t Vert_0s(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+	 // vert_t Vert_s0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
        
-       #pragma omp for
-       for(int iconf=0;iconf<nconfs;iconf++)
-         for(size_t ihit=0;ihit<nhits;ihit++)
-	   {
-	     vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);  // S[type][mr] e.g.: S[1][0]=S_M0_R0_F, S[2][1]=S_M0_R1_FF
+         #pragma omp for collapse(5)
+	 for(int iconf=0;iconf<nconfs;iconf++)
+	   for(size_t ihit=0;ihit<nhits;ihit++)
+	     {
+	       for(int t=0;t<nt;t++)
+		 for(int m=0;m<nm;m++)
+		   for(int r=0;r<nr;r++)
+		     {
+	       int ijack=iconf/clust_size;
+	       
+	       string hit_suffix = "";
+	       if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
+	       
+	       icombo=r + nr*m + nr*nm*t + nr*nm*nt*ihit + nr*nm*nt*nhits*iconf;
+	       string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
+	       
+	       int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
+	       
+	       //DEBUG
+	       cout<<"  Reading propagator from "<<path<<endl;
+	       //DEBUG
+	       
+	       //create all the propagators in a given conf and a given mom
+	       S[t][mr] = read_prop(input[icombo],path);
+	       
+	       if(t==4) S[t][mr]*=dcompl(0.0,-1.0);
+	       if(t==5) S[t][mr]*=dcompl(1.0,0.0);  
+	     }
+	       
+	       
+	       //create vertex functions with fixed momentum
+	       
+	       Vert_0=make_vertex(S[0], S[0], GAMMA);  //Vert_0[mr_fw][mr_bw][gamma]	     
+	       Vert_11=make_vertex(S[1], S[1], GAMMA);	       
+	       Vert_02=make_vertex(S[0], S[2], GAMMA);
+	       Vert_20=make_vertex(S[2], S[0], GAMMA);	       
+	       Vert_0t=make_vertex(S[0], S[3], GAMMA);
+	       Vert_t0=make_vertex(S[3], S[0], GAMMA);	       
+	       Vert_0p=make_vertex(S[0], S[4], GAMMA);
+	       Vert_p0=make_vertex(S[4], S[0], GAMMA);
+	       // Vert_0s = make_vertex(S[0], S[5], GAMMA);
+	       // Vert_s0 = make_vertex(S[5], S[0], GAMMA);
+	       
+	       //create pre-jackknife propagator:  jS_0[ijack][mr]
+	       jS_0[ijack] += S[0];
+	       jS_self_tad[ijack] += S[2] + S[3];
+	       jS_p[ijack] += S[4];
+	       // jS_s[ijack] += S[5];
+	       
+	       //create pre-jackknife vertex:  jVert_0[ijack][mr_fw][mr_bw][gamma]
+	       jVert_0[ijack] += Vert_0;
+	       jVert_11_self_tad[ijack] += Vert_11 + Vert_02 + Vert_20 + Vert_0t + Vert_t0;
+	       jVert_p[ijack] += Vert_0p + Vert_p0;
+	       // jVert_s[ijack] += Vert_0s + Vert_s0;
+	       
+	     } //close hits&confs loop
 	     
-	     vert_t Vert_0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);  //Vert_0[mr_fw][mr_bw][gamma]	 
-	     vert_t Vert_11(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-	     vert_t Vert_02(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-	     vert_t Vert_20(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);	       
-	     vert_t Vert_0t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-	     vert_t Vert_t0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);	       
-	     vert_t Vert_0p(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-	     vert_t Vert_p0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);	       
-	     // vert_t Vert_0s(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-	     // vert_t Vert_s0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-
-	     int ijack=iconf/clust_size;
+	     }//close pragma omp parallel
 	       
-	     string hit_suffix = "";
-	     if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
-	       
-	     for(int t=0;t<nt;t++)
-	       for(int m=0;m<nm;m++)
-		 for(int r=0;r<nr;r++)
-		   {
-		     icombo=r + nr*m + nr*nm*t + nr*nm*nt*ihit + nr*nm*nt*nhits*iconf;
-		     string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
-		       
-		     int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
-		       
-		     //DEBUG
-		     cout<<"  Reading propagator from "<<path<<endl;
-		     //DEBUG
-		       
-		     //create all the propagators in a given conf and a given mom
-		     S[t][mr] = read_prop(input[icombo],path);
-		       
-		     if(t==4) S[t][mr]*=dcompl(0.0,-1.0);
-		     if(t==5) S[t][mr]*=dcompl(1.0,0.0);  
-		   }
-	       
-	     //create vertex functions with fixed momentum
-	       
-	     Vert_0=make_vertex(S[0], S[0], GAMMA);  //Vert_0[mr_fw][mr_bw][gamma]	     
-	     Vert_11=make_vertex(S[1], S[1], GAMMA);	       
-	     Vert_02=make_vertex(S[0], S[2], GAMMA);
-	     Vert_20=make_vertex(S[2], S[0], GAMMA);	       
-	     Vert_0t=make_vertex(S[0], S[3], GAMMA);
-	     Vert_t0=make_vertex(S[3], S[0], GAMMA);	       
-	     Vert_0p=make_vertex(S[0], S[4], GAMMA);
-	     Vert_p0=make_vertex(S[4], S[0], GAMMA);
-	     // Vert_0s = make_vertex(S[0], S[5], GAMMA);
-	     // Vert_s0 = make_vertex(S[5], S[0], GAMMA);
-	       
-	     //create pre-jackknife propagator:  jS_0[ijack][mr]
-	     jS_0[ijack] += S[0];
-	     jS_self_tad[ijack] += S[2] + S[3];
-	     jS_p[ijack] += S[4];
-	     // jS_s[ijack] += S[5];
-	       
-	     //create pre-jackknife vertex:  jVert_0[ijack][mr_fw][mr_bw][gamma]
-	     jVert_0[ijack] += Vert_0;
-	     jVert_11_self_tad[ijack] += Vert_11 + Vert_02 + Vert_20 + Vert_0t + Vert_t0;
-	     jVert_p[ijack] += Vert_0p + Vert_p0;
-	     // jVert_s[ijack] += Vert_0s + Vert_s0;
-	       
-	   } //close hits&confs loop
-      
-
-
-       }//close pragma omp parallel
-     
        high_resolution_clock::time_point t1=high_resolution_clock::now();
        t_span = duration_cast<duration<double>>(t1-t0);
        cout<<"***** Read propagators and created vertices (and jackknives) in "<<t_span.count()<<" s ******"<<endl<<endl;
