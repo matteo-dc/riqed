@@ -996,21 +996,21 @@ int main(int narg,char **arg)
 	 //} //close confs loop
 
       #pragma omp critical
-       for(int ijack=0;ijack<njacks;ijack++)
-	 {
-	   jS_0[ijack] += PR_jS_0[ijack];
-	   jS_self_tad[ijack] += PR_jS_self_tad[ijack];
-	   jS_p[ijack] += PR_jS_p[ijack];
-	   // jS_s[ijack] += PR_jS_s[ijack];
-	   
-	   jVert_0[ijack] +=PR_jVert_0[ijack] ;
-	   jVert_11_self_tad[ijack] += PR_jVert_11_self_tad[ijack];
-	   jVert_p[ijack] += PR_jVert_p[ijack];
-	   // jVert_s[ijack] += PR_jVert_s[ijack];
-	 }
-       
+	 for(int ijack=0;ijack<njacks;ijack++)
+	   {
+	     jS_0[ijack] += PR_jS_0[ijack];
+	     jS_self_tad[ijack] += PR_jS_self_tad[ijack];
+	     jS_p[ijack] += PR_jS_p[ijack];
+	     // jS_s[ijack] += PR_jS_s[ijack];
+	     
+	     jVert_0[ijack] +=PR_jVert_0[ijack] ;
+	     jVert_11_self_tad[ijack] += PR_jVert_11_self_tad[ijack];
+	     jVert_p[ijack] += PR_jVert_p[ijack];
+	     // jVert_s[ijack] += PR_jVert_s[ijack];
+	   }
+	 
        }//close pragma omp
-
+       
        high_resolution_clock::time_point t1=high_resolution_clock::now();
        t_span = duration_cast<duration<double>>(t1-t0);
        cout<<"***** Read propagators and created vertices (and jackknives) in "<<t_span.count()<<" s ******"<<endl<<endl;
