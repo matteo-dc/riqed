@@ -895,18 +895,18 @@ int main(int narg,char **arg)
 
        vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);
 
-       vert_t Vert_0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);  //Vert_0[mr_fw][mr_bw][gamma]
+       // vert_t Vert_0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);  //Vert_0[mr_fw][mr_bw][gamma]
        
-       vert_t Vert_11(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+       // vert_t Vert_11(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
        
-       vert_t Vert_02(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       vert_t Vert_20(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+       // vert_t Vert_02(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+       // vert_t Vert_20(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
        
-       vert_t Vert_0t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       vert_t Vert_t0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+       // vert_t Vert_0t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+       // vert_t Vert_t0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
        
-       vert_t Vert_0p(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       vert_t Vert_p0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+       // vert_t Vert_0p(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+       // vert_t Vert_p0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
        
        // vert_t Vert_0s(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
        // vert_t Vert_s0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
@@ -969,21 +969,21 @@ int main(int narg,char **arg)
 	       #pragma omp parallel
 	       {
 	       
-	       Vert_0=make_vertex(S[0], S[0], GAMMA);  //Vert_0[mr_fw][mr_bw][gamma]
+	       vert_t Vert_0=make_vertex(S[0], S[0], GAMMA);  //Vert_0[mr_fw][mr_bw][gamma]
 	       
-	       Vert_11=make_vertex(S[1], S[1], GAMMA);
+	       vert_t Vert_11=make_vertex(S[1], S[1], GAMMA);
 	       
-	       Vert_02=make_vertex(S[0], S[2], GAMMA);
-	       Vert_20=make_vertex(S[2], S[0], GAMMA);
+	       vert_t Vert_02=make_vertex(S[0], S[2], GAMMA);
+	       vert_t  Vert_20=make_vertex(S[2], S[0], GAMMA);
 	       
-	       Vert_0t=make_vertex(S[0], S[3], GAMMA);
-	       Vert_t0=make_vertex(S[3], S[0], GAMMA);
+	       vert_t  Vert_0t=make_vertex(S[0], S[3], GAMMA);
+	       vert_t Vert_t0=make_vertex(S[3], S[0], GAMMA);
 	       
-	       Vert_0p=make_vertex(S[0], S[4], GAMMA);
-	       Vert_p0=make_vertex(S[4], S[0], GAMMA);
+	       vert_t Vert_0p=make_vertex(S[0], S[4], GAMMA);
+	       vert_t Vert_p0=make_vertex(S[4], S[0], GAMMA);
 	       
-	       //  Vert_0s = make_vertex(S[0], S[5], GAMMA);
-	       //  Vert_s0 = make_vertex(S[5], S[0], GAMMA);
+	       // vert_t Vert_0s = make_vertex(S[0], S[5], GAMMA);
+	       // vert_t Vert_s0 = make_vertex(S[5], S[0], GAMMA);
 	       }
 	       
 	       //create pre-jackknife propagator:  jS_0[ijack][mr]
