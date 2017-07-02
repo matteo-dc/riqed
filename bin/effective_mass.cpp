@@ -422,18 +422,18 @@ vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const i
 	eff_mass[mr_fw][mr_bw][1]=eff_mass_fit_parameters[mr_fw][mr_bw][0][1];
       }
 
-  cout<<"********DEBUG*****************************"<<endl; 
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      {
-  	int r1 = mr_fw%nr;
-  	int m1 = (mr_fw-r1)/nr;
-  	int r2 = mr_bw%nr;
-  	int m2 = (mr_bw-r2)/nr;
+  // cout<<"********DEBUG*****************************"<<endl; 
+  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+  //     {
+  // 	int r1 = mr_fw%nr;
+  // 	int m1 = (mr_fw-r1)/nr;
+  // 	int r2 = mr_bw%nr;
+  // 	int m2 = (mr_bw-r2)/nr;
   
-  	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  eff_mass: "<<eff_mass[mr_fw][mr_bw][0]<<" +- "<<eff_mass[mr_fw][mr_bw][1]<<endl;
-      }
-  cout<<"********DEBUG*****************************"<<endl; 
+  // 	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  eff_mass: "<<eff_mass[mr_fw][mr_bw][0]<<" +- "<<eff_mass[mr_fw][mr_bw][1]<<endl;
+  //     }
+  // cout<<"********DEBUG*****************************"<<endl; 
   
   return eff_mass;
 }
