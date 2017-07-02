@@ -119,7 +119,7 @@ prop_t read_prop(ifstream &input, const string &path)
 {
   prop_t out(prop_t::Zero());
 
-  //for(size_t imom=0;imom<mom_list.size();imom++)
+#pragma omp parallel for collapse(4) shared(out,input,path)
   for(int id_so=0;id_so<4;id_so++)
     for(int ic_so=0;ic_so<3;ic_so++)
       for(int id_si=0;id_si<4;id_si++)
@@ -976,7 +976,7 @@ int main(int narg,char **arg)
 		     int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
 		       
 		     //DEBUG
-		     cout<<"  Reading propagator from "<<path<<endl;
+		     //cout<<"  Reading propagator from "<<path<<endl;
 		     //DEBUG
 		       
 		     //create all the propagators in a given conf and a given mom
