@@ -911,7 +911,7 @@ int main(int narg,char **arg)
 
        t0=high_resolution_clock::now();
 
-#pragma omp parallel for
+       //#pragma omp parallel for
        for(int iconf=0;iconf<nconfs;iconf++)
 	 {
 	   vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);  // S[type][mr] e.g.: S[1][0]=S_M0_R0_F, S[2][1]=S_M0_R1_FF
