@@ -10,6 +10,7 @@
 #include <valarray>
 #include <math.h>
 #include <chrono>
+#include <omp.h>
 
 using namespace std;
 using namespace Eigen;
@@ -804,12 +805,12 @@ int main(int narg,char **arg)
 	  eff_mass_array[mr_fw][mr_bw][i]=temp; //store
 	}
   
-  cout<<"***DEBUG***"<<endl;
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      for(int i=0;i<2;i++)
-  	cout<<eff_mass_array[mr_fw][mr_bw][i]<<endl;
-  cout<<"***DEBUG***"<<endl;
+  // cout<<"***DEBUG***"<<endl;
+  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+  //     for(int i=0;i<2;i++)
+  // 	cout<<eff_mass_array[mr_fw][mr_bw][i]<<endl;
+  // cout<<"***DEBUG***"<<endl;
   
   vvd_t eff_mass(vd_t(0.0,nmr),nmr);
   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -909,7 +910,9 @@ int main(int narg,char **arg)
        icombo=-1;
 
        t0=high_resolution_clock::now();
+
        
+       #pragma omp parallel for
        for(int iconf=0;iconf<nconfs;iconf++)
 	 {
 	   vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);  // S[type][mr] e.g.: S[1][0]=S_M0_R0_F, S[2][1]=S_M0_R1_FF
