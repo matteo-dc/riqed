@@ -922,23 +922,30 @@ int main(int narg,char **arg)
        // jvert_t PR_jVert_p (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
        // //  jvert_t PR_jVert_s (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
 	 
-       vert_t Vert_0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);  //Vert_0[mr_fw][mr_bw][gamma]	 
-       vert_t Vert_11(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       vert_t Vert_02(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       vert_t Vert_20(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);	       
-       vert_t Vert_0t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       vert_t Vert_t0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);	       
-       vert_t Vert_0p(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       vert_t Vert_p0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);	       
-       // vert_t Vert_0s(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       // vert_t Vert_s0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+      
 
-       vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);  // S[type][mr] e.g.: S[1][0]=S_M0_R0_F, S[2][1]=S_M0_R1_FF
-	 
-       //#pragma omp for collapse(2) private(Vert_0,Vert_11,Vert_02,Vert_20,Vert_0t,Vert_t0,Vert_0p,Vert_p0)
+
+#pragma omp parallel shared(jS_0,jS_self_tad,jS_p,jVert_0,jVert11_self_tad,jVert_p) private(icombo,)
+       {
+       
+       #pragma omp for
        for(int iconf=0;iconf<nconfs;iconf++)
-	 for(size_t ihit=0;ihit<nhits;ihit++)
+         for(size_t ihit=0;ihit<nhits;ihit++)
 	   {
+	     vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);  // S[type][mr] e.g.: S[1][0]=S_M0_R0_F, S[2][1]=S_M0_R1_FF
+	     
+	     vert_t Vert_0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);  //Vert_0[mr_fw][mr_bw][gamma]	 
+	     vert_t Vert_11(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+	     vert_t Vert_02(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+	     vert_t Vert_20(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);	       
+	     vert_t Vert_0t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+	     vert_t Vert_t0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);	       
+	     vert_t Vert_0p(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+	     vert_t Vert_p0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);	       
+	     // vert_t Vert_0s(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+	     // vert_t Vert_s0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
+
+      
 	     
 	       
 	     int ijack=iconf/clust_size;
@@ -991,25 +998,11 @@ int main(int narg,char **arg)
 	     jVert_p[ijack] += Vert_0p + Vert_p0;
 	     // jVert_s[ijack] += Vert_0s + Vert_s0;
 	       
-	   } //close hits loop
-       //} //close confs loop
+	   } //close hits&confs loop
+      
 
-       // 	 //  #pragma omp critical
-       // 	 for(int ijack=0;ijack<njacks;ijack++)
-       // 	   {
-       // 	     jS_0[ijack] += PR_jS_0[ijack];
-       // 	     jS_self_tad[ijack] += PR_jS_self_tad[ijack];
-       // 	     jS_p[ijack] += PR_jS_p[ijack];
-       // 	     // jS_s[ijack] += PR_jS_s[ijack];
-	     
-       // 	     jVert_0[ijack] +=PR_jVert_0[ijack] ;
-       // 	     jVert_11_self_tad[ijack] += PR_jVert_11_self_tad[ijack];
-       // 	     jVert_p[ijack] += PR_jVert_p[ijack];
-       // 	     // jVert_s[ijack] += PR_jVert_s[ijack];
-       // 	   }
-	 
-       // }//close pragma omp
-	 
+
+       }//close pragma omp parallel
      
        high_resolution_clock::time_point t1=high_resolution_clock::now();
        t_span = duration_cast<duration<double>>(t1-t0);
