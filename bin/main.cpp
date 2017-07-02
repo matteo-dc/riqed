@@ -984,7 +984,7 @@ int main(int narg,char **arg)
 	       
 	       // vert_t Vert_0s = make_vertex(S[0], S[5], GAMMA);
 	       // vert_t Vert_s0 = make_vertex(S[5], S[0], GAMMA);
-	       }
+	       
 	       
 	       //create pre-jackknife propagator:  jS_0[ijack][mr]
 	       jS_0[ijack] += S[0];
@@ -997,7 +997,7 @@ int main(int narg,char **arg)
 	       jVert_11_self_tad[ijack] += Vert_11 + Vert_02 + Vert_20 + Vert_0t + Vert_t0;
 	       jVert_p[ijack] += Vert_0p + Vert_p0;
 	       // jVert_s[ijack] += Vert_0s + Vert_s0;
-
+	       }
 	       
 	       
 	     } //close hits loop
