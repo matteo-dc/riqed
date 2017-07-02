@@ -865,7 +865,7 @@ int main(int narg,char **arg)
 
    t0=high_resolution_clock::now();
 
-#pragma omp parallel private(icombo)
+#pragma omp parallel shared(input) private(icombo)
    {
      #pragma omp for
      for(int iconf=0;iconf<nconfs;iconf++)
