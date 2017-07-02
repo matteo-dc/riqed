@@ -306,16 +306,20 @@ jprop_t invert_jprop( const jprop_t &jprop){
 
 jvert_t amputate( const jprop_t  &jprop1_inv, const jvert_t &jV, const jprop_t  &jprop2_inv, vprop_t GAMMA){
 
-  int njacks = jV.size();
-  int nmr = jV[0].size();
   jvert_t jLambda(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
-
-#pragma omp parallel for collapse(4) shared(jLambda,nmr,njacks) private(jprop1_inv,jV,jprop2_inv,GAMMA)
-  for(int ijack=0;ijack<njacks;ijack++)
-    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-      for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-	for(int igam=0;igam<16;igam++)
-	  jLambda[ijack][mr_fw][mr_bw][igam]=jprop1_inv[ijack][mr_fw]*jV[ijack][mr_fw][mr_bw][igam]*GAMMA[5]*jprop2_inv[ijack][mr_bw].adjoint()*GAMMA[5];
+  
+#pragma omp parallel shared(jLambda)
+  {
+    int njacks = jV.size();
+    int nmr = jV[0].size();
+    
+#pragma omp for collapse(4) shared(jLambda,jprop1_inv,jV,jprop2_inv,GAMMA)
+    for(int ijack=0;ijack<njacks;ijack++)
+      for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+	for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+	  for(int igam=0;igam<16;igam++)
+	    jLambda[ijack][mr_fw][mr_bw][igam]=jprop1_inv[ijack][mr_fw]*jV[ijack][mr_fw][mr_bw][igam]*GAMMA[5]*jprop2_inv[ijack][mr_bw].adjoint()*GAMMA[5];
+  }
   
   return jLambda;
 }
@@ -946,9 +950,6 @@ int main(int narg,char **arg)
 	     // vert_t Vert_0s(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
 	     // vert_t Vert_s0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
 
-      
-	     
-	       
 	     int ijack=iconf/clust_size;
 	       
 	     string hit_suffix = "";
