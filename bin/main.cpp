@@ -936,7 +936,7 @@ int main(int narg,char **arg)
 
 	 vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);  // S[type][mr] e.g.: S[1][0]=S_M0_R0_F, S[2][1]=S_M0_R1_FF
 	 
-       #pragma omp for collapse(2)
+#pragma omp for collapse(2) private(Vert_0,Vert_11,Vert_02,Vert_20,Vert_0t,Vert_t0,Vert_0p,Vert_p0)
 	 for(int iconf=0;iconf<nconfs;iconf++)
 	   for(size_t ihit=0;ihit<nhits;ihit++)
 	     {
@@ -995,7 +995,7 @@ int main(int narg,char **arg)
 	     } //close hits loop
 	 //} //close confs loop
 
-      #pragma omp critical
+        #pragma omp critical
 	 for(int ijack=0;ijack<njacks;ijack++)
 	   {
 	     jS_0[ijack] += PR_jS_0[ijack];
