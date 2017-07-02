@@ -925,7 +925,7 @@ int main(int narg,char **arg)
       
 
 
-#pragma omp parallel shared(jS_0,jS_self_tad,jS_p,jVert_0,jVert11_self_tad,jVert_p) private(icombo,)
+#pragma omp parallel shared(jS_0,jS_self_tad,jS_p,jVert_0,jVert_11_self_tad,jVert_p) private(icombo)
        {
        
        #pragma omp for
