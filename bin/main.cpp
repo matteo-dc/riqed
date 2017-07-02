@@ -892,26 +892,6 @@ int main(int narg,char **arg)
    
    for(size_t imom=0; imom<1; imom++)
      {
-
-       vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);
-
-       // vert_t Vert_0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);  //Vert_0[mr_fw][mr_bw][gamma]
-       
-       // vert_t Vert_11(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       
-       // vert_t Vert_02(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       // vert_t Vert_20(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       
-       // vert_t Vert_0t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       // vert_t Vert_t0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       
-       // vert_t Vert_0p(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       // vert_t Vert_p0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       
-       // vert_t Vert_0s(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-       // vert_t Vert_s0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-
-       
        // put to zero jackknife props and verts
        jprop_t jS_0(valarray<prop_t>(prop_t::Zero(),nmr),njacks);		
        jprop_t jS_self_tad(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
@@ -931,10 +911,10 @@ int main(int narg,char **arg)
 
        t0=high_resolution_clock::now();
 
-       //  #pragma omp parallel for
+       //#pragma omp parallel for
        for(int iconf=0;iconf<nconfs;iconf++)
 	 {
-	   //vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);  // S[type][mr] e.g.: S[1][0]=S_M0_R0_F, S[2][1]=S_M0_R1_FF
+	   vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);  // S[type][mr] e.g.: S[1][0]=S_M0_R0_F, S[2][1]=S_M0_R1_FF
 	   
 	   for(size_t ihit=0;ihit<nhits;ihit++)
 	     {
@@ -942,13 +922,12 @@ int main(int narg,char **arg)
 	       
 	       string hit_suffix = "";
 	       if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
-
-	       //#pragma omp parallel for
+	       
 	       for(int t=0;t<nt;t++)
 		 for(int m=0;m<nm;m++)
 		   for(int r=0;r<nr;r++)
 		     {
-		       icombo=r+nr*m+nr*nm*t+nr*nm*nt*ihit+nr*nm*nt*nhits*iconf;
+		       icombo=r + nr*m + nr*nm*t + nr*nm*nt*ihit + nr*nm*nt*nhits*iconf;
 		       string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
 		       
 		       int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
@@ -965,18 +944,15 @@ int main(int narg,char **arg)
 		     }
 
 	       //create vertex functions with fixed momentum
-
-	       #pragma omp parallel
-	       {
 	       
 	       vert_t Vert_0=make_vertex(S[0], S[0], GAMMA);  //Vert_0[mr_fw][mr_bw][gamma]
 	       
 	       vert_t Vert_11=make_vertex(S[1], S[1], GAMMA);
 	       
 	       vert_t Vert_02=make_vertex(S[0], S[2], GAMMA);
-	       vert_t  Vert_20=make_vertex(S[2], S[0], GAMMA);
+	       vert_t Vert_20=make_vertex(S[2], S[0], GAMMA);
 	       
-	       vert_t  Vert_0t=make_vertex(S[0], S[3], GAMMA);
+	       vert_t Vert_0t=make_vertex(S[0], S[3], GAMMA);
 	       vert_t Vert_t0=make_vertex(S[3], S[0], GAMMA);
 	       
 	       vert_t Vert_0p=make_vertex(S[0], S[4], GAMMA);
@@ -984,7 +960,6 @@ int main(int narg,char **arg)
 	       
 	       // vert_t Vert_0s = make_vertex(S[0], S[5], GAMMA);
 	       // vert_t Vert_s0 = make_vertex(S[5], S[0], GAMMA);
-	       
 	       
 	       //create pre-jackknife propagator:  jS_0[ijack][mr]
 	       jS_0[ijack] += S[0];
@@ -997,7 +972,7 @@ int main(int narg,char **arg)
 	       jVert_11_self_tad[ijack] += Vert_11 + Vert_02 + Vert_20 + Vert_0t + Vert_t0;
 	       jVert_p[ijack] += Vert_0p + Vert_p0;
 	       // jVert_s[ijack] += Vert_0s + Vert_s0;
-	       }
+
 	       
 	       
 	     } //close hits loop
