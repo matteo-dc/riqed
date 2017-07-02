@@ -1039,15 +1039,22 @@ int main(int narg,char **arg)
        
        //define em propagator and vertex
        t0=high_resolution_clock::now();
-       
+
+
+       #pragma omp parallel for shared(njacks,nmr,jS_em,jS_self_tad,deltam_cr,jS_p)
        for(int ijack=0;ijack<njacks;ijack++)
 	 for(int mr=0;mr<nmr;mr++)
 	   {
 	     jS_em[ijack][mr] = jS_self_tad[ijack][mr] - deltam_cr[mr][mr]*jS_p[ijack][mr]; // + scalar correction
-	     for(int mr2=0;mr2<nmr;mr2++)
-	       for(int igam=0;igam<16;igam++)
-		 jVert_em[ijack][mr][mr2][igam] = jVert_11_self_tad[ijack][mr][mr2][igam] - deltam_cr[mr][mr2]*jVert_p[ijack][mr][mr2][igam]; // + scalar correction
 	   }
+
+       #pragma omp parallel for shared(njacks,nmr,jVert_em,jVert_11_self_tad,deltam_cr,jVert_p)
+       for(int ijack=0;ijack<njacks;ijack++)
+	 for(int mr=0;mr<nmr;mr++)
+	   for(int mr2=0;mr2<nmr;mr2++)
+	     for(int igam=0;igam<16;igam++)
+	       jVert_em[ijack][mr][mr2][igam] = jVert_11_self_tad[ijack][mr][mr2][igam] - deltam_cr[mr][mr2]*jVert_p[ijack][mr][mr2][igam]; // + scalar correction
+     
 
        t1=high_resolution_clock::now();
        t_span = duration_cast<duration<double>>(t1-t0);
