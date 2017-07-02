@@ -865,30 +865,36 @@ int main(int narg,char **arg)
 
    t0=high_resolution_clock::now();
 
-   for(int iconf=0;iconf<nconfs;iconf++)
-     for(size_t ihit=0;ihit<nhits;ihit++)
-       {
-	 string hit_suffix = "";
-	 if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
+#pragma omp parallel private(icombo)
+   {
+     #pragma omp for
+     for(int iconf=0;iconf<nconfs;iconf++)
+       for(size_t ihit=0;ihit<nhits;ihit++)
+	 {
+	   string hit_suffix = "";
+	   if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
 	 
-	 for(int t=0;t<nt;t++)
-	   for(int m=0;m<nm;m++)
-	     for(int r=0;r<nr;r++)
-	       {
-		 icombo++;		 
-		 string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
+	   for(int t=0;t<nt;t++)
+	     for(int m=0;m<nm;m++)
+	       for(int r=0;r<nr;r++)
+		 {
+		   icombo++;		 
+		   string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
 		 
-		 input[icombo].open(path,ios::binary);
+		   input[icombo].open(path,ios::binary);
 
-		 //DEBUG
-		 //cout<<"  Opening file "<<path<<endl;
-		 //DEBUG
+		   //DEBUG
+		   //cout<<"  Opening file "<<path<<endl;
+		   //DEBUG
 		 
-		 if(!input[icombo].good())
-		   {cerr<<"Unable to open file "<<path<<" combo "<<icombo<<endl;
-		     exit(1);}
-	       }
-       }
+		   if(!input[icombo].good())
+		     {cerr<<"Unable to open file "<<path<<" combo "<<icombo<<endl;
+		       exit(1);}
+		 }
+	 }
+
+   }
+   
    
    t1=high_resolution_clock::now();
    t_span = duration_cast<duration<double>>(t1-t0);
