@@ -1090,7 +1090,7 @@ int main(int narg,char **arg)
 
   t0=high_resolution_clock::now();
   
-  vvvd_t deltam_cr_array= compute_deltam_cr(T,nconfs,njacks,conf_id);
+  //  vvvd_t deltam_cr_array= compute_deltam_cr(T,nconfs,njacks,conf_id);
   
   // cout<<"********DEBUG*****************************"<<endl; 
   // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -1105,14 +1105,43 @@ int main(int narg,char **arg)
   //     }
   // cout<<"********DEBUG*****************************"<<endl<<endl;
 
-  t1=high_resolution_clock::now();
-  t_span = duration_cast<duration<double>>(t1-t0);
-  cout<<"***** Computed Deltam_cr in  "<<t_span.count()<<" s ******"<<endl<<endl;
+  vvvd_t deltam_cr_array= compute_deltam_cr(T,nconfs,njacks,conf_id);
+
+
+  ifstream input_deltam;
+  input_deltam.open("deltam_cr_array",ios::binary);
+  
+  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+      for(int i=0;i<2;i++)
+	{
+	  double temp;
+	    input_deltam.read((char*)&temp,sizeof(double));
+	    if(not input.good())
+	      {
+		cerr<<"Unable to read from "<<path<<" id_so: "<<id_so<<", ic_so: "<<ic_so<<", id_si: "<<id_si<<", ic_si:"<<ic_si<<endl;
+		exit(1);
+	      }
+	    deltam_cr_array[mr_fw][mr_bw][i]=temp; //store
+	  }
+
+  cout<<"***DEBUG***"<<endl;
+  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+      for(int i=0;i<2;i++)
+	cout<<deltam_cr_array[mr_fw][mr_bw][i]<<endl;
+  cout<<"***DEBUG***"<<endl;
+  
   
   vvd_t deltam_cr(vd_t(0.0,nmr),nmr);
   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
       deltam_cr[mr_fw][mr_bw] = deltam_cr_array[mr_fw][mr_bw][0];
+
+  t1=high_resolution_clock::now();
+  t_span = duration_cast<duration<double>>(t1-t0);
+  cout<<"***** Computed Deltam_cr in  "<<t_span.count()<<" s ******"<<endl<<endl;
+  
   
   //double deltam_cr = 0.230697;
   
@@ -1618,14 +1647,20 @@ int main(int narg,char **arg)
        cout<<endl;
        
 
-       vd_t Gp_subpole(neq);
+       vd_t Gp_subpole(neq), sqr_Gp_subpole(neq), Gp_err_subpole(neq);
        
        for(int i=0;i<neq;i++)
+	 {
 	 for(int ijack=0; ijack<njacks; ijack++)
-	   Gp_subpole[i]+=jG_p_subpole[ijack][i]/njacks;
+	   {
+	     Gp_subpole[i]+=jG_p_subpole[ijack][i]/njacks;
+	     sqr_Gp_subpole[i]+=jG_p_subpole[ijack][i]*jG_p_subpole[ijack][i]/njacks;
+	   }
+	 Gp_err_subpole[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_subpole[i]- Gp_subpole[i]*Gp_subpole[i]);
+	 }
        
        cout<<"---- M^2 ---- Gp_SUB average ---"<<endl;
-       for(int i=0;i<neq;i++)  cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< Gp_subpole[i]<<endl;
+       for(int i=0;i<neq;i++)  cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< Gp_subpole[i]<<"\t"<<Gp_err_subpole[i]<<endl;
        
   
        t1=high_resolution_clock::now();
@@ -2045,4 +2080,4 @@ int main(int narg,char **arg)
   
   return 0;
 
-      }
+}
