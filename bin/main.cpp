@@ -119,7 +119,6 @@ prop_t read_prop(ifstream &input, const string &path)
 {
   prop_t out(prop_t::Zero());
 
-#pragma omp parallel for collapse(4) shared(out,input,path)
   for(int id_so=0;id_so<4;id_so++)
     for(int ic_so=0;ic_so<3;ic_so++)
       for(int id_si=0;id_si<4;id_si++)
