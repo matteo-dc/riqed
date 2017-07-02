@@ -278,6 +278,8 @@ jvert_t jackknife_vertex(jvert_t &jVert, int nconf, int clust_size, size_t nhits
   for(size_t j=0;j<jVert.size();j++)
     {
       jVert[j]=jSum-jVert[j];
+
+#pragma omp parallel for shared(jVert,nconf,clust_size,nhits)
       for(auto &it : jVert[j])
 	for(auto &jt : it)
 	  for(auto &kt : jt)
