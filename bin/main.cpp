@@ -627,369 +627,6 @@ void print_file_filtered(const char* name_file, vd_t p2, vd_t p4, vvd_t Z, vvd_t
 }
 
 
-
-vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const string &T2, const string &ID, const string &reim, const string &parity, const int T, const int nconfs, const int njacks , const int* conf_id)
-{
-   
-  vd_t data_V0P5_real(0.0,T);
-  vd_t data_V0P5_imag(0.0,T);
-  vd_t data_P5P5_real(0.0,T);
-  vd_t data_P5P5_imag(0.0,T);
-  
-  vvd_t jP5P5_real(vd_t(0.0,T),njacks);
-  vvd_t jP5P5_imag(vd_t(0.0,T),njacks);
-  vvd_t jV0P5_real(vd_t(0.0,T),njacks);
-  vvd_t jV0P5_imag(vd_t(0.0,T),njacks);
-
-  int clust_size=nconfs/njacks;
-
-  /////////
-   
-  for(int iconf=0;iconf<nconfs;iconf++)
-    {
-      int ijack=iconf/clust_size;
-       
-      ifstream infile;
-      
-      infile.open(path_to_contr(conf_id[iconf],mr1,T1,mr2,T2));
-
-      if(!infile.good())
-	{cerr<<"Unable to open file "<<path_to_contr(conf_id[iconf],mr1,T1,mr2,T2)<<endl;
-	  exit(1);}
-
-      //DEBUG
-      // cout<<"  Reading contraction from "<<path_to_contr(conf_id[iconf],mr1,T1,mr2,T2)<<endl;
-      //DEBUG
-      
-      infile.ignore(256,'5');
-       
-      for(int t=0; t<T; t++)
-	{
-	  infile>>data_V0P5_real[t];
-	  infile>>data_V0P5_imag[t];	  
-	}
-       
-      infile.ignore(256,'5');
-      infile.ignore(256,'5');
-       
-      for(int t=0; t<T; t++)
-	{
-	  infile>>data_P5P5_real[t];
-	  infile>>data_P5P5_imag[t];	  
-	}
-
-      for(int t=0; t<T; t++) jV0P5_real[ijack][t]+=data_V0P5_real[t];
-      for(int t=0; t<T; t++) jV0P5_imag[ijack][t]+=data_V0P5_imag[t];
-      for(int t=0; t<T; t++) jP5P5_real[ijack][t]+=data_P5P5_real[t];
-      for(int t=0; t<T; t++) jP5P5_imag[ijack][t]+=data_P5P5_imag[t];
-      
-      infile.close(); 
-    }
-  
-  jV0P5_real=jackknife_double(jV0P5_real,T,nconfs,clust_size);
-  jV0P5_imag=jackknife_double(jV0P5_imag,T,nconfs,clust_size);
-  jP5P5_real=jackknife_double(jP5P5_real,T,nconfs,clust_size);
-  jP5P5_imag=jackknife_double(jP5P5_imag,T,nconfs,clust_size);
-
-  vvd_t jvec(vd_t(0.0,T),njacks);
-
-  if(ID=="P5P5" and reim=="RE") jvec=jP5P5_real;
-  if(ID=="P5P5" and reim=="IM") jvec=jP5P5_imag;
-  if(ID=="V0P5" and reim=="RE") jvec=jV0P5_real;
-  if(ID=="V0P5" and reim=="IM") jvec=jV0P5_imag;
-
-  double par;
-  
-  if(parity=="EVEN") par=1.0;
-  if(parity=="ODD") par=-1.0;
-  
-  vvd_t jvec_sym(vd_t(0.0,T),njacks);
-  vvd_t jvec_par(vd_t(0.0,T/2+1),njacks);
-  
-  for(int ijack=0;ijack<njacks;ijack++)
-    {
-      for(int t=0;t<T;t++)
-	jvec_sym[ijack][(T-t)%T]=jvec[ijack][t];
-      for(int t=0;t<T/2+1;t++)
-	jvec_par[ijack][t]=(jvec[ijack][t]+par*jvec_sym[ijack][t])/2.0;
-    }
-
-  // if(ID=="P5P5" and reim=="RE" and parity=="EVEN"){
-  //   cout<<"**********DEBUG*************"<<endl;
-  //   for(int ijack=0;ijack<njacks;ijack++)
-  //     for(int t=0;t<T;t++)
-  // 	cout<<jvec[ijack][t]<<endl;
-  //   cout<<"**********DEBUG*************"<<endl;}
-
-  return jvec_par;
-
-}
-
-//function to use in Newton's method for M_eff
-double f_mass (int t, int T, double x0, double y)
-{
-  double f = cosh(x0*(t-T/2))/cosh(x0*(t+1-T/2)) - y;  // y=c(t)/c(t+1), where c(t) is the correlator at the time t
-
-  return f;
-}
-
-//derivative to use in Newton's method for M_eff
-double f_prime_mass (int t, int T, double x0)
-{
-  int k = t-T/2;
-
-  double fp = ( k*sinh(x0*k) - (1+k)*cosh(x0*k)*tanh(x0*(1+k)) )/cosh(x0*(t+1-T/2));
-
-  return fp;
-}
-
-//Newton's Method for M_eff (in a fixed jackknife)
-double solve_Newton (vvd_t C, int ijack, int t, const int T) 
-{
-  double k = C[ijack][t]/C[ijack][t+1];
-
-  // cout<<"**********DEBUG*************"<<endl;
-  // cout<<"jack: "<<ijack<<"  t: "<<t<<"  c(t)/c(t+1): "<<k<<endl;
-  // cout<<"**********DEBUG*************"<<endl;
-  
-  if(k<1.0)
-    {return nan("");}
-  else{
-  
-  double eps=1e-14;
-  int max_iteration=500; 
-  int count_iteration=0;
-  int g=0;
-
-  double x0=1.09; //seed
-  double x1;
-    
-  double y, yp, x;
-    
-  x1=x0;
-  do
-    {
-      x=x1;
-	
-      y=f_mass(t,T,x,k);
-      yp=f_prime_mass(t,T,x);
-	
-      x1 = x - y/yp;
-	
-      count_iteration++;
-      g++;
-	
-      //  cout<<count_iteration<<endl;
-	
-    } while ( abs(x1-x) >= x1*eps and count_iteration!=max_iteration );
-
-
-  // cout<<x0<<" ";
-  
-  // cout<<"********DEBUG*****************************"<<endl; 
-  // if(count_iteration==max_iteration)
-  //   cerr<<t<<" Newton's method did not converge for the jackknife n. "<<ijack<<" in "<<max_iteration<<" iterations. The value is "<<x1<<" k "<<k<<endl;
-  // else cout<<t<<" Jackknife n. "<<ijack<<" has converged with success to the value "<<x1<<" in "<<g<<" iterations"<<" k "<<k<<endl;
-  // cout<<"********DEBUG*****************************"<<endl; 
-  
-  return x1;
-  }
-}
-
-//compute delta m_cr
-vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const int* conf_id)
-{
-  int nmr=8;
-  
-  //define jackknife V0P5 correlators
-  vvvvd_t jV0P5_LL(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-  vvvvd_t jV0P5_0M(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-  vvvvd_t jV0P5_M0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-  vvvvd_t jV0P5_0T(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-  vvvvd_t jV0P5_T0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-  vvvvd_t jV0P5_0P(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-  vvvvd_t jV0P5_P0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-  //define deltam_cr
-  vvvvd_t num_deltam_cr_corr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nmr),nmr);
-  vvvvd_t den_deltam_cr_corr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nmr),nmr);
-  vvvvd_t deltam_cr_corr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nmr),nmr);
-
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      {
-	//load corrections
-	jV0P5_LL[mr_fw][mr_bw]=get_contraction(mr_fw,"F",mr_bw,"F","V0P5","IM","ODD",T,nconfs,njacks,conf_id);
-	jV0P5_0M[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"FF","V0P5","IM","ODD",T,nconfs,njacks,conf_id);
-	jV0P5_M0[mr_fw][mr_bw]=get_contraction(mr_fw,"FF",mr_bw,"0","V0P5","IM","ODD",T,nconfs,njacks,conf_id);
-	jV0P5_0T[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"T","V0P5","IM","ODD",T,nconfs,njacks,conf_id);
-	jV0P5_T0[mr_fw][mr_bw]=get_contraction(mr_fw,"T",mr_bw,"0","V0P5","IM","ODD",T,nconfs,njacks,conf_id);
-	//load the derivative wrt counterterm
-	jV0P5_0P[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"P","V0P5","RE","ODD",T,nconfs,njacks,conf_id);
-	jV0P5_P0[mr_fw][mr_bw]=get_contraction(mr_fw,"P",mr_bw,"0","V0P5","RE","ODD",T,nconfs,njacks,conf_id);
-      }
-
- 
-  
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      for(int ijack=0;ijack<njacks;ijack++)
-	for(int t=0;t<T/2+1;t++)
-	  {
-	    num_deltam_cr_corr[mr_fw][mr_bw][ijack][t]=jV0P5_LL[mr_fw][mr_bw][ijack][t]+jV0P5_0M[mr_fw][mr_bw][ijack][t]+jV0P5_M0[mr_fw][mr_bw][ijack][t]+jV0P5_0T[mr_fw][mr_bw][ijack][t]+jV0P5_T0[mr_fw][mr_bw][ijack][t];
-	    den_deltam_cr_corr[mr_fw][mr_bw][ijack][t]=-jV0P5_P0[mr_fw][mr_bw][ijack][t]+jV0P5_0P[mr_fw][mr_bw][ijack][t];
-	    deltam_cr_corr[mr_fw][mr_bw][ijack][t]=-num_deltam_cr_corr[mr_fw][mr_bw][ijack][t]/den_deltam_cr_corr[mr_fw][mr_bw][ijack][t];
-	  }
-
-  vvvd_t mean_value(vvd_t(vd_t(0.0,T/2+1),nmr),nmr), sqr_mean_value(vvd_t(vd_t(0.0,T/2+1),nmr),nmr), error(vvd_t(vd_t(0.0,T/2+1),nmr),nmr);
-  
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      for(int t=0;t<T/2+1;t++)
-	{
-	  for(int ijack=0;ijack<njacks;ijack++)
-	    {
-	      mean_value[mr_fw][mr_bw][t]+=deltam_cr_corr[mr_fw][mr_bw][ijack][t]/njacks;
-	      sqr_mean_value[mr_fw][mr_bw][t]+=deltam_cr_corr[mr_fw][mr_bw][ijack][t]*deltam_cr_corr[mr_fw][mr_bw][ijack][t]/njacks;
-	    }
-	  error[mr_fw][mr_bw][t]=sqrt((double)(njacks-1))*sqrt(sqr_mean_value[mr_fw][mr_bw][t]-mean_value[mr_fw][mr_bw][t]*mean_value[mr_fw][mr_bw][t]);
-	}
-
-  //t-range for the fit
-  int t_min=12;
-  int t_max=23;
-  
-  vvd_t coord(vd_t(0.0,T/2+1),1);
-  for(int j=0; j<T/2+1; j++)
-    {
-      coord[0][j] = 1.0;  //fit a costante
-    }
-
-  vvvvd_t deltam_cr_fit_parameters(vvvd_t(vvd_t(vd_t(0.0,2),coord.size()),nmr),nmr);
-  
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      deltam_cr_fit_parameters[mr_fw][mr_bw]=fit_par(coord,error[mr_fw][mr_bw],deltam_cr_corr[mr_fw][mr_bw],t_min,t_max); 
-  
-  vvvd_t deltam_cr(vvd_t(vd_t(0.0,2),nmr),nmr);
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      {
-      deltam_cr[mr_fw][mr_bw][0]=deltam_cr_fit_parameters[mr_fw][mr_bw][0][0]; 
-      deltam_cr[mr_fw][mr_bw][1]=deltam_cr_fit_parameters[mr_fw][mr_bw][0][1];
-      }
-  
-  return deltam_cr;
-}
-
-//compute effective mass
-vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const int *conf_id)
-{
-
-  vvvvd_t jP5P5_00(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      jP5P5_00[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"0","P5P5","RE","EVEN",T,nconfs,njacks,conf_id);
-  
-  // cout<<"**********DEBUG*************"<<endl;
-  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-  //     for(int ijack=0;ijack<njacks;ijack++)
-  // 	for(int t=0;t<T/2-1;t++)
-  // 	  cout<<mr_fw<<" "<<mr_bw<<" ijack "<<ijack<<" t "<<t<<"\t"<< jP5P5_00[mr_fw][mr_bw][ijack][t]/jP5P5_00[mr_fw][mr_bw][ijack][t+1]<<endl;
-  // cout<<"**********DEBUG*************"<<endl;
-
-  vvvvd_t M_eff(vvvd_t(vvd_t(vd_t(T/2),njacks),nmr),nmr);
-
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      {
-	// cout<<"**********DEBUG*************"<<endl;
-	// int r1 = mr_fw%nr;
-	// int m1 = (mr_fw-r1)/nr;
-	// int r2 = mr_bw%nr;
-	// int m2 = (mr_bw-r2)/nr;
-	// cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<endl;
-	// cout<<"--------------------------------------------"<<endl;
-	// cout<<"**********DEBUG*************"<<endl;
-	
-	for(int ijack=0; ijack<njacks;ijack++)
-	  for(int t=0;t<T/2;t++) 
-	    M_eff[mr_fw][mr_bw][ijack][t] = solve_Newton (jP5P5_00[mr_fw][mr_bw],ijack,t,T);
-	
-      }
-  
-  // cout<<"**********DEBUG*************"<<endl;
-  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-  //     for(int ijack=0;ijack<njacks;ijack++)
-  // 	for(int t=0;t<T/2;t++)
-  // 	  cout<<mr_fw<<" "<<mr_bw<<" ijack "<<ijack<<" t "<<t<<"\t"<<M_eff[mr_fw][mr_bw][ijack][t]<<endl;
-  // cout<<"**********DEBUG*************"<<endl;
-
-    // cout<<"**********DEBUG*************"<<endl;
-  // for(double i=0;i<10;i+=0.1){ cout<<i+1<<"\t"<<f_mass(22,T,i,jP5P5_00[0][0][0][22]/jP5P5_00[0][0][0][23])<<endl;}
-  // cout<<"**********DEBUG*************"<<endl;
-  
-  
-  vvvd_t mass_ave(vvd_t(vd_t(0.0,T/2),nmr),nmr), sqr_mass_ave(vvd_t(vd_t(0.0,T/2),nmr),nmr), mass_err(vvd_t(vd_t(0.0,T/2),nmr),nmr);
-  //   vd_t mass_ave(0.0,T/2), sqr_mass_ave(0.0,T/2), mass_err(0.0,T/2);
-  
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      for(int t=0;t<T/2;t++)
-	{
-	  for(int ijack=0;ijack<njacks;ijack++)
-	    {
-	      mass_ave[mr_fw][mr_bw][t]+=M_eff[mr_fw][mr_bw][ijack][t]/njacks;
-	      sqr_mass_ave[mr_fw][mr_bw][t]+=M_eff[mr_fw][mr_bw][ijack][t]*M_eff[mr_fw][mr_bw][ijack][t]/njacks;
-	    }
-	  mass_err[mr_fw][mr_bw][t]=sqrt((double)(njacks-1))*sqrt(sqr_mass_ave[mr_fw][mr_bw][t]-mass_ave[mr_fw][mr_bw][t]*mass_ave[mr_fw][mr_bw][t]);      
-	}
-
-  
-  //t-range for the fit
-  int t_min=12;
-  int t_max=23;
-  
-  vvd_t coord(vd_t(0.0,T/2),1);
-  for(int j=0; j<T/2; j++)
-    {
-      coord[0][j] = 1.0;  //fit a costante
-    }
-
-  vvvvd_t eff_mass_fit_parameters(vvvd_t(vvd_t(vd_t(0.0,2),coord.size()),nmr),nmr);
-  
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      {
-	eff_mass_fit_parameters[mr_fw][mr_bw]=fit_par(coord,mass_err[mr_fw][mr_bw],M_eff[mr_fw][mr_bw],t_min,t_max);
-      }
-  
-  vvvd_t eff_mass(vvd_t(vd_t(0.0,2),nmr),nmr);
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      {
-	eff_mass[mr_fw][mr_bw][0]=eff_mass_fit_parameters[mr_fw][mr_bw][0][0]; 
-	eff_mass[mr_fw][mr_bw][1]=eff_mass_fit_parameters[mr_fw][mr_bw][0][1];
-      }
-
-  // cout<<"********DEBUG*****************************"<<endl; 
-  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-  //     {
-  // 	int r1 = mr_fw%nr;
-  // 	int m1 = (mr_fw-r1)/nr;
-  // 	int r2 = mr_bw%nr;
-  // 	int m2 = (mr_bw-r2)/nr;
-  
-  // 	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  eff_mass: "<<eff_mass[mr_fw][mr_bw][0]<<" +- "<<eff_mass[mr_fw][mr_bw][1]<<endl;
-  //     }
-  // cout<<"********DEBUG*****************************"<<endl; 
-  
-  return eff_mass;
-}
-
-
 /***********************************************************/
 /*************************** main **************************/
 /***********************************************************/
@@ -1084,29 +721,13 @@ int main(int narg,char **arg)
 
   //delta m_cr
 
-   //DEBUG
-  cout<<"Computing deltam_cr. "<<endl;
+  //DEBUG
+  cout<<"Reading deltam_cr. "<<endl;
   //DEBUG
 
   t0=high_resolution_clock::now();
-  
-  //  vvvd_t deltam_cr_array= compute_deltam_cr(T,nconfs,njacks,conf_id);
-  
-  // cout<<"********DEBUG*****************************"<<endl; 
-  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-  //     {
-  // 	int r1 = mr_fw%nr;
-  // 	int m1 = (mr_fw-r1)/nr;
-  // 	int r2 = mr_bw%nr;
-  // 	int m2 = (mr_bw-r2)/nr;
-	
-  // 	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  deltam_cr "<<deltam_cr_array[mr_fw][mr_bw][0]<<"+-"<<deltam_cr_array[mr_fw][mr_bw][1]<<endl;
-  //     }
-  // cout<<"********DEBUG*****************************"<<endl<<endl;
 
   vvvd_t deltam_cr_array(vvd_t(vd_t(0.0,2),nmr),nmr);
-
 
   ifstream input_deltam;
   input_deltam.open("deltam_cr_array",ios::binary);
@@ -1125,13 +746,25 @@ int main(int narg,char **arg)
 	    deltam_cr_array[mr_fw][mr_bw][i]=temp; //store
 	  }
 
-  cout<<"***DEBUG***"<<endl;
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      for(int i=0;i<2;i++)
-	cout<<deltam_cr_array[mr_fw][mr_bw][i]<<endl;
-  cout<<"***DEBUG***"<<endl;
-  
+   // cout<<"********DEBUG*****************************"<<endl; 
+  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+  //     {
+  // 	int r1 = mr_fw%nr;
+  // 	int m1 = (mr_fw-r1)/nr;
+  // 	int r2 = mr_bw%nr;
+  // 	int m2 = (mr_bw-r2)/nr;
+	
+  // 	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  deltam_cr "<<deltam_cr_array[mr_fw][mr_bw][0]<<"+-"<<deltam_cr_array[mr_fw][mr_bw][1]<<endl;
+  //     }
+  // cout<<"********DEBUG*****************************"<<endl<<endl;
+
+  // cout<<"***DEBUG***"<<endl;
+  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+  //     for(int i=0;i<2;i++)
+  // 	cout<<deltam_cr_array[mr_fw][mr_bw][i]<<endl;
+  // cout<<"***DEBUG***"<<endl;
   
   vvd_t deltam_cr(vd_t(0.0,nmr),nmr);
   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -1140,32 +773,56 @@ int main(int narg,char **arg)
 
   t1=high_resolution_clock::now();
   t_span = duration_cast<duration<double>>(t1-t0);
-  cout<<"***** Computed Deltam_cr in  "<<t_span.count()<<" s ******"<<endl<<endl;
-  
+  cout<<"***** Read Deltam_cr in  "<<t_span.count()<<" s ******"<<endl<<endl;
   
   //double deltam_cr = 0.230697;
   
   //Effective Mass
 
   //DEBUG
-  cout<<"Computing effective mass. "<<endl;
+  cout<<"Reading effective mass. "<<endl;
   //DEBUG
 
   t0=high_resolution_clock::now();
   
-  vvvd_t eff_mass_array = compute_eff_mass(T,nconfs,njacks,conf_id);
+  vvvd_t eff_mass_array(vvd_t(vd_t(0.0,2),nmr),nmr);
 
-  t1=high_resolution_clock::now();
-  t_span = duration_cast<duration<double>>(t1-t0);
-  cout<<endl;
-  cout<<"***** Computed Effective Mass in "<<t_span.count()<<" s ******"<<endl<<endl;
-
+  ifstream input_effmass;
+  input_effmass.open("eff_mass_array",ios::binary);
+  
+  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+      for(int i=0;i<2;i++)
+	{
+	  double temp;
+	  input_effmass.read((char*)&temp,sizeof(double));
+	  if(not input_effmass.good())
+	    {
+	      cerr<<"Unable to read from eff_mass_array mr_fw: "<<mr_fw<<", mr_bw: "<<mr_bw<<", i: "<<i<<endl;
+	      exit(1);
+	    }
+	  eff_mass_array[mr_fw][mr_bw][i]=temp; //store
+	}
+  
+  cout<<"***DEBUG***"<<endl;
+  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+      for(int i=0;i<2;i++)
+  	cout<<eff_mass_array[mr_fw][mr_bw][i]<<endl;
+  cout<<"***DEBUG***"<<endl;
+  
   vvd_t eff_mass(vd_t(0.0,nmr),nmr);
   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
       eff_mass[mr_fw][mr_bw] = eff_mass_array[mr_fw][mr_bw][0];
   
+  t1=high_resolution_clock::now();
+  t_span = duration_cast<duration<double>>(t1-t0);
+  cout<<endl;
+  cout<<"***** Read Effective Mass in "<<t_span.count()<<" s ******"<<endl<<endl;
+  
   // cout<<"eff_mass: "<<eff_mass_array[0]<<" +- "<<eff_mass_array[1]<<endl;
+
   
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////
   
