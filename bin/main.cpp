@@ -933,7 +933,7 @@ int main(int narg,char **arg)
 		       int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
 
 		       //DEBUG
-		       cout<<"  Reading propagator from "<<path<<endl;
+		       //cout<<"  Reading propagator from "<<path<<endl;
 		       //DEBUG
 		       
 		       //create all the propagators in a given conf and a given mom
