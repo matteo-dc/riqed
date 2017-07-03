@@ -302,20 +302,11 @@ jprop_t invert_jprop( const jprop_t &jprop){
 
 //amputate external legs
 
-jvert_t amputate( const jprop_t  &jprop1_inv, const jvert_t &jV, const jprop_t  &jprop2_inv, vprop_t GAMMA){
+prop_t amputate( const prop_t  &prop1_inv, const prop_t &V, const prop_t  &prop2_inv, vprop_t GAMMA){
 
-  const int njacks = jV.size();
-  const int nmr = jV[0].size();
-  jvert_t jLambda(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
+  prop_t Lambda=prop1_inv*jV*GAMMA[5]*prop2_inv.adjoint()*GAMMA[5];
   
-#pragma omp parallel for collapse(4)
-  for(int ijack=0;ijack<njacks;ijack++)
-    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-      for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-	for(int igam=0;igam<16;igam++)
-	  jLambda[ijack][mr_fw][mr_bw][igam]=jprop1_inv[ijack][mr_fw]*jV[ijack][mr_fw][mr_bw][igam]*GAMMA[5]*jprop2_inv[ijack][mr_bw].adjoint()*GAMMA[5];
-  
-  return jLambda;
+  return Lambda;
 }
 
 //compute jZq
@@ -1023,11 +1014,23 @@ int main(int narg,char **arg)
        //amputate external legs
        t0=high_resolution_clock::now();
        
-       jvert_t jLambda_0 = amputate(jS_0_inv, jVert_0, jS_0_inv, GAMMA);     //jLambda_0[ijack][mr_fw][mr_bw][gamma]
-       jvert_t jLambda_em = amputate(jS_0_inv, jVert_em, jS_0_inv, GAMMA);
-       jvert_t jLambda_a = amputate(jS_em_inv, jVert_0, jS_0_inv, GAMMA);
-       jvert_t jLambda_b = amputate(jS_0_inv, jVert_0, jS_em_inv, GAMMA);
-
+       jvert_t jLambda_0(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);    //jLambda_0[ijack][mr_fw][mr_bw][gamma]
+       jvert_t jLambda_em(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
+       jvert_t jLambda_a(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
+       jvert_t jLambda_b(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
+       
+#pragma omp parallel for collapse(4)
+       for(int ijack=0;ijack<njacks;ijack++)
+	 for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+	   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+	     for(int igam=0;igam<16;igam++)
+	       {
+		 jLambda_0[ijack][mr_fw][mr_bw][gamma] = amputate(jS_0_inv[ijack][mr_fw], jVert_0[ijack][mr_fw][mr_bw][igam], jS_0_inv[ijack][mr_bw], GAMMA);   //jLambda_0[ijack][mr_fw][mr_bw][gamma]
+		 jLambda_em[ijack][mr_fw][mr_bw][gamma] = amputate(jS_0_inv[ijack][mr_fw], jVert_em[ijack][mr_fw][mr_bw][igam], jS_0_inv[ijack][mr_bw], GAMMA);
+		 jLambda_a[ijack][mr_fw][mr_bw][gamma] = amputate(jS_em_inv[ijack][mr_fw], jVert_0[ijack][mr_fw][mr_bw][igam], jS_0_inv[ijack][mr_bw], GAMMA);
+		 jLambda_b[ijack][mr_fw][mr_bw][gamma] = amputate(jS_0_inv[ijack][mr_fw], jVert_0[ijack][mr_fw][mr_bw][igam], jS_em_inv[ijack][mr_bw], GAMMA);
+	       }
+       
        t1=high_resolution_clock::now();
        t_span = duration_cast<duration<double>>(t1-t0);
        cout<<"***** Amputated external legs in "<<t_span.count()<<" s ******"<<endl<<endl;
