@@ -125,6 +125,11 @@ prop_t read_prop(ifstream &input, const string &path)
 	for(int ic_si=0;ic_si<3;ic_si++)
 	  {
 	    double temp[2];
+	    if(not input.good())
+	      {
+		cerr<<"Bad before reading"<<endl;
+		exit(1);
+	      }
 	    input.read((char*)&temp,sizeof(double)*2);
 	    if(not input.good())
 	      {
@@ -194,19 +199,12 @@ vprop_t make_gamma()
 }
 
 //calculate the vertex function in a given configuration for the given equal momenta
-vvvprop_t make_vertex(const vprop_t &prop1, const vprop_t &prop2,const vprop_t &gamma)
+prop_t make_vertex(const prop_t &prop1, const prop_t &prop2, const int mu, const vprop_t &gamma)
 {
-
-  int nmr=prop1.size(); 
-  vvvprop_t vert(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-  
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      for(int mu=0;mu<16;mu++)
-	{      
-	  vert[mr_fw][mr_bw][mu]=prop1[mr_fw]*gamma[mu]*gamma[5]*prop2[mr_bw].adjoint()*gamma[5];  /*it has to be "jackknifed"*/
-	}
-  return vert;
+ 
+ prop_t vert=prop1*gamma[mu]*gamma[5]*prop2.adjoint()*gamma[5];  /*it has to be "jackknifed"*/
+ 
+ return vert;
 }
 
 
@@ -632,6 +630,10 @@ void print_file_filtered(const char* name_file, vd_t p2, vd_t p4, vvd_t Z, vvd_t
   
 int main(int narg,char **arg)
 {
+#pragma omp parallel
+#pragma omp master
+  cout<<"Using "<<omp_get_num_threads()<<" threads"<<endl;
+  
   high_resolution_clock::time_point t0=high_resolution_clock::now();
   
   if (narg!=11){
@@ -910,7 +912,7 @@ int main(int narg,char **arg)
 	     string hit_suffix = "";
 	     if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
 	     
-	     vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);  // S[type][mr] e.g.: S[1][0]=S_M0_R0_F, S[2][1]=S_M0_R1_FF
+	     vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),nt),njacks);  // S[ijack][type][mr]
 	       
 #pragma omp parallel for collapse(4)
 	     for(int t=0;t<nt;t++)
@@ -924,42 +926,53 @@ int main(int narg,char **arg)
 		       string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
 		       
 		       int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
+
+		       printf(" i_in_clust %d  iconf %d   ijack %d \n",i_in_clust,iconf,ijack);
 		       
 		       //DEBUG
-		       cout<<"  Reading propagator from "<<path<<endl;
+		       printf("  Reading propagator from %s\n",path.c_str());
 		       //DEBUG
 		       
 		       //create all the propagators in a given conf and a given mom
-		       S[t][mr] = read_prop(input[icombo],path);
+		       S[ijack][t][mr] = read_prop(input[icombo],path);
 		       
-		       if(t==4) S[t][mr]*=dcompl(0.0,-1.0);
-		       if(t==5) S[t][mr]*=dcompl(1.0,0.0);
+		       if(t==4) S[ijack][t][mr]*=dcompl(0.0,-1.0);
+		       if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);
 		     }
-
+	     
+#pragma omp parallel for collapse (2)
 	     for(int ijack=0;ijack<njacks;ijack++)
-	       {
-		 //create pre-jackknife propagator:  jS_0[ijack][mr]
-		 jS_0[ijack] += S[0];
-		 jS_self_tad[ijack] += S[2] + S[3];
-		 jS_p[ijack] += S[4];
-		 // jS_s[ijack] += S[5];
-	       
-		 //create pre-jackknife vertex:  jVert_0[ijack][mr_fw][mr_bw][gamma]
-		 jVert_0[ijack] += make_vertex(S[0], S[0], GAMMA);
-		 jVert_11_self_tad[ijack] += make_vertex(S[1],S[1],GAMMA)+make_vertex(S[0],S[2],GAMMA)+make_vertex(S[2],S[0],GAMMA)+make_vertex(S[0],S[3],GAMMA)+make_vertex(S[3],S[0],GAMMA);
-		 jVert_p[ijack] += make_vertex(S[0],S[4],GAMMA)+make_vertex(S[4],S[0],GAMMA);
-		 // jVert_s[ijack] += make_vertex(S[0],S[5],GAMMA) + make_vertex(S[5],S[0],GAMMA);
-	       }
+	       for(int mr=0;mr<nmr;mr++)
+		 {
+		   jS_0[ijack][mr] += S[ijack][0][mr];
+		   jS_self_tad[ijack][mr] += S[ijack][2][mr] + S[ijack][3][mr];
+		   jS_p[ijack][mr] += S[ijack][4][mr];
+		   // jS_s[ijack][mr] += S[ijack][5][mr];
+		 }
+
+#pragma omp parallel for collapse (4)
+	     for(int ijack=0;ijack<njacks;ijack++)
+	       for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+		 for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+		   for(int igam=0;igam<16;igam++)
+		     {
+		       jVert_0[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw], S[ijack][0][mr_bw],igam,GAMMA);
+		       jVert_11_self_tad[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][1][mr_fw],S[ijack][1][mr_bw],igam,GAMMA)\
+			 +make_vertex(S[ijack][0][mr_fw],S[ijack][2][mr_bw],igam,GAMMA)+make_vertex(S[ijack][2][mr_fw],S[ijack][0][mr_bw],igam,GAMMA)\
+			 +make_vertex(S[ijack][0][mr_fw],S[ijack][3][mr_bw],igam,GAMMA)+make_vertex(S[ijack][3][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
+		       jVert_p[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw],S[ijack][4][mr_bw],igam,GAMMA)+make_vertex(S[ijack][4][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
+		       // jVert_s[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw],S[ijack][5][mr_bw],igam,GAMMA) + make_vertex(S[ijack][5][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
+		     }
 	     
 	   } //close hits&in_i_clust loop
-      
+       
      
        high_resolution_clock::time_point t1=high_resolution_clock::now();
        t_span = duration_cast<duration<double>>(t1-t0);
        cout<<"***** Read propagators and created vertices (and jackknives) in "<<t_span.count()<<" s ******"<<endl<<endl;
-	 
+       
        t0=high_resolution_clock::now();
-	 
+       
        //jackknife of propagators
        jS_0 = jackknife_prop(jS_0,nconfs,clust_size,nhits);
        jS_self_tad = jackknife_prop(jS_self_tad,nconfs,clust_size,nhits);
