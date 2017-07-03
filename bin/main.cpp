@@ -106,7 +106,7 @@ void read_mom_list(const string &path)
 string path_to_conf(int i_conf,const string &name)
 {
   char path[1024];
-  sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/fft_%s",i_conf,name.c_str());
+  sprintf(path,/*"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/*/"out/%04d/fft_%s",i_conf,name.c_str());
   return path;
 }
 
@@ -219,7 +219,7 @@ string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, 
   int m2 = (mr2-r2)/nr;
   
   char path[1024];
-  sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
+  sprintf(path,/*"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/*/"out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
 
   // cout<<path<<endl;
   
@@ -304,7 +304,7 @@ jprop_t invert_jprop( const jprop_t &jprop){
 
 prop_t amputate( const prop_t  &prop1_inv, const prop_t &V, const prop_t  &prop2_inv, vprop_t GAMMA){
 
-  prop_t Lambda=prop1_inv*jV*GAMMA[5]*prop2_inv.adjoint()*GAMMA[5];
+  prop_t Lambda=prop1_inv*V*GAMMA[5]*prop2_inv.adjoint()*GAMMA[5];
   
   return Lambda;
 }
@@ -1025,10 +1025,10 @@ int main(int narg,char **arg)
 	   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
 	     for(int igam=0;igam<16;igam++)
 	       {
-		 jLambda_0[ijack][mr_fw][mr_bw][gamma] = amputate(jS_0_inv[ijack][mr_fw], jVert_0[ijack][mr_fw][mr_bw][igam], jS_0_inv[ijack][mr_bw], GAMMA);   //jLambda_0[ijack][mr_fw][mr_bw][gamma]
-		 jLambda_em[ijack][mr_fw][mr_bw][gamma] = amputate(jS_0_inv[ijack][mr_fw], jVert_em[ijack][mr_fw][mr_bw][igam], jS_0_inv[ijack][mr_bw], GAMMA);
-		 jLambda_a[ijack][mr_fw][mr_bw][gamma] = amputate(jS_em_inv[ijack][mr_fw], jVert_0[ijack][mr_fw][mr_bw][igam], jS_0_inv[ijack][mr_bw], GAMMA);
-		 jLambda_b[ijack][mr_fw][mr_bw][gamma] = amputate(jS_0_inv[ijack][mr_fw], jVert_0[ijack][mr_fw][mr_bw][igam], jS_em_inv[ijack][mr_bw], GAMMA);
+		 jLambda_0[ijack][mr_fw][mr_bw][igam] = amputate(jS_0_inv[ijack][mr_fw], jVert_0[ijack][mr_fw][mr_bw][igam], jS_0_inv[ijack][mr_bw], GAMMA);   //jLambda_0[ijack][mr_fw][mr_bw][igam]
+		 jLambda_em[ijack][mr_fw][mr_bw][igam] = amputate(jS_0_inv[ijack][mr_fw], jVert_em[ijack][mr_fw][mr_bw][igam], jS_0_inv[ijack][mr_bw], GAMMA);
+		 jLambda_a[ijack][mr_fw][mr_bw][igam] = amputate(jS_em_inv[ijack][mr_fw], jVert_0[ijack][mr_fw][mr_bw][igam], jS_0_inv[ijack][mr_bw], GAMMA);
+		 jLambda_b[ijack][mr_fw][mr_bw][igam] = amputate(jS_0_inv[ijack][mr_fw], jVert_0[ijack][mr_fw][mr_bw][igam], jS_em_inv[ijack][mr_bw], GAMMA);
 	       }
        
        t1=high_resolution_clock::now();
@@ -1214,7 +1214,7 @@ int main(int narg,char **arg)
 	     
 	     for(int r=0; r<nr; r++)
 	       {
-		 M_average += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr);
+		 M_average += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
 		 for(int ijack=0;ijack<njacks;ijack++) Gp_average[ijack] += (jG_0[ijack][r+nr*mA][r+nr*mB][2]+jG_0[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
 		 for(int ijack=0;ijack<njacks;ijack++) Gs_average[ijack] += (jG_0[ijack][r+nr*mA][r+nr*mB][0]+jG_0[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
 	       }
@@ -1224,6 +1224,31 @@ int main(int narg,char **arg)
 	     ieq++;  //ieq={00,01,02,03,11,12,13,22,23,33}
 	   }
 
+
+       vvd_t Gp_ave1(vd_t(0.0,nmr),nmr), sqr_Gp_ave1(vd_t(0.0,nmr),nmr), Gp_err1(vd_t(0.0,nmr),nmr);
+
+
+       for(int mr_fw=0; mr_fw<nmr; mr_fw++)
+	 for(int mr_bw=0; mr_bw<nmr; mr_bw++)
+	   {
+	     for(int ijack=0;ijack<njacks;ijack++)
+	       {
+		 Gp_ave1[mr_fw][mr_bw]+=jG_0[ijack][mr_fw][mr_bw][2]/njacks;
+		 sqr_Gp_ave1[mr_fw][mr_bw]+=jG_0[ijack][mr_fw][mr_bw][2]*jG_0[ijack][mr_fw][mr_bw][2]/njacks;
+	       }
+	     Gp_err1[mr_fw][mr_bw]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_ave1[mr_fw][mr_bw]-Gp_ave1[mr_fw][mr_bw]*Gp_ave1[mr_fw][mr_bw]);
+	   }
+
+
+       
+       for(int mA=0; mA<nm; mA++)
+	 for(int mB=mA; mB<nm; mB++)
+	   {
+	     cout<<"mA "<<mA<<" mB "<<mB<<"   ";
+	     for(int r=0; r<nr; r++) cout<<"(r="<<r<<") "<<eff_mass[r+nr*mA][r+nr*mB]<<" "<<eff_mass[r+nr*mB][r+nr*mA]<<" | "<<Gp_ave1[r+nr*mA][r+nr*mB]<<"+-"<<Gp_err1[r+nr*mA][r+nr*mB]<<" "<<Gp_ave1[r+nr*mB][r+nr*mA]<<"+-"<<Gp_err1[r+nr*mB][r+nr*mA]<<endl;
+	     cout<<endl;
+	   }
+       
        // for(int mA=0; mA<nm; mA++)
        // 	 for(int mB=0; mB<nm; mB++)
        // 	   for(int ijack=0;ijack<njacks;ijack++)
