@@ -306,20 +306,16 @@ jprop_t invert_jprop( const jprop_t &jprop){
 
 jvert_t amputate( const jprop_t  &jprop1_inv, const jvert_t &jV, const jprop_t  &jprop2_inv, vprop_t GAMMA){
 
-  int njacks = jV.size();
-  int nmr = jV[0].size();
+  const int njacks = jV.size();
+  const int nmr = jV[0].size();
   jvert_t jLambda(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
   
-#pragma omp parallel shared(jLambda,jprop1_inv,jV,jprop2_inv,GAMMA,njacks,nmr)
-  {
-    
-#pragma omp for collapse(4)
-    for(int ijack=0;ijack<njacks;ijack++)
-      for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-	for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-	  for(int igam=0;igam<16;igam++)
-	    jLambda[ijack][mr_fw][mr_bw][igam]=jprop1_inv[ijack][mr_fw]*jV[ijack][mr_fw][mr_bw][igam]*GAMMA[5]*jprop2_inv[ijack][mr_bw].adjoint()*GAMMA[5];
-  }
+#pragma omp parallel for collapse(4)
+  for(int ijack=0;ijack<njacks;ijack++)
+    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+      for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+	for(int igam=0;igam<16;igam++)
+	  jLambda[ijack][mr_fw][mr_bw][igam]=jprop1_inv[ijack][mr_fw]*jV[ijack][mr_fw][mr_bw][igam]*GAMMA[5]*jprop2_inv[ijack][mr_bw].adjoint()*GAMMA[5];
   
   return jLambda;
 }
@@ -417,17 +413,13 @@ vvd_t compute_jSigma1(vprop_t GAMMA, jprop_t jS_inv, double L, double T, int imo
 //project the amputated green function
 jproj_t project(vprop_t GAMMA, const jvert_t &jLambda)
 {
-  int njacks=jLambda.size();
-  int nmr=jLambda[0].size();
+  const int njacks=jLambda.size();
+  const int nmr=jLambda[0].size();
   //L_proj has 5 components: S(0), V(1), P(2), A(3), T(4)
   jvert_t L_proj(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),5),nmr),nmr),njacks);
-  vvvvdcompl_t jG(vvvdcompl_t(vvdcompl_t(vdcompl_t(0.0,5),nmr),nmr),njacks);
   jproj_t jG_real(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks);
   vprop_t P(prop_t::Zero(),16);
 
-#pragma omp parallel shared(GAMMA,jLambda,L_proj,jG,jG_real,P,njacks,nmr)
-  {
- 
     //create projectors such that tr(GAMMA*P)=Identity
     P[0]=GAMMA[0]; //scalar
     for(int igam=1;igam<5;igam++)  //vector
@@ -437,8 +429,8 @@ jproj_t project(vprop_t GAMMA, const jvert_t &jLambda)
       P[igam]=GAMMA[igam].adjoint()/4.;
     for(int igam=10;igam<16;igam++)  //tensor
       P[igam]=GAMMA[igam].adjoint()/6.;
-
-#pragma omp for collapse(3)
+ 
+#pragma omp parallel for collapse(3)
     for(int ijack=0;ijack<njacks;ijack++)
       for(int mr_fw=0;mr_fw<nmr;mr_fw++)
 	for(int mr_bw=0;mr_bw<nmr;mr_bw++)
@@ -453,12 +445,8 @@ jproj_t project(vprop_t GAMMA, const jvert_t &jLambda)
 	      L_proj[ijack][mr_fw][mr_bw][4]+=jLambda[ijack][mr_fw][mr_bw][igam]*P[igam];
 	  
 	    for(int j=0;j<5;j++)
-	      {
-		jG[ijack][mr_fw][mr_bw][j]=L_proj[ijack][mr_fw][mr_bw][j].trace()/12.;
-		jG_real[ijack][mr_fw][mr_bw][j]=jG[ijack][mr_fw][mr_bw][j].real();
-	      }
+	      jG_real[ijack][mr_fw][mr_bw][j]=L_proj[ijack][mr_fw][mr_bw][j].trace().real()/12.0;
 	  }
-  }
   
   return jG_real;
 }
@@ -865,40 +853,31 @@ int main(int narg,char **arg)
 
    
 
-   int icombo=-1;
-
    t0=high_resolution_clock::now();
 
-#pragma omp parallel shared(input) private(icombo)
-   {
-     #pragma omp for
-     for(int iconf=0;iconf<nconfs;iconf++)
-       for(size_t ihit=0;ihit<nhits;ihit++)
-	 {
-	   string hit_suffix = "";
-	   if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
-	 
-	   for(int t=0;t<nt;t++)
-	     for(int m=0;m<nm;m++)
-	       for(int r=0;r<nr;r++)
-		 {
-		   icombo=r + nr*m + nr*nm*t + nr*nm*nt*ihit + nr*nm*nt*nhits*iconf;		 
-		   string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
-		 
-		   input[icombo].open(path,ios::binary);
-
-		   //DEBUG
-		   //cout<<"  Opening file "<<path<<endl;
-		   //DEBUG
-		 
-		   if(!input[icombo].good())
-		     {cerr<<"Unable to open file "<<path<<" combo "<<icombo<<endl;
-		       exit(1);}
-		 }
-	 }
-
-   }
-   
+#pragma omp parallel for collapse(5)
+   for(int iconf=0;iconf<nconfs;iconf++)
+     for(size_t ihit=0;ihit<nhits;ihit++)
+       for(int t=0;t<nt;t++)
+	 for(int m=0;m<nm;m++)
+	   for(int r=0;r<nr;r++)
+	     {
+	       string hit_suffix = "";
+	       if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
+	       
+	       int icombo=r + nr*m + nr*nm*t + nr*nm*nt*ihit + nr*nm*nt*nhits*iconf;		 
+	       string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
+	       
+	       input[icombo].open(path,ios::binary);
+	       
+	       //DEBUG
+	       //cout<<"  Opening file "<<path<<endl;
+	       //DEBUG
+	       
+	       if(!input[icombo].good())
+		 {cerr<<"Unable to open file "<<path<<" combo "<<icombo<<endl;
+		   exit(1);}
+	     }
    
    t1=high_resolution_clock::now();
    t_span = duration_cast<duration<double>>(t1-t0);
@@ -922,31 +901,15 @@ int main(int narg,char **arg)
        jvert_t jVert_em (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
      
 
-       icombo=-1;
-
        t0=high_resolution_clock::now();
        
        
-       // jprop_t PR_jS_0(valarray<prop_t>(prop_t::Zero(),nmr),njacks);		
-       // jprop_t PR_jS_self_tad(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
-       // jprop_t PR_jS_p(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
-       // // jprop_t PR_jS_s(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
-       
-       // jvert_t PR_jVert_0 (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
-       // jvert_t PR_jVert_11_self_tad (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
-       // jvert_t PR_jVert_p (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
-       // //  jvert_t PR_jVert_s (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
-	 
-      
-
-
-#pragma omp parallel shared(jS_0,jS_self_tad,jS_p,jVert_0,jVert_11_self_tad,jVert_p) private(icombo)
-       {
-       
-       #pragma omp for
-       for(int iconf=0;iconf<nconfs;iconf++)
-         for(size_t ihit=0;ihit<nhits;ihit++)
+       for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
+	 for(size_t ihit=0;ihit<nhits;ihit++)
 	   {
+	     string hit_suffix = "";
+	     if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
+	     
 	     vvprop_t S(vprop_t(prop_t::Zero(),nmr),nt);  // S[type][mr] e.g.: S[1][0]=S_M0_R0_F, S[2][1]=S_M0_R1_FF
 	     
 	     vert_t Vert_0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);  //Vert_0[mr_fw][mr_bw][gamma]	 
@@ -957,22 +920,22 @@ int main(int narg,char **arg)
 	     vert_t Vert_t0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);	       
 	     vert_t Vert_0p(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
 	     vert_t Vert_p0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);	       
+	     
 	     // vert_t Vert_0s(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
 	     // vert_t Vert_s0(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
-
-	     int ijack=iconf/clust_size;
-	       
-	     string hit_suffix = "";
-	     if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
-	       
+	     
+#pragma omp parallel for collapse(4)
 	     for(int t=0;t<nt;t++)
 	       for(int m=0;m<nm;m++)
 		 for(int r=0;r<nr;r++)
-		   {
-		     icombo=r + nr*m + nr*nm*t + nr*nm*nt*ihit + nr*nm*nt*nhits*iconf;
-		     string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
+		   for(int ijack=0;ijack<njacks;ijack++)
+		     {
+		       int iconf=clust_size*ijack+i_in_clust;
 		       
-		     int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
+		       int icombo=r + nr*m + nr*nm*t + nr*nm*nt*ihit + nr*nm*nt*nhits*iconf;
+		       string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
+		       
+		       int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
 		       
 		     //DEBUG
 		     //cout<<"  Reading propagator from "<<path<<endl;
@@ -983,7 +946,7 @@ int main(int narg,char **arg)
 		       
 		     if(t==4) S[t][mr]*=dcompl(0.0,-1.0);
 		     if(t==5) S[t][mr]*=dcompl(1.0,0.0);  
-		   }
+		     }
 	       
 	     //create vertex functions with fixed momentum
 	       
