@@ -1570,14 +1570,20 @@ int main(int narg,char **arg)
    cout<<"000"<<endl;
    
    //Vector of interesting quantities (EQUIVALENT MOMS)
-   vector<jZ_t> jZq_eqmoms(neq_moms,(vvd_t(vd_t(nmr),njacks))), jSigma1_eqmoms(neq_moms), jZq_em_eqmoms(neq_moms), jSigma1_em_eqmoms(neq_moms);
-   vector<jZbil_t> jZ_eqmoms(neq_moms), jZ1_eqmoms(neq_moms), jZ_em_eqmoms(neq_moms), jZ1_em_eqmoms(neq_moms);
-   vector<jZ_t> jZq_sub_eqmoms(neq_moms), jSigma1_sub_eqmoms(neq_moms), jZq_em_sub_eqmoms(neq_moms), jSigma1_em_sub_eqmoms(neq_moms);
-   vector<jZbil_t> jZ_sub_eqmoms(neq_moms), jZ1_sub_eqmoms(neq_moms), jZ_em_sub_eqmoms(neq_moms), jZ1_em_sub_eqmoms(neq_moms);
-   vector<vvd_t> jGp_equivalent_eqmoms(neq_moms), jGs_equivalent_eqmoms(neq_moms), jGp_subpole_eqmoms(neq_moms), jGs_subpole_eqmoms(neq_moms);
-   vector<vd_t> jGp_0_chiral_eqmoms(neq_moms),jGa_0_chiral_eqmoms(neq_moms),jGv_0_chiral_eqmoms(neq_moms),jGs_0_chiral_eqmoms(neq_moms),jGt_0_chiral_eqmoms(neq_moms);
-   vector<vd_t> jZq_chiral_eqmoms(neq_moms),jSigma1_chiral_eqmoms(neq_moms);
-   vector<vvd_t> jZ_chiral_eqmoms(neq_moms),jZ1_chiral_eqmoms(neq_moms);  
+   vector<jZ_t> jZq_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)),\
+     jZq_em_eqmoms(neq_moms,(vvd_t(vd_t(nmr),njacks))), jSigma1_em_eqmoms(neq_moms,(vvd_t(vd_t(nmr),njacks)));
+   vector<jZbil_t> jZ_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)),\
+     jZ_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks));
+   vector<jZ_t> jZq_sub_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_sub_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)),\
+     jZq_em_sub_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_em_sub_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
+   vector<jZbil_t> jZ_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)),\
+     jZ_em_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_em_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks));
+   vector<vvd_t> jGp_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)),\
+     jGp_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
+   vector<vd_t> jGp_0_chiral_eqmoms(neq_moms,vd_t(njacks)),jGa_0_chiral_eqmoms(neq_moms,vd_t(njacks)),jGv_0_chiral_eqmoms(neq_moms,vd_t(njacks)),\
+     jGs_0_chiral_eqmoms(neq_moms,vd_t(njacks)),jGt_0_chiral_eqmoms(neq_moms,vd_t(njacks));
+   vector<vd_t> jZq_chiral_eqmoms(neq_moms,vd_t(njacks)),jSigma1_chiral_eqmoms(neq_moms,vd_t(njacks));
+   vector<vvd_t> jZ_chiral_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)),jZ1_chiral_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));  
 
    for(int tag=0;tag<neq_moms;tag++)
      for(int imom=0;imom<moms;imom++)
