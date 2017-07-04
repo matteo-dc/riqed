@@ -1591,12 +1591,19 @@ int main(int narg,char **arg)
 	       for(int mr=0;mr<nmr;mr++)
 		 {
 		   jZq_eqmoms[tag][ijack][mr] += jZq_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		   cout<<"1"<<endl;
 		   jSigma1_eqmoms[tag][ijack][mr] += jSigma1_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		   cout<<"2"<<endl;
 		   jZq_em_eqmoms[tag][ijack][mr] += jZq_em_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		   cout<<"3"<<endl;
 		   jSigma1_em_eqmoms[tag][ijack][mr] += jSigma1_em_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		   cout<<"4"<<endl;
 		   jZq_sub_eqmoms[tag][ijack][mr] += jZq_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		   cout<<"5"<<endl;
 		   jSigma1_sub_eqmoms[tag][ijack][mr] += jSigma1_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		   cout<<"6"<<endl;
 		   jZq_em_sub_eqmoms[tag][ijack][mr] += jZq_em_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		   cout<<"7"<<endl;
 		   jSigma1_em_sub_eqmoms[tag][ijack][mr] += jSigma1_em_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
 		 }
 	     cout<<"b"<<endl;
