@@ -1539,8 +1539,6 @@ int main(int narg,char **arg)
    t0=high_resolution_clock::now();
    
    int neq_moms = tag+1;
-
-   int neq=
    
    vector<int> count_tag_vector(neq_moms);
    int count=0;
