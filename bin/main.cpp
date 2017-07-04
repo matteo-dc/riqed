@@ -1100,7 +1100,7 @@ int main(int narg,char **arg)
 
        
        //create p_tilde vector
-       
+     
        vd_t p(0.0,4);
        vd_t p_tilde(0.0,4);
        double p2=0.0;
@@ -1496,7 +1496,7 @@ int main(int narg,char **arg)
        for(size_t i=0;i<imom;i++)
 	 {
 	   if(abs(p2_vector[i]-p2_vector[imom])<eps*p2_vector[i] &&	\
-	      abs( abs(mom_list[i][1])*abs(mom_list[i][2])*abs(mom_list[i][3])-(abs(mom_list[imom][1])*abs(mom_list[imom][2])*abs(mom_list[imom][3])))<eps )
+	      abs( abs(mom_list[i][1])*abs(mom_list[i][2])*abs(mom_list[i][3])-(abs(mom_list[imom][1])*abs(mom_list[imom][2])*abs(mom_list[imom][3])))<eps ) //equivalence
 	     {
 	       tag_aux=tag_vector[i];
 	       tag_vector.push_back(tag_aux);
@@ -1519,9 +1519,9 @@ int main(int narg,char **arg)
    cout<<"_____P2________"<<endl;
    for(size_t imom=0;imom<mom_list.size();imom++) cout<<p2_vector[imom]<<endl;
    cout<<endl;
-   cout<<tag_vector.size()<<endl<<endl;
+   cout<<tag_vector.size()<<"   "<<neq_moms<<endl<<endl;
    
-   for(int imom=0;imom<neq_moms;imom++) cout<<imom<<"  "<<tag_vector[imom]<<endl;
+   for(size_t imom=0;imom<mom_list.size();imom++) cout<<imom<<"  "<<tag_vector[imom]<<endl;
   
    
    // //LO
