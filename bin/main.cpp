@@ -854,7 +854,6 @@ int main(int narg,char **arg)
    vector<jZbil_t> jZ_allmoms, jZ1_allmoms, jZ_em_allmoms, jZ1_em_allmoms;
    vector<jZ_t> jZq_sub_allmoms, jSigma1_sub_allmoms, jZq_em_sub_allmoms, jSigma1_em_sub_allmoms;
    vector<jZbil_t> jZ_sub_allmoms, jZ1_sub_allmoms, jZ_em_sub_allmoms, jZ1_em_sub_allmoms;
-   vector<vd_t> m_eff_equivalent_allmoms;
    vector<vvd_t> jGp_equivalent_allmoms, jGs_equivalent_allmoms, jGp_subpole_allmoms, jGs_subpole_allmoms;
    vector<vd_t> jGp_0_chiral_allmoms,jGa_0_chiral_allmoms,jGv_0_chiral_allmoms,jGs_0_chiral_allmoms,jGt_0_chiral_allmoms;
    vector<vd_t> jZq_chiral_allmoms,jSigma1_chiral_allmoms;
@@ -1405,8 +1404,8 @@ int main(int narg,char **arg)
        
        vvd_t jZq_equivalent(vd_t(0.0,neq),njacks), jSigma1_equivalent(vd_t(0.0,neq),njacks);
 
-       neq=nm;
-       vd_t m_eff_equivalent_Zq(0.0,neq);
+       int neq2=nm;
+       vd_t m_eff_equivalent_Zq(0.0,neq2);
        ieq=0;
 
 #pragma omp parallel for collapse(2)
@@ -1420,10 +1419,10 @@ int main(int narg,char **arg)
 	   }
 	    
 
-       vd_t Zq_ave(0.0,neq), sqr_Zq_ave(0.0,neq), Zq_err(0.0,neq);
-       vd_t Sigma1_ave(0.0,neq), sqr_Sigma1_ave(0.0,neq), Sigma1_err(0.0,neq);
+       vd_t Zq_ave(0.0,neq2), sqr_Zq_ave(0.0,neq2), Zq_err(0.0,neq2);
+       vd_t Sigma1_ave(0.0,neq2), sqr_Sigma1_ave(0.0,neq2), Sigma1_err(0.0,neq2);
        
-       for(int i=0;i<neq;i++)
+       for(int i=0;i<neq2;i++)
 	 {
 	   for(int ijack=0;ijack<njacks;ijack++)
 	     {
@@ -1439,9 +1438,9 @@ int main(int narg,char **arg)
        
        //linear fit
        t_min=0;
-       t_max=neq-1;
+       t_max=neq2-1;
 
-       for(int i=0; i<neq; i++)
+       for(int i=0; i<neq2; i++)
 	 {
 	   coord_linear[0][i] = 1.0;  //costante
 	   coord_linear[1][i] = m_eff_equivalent_Zq[i]*m_eff_equivalent_Zq[i];   //M^2 
@@ -1521,7 +1520,6 @@ int main(int narg,char **arg)
        jZ1_allmoms.push_back(jZ1);
        jZ_em_allmoms.push_back(jZ_em);
        jZ1_em_allmoms.push_back(jZ1_em);
-       m_eff_equivalent_allmoms.push_back(m_eff_equivalent);
        jGp_equivalent_allmoms.push_back(jGp_equivalent);
        jGs_equivalent_allmoms.push_back(jGs_equivalent);
        jGp_subpole_allmoms.push_back(jGp_subpole);
@@ -1566,7 +1564,6 @@ int main(int narg,char **arg)
    vector<jZbil_t> jZ_eqmoms(neq_moms), jZ1_eqmoms(neq_moms), jZ_em_eqmoms(neq_moms), jZ1_em_eqmoms(neq_moms);
    vector<jZ_t> jZq_sub_eqmoms(neq_moms), jSigma1_sub_eqmoms(neq_moms), jZq_em_sub_eqmoms(neq_moms), jSigma1_em_sub_eqmoms(neq_moms);
    vector<jZbil_t> jZ_sub_eqmoms(neq_moms), jZ1_sub_eqmoms(neq_moms), jZ_em_sub_eqmoms(neq_moms), jZ1_em_sub_eqmoms(neq_moms);
-   vector<vd_t> m_eff_equivalent_eqmoms(neq_moms);
    vector<vvd_t> jGp_equivalent_eqmoms(neq_moms), jGs_equivalent_eqmoms(neq_moms), jGp_subpole_eqmoms(neq_moms), jGs_subpole_eqmoms(neq_moms);
    vector<vd_t> jGp_0_chiral_eqmoms(neq_moms),jGa_0_chiral_eqmoms(neq_moms),jGv_0_chiral_eqmoms(neq_moms),jGs_0_chiral_eqmoms(neq_moms),jGt_0_chiral_eqmoms(neq_moms);
    vector<vd_t> jZq_chiral_eqmoms(neq_moms),jSigma1_chiral_eqmoms(neq_moms);
@@ -1577,37 +1574,60 @@ int main(int narg,char **arg)
        {
 	 if(tag_vector[imom]==tag)
 	   {
-	     jZq_eqmoms[tag] += jZq_allmoms[imom] / count_tag_vector[tag];
-	     jSigma1_eqmoms[tag] += jSigma1_allmoms[imom] / count_tag_vector[tag];
-	     jZq_em_eqmoms[tag] += jZq_em_allmoms[imom] / count_tag_vector[tag];
-	     jSigma1_em_eqmoms[tag] += jSigma1_em_allmoms[imom] / count_tag_vector[tag];
-	     jZ_eqmoms[tag] += jZ_allmoms[imom] / count_tag_vector[tag];
-	     jZ1_eqmoms[tag] += jZ1_allmoms[imom] / count_tag_vector[tag];
-	     jZ_em_eqmoms[tag] += jZ_em_allmoms[imom] / count_tag_vector[tag];
-	     jZ1_em_eqmoms[tag] += jZ1_em_allmoms[imom] / count_tag_vector[tag];
-	     jZq_sub_eqmoms[tag] += jZq_sub_allmoms[imom] / count_tag_vector[tag];
-	     jSigma1_sub_eqmoms[tag] += jSigma1_sub_allmoms[imom] / count_tag_vector[tag];
-	     jZq_em_sub_eqmoms[tag] += jZq_em_sub_allmoms[imom] / count_tag_vector[tag];
-	     jSigma1_em_sub_eqmoms[tag] += jSigma1_em_sub_allmoms[imom] / count_tag_vector[tag];
-	     jZ_sub_eqmoms[tag] += jZ_sub_allmoms[imom] / count_tag_vector[tag];
-	     jZ1_sub_eqmoms[tag] += jZ1_sub_allmoms[imom] / count_tag_vector[tag];
-	     jZ_em_sub_eqmoms[tag] += jZ_em_sub_allmoms[imom] / count_tag_vector[tag];
-	     jZ1_em_sub_eqmoms[tag] += jZ1_em_sub_allmoms[imom] / count_tag_vector[tag];	     
-	     m_eff_equivalent_eqmoms[tag] += m_eff_equivalent_allmoms[imom] / count_tag_vector[tag];
-	     jGp_equivalent_eqmoms[tag] += jGp_equivalent_allmoms[imom] / count_tag_vector[tag];
-	     jGs_equivalent_eqmoms[tag] += jGs_equivalent_allmoms[imom] / count_tag_vector[tag];
-	     jGp_subpole_eqmoms[tag] += jGp_subpole_allmoms[imom] / count_tag_vector[tag];
-	     jGs_subpole_eqmoms[tag] += jGs_subpole_allmoms[imom] / count_tag_vector[tag];
-	     jGp_0_chiral_eqmoms[tag] += jGp_0_chiral_allmoms[imom] / count_tag_vector[tag];
-	     jGa_0_chiral_eqmoms[tag] += jGa_0_chiral_allmoms[imom] / count_tag_vector[tag];
-	     jGv_0_chiral_eqmoms[tag] += jGv_0_chiral_allmoms[imom] / count_tag_vector[tag];
-	     jGs_0_chiral_eqmoms[tag] += jGs_0_chiral_allmoms[imom] / count_tag_vector[tag];
-	     jGt_0_chiral_eqmoms[tag] += jGt_0_chiral_allmoms[imom] / count_tag_vector[tag];
-	     jZq_chiral_eqmoms[tag] += jZq_chiral_allmoms[imom] / count_tag_vector[tag];
-	     jSigma1_chiral_eqmoms[tag] += jSigma1_chiral_allmoms[imom] / count_tag_vector[tag];
-	     jZ_chiral_eqmoms[tag] += jZ_chiral_allmoms[imom] / count_tag_vector[tag];
-	     jZ1_chiral_eqmoms[tag] += jZ1_chiral_allmoms[imom] / count_tag_vector[tag];
-
+#pragma omp parallel for collapse(2)
+	     for(int ijack=0;ijack<njacks;ijack++)
+	       for(int mr=0;mr<nmr;mr++)
+		 {
+		   jZq_eqmoms[tag][ijack][mr] += jZq_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		   jSigma1_eqmoms[tag][ijack][mr] += jSigma1_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		   jZq_em_eqmoms[tag][ijack][mr] += jZq_em_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		   jSigma1_em_eqmoms[tag][ijack][mr] += jSigma1_em_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		   jZq_sub_eqmoms[tag][ijack][mr] += jZq_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		   jSigma1_sub_eqmoms[tag][ijack][mr] += jSigma1_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		   jZq_em_sub_eqmoms[tag][ijack][mr] += jZq_em_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		   jSigma1_em_sub_eqmoms[tag][ijack][mr] += jSigma1_em_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
+		 }
+#pragma omp parallel for collapse(3)
+	     for(int ijack=0;ijack<njacks;ijack++)
+	       for(int mrA=0;mrA<nmr;mrA++)
+		 for(int mrB=0;mrB<nmr;mrB++)
+		   {
+		     jZ_eqmoms[tag][ijack][mrA][mrB] += jZ_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
+		     jZ1_eqmoms[tag][ijack][mrA][mrB] += jZ1_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
+		     jZ_em_eqmoms[tag][ijack][mrA][mrB] += jZ_em_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
+		     jZ1_em_eqmoms[tag][ijack][mrA][mrB] += jZ1_em_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
+		     jZ_sub_eqmoms[tag][ijack][mrA][mrB] += jZ_sub_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
+		     jZ1_sub_eqmoms[tag][ijack][mrA][mrB] += jZ1_sub_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
+		     jZ_em_sub_eqmoms[tag][ijack][mrA][mrB] += jZ_em_sub_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
+		     jZ1_em_sub_eqmoms[tag][ijack][mrA][mrB] += jZ1_em_sub_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
+		   }
+#pragma omp parallel for
+	     for(int ijack=0;ijack<njacks;ijack++)
+	       {
+		 jGp_0_chiral_eqmoms[tag][ijack] += jGp_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jGa_0_chiral_eqmoms[tag][ijack] += jGa_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jGv_0_chiral_eqmoms[tag][ijack] += jGv_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jGs_0_chiral_eqmoms[tag][ijack] += jGs_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jGt_0_chiral_eqmoms[tag][ijack] += jGt_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jZq_chiral_eqmoms[tag][ijack] += jZq_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jSigma1_chiral_eqmoms[tag][ijack] += jSigma1_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+	       }
+#pragma omp parallel for collapse(2)
+	     for(int ijack=0;ijack<njacks;ijack++)
+	       for(int ieq=0;ieq<neq;ieq++)
+		 {
+		   jGp_equivalent_eqmoms[tag][ijack][ieq] += jGp_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGs_equivalent_eqmoms[tag][ijack][ieq] += jGs_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGp_subpole_eqmoms[tag][ijack][ieq] += jGp_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGs_subpole_eqmoms[tag][ijack][ieq] += jGs_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		 }	     
+#pragma omp parallel for collapse(2)
+	     for(int ijack=0;ijack<njacks;ijack++)
+	       for(int i=0;i<5;i++)
+		 {
+		   jZ_chiral_eqmoms[tag][ijack][i] += jZ_chiral_allmoms[imom][ijack][i] / count_tag_vector[tag];
+		   jZ1_chiral_eqmoms[tag][ijack][i] += jZ1_chiral_allmoms[imom][ijack][i] / count_tag_vector[tag];
+		 }
 	   }
        }
 
