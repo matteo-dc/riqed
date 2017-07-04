@@ -1507,7 +1507,7 @@ int main(int narg,char **arg)
 	       tag++;
 	       tag_vector.push_back(tag);
 	     }
-	   if(count_yes==imom) tag_vector.push_back(tag_aux);
+	   if(count_yes+count_yes==imom) tag_vector.push_back(tag_aux);
 	 }
 
        t1=high_resolution_clock::now();
