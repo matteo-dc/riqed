@@ -1327,158 +1327,158 @@ int main(int narg,char **arg)
 
 
        
-       //chiral extrapolation of Gv,Ga,Gt
-       t0=high_resolution_clock::now();
+ //       //chiral extrapolation of Gv,Ga,Gt
+//        t0=high_resolution_clock::now();
        
-       m_eff_equivalent=0.0;
-       vvd_t jG_v_equivalent(vd_t(0.0,neq),njacks);
-       vvd_t jG_a_equivalent(vd_t(0.0,neq),njacks);
-       vvd_t jG_t_equivalent(vd_t(0.0,neq),njacks);
+//        m_eff_equivalent=0.0;
+//        vvd_t jG_v_equivalent(vd_t(0.0,neq),njacks);
+//        vvd_t jG_a_equivalent(vd_t(0.0,neq),njacks);
+//        vvd_t jG_t_equivalent(vd_t(0.0,neq),njacks);
 
-       ieq=0;
-       for(int mA=0; mA<nm; mA++)
-	 for(int mB=mA; mB<nm; mB++)
-	   {	     
-	     for(int r=0; r<nr; r++)
-	       {
-		 m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
-		 for(int ijack=0;ijack<njacks;ijack++) jG_v_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][1]+jG_0[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
-		 for(int ijack=0;ijack<njacks;ijack++) jG_a_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][3]+jG_0[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
-		 for(int ijack=0;ijack<njacks;ijack++) jG_t_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][4]+jG_0[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
-	       }
-	     ieq++;  //ieq={00,01,02,03,11,12,13,22,23,33}
-	   }
+//        ieq=0;
+//        for(int mA=0; mA<nm; mA++)
+// 	 for(int mB=mA; mB<nm; mB++)
+// 	   {	     
+// 	     for(int r=0; r<nr; r++)
+// 	       {
+// 		 m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
+// 		 for(int ijack=0;ijack<njacks;ijack++) jG_v_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][1]+jG_0[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
+// 		 for(int ijack=0;ijack<njacks;ijack++) jG_a_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][3]+jG_0[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
+// 		 for(int ijack=0;ijack<njacks;ijack++) jG_t_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][4]+jG_0[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
+// 	       }
+// 	     ieq++;  //ieq={00,01,02,03,11,12,13,22,23,33}
+// 	   }
 
-       vd_t Gv_ave(0.0,neq), sqr_Gv_ave(0.0,neq), Gv_err(0.0,neq);
-       vd_t Ga_ave(0.0,neq), sqr_Ga_ave(0.0,neq), Ga_err(0.0,neq);
-       vd_t Gt_ave(0.0,neq), sqr_Gt_ave(0.0,neq), Gt_err(0.0,neq);
+//        vd_t Gv_ave(0.0,neq), sqr_Gv_ave(0.0,neq), Gv_err(0.0,neq);
+//        vd_t Ga_ave(0.0,neq), sqr_Ga_ave(0.0,neq), Ga_err(0.0,neq);
+//        vd_t Gt_ave(0.0,neq), sqr_Gt_ave(0.0,neq), Gt_err(0.0,neq);
        
-       for(int i=0;i<neq;i++)
-	 {
-	   for(int ijack=0;ijack<njacks;ijack++)
-	     {
-	       Gv_ave[i]+=jG_v_equivalent[ijack][i]/njacks;
-	       sqr_Gv_ave[i]+=jG_v_equivalent[ijack][i]*jG_v_equivalent[ijack][i]/njacks;
+//        for(int i=0;i<neq;i++)
+// 	 {
+// 	   for(int ijack=0;ijack<njacks;ijack++)
+// 	     {
+// 	       Gv_ave[i]+=jG_v_equivalent[ijack][i]/njacks;
+// 	       sqr_Gv_ave[i]+=jG_v_equivalent[ijack][i]*jG_v_equivalent[ijack][i]/njacks;
 
-	       Ga_ave[i]+=jG_a_equivalent[ijack][i]/njacks;
-	       sqr_Ga_ave[i]+=jG_a_equivalent[ijack][i]*jG_a_equivalent[ijack][i]/njacks;
+// 	       Ga_ave[i]+=jG_a_equivalent[ijack][i]/njacks;
+// 	       sqr_Ga_ave[i]+=jG_a_equivalent[ijack][i]*jG_a_equivalent[ijack][i]/njacks;
 
-	       Gt_ave[i]+=jG_t_equivalent[ijack][i]/njacks;
-	       sqr_Gt_ave[i]+=jG_t_equivalent[ijack][i]*jG_t_equivalent[ijack][i]/njacks;
-	     }
-	   Gv_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_ave[i]-Gv_ave[i]*Gv_ave[i]);
-	   Ga_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_ave[i]-Ga_ave[i]*Ga_ave[i]);      
-	   Gt_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_ave[i]-Gt_ave[i]*Gt_ave[i]);      
-	 }
+// 	       Gt_ave[i]+=jG_t_equivalent[ijack][i]/njacks;
+// 	       sqr_Gt_ave[i]+=jG_t_equivalent[ijack][i]*jG_t_equivalent[ijack][i]/njacks;
+// 	     }
+// 	   Gv_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_ave[i]-Gv_ave[i]*Gv_ave[i]);
+// 	   Ga_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_ave[i]-Ga_ave[i]*Ga_ave[i]);      
+// 	   Gt_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_ave[i]-Gt_ave[i]*Gt_ave[i]);      
+// 	 }
 
-       //range for the fit
-       t_min=0;
-       t_max=neq-1;
+//        //range for the fit
+//        t_min=0;
+//        t_max=neq-1;
 
-       vvd_t coord_linear(vd_t(0.0,neq),2);
-       for(int i=0; i<neq; i++)
-	 {
-	   coord[0][i] = 1.0;  //costante
-	   coord[1][i] = m_eff_equivalent[i]*m_eff_equivalent[i];   //M^2 
-	 }
+//        vvd_t coord_linear(vd_t(0.0,neq),2);
+//        for(int i=0; i<neq; i++)
+// 	 {
+// 	   coord[0][i] = 1.0;  //costante
+// 	   coord[1][i] = m_eff_equivalent[i]*m_eff_equivalent[i];   //M^2 
+// 	 }
 
-       valarray<VectorXd> jack_Gv_pars=fit_par_jackknife(coord_linear,Gv_err,jG_v_equivalent,t_min,t_max);  //jack_Gp_pars[ijack][par]
-       valarray<VectorXd> jack_Ga_pars=fit_par_jackknife(coord_linear,Ga_err,jG_a_equivalent,t_min,t_max);
-       valarray<VectorXd> jack_Gt_pars=fit_par_jackknife(coord_linear,Gt_err,jG_t_equivalent,t_min,t_max);
+//        valarray<VectorXd> jack_Gv_pars=fit_par_jackknife(coord_linear,Gv_err,jG_v_equivalent,t_min,t_max);  //jack_Gp_pars[ijack][par]
+//        valarray<VectorXd> jack_Ga_pars=fit_par_jackknife(coord_linear,Ga_err,jG_a_equivalent,t_min,t_max);
+//        valarray<VectorXd> jack_Gt_pars=fit_par_jackknife(coord_linear,Gt_err,jG_t_equivalent,t_min,t_max);
 
-       vd_t jGv_0_chiral(njacks), jGa_0_chiral(njacks), jGt_0_chiral(njacks);
+//        vd_t jGv_0_chiral(njacks), jGa_0_chiral(njacks), jGt_0_chiral(njacks);
 
-       for(int ijack=0;ijack<njacks;ijack++)
-	 {
-	   jGv_0_chiral[ijack]=jack_Gv_pars[ijack][0];
-	   jGa_0_chiral[ijack]=jack_Ga_pars[ijack][0];
-	   jGt_0_chiral[ijack]=jack_Gt_pars[ijack][0];
-	 }
+//        for(int ijack=0;ijack<njacks;ijack++)
+// 	 {
+// 	   jGv_0_chiral[ijack]=jack_Gv_pars[ijack][0];
+// 	   jGa_0_chiral[ijack]=jack_Ga_pars[ijack][0];
+// 	   jGt_0_chiral[ijack]=jack_Gt_pars[ijack][0];
+// 	 }
 
 
-       t1=high_resolution_clock::now();
-       t_span = duration_cast<duration<double>>(t1-t0);
-       cout<<"***** Chiral extrapolation of Gv,Ga&Gt in "<<t_span.count()<<" s ******"<<endl<<endl;
+//        t1=high_resolution_clock::now();
+//        t_span = duration_cast<duration<double>>(t1-t0);
+//        cout<<"***** Chiral extrapolation of Gv,Ga&Gt in "<<t_span.count()<<" s ******"<<endl<<endl;
 
-       //chiral extrapolation of Zq
-       t0=high_resolution_clock::now();
+//        //chiral extrapolation of Zq
+//        t0=high_resolution_clock::now();
        
-       vvd_t jZq_equivalent(vd_t(0.0,neq),njacks), jSigma1_equivalent(vd_t(0.0,neq),njacks);
+//        vvd_t jZq_equivalent(vd_t(0.0,neq),njacks), jSigma1_equivalent(vd_t(0.0,neq),njacks);
 
-       neq=nm;
-       vd_t m_eff_equivalent_Zq(0.0,neq);
-       ieq=0;
+//        neq=nm;
+//        vd_t m_eff_equivalent_Zq(0.0,neq);
+//        ieq=0;
 
-#pragma omp parallel for collapse(2)
-       for(int m=0; m<nm; m++)
-	 for(int r=0; r<nr; r++)
-	   {
-	     ieq=m;
-	     m_eff_equivalent_Zq[ieq] += eff_mass[r+nr*m][r+nr*m]/nr; //charged channel
-	     for(int ijack=0;ijack<njacks;ijack++) jZq_equivalent[ijack][ieq] += jZq[ijack][r+nr*m]/nr;
-	     for(int ijack=0;ijack<njacks;ijack++) jSigma1_equivalent[ijack][ieq] += jSigma1[ijack][r+nr*m]/nr;
-	   }
+// #pragma omp parallel for collapse(2)
+//        for(int m=0; m<nm; m++)
+// 	 for(int r=0; r<nr; r++)
+// 	   {
+// 	     ieq=m;
+// 	     m_eff_equivalent_Zq[ieq] += eff_mass[r+nr*m][r+nr*m]/nr; //charged channel
+// 	     for(int ijack=0;ijack<njacks;ijack++) jZq_equivalent[ijack][ieq] += jZq[ijack][r+nr*m]/nr;
+// 	     for(int ijack=0;ijack<njacks;ijack++) jSigma1_equivalent[ijack][ieq] += jSigma1[ijack][r+nr*m]/nr;
+// 	   }
 	    
 
-       vd_t Zq_ave(0.0,neq), sqr_Zq_ave(0.0,neq), Zq_err(0.0,neq);
-       vd_t Sigma1_ave(0.0,neq), sqr_Sigma1_ave(0.0,neq), Sigma1_err(0.0,neq);
+//        vd_t Zq_ave(0.0,neq), sqr_Zq_ave(0.0,neq), Zq_err(0.0,neq);
+//        vd_t Sigma1_ave(0.0,neq), sqr_Sigma1_ave(0.0,neq), Sigma1_err(0.0,neq);
        
-       for(int i=0;i<neq;i++)
-	 {
-	   for(int ijack=0;ijack<njacks;ijack++)
-	     {
-	       Zq_ave[i]+=jZq_equivalent[ijack][i]/njacks;
-	       sqr_Zq_ave[i]+=jZq_equivalent[ijack][i]*jZq_equivalent[ijack][i]/njacks;
+//        for(int i=0;i<neq;i++)
+// 	 {
+// 	   for(int ijack=0;ijack<njacks;ijack++)
+// 	     {
+// 	       Zq_ave[i]+=jZq_equivalent[ijack][i]/njacks;
+// 	       sqr_Zq_ave[i]+=jZq_equivalent[ijack][i]*jZq_equivalent[ijack][i]/njacks;
 
-	       Sigma1_ave[i]+=jSigma1_equivalent[ijack][i]/njacks;
-	       sqr_Sigma1_ave[i]+=jSigma1_equivalent[ijack][i]*jSigma1_equivalent[ijack][i]/njacks;
-	     }
-	   Zq_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[i]-Zq_ave[i]*Zq_ave[i]);
-	   Sigma1_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Sigma1_ave[i]-Sigma1_ave[i]*Sigma1_ave[i]);
-	 }
+// 	       Sigma1_ave[i]+=jSigma1_equivalent[ijack][i]/njacks;
+// 	       sqr_Sigma1_ave[i]+=jSigma1_equivalent[ijack][i]*jSigma1_equivalent[ijack][i]/njacks;
+// 	     }
+// 	   Zq_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[i]-Zq_ave[i]*Zq_ave[i]);
+// 	   Sigma1_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Sigma1_ave[i]-Sigma1_ave[i]*Sigma1_ave[i]);
+// 	 }
        
-       //linear fit
-       t_min=0;
-       t_max=neq-1;
+//        //linear fit
+//        t_min=0;
+//        t_max=neq-1;
 
-       for(int i=0; i<neq; i++)
-	 {
-	   coord_linear[0][i] = 1.0;  //costante
-	   coord_linear[1][i] = m_eff_equivalent_Zq[i]*m_eff_equivalent_Zq[i];   //M^2 
-	 }
+//        for(int i=0; i<neq; i++)
+// 	 {
+// 	   coord_linear[0][i] = 1.0;  //costante
+// 	   coord_linear[1][i] = m_eff_equivalent_Zq[i]*m_eff_equivalent_Zq[i];   //M^2 
+// 	 }
 
-       valarray<VectorXd> jack_Zq_pars=fit_par_jackknife(coord_linear,Zq_err,jZq_equivalent,t_min,t_max);  //jack_Zq_pars[ijack][par]
-       valarray<VectorXd> jack_Sigma1_pars=fit_par_jackknife(coord_linear,Sigma1_err,jSigma1_equivalent,t_min,t_max);  //jack_Zq_pars[ijack][par]
+//        valarray<VectorXd> jack_Zq_pars=fit_par_jackknife(coord_linear,Zq_err,jZq_equivalent,t_min,t_max);  //jack_Zq_pars[ijack][par]
+//        valarray<VectorXd> jack_Sigma1_pars=fit_par_jackknife(coord_linear,Sigma1_err,jSigma1_equivalent,t_min,t_max);  //jack_Zq_pars[ijack][par]
        
-       vd_t jZq_chiral(njacks), jSigma1_chiral(njacks);
+//        vd_t jZq_chiral(njacks), jSigma1_chiral(njacks);
 
-       for(int ijack=0;ijack<njacks;ijack++)
-	 {
-	   jZq_chiral[ijack]=jack_Zq_pars[ijack][0];
-	   jSigma1_chiral[ijack]=jack_Sigma1_pars[ijack][0];
-	 }
+//        for(int ijack=0;ijack<njacks;ijack++)
+// 	 {
+// 	   jZq_chiral[ijack]=jack_Zq_pars[ijack][0];
+// 	   jSigma1_chiral[ijack]=jack_Sigma1_pars[ijack][0];
+// 	 }
 
-       t1=high_resolution_clock::now();
-       t_span = duration_cast<duration<double>>(t1-t0);
-       cout<<"***** Chiral extrapolation of Zq in "<<t_span.count()<<" s ******"<<endl<<endl;
+//        t1=high_resolution_clock::now();
+//        t_span = duration_cast<duration<double>>(t1-t0);
+//        cout<<"***** Chiral extrapolation of Zq in "<<t_span.count()<<" s ******"<<endl<<endl;
 
        
-       //chiral jackknife Z's
-       t0=high_resolution_clock::now();
-       vvd_t jZ_chiral(vd_t(0.0,5),njacks), jZ1_chiral(vd_t(0.0,5),njacks);
+//        //chiral jackknife Z's
+//        t0=high_resolution_clock::now();
+//        vvd_t jZ_chiral(vd_t(0.0,5),njacks), jZ1_chiral(vd_t(0.0,5),njacks);
 
-       for(int ijack=0;ijack<njacks;ijack++)
-	 {
-	   jZ_chiral[ijack][0] = jZq_chiral[ijack]/jGs_0_chiral[ijack];
-	   jZ_chiral[ijack][1] = jZq_chiral[ijack]/jGv_0_chiral[ijack];
-	   jZ_chiral[ijack][2] = jZq_chiral[ijack]/jGp_0_chiral[ijack];
-	   jZ_chiral[ijack][3] = jZq_chiral[ijack]/jGa_0_chiral[ijack];
-	   jZ_chiral[ijack][4] = jZq_chiral[ijack]/jGt_0_chiral[ijack];	   
-	 }
+//        for(int ijack=0;ijack<njacks;ijack++)
+// 	 {
+// 	   jZ_chiral[ijack][0] = jZq_chiral[ijack]/jGs_0_chiral[ijack];
+// 	   jZ_chiral[ijack][1] = jZq_chiral[ijack]/jGv_0_chiral[ijack];
+// 	   jZ_chiral[ijack][2] = jZq_chiral[ijack]/jGp_0_chiral[ijack];
+// 	   jZ_chiral[ijack][3] = jZq_chiral[ijack]/jGa_0_chiral[ijack];
+// 	   jZ_chiral[ijack][4] = jZq_chiral[ijack]/jGt_0_chiral[ijack];	   
+// 	 }
 
-       t1=high_resolution_clock::now();
-       t_span = duration_cast<duration<double>>(t1-t0);
-       cout<<"***** Chiral Z's computation in "<<t_span.count()<<" s ******"<<endl<<endl;
+//        t1=high_resolution_clock::now();
+//        t_span = duration_cast<duration<double>>(t1-t0);
+//        cout<<"***** Chiral Z's computation in "<<t_span.count()<<" s ******"<<endl<<endl;
        
        
 
@@ -1518,6 +1518,8 @@ int main(int narg,char **arg)
    int neq_moms = tag+1;
    cout<<"_____P2________"<<endl;
    for(size_t imom=0;imom<mom_list.size();imom++) cout<<p2_vector[imom]<<endl;
+   cout<<endl;
+   cout<<tag_vector.size()<<endl<<endl;
    
    for(int imom=0;imom<neq_moms;imom++) cout<<imom<<"  "<<tag_vector[imom]<<endl;
   
