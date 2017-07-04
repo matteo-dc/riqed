@@ -1099,26 +1099,26 @@ int main(int narg,char **arg)
 //        // cout<<"********DEBUG*************"<<endl;
 
        
-//        //create p_tilde vector
+       //create p_tilde vector
      
-//        vd_t p(0.0,4);
-//        vd_t p_tilde(0.0,4);
-//        double p2=0.0;
-//        double p2_space=0.0;
-//        double p4=0.0;  //for the democratic filter
+       vd_t p(0.0,4);
+       vd_t p_tilde(0.0,4);
+       double p2=0.0;
+       double p2_space=0.0;
+       double p4=0.0;  //for the democratic filter
 
-//        p={2*M_PI*mom_list[imom][1]/L,2*M_PI*mom_list[imom][2]/L,2*M_PI*mom_list[imom][3]/L,2*M_PI*(mom_list[imom][0]+0.5)/T};
-//        p_tilde={sin(p[0]),sin(p[1]),sin(p[2]),sin(p[3])};
+       p={2*M_PI*mom_list[imom][1]/L,2*M_PI*mom_list[imom][2]/L,2*M_PI*mom_list[imom][3]/L,2*M_PI*(mom_list[imom][0]+0.5)/T};
+       p_tilde={sin(p[0]),sin(p[1]),sin(p[2]),sin(p[3])};
 
-//        for(int coord=0;coord<4;coord++)
-// 	 p2+=p_tilde[coord]*p_tilde[coord];
-//        for(int coord=0;coord<3;coord++)
-// 	 p2_space+=p_tilde[coord]*p_tilde[coord];
-//        for(int coord=0;coord<4;coord++)
-// 	 p4+=p_tilde[coord]*p_tilde[coord]*p_tilde[coord]*p_tilde[coord]; //for the democratic filter
+       for(int coord=0;coord<4;coord++)
+	 p2+=p_tilde[coord]*p_tilde[coord];
+       for(int coord=0;coord<3;coord++)
+	 p2_space+=p_tilde[coord]*p_tilde[coord];
+       for(int coord=0;coord<4;coord++)
+	 p4+=p_tilde[coord]*p_tilde[coord]*p_tilde[coord]*p_tilde[coord]; //for the democratic filter
        
-//        p2_vector.push_back(p2);
-//        p4_vector.push_back(p4);
+// //        p2_vector.push_back(p2);
+// //        p4_vector.push_back(p4);
 
 //        vector<double> c_q(3);
    
