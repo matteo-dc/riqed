@@ -1499,14 +1499,13 @@ int main(int narg,char **arg)
 	      abs( abs(mom_list[i][1])*abs(mom_list[i][2])*abs(mom_list[i][3])-(abs(mom_list[imom][1])*abs(mom_list[imom][2])*abs(mom_list[imom][3])))<eps ) //equivalence
 	     {
 	       tag_aux=tag_vector[i];
-	       tag_vector.push_back(tag_aux);
 	     }else count++;
 	   
 	   if(count==imom)
 	     {
 	       tag++;
 	       tag_vector.push_back(tag);
-	     }
+	     }else tag_vector.push_back(tag_aux);
 	 }
 
        t1=high_resolution_clock::now();
