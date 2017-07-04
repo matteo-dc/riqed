@@ -1570,7 +1570,7 @@ int main(int narg,char **arg)
    cout<<"000"<<endl;
    
    //Vector of interesting quantities (EQUIVALENT MOMS)
-   vector<jZ_t> jZq_eqmoms(neq_moms), jSigma1_eqmoms(neq_moms), jZq_em_eqmoms(neq_moms), jSigma1_em_eqmoms(neq_moms);
+   vector<jZ_t> jZq_eqmoms(neq_moms,(vvd_t(vd_t(nmr),njacks))), jSigma1_eqmoms(neq_moms), jZq_em_eqmoms(neq_moms), jSigma1_em_eqmoms(neq_moms);
    vector<jZbil_t> jZ_eqmoms(neq_moms), jZ1_eqmoms(neq_moms), jZ_em_eqmoms(neq_moms), jZ1_em_eqmoms(neq_moms);
    vector<jZ_t> jZq_sub_eqmoms(neq_moms), jSigma1_sub_eqmoms(neq_moms), jZq_em_sub_eqmoms(neq_moms), jSigma1_em_sub_eqmoms(neq_moms);
    vector<jZbil_t> jZ_sub_eqmoms(neq_moms), jZ1_sub_eqmoms(neq_moms), jZ_em_sub_eqmoms(neq_moms), jZ1_em_sub_eqmoms(neq_moms);
