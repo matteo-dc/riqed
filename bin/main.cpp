@@ -1505,7 +1505,7 @@ int main(int narg,char **arg)
 	     {
 	       tag++;
 	       tag_vector.push_back(tag);
-	     }else tag_vector.push_back(tag_aux);
+	     }else if(i==imom-1) tag_vector.push_back(tag_aux);
 	 }
 
        t1=high_resolution_clock::now();
