@@ -251,14 +251,16 @@ jprop_t jackknife_prop(jprop_t &jS, int nconf, int clust_size, size_t nhits)
   valarray<prop_t> jSum(prop_t::Zero(),nmr);
 
   //sum of jS
-  for(size_t j=0;j<jS.size();j++) jSum+= jS[j];
-  //jackknife fluctuation
+#pragma omp parallel for collapse(2)
   for(size_t j=0;j<jS.size();j++)
-    {
-      jS[j]=jSum-jS[j];
-      for(auto &it : jS[j])
-	it/=(nconf-clust_size)/nhits;
-    }
+    for(int mr=0;mr<nmr;mr++)
+      jSum[mr]+= jS[j][mr];
+  
+  //jackknife fluctuation
+#pragma omp parallel for collapse(2)
+  for(size_t j=0;j<jS.size();j++)
+    for(int mr=0;mr<nmr;mr++)
+      jS[j][mr]=(jSum[mr]-jS[j][mr])/((nconf-clust_size)/nhits);
 
   return jS;
 }
@@ -270,17 +272,19 @@ jvert_t jackknife_vertex(jvert_t &jVert, int nconf, int clust_size, size_t nhits
   vert_t jSum(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
   
   //sum of the jVert
-  for(size_t j=0;j<jVert.size();j++) jSum+= jVert[j];
-  //jackknife fluctuation
+#pragma omp parallel for collapse(4)
   for(size_t j=0;j<jVert.size();j++)
-    {
-      jVert[j]=jSum-jVert[j];
-      
-      for(auto &it : jVert[j])
-	for(auto &jt : it)
-	  for(auto &kt : jt)
-	    kt/=(nconf-clust_size)*nhits;
-    }
+    for(int mrA=0;mrA<nmr;mrA++)
+      for(int mrB=0;mrB<nmr;mrB++)
+	for(int igam=0;igam<16;igam++)
+	  jSum[mrA][mrB][igam] += jVert[j][mrA][mrB][igam];
+  //jackknife fluctuation
+#pragma omp parallel for collapse(4)
+  for(size_t j=0;j<jVert.size();j++)
+    for(int mrA=0;mrA<nmr;mrA++)
+      for(int mrB=0;mrB<nmr;mrB++)
+	for(int igam=0;igam<16;igam++)
+	  jVert[j][mrA][mrB][igam] = (jSum[mrA][mrB][igam]-jVert[j][mrA][mrB][igam])/((nconf-clust_size)*nhits);
   
   return jVert;
 }
@@ -292,7 +296,8 @@ jprop_t invert_jprop( const jprop_t &jprop){
   int nmr=jprop[0].size();
 
   jprop_t jprop_inv(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
-  
+
+#pragma omp parallel for collapse(2)
   for(int ijack=0;ijack<njacks;ijack++)
     for(int mr=0;mr<nmr;mr++)
       jprop_inv[ijack][mr]=jprop[ijack][mr].inverse();
@@ -346,7 +351,8 @@ vvd_t compute_jZq(vprop_t GAMMA, jprop_t jS_inv, double L, double T, int imom)
   //compute p^2
   for(int coord=0;coord<4;coord++)
     p2+=p_tilde[coord]*p_tilde[coord];
-  
+
+#pragma omp parallel for collapse(2)
   for(int ijack=0;ijack<njacks;ijack++)
     for(int mr=0;mr<nmr;mr++)
       {
@@ -1552,6 +1558,7 @@ int main(int narg,char **arg)
 
    cout<<endl;
    cout<<"***Exit loop on momenta***"<<endl;
+   cout<<endl;
    
    t0=high_resolution_clock::now();
    
@@ -1575,8 +1582,6 @@ int main(int narg,char **arg)
        {
 	 if(tag_vector[imom]==tag)  p2_vector_eqmoms[tag] = p2_vector[imom];  
        }
-
-   cout<<"000"<<endl;
    
    //Vector of interesting quantities (EQUIVALENT MOMS)
    vector<jZ_t> jZq_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)),\
@@ -1598,30 +1603,20 @@ int main(int narg,char **arg)
      for(int imom=0;imom<moms;imom++)
        {
 	 if(tag_vector[imom]==tag)
-	   {
-	     cout<<"a"<<endl;
-	     
+	   {    
 #pragma omp parallel for collapse(2) shared(jZq_eqmoms,jSigma1_eqmoms,jZq_em_eqmoms,jSigma1_em_eqmoms,jZq_sub_eqmoms,jSigma1_sub_eqmoms,jZq_em_sub_eqmoms,jSigma1_em_sub_eqmoms)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mr=0;mr<nmr;mr++)
 		 {
 		   jZq_eqmoms[tag][ijack][mr] += jZq_allmoms[imom][ijack][mr] / count_tag_vector[tag];
-		   cout<<"1"<<endl;
 		   jSigma1_eqmoms[tag][ijack][mr] += jSigma1_allmoms[imom][ijack][mr] / count_tag_vector[tag];
-		   cout<<"2"<<endl;
 		   jZq_em_eqmoms[tag][ijack][mr] += jZq_em_allmoms[imom][ijack][mr] / count_tag_vector[tag];
-		   cout<<"3"<<endl;
 		   jSigma1_em_eqmoms[tag][ijack][mr] += jSigma1_em_allmoms[imom][ijack][mr] / count_tag_vector[tag];
-		   cout<<"4"<<endl;
 		   jZq_sub_eqmoms[tag][ijack][mr] += jZq_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
-		   cout<<"5"<<endl;
 		   jSigma1_sub_eqmoms[tag][ijack][mr] += jSigma1_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
-		   cout<<"6"<<endl;
 		   jZq_em_sub_eqmoms[tag][ijack][mr] += jZq_em_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
-		   cout<<"7"<<endl;
 		   jSigma1_em_sub_eqmoms[tag][ijack][mr] += jSigma1_em_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
 		 }
-	     cout<<"b"<<endl;
 #pragma omp parallel for collapse(4)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mrA=0;mrA<nmr;mrA++)
@@ -1637,7 +1632,6 @@ int main(int narg,char **arg)
 		       jZ_em_sub_eqmoms[tag][ijack][mrA][mrB][i] += jZ_em_sub_allmoms[imom][ijack][mrA][mrB][i] / count_tag_vector[tag];
 		       jZ1_em_sub_eqmoms[tag][ijack][mrA][mrB][i] += jZ1_em_sub_allmoms[imom][ijack][mrA][mrB][i] / count_tag_vector[tag];
 		     }
-	     cout<<"c"<<endl;
 #pragma omp parallel for
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       {
@@ -1649,7 +1643,6 @@ int main(int narg,char **arg)
 		 jZq_chiral_eqmoms[tag][ijack] += jZq_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
 		 jSigma1_chiral_eqmoms[tag][ijack] += jSigma1_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
 	       }
-	     cout<<"d"<<endl;
 #pragma omp parallel for collapse(2)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int ieq=0;ieq<neq;ieq++)
@@ -1659,7 +1652,6 @@ int main(int narg,char **arg)
 		   jGp_subpole_eqmoms[tag][ijack][ieq] += jGp_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
 		   jGs_subpole_eqmoms[tag][ijack][ieq] += jGs_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
 		 }
-	     cout<<"e"<<endl;
 #pragma omp parallel for collapse(2)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int i=0;i<5;i++)
