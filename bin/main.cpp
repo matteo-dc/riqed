@@ -1547,7 +1547,7 @@ int main(int narg,char **arg)
 	 {
 	   if(tag_vector[imom]==tag) count++;
 	 }
-       count_tag_vector.push_back(count);
+       count_tag_vector[tag]=count;
      }
    
    vector<double> p2_vector_eqmoms(neq_moms);
