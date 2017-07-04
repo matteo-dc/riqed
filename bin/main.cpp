@@ -1240,14 +1240,19 @@ int main(int narg,char **arg)
 	   }
 
 
+       for(int mr=0; mr<nmr; mr++)
+	 for(int ijack=0;ijack<njacks;ijack++)
+	   cout<<"mr="<<mr<<"  jack="<<ijack<<"   "<<eff_mass[mr][mr]*eff_mass[mr][mr]<<"  "<<jZq[ijack][mr]<<endl;
        
-       for(int mA=0; mA<nm; mA++)
-	 for(int mB=mA; mB<nm; mB++)
-	   {
-	     cout<<"mA "<<mA<<" mB "<<mB<<"   ";
-	     for(int r=0; r<nr; r++) cout<<"(r="<<r<<") "<<eff_mass[r+nr*mA][r+nr*mB]<<" "<<eff_mass[r+nr*mB][r+nr*mA]<<" | "<<Gp_ave1[r+nr*mA][r+nr*mB]<<"+-"<<Gp_err1[r+nr*mA][r+nr*mB]<<" "<<Gp_ave1[r+nr*mB][r+nr*mA]<<"+-"<<Gp_err1[r+nr*mB][r+nr*mA]<<endl;
-	     cout<<endl;
-	   }
+
+       
+       // for(int mA=0; mA<nm; mA++)
+       // 	 for(int mB=mA; mB<nm; mB++)
+       // 	   {
+       // 	     cout<<"mA "<<mA<<" mB "<<mB<<"   ";
+       // 	     for(int r=0; r<nr; r++) cout<<"(r="<<r<<") "<<eff_mass[r+nr*mA][r+nr*mB]<<" "<<eff_mass[r+nr*mB][r+nr*mA]<<" | "<<Gp_ave1[r+nr*mA][r+nr*mB]<<"+-"<<Gp_err1[r+nr*mA][r+nr*mB]<<" "<<Gp_ave1[r+nr*mB][r+nr*mA]<<"+-"<<Gp_err1[r+nr*mB][r+nr*mA]<<endl;
+       // 	     cout<<endl;
+       // 	   }
        
        // for(int mA=0; mA<nm; mA++)
        // 	 for(int mB=0; mB<nm; mB++)
@@ -1349,6 +1354,15 @@ int main(int narg,char **arg)
        t1=high_resolution_clock::now();
        t_span = duration_cast<duration<double>>(t1-t0);
        cout<<"***** Goldstone pole subtraction in "<<t_span.count()<<" s ******"<<endl<<endl;
+
+
+       //----------TO DO LIST-----------------
+       //
+       // * Chiral extrapolation also for V,A,T
+       // * Save all the quantities of interest into a file
+       // * Average over equivalent momenta
+       // * Fit over momenta and zero momentum extrapolation for the Z's
+       //
        
        
 
