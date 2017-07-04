@@ -817,7 +817,7 @@ int main(int narg,char **arg)
   // cout<<"eff_mass: "<<eff_mass_array[0]<<" +- "<<eff_mass_array[1]<<endl;
 
   
-  // ///////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
   
   
    read_mom_list(arg[1]);
@@ -839,6 +839,8 @@ int main(int narg,char **arg)
    int nt=Type.size();
 
    int combo=nm*nr*nt*nhits*nconfs;
+
+   int neq  = fact(nm+nr-1)/fact(nr)/fact(nm-1);
 
    int moms=mom_list.size();
 
@@ -893,6 +895,8 @@ int main(int narg,char **arg)
    int tag=0, tag_aux=0;
    double eps=1.0e-15;
    tag_vector.push_back(0);
+
+   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ mom loop ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
    for(size_t imom=0; imom<mom_list.size(); imom++)
      {
@@ -1212,7 +1216,6 @@ int main(int narg,char **arg)
       //Goldstone pole subtraction from jG_p and jG_s & chiral extrapolation of jG_p and jG_s
        t0=high_resolution_clock::now();
        
-       const int neq = fact(nm+nr-1)/fact(nr)/fact(nm-1);
        vd_t m_eff_equivalent(0.0,neq);
        vvd_t jGp_equivalent(vd_t(0.0,neq),njacks);
        vvd_t jGs_equivalent(vd_t(0.0,neq),njacks);
