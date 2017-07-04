@@ -1534,14 +1534,15 @@ int main(int narg,char **arg)
        // jZ1_chiral_allmoms.push_back(jZ1_chiral);
        
      }//moms loop
-
+   
    int neq_moms = tag+1;
    vector<int> count_tag_vector(neq_moms);
-
+   
    //count tag
+   int count=0;
    for(int tag=0;tag<neq_moms;tag++)
      {
-       int count=0;
+       count=0;
        for(int imom=0;imom<moms;imom++)
 	 {
 	   if(tag_vector[imom]==tag) count++;
@@ -1557,7 +1558,7 @@ int main(int narg,char **arg)
 	 if(tag_vector[imom]==tag)  p2_vector_eqmoms[tag] = p2_vector[imom];  
        }
    
-
+   
    cout<<"_____P2________"<<endl;
    for(size_t imom=0;imom<mom_list.size();imom++) cout<<p2_vector[imom]<<endl;
    cout<<endl;
@@ -1565,12 +1566,12 @@ int main(int narg,char **arg)
    
    for(size_t imom=0;imom<mom_list.size();imom++) cout<<imom<<"  "<<tag_vector[imom]<<endl;
    cout<<endl;
-
+   
    for(int imom=0;imom<neq_moms;imom++)
      {
        cout<<count_tag_vector[imom]<<"   "<<p2_vector_eqmoms[imom]<<endl;
      }
-
+   
 
 
    
