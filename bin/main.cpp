@@ -852,14 +852,14 @@ int main(int narg,char **arg)
    ifstream input[combo];
 
    //Vector of interesting quantities (ALL MOMS)
-   vector<jZ_t> jZq_allmoms, jSigma1_allmoms, jZq_em_allmoms, jSigma1_em_allmoms;
-   vector<jZbil_t> jZ_allmoms, jZ1_allmoms, jZ_em_allmoms, jZ1_em_allmoms;
-   vector<jZ_t> jZq_sub_allmoms, jSigma1_sub_allmoms, jZq_em_sub_allmoms, jSigma1_em_sub_allmoms;
-   vector<jZbil_t> jZ_sub_allmoms, jZ1_sub_allmoms, jZ_em_sub_allmoms, jZ1_em_sub_allmoms;
-   vector<vvd_t> jGp_equivalent_allmoms, jGs_equivalent_allmoms, jGp_subpole_allmoms, jGs_subpole_allmoms;
-   vector<vd_t> jGp_0_chiral_allmoms,jGa_0_chiral_allmoms,jGv_0_chiral_allmoms,jGs_0_chiral_allmoms,jGt_0_chiral_allmoms;
-   vector<vd_t> jZq_chiral_allmoms,jSigma1_chiral_allmoms;
-   vector<vvd_t> jZ_chiral_allmoms,jZ1_chiral_allmoms;
+   vector<jZ_t> jZq_allmoms(moms), jSigma1_allmoms(moms), jZq_em_allmoms(moms), jSigma1_em_allmoms(moms);
+   vector<jZbil_t> jZ_allmoms(moms), jZ1_allmoms(moms), jZ_em_allmoms(moms), jZ1_em_allmoms(moms);
+   vector<jZ_t> jZq_sub_allmoms(moms), jSigma1_sub_allmoms(moms), jZq_em_sub_allmoms(moms), jSigma1_em_sub_allmoms(moms);
+   vector<jZbil_t> jZ_sub_allmoms(moms), jZ1_sub_allmoms(moms), jZ_em_sub_allmoms(moms), jZ1_em_sub_allmoms(moms);
+   vector<vvd_t> jGp_equivalent_allmoms(moms), jGs_equivalent_allmoms(moms), jGp_subpole_allmoms(moms), jGs_subpole_allmoms(moms);
+   vector<vd_t> jGp_0_chiral_allmoms(moms),jGa_0_chiral_allmoms(moms),jGv_0_chiral_allmoms(moms),jGs_0_chiral_allmoms(moms),jGt_0_chiral_allmoms(moms);
+   vector<vd_t> jZq_chiral_allmoms(moms),jSigma1_chiral_allmoms(moms);
+   vector<vvd_t> jZ_chiral_allmoms(moms),jZ1_chiral_allmoms(moms);
 
    t0=high_resolution_clock::now();
 
@@ -1516,26 +1516,26 @@ int main(int narg,char **arg)
        cout<<"***** Found equivalent momenta in "<<t_span.count()<<" s ******"<<endl<<endl;
 
        //pushback allmoms-vectors component
-       jZq_allmoms.push_back(jZq);
-       jSigma1_allmoms.push_back(jSigma1);
-       jZq_em_allmoms.push_back(jZq_em);
-       jZ_allmoms.push_back(jZ);
-       jZ1_allmoms.push_back(jZ1);
-       jZ_em_allmoms.push_back(jZ_em);
-       jZ1_em_allmoms.push_back(jZ1_em);
-       jGp_equivalent_allmoms.push_back(jGp_equivalent);
-       jGs_equivalent_allmoms.push_back(jGs_equivalent);
-       jGp_subpole_allmoms.push_back(jGp_subpole);
-       jGs_subpole_allmoms.push_back(jGs_subpole);
-       jGp_0_chiral_allmoms.push_back(jGp_0_chiral);
-       jGv_0_chiral_allmoms.push_back(jGv_0_chiral);
-       jGs_0_chiral_allmoms.push_back(jGs_0_chiral);
-       jGa_0_chiral_allmoms.push_back(jGa_0_chiral);
-       jGt_0_chiral_allmoms.push_back(jGt_0_chiral);
-       jZq_chiral_allmoms.push_back(jZq_chiral);
-       jSigma1_chiral_allmoms.push_back(jSigma1_chiral);
-       jZ_chiral_allmoms.push_back(jZ_chiral);
-       jZ1_chiral_allmoms.push_back(jZ1_chiral);
+       jZq_allmoms[imom]=jZq;
+       jSigma1_allmoms[imom]=jSigma1;
+       jZq_em_allmoms[imom]=jZq_em;
+       jZ_allmoms[imom]=jZ;
+       jZ1_allmoms[imom]=jZ1;
+       jZ_em_allmoms[imom]=jZ_em;
+       jZ1_em_allmoms[imom]=jZ1_em;
+       jGp_equivalent_allmoms[imom]=jGp_equivalent;
+       jGs_equivalent_allmoms[imom]=jGs_equivalent;
+       jGp_subpole_allmoms[imom]=jGp_subpole;
+       jGs_subpole_allmoms[imom]=jGs_subpole;
+       jGp_0_chiral_allmoms[imom]=jGp_0_chiral;
+       jGv_0_chiral_allmoms[imom]=jGv_0_chiral;
+       jGs_0_chiral_allmoms[imom]=jGs_0_chiral;
+       jGa_0_chiral_allmoms[imom]=jGa_0_chiral;
+       jGt_0_chiral_allmoms[imom]=jGt_0_chiral;
+       jZq_chiral_allmoms[imom]=jZq_chiral;
+       jSigma1_chiral_allmoms[imom]=jSigma1_chiral;
+       jZ_chiral_allmoms[imom]=jZ_chiral;
+       jZ1_chiral_allmoms[imom]=jZ1_chiral;
      
      }//moms loop
 
