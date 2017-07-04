@@ -1571,7 +1571,7 @@ int main(int narg,char **arg)
    
    //Vector of interesting quantities (EQUIVALENT MOMS)
    vector<jZ_t> jZq_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)),\
-     jZq_em_eqmoms(neq_moms,(vvd_t(vd_t(nmr),njacks))), jSigma1_em_eqmoms(neq_moms,(vvd_t(vd_t(nmr),njacks)));
+     jZq_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
    vector<jZbil_t> jZ_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)),\
      jZ_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks));
    vector<jZ_t> jZq_sub_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_sub_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)),\
