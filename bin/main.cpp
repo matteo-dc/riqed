@@ -1498,7 +1498,6 @@ int main(int narg,char **arg)
 	   if(abs(p2_vector[i]-p2_vector[imom])<eps*p2_vector[i] &&	\
 	      abs( abs(mom_list[i][1])*abs(mom_list[i][2])*abs(mom_list[i][3])-(abs(mom_list[imom][1])*abs(mom_list[imom][2])*abs(mom_list[imom][3])))<eps ) //equivalence
 	     {
-	       count_yes++;
 	       tag_aux=tag_vector[i];
 	     }else count_no++;
 	   
@@ -1506,8 +1505,7 @@ int main(int narg,char **arg)
 	     {
 	       tag++;
 	       tag_vector.push_back(tag);
-	     }
-	   if(count_yes+count_no==imom) tag_vector.push_back(tag_aux);
+	     }else tag_vector.push_back(tag_aux);
 	 }
 
        t1=high_resolution_clock::now();
