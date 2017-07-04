@@ -830,6 +830,7 @@ int main(int narg,char **arg)
    vector<string> Type={"0","F","FF","T","P"/*,"S"*/};
 
    vector<double> p2_vector, p4_vector;
+   vector<int> tag_vector;
    
    // int nm=Mass.size();
    // int nr=R.size();
@@ -876,8 +877,12 @@ int main(int narg,char **arg)
    t_span = duration_cast<duration<double>>(t1-t0);
    cout<<"***** Opened all the files to read props in "<<t_span.count()<<" s ******"<<endl<<endl;
    
-   
-   for(size_t imom=0; imom<1; imom++)
+
+   int tag=0, tag_aux=0;
+   double eps=1.0e-15;
+   tag_vector.push_back(0);
+
+   for(size_t imom=0; imom<mom_list.size(); imom++)
      {
        // put to zero jackknife props and verts
        jprop_t jS_0(valarray<prop_t>(prop_t::Zero(),nmr),njacks);		
@@ -1191,80 +1196,40 @@ int main(int narg,char **arg)
        t_span = duration_cast<duration<double>>(t1-t0);
        cout<<"***** Subtraction O(g2a2) and O(e2a2) in "<<t_span.count()<<" s ******"<<endl<<endl;
 
-       
-       
-       //Goldstone pole subtraction from jG_p and jG_s
-        t0=high_resolution_clock::now();
+     
+      //Goldstone pole subtraction from jG_p and jG_s & chiral extrapolation of jG_p and jG_s
+       t0=high_resolution_clock::now();
        
        int neq = fact(nm+nr-1)/fact(nr)/fact(nm-1);
-       vd_t m_eff_equivalent(neq);
-       vvd_t jG_p_equivalent(vd_t(neq),njacks);
-       vvd_t jG_s_equivalent(vd_t(neq),njacks);
+       vd_t m_eff_equivalent(0.0,neq);
+       vvd_t jG_p_equivalent(vd_t(0.0,neq),njacks);
+       vvd_t jG_s_equivalent(vd_t(0.0,neq),njacks);
        
-       
-       double M_average;
-       vd_t  Gp_average(njacks),  Gs_average(njacks);
        int ieq=0;
        for(int mA=0; mA<nm; mA++)
 	 for(int mB=mA; mB<nm; mB++)
-	   {
-	     M_average=0.0;
-	     for(int ijack=0;ijack<njacks;ijack++) Gp_average[ijack]=0.0;
-	     for(int ijack=0;ijack<njacks;ijack++) Gs_average[ijack]=0.0;
-	     
+	   {	     
 	     for(int r=0; r<nr; r++)
 	       {
-		 M_average += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
-		 for(int ijack=0;ijack<njacks;ijack++) Gp_average[ijack] += (jG_0[ijack][r+nr*mA][r+nr*mB][2]+jG_0[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
-		 for(int ijack=0;ijack<njacks;ijack++) Gs_average[ijack] += (jG_0[ijack][r+nr*mA][r+nr*mB][0]+jG_0[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
-	       }
-	     m_eff_equivalent[ieq]=M_average;
-	     for(int ijack=0;ijack<njacks;ijack++) jG_p_equivalent[ijack][ieq]=Gp_average[ijack];
-	     for(int ijack=0;ijack<njacks;ijack++) jG_s_equivalent[ijack][ieq]=Gs_average[ijack];	  
+		 m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
+		 for(int ijack=0;ijack<njacks;ijack++) jG_p_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][2]+jG_0[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
+		 for(int ijack=0;ijack<njacks;ijack++) jG_s_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][0]+jG_0[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
+	       }	  
 	     ieq++;  //ieq={00,01,02,03,11,12,13,22,23,33}
 	   }
-
-
-       vvd_t Gp_ave1(vd_t(0.0,nmr),nmr), sqr_Gp_ave1(vd_t(0.0,nmr),nmr), Gp_err1(vd_t(0.0,nmr),nmr);
-
-
-       for(int mr_fw=0; mr_fw<nmr; mr_fw++)
-	 for(int mr_bw=0; mr_bw<nmr; mr_bw++)
-	   {
-	     for(int ijack=0;ijack<njacks;ijack++)
-	       {
-		 Gp_ave1[mr_fw][mr_bw]+=jG_0[ijack][mr_fw][mr_bw][2]/njacks;
-		 sqr_Gp_ave1[mr_fw][mr_bw]+=jG_0[ijack][mr_fw][mr_bw][2]*jG_0[ijack][mr_fw][mr_bw][2]/njacks;
-	       }
-	     Gp_err1[mr_fw][mr_bw]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_ave1[mr_fw][mr_bw]-Gp_ave1[mr_fw][mr_bw]*Gp_ave1[mr_fw][mr_bw]);
-	   }
-
-
-       for(int mr=0; mr<nmr; mr++)
-	 for(int ijack=0;ijack<njacks;ijack++)
-	   cout<<"mr="<<mr<<"  jack="<<ijack<<"   "<<eff_mass[mr][mr]*eff_mass[mr][mr]<<"  "<<jZq[ijack][mr]<<endl;
        
-
+       // vvd_t Gp_ave1(vd_t(0.0,nmr),nmr), sqr_Gp_ave1(vd_t(0.0,nmr),nmr), Gp_err1(vd_t(0.0,nmr),nmr);
        
-       // for(int mA=0; mA<nm; mA++)
-       // 	 for(int mB=mA; mB<nm; mB++)
+       // for(int mr_fw=0; mr_fw<nmr; mr_fw++)
+       // 	 for(int mr_bw=0; mr_bw<nmr; mr_bw++)
        // 	   {
-       // 	     cout<<"mA "<<mA<<" mB "<<mB<<"   ";
-       // 	     for(int r=0; r<nr; r++) cout<<"(r="<<r<<") "<<eff_mass[r+nr*mA][r+nr*mB]<<" "<<eff_mass[r+nr*mB][r+nr*mA]<<" | "<<Gp_ave1[r+nr*mA][r+nr*mB]<<"+-"<<Gp_err1[r+nr*mA][r+nr*mB]<<" "<<Gp_ave1[r+nr*mB][r+nr*mA]<<"+-"<<Gp_err1[r+nr*mB][r+nr*mA]<<endl;
-       // 	     cout<<endl;
+       // 	     for(int ijack=0;ijack<njacks;ijack++)
+       // 	       {
+       // 		 Gp_ave1[mr_fw][mr_bw]+=jG_0[ijack][mr_fw][mr_bw][2]/njacks;
+       // 		 sqr_Gp_ave1[mr_fw][mr_bw]+=jG_0[ijack][mr_fw][mr_bw][2]*jG_0[ijack][mr_fw][mr_bw][2]/njacks;
+       // 	       }
+       // 	     Gp_err1[mr_fw][mr_bw]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_ave1[mr_fw][mr_bw]-Gp_ave1[mr_fw][mr_bw]*Gp_ave1[mr_fw][mr_bw]);
        // 	   }
-       
-       // for(int mA=0; mA<nm; mA++)
-       // 	 for(int mB=0; mB<nm; mB++)
-       // 	   for(int ijack=0;ijack<njacks;ijack++)
-       // 	     cout<<eff_mass[0+nr*mA][0+nr*mB]*eff_mass[0+nr*mA][0+nr*mB]<<"\t"<<jG_0[ijack][0+nr*mA][0+nr*mB][2]<<endl;
-       // cout<<endl;
-       
-       // for(int mA=0; mA<nm; mA++)
-       // 	 for(int mB=0; mB<nm; mB++)
-       // 	   cout<<eff_mass[1+nr*mA][1+nr*mB]*eff_mass[1+nr*mA][1+nr*mB]<<"\t"<<jG_0[0][1+nr*mA][1+nr*mB][2]<<endl;
-       // cout<<endl;
-       
        
 
        vd_t Gp_ave(0.0,neq), sqr_Gp_ave(0.0,neq), Gp_err(0.0,neq);
@@ -1303,7 +1268,7 @@ int main(int narg,char **arg)
        valarray<VectorXd> jack_Gp_pars=fit_par_jackknife(coord,Gp_err,jG_p_equivalent,t_min,t_max);  //jack_Gp_pars[ijack][par]
        valarray<VectorXd> jack_Gs_pars=fit_par_jackknife(coord,Gs_err,jG_s_equivalent,t_min,t_max);
 
-       vd_t C_p(njacks), C_s(njacks);
+       vd_t C_p(njacks), C_s(njacks), jGp_0_chiral(njacks), jGs_0_chiral(njacks);
 
        for(int ijack=0;ijack<njacks;ijack++)
 	 {
@@ -1323,16 +1288,21 @@ int main(int narg,char **arg)
 	     jG_p_subpole[ijack][i] = jG_p_equivalent[ijack][i] - C_p[ijack]/(m_eff_equivalent[i]*m_eff_equivalent[i]);
 	     jG_s_subpole[ijack][i] = jG_s_equivalent[ijack][i] - C_s[ijack]/(m_eff_equivalent[i]*m_eff_equivalent[i]);
 	   }
-       
-       
-       cout<<"---- M^2  ---- jG_p ---- jG_p_SUB --- (for each jackknife)"<<endl;
-       for(int ijack=0; ijack<njacks; ijack++)
+
+       for(int ijack=0;ijack<njacks;ijack++)
 	 {
-	   for(int i=0; i<neq; i++)
-	     cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< jG_p_equivalent[ijack][i]<<"\t"<< jG_p_subpole[ijack][i]<<endl;
-	   cout<<endl;
+	   jGp_0_chiral[ijack]=jack_Gp_pars[ijack][0];
+	   jGs_0_chiral[ijack]=jack_Gs_pars[ijack][0];	   
 	 }
-       cout<<endl;
+    
+       // cout<<"---- M^2  ---- jG_p ---- jG_p_SUB --- (for each jackknife)"<<endl;
+       // for(int ijack=0; ijack<njacks; ijack++)
+       // 	 {
+       // 	   for(int i=0; i<neq; i++)
+       // 	     cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< jG_p_equivalent[ijack][i]<<"\t"<< jG_p_subpole[ijack][i]<<endl;
+       // 	   cout<<endl;
+       // 	 }
+       // cout<<endl;
        
 
        vd_t Gp_subpole(neq), sqr_Gp_subpole(neq), Gp_err_subpole(neq);
@@ -1347,8 +1317,8 @@ int main(int narg,char **arg)
 	   Gp_err_subpole[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_subpole[i]- Gp_subpole[i]*Gp_subpole[i]);
 	 }
        
-       cout<<"---- M^2 ---- Gp_SUB average ---"<<endl;
-       for(int i=0;i<neq;i++)  cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< Gp_subpole[i]<<"\t"<<Gp_err_subpole[i]<<endl;
+       // cout<<"---- M^2 ---- Gp_SUB average ---"<<endl;
+       // for(int i=0;i<neq;i++)  cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< Gp_subpole[i]<<"\t"<<Gp_err_subpole[i]<<endl;
        
   
        t1=high_resolution_clock::now();
@@ -1356,19 +1326,225 @@ int main(int narg,char **arg)
        cout<<"***** Goldstone pole subtraction in "<<t_span.count()<<" s ******"<<endl<<endl;
 
 
-       //----------TO DO LIST-----------------
-       //
-       // * Chiral extrapolation also for V,A,T
-       // * Save all the quantities of interest into a file
-       // * Average over equivalent momenta
-       // * Fit over momenta and zero momentum extrapolation for the Z's
-       //
+       
+       //chiral extrapolation of Gv,Ga,Gt
+       t0=high_resolution_clock::now();
+       
+       m_eff_equivalent=0.0;
+       vvd_t jG_v_equivalent(vd_t(0.0,neq),njacks);
+       vvd_t jG_a_equivalent(vd_t(0.0,neq),njacks);
+       vvd_t jG_t_equivalent(vd_t(0.0,neq),njacks);
+
+       ieq=0;
+       for(int mA=0; mA<nm; mA++)
+	 for(int mB=mA; mB<nm; mB++)
+	   {	     
+	     for(int r=0; r<nr; r++)
+	       {
+		 m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
+		 for(int ijack=0;ijack<njacks;ijack++) jG_v_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][1]+jG_0[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
+		 for(int ijack=0;ijack<njacks;ijack++) jG_a_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][3]+jG_0[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
+		 for(int ijack=0;ijack<njacks;ijack++) jG_t_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][4]+jG_0[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
+	       }
+	     ieq++;  //ieq={00,01,02,03,11,12,13,22,23,33}
+	   }
+
+       vd_t Gv_ave(0.0,neq), sqr_Gv_ave(0.0,neq), Gv_err(0.0,neq);
+       vd_t Ga_ave(0.0,neq), sqr_Ga_ave(0.0,neq), Ga_err(0.0,neq);
+       vd_t Gt_ave(0.0,neq), sqr_Gt_ave(0.0,neq), Gt_err(0.0,neq);
+       
+       for(int i=0;i<neq;i++)
+	 {
+	   for(int ijack=0;ijack<njacks;ijack++)
+	     {
+	       Gv_ave[i]+=jG_v_equivalent[ijack][i]/njacks;
+	       sqr_Gv_ave[i]+=jG_v_equivalent[ijack][i]*jG_v_equivalent[ijack][i]/njacks;
+
+	       Ga_ave[i]+=jG_a_equivalent[ijack][i]/njacks;
+	       sqr_Ga_ave[i]+=jG_a_equivalent[ijack][i]*jG_a_equivalent[ijack][i]/njacks;
+
+	       Gt_ave[i]+=jG_t_equivalent[ijack][i]/njacks;
+	       sqr_Gt_ave[i]+=jG_t_equivalent[ijack][i]*jG_t_equivalent[ijack][i]/njacks;
+	     }
+	   Gv_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_ave[i]-Gv_ave[i]*Gv_ave[i]);
+	   Ga_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_ave[i]-Ga_ave[i]*Ga_ave[i]);      
+	   Gt_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_ave[i]-Gt_ave[i]*Gt_ave[i]);      
+	 }
+
+       //range for the fit
+       t_min=0;
+       t_max=neq-1;
+
+       vvd_t coord_linear(vd_t(0.0,neq),2);
+       for(int i=0; i<neq; i++)
+	 {
+	   coord[0][i] = 1.0;  //costante
+	   coord[1][i] = m_eff_equivalent[i]*m_eff_equivalent[i];   //M^2 
+	 }
+
+       valarray<VectorXd> jack_Gv_pars=fit_par_jackknife(coord_linear,Gv_err,jG_v_equivalent,t_min,t_max);  //jack_Gp_pars[ijack][par]
+       valarray<VectorXd> jack_Ga_pars=fit_par_jackknife(coord_linear,Ga_err,jG_a_equivalent,t_min,t_max);
+       valarray<VectorXd> jack_Gt_pars=fit_par_jackknife(coord_linear,Gt_err,jG_t_equivalent,t_min,t_max);
+
+       vd_t jGv_0_chiral(njacks), jGa_0_chiral(njacks), jGt_0_chiral(njacks);
+
+       for(int ijack=0;ijack<njacks;ijack++)
+	 {
+	   jGv_0_chiral[ijack]=jack_Gv_pars[ijack][0];
+	   jGa_0_chiral[ijack]=jack_Ga_pars[ijack][0];
+	   jGt_0_chiral[ijack]=jack_Gt_pars[ijack][0];
+	 }
+
+
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Chiral extrapolation of Gv,Ga&Gt in "<<t_span.count()<<" s ******"<<endl<<endl;
+
+       //chiral extrapolation of Zq
+       t0=high_resolution_clock::now();
+       
+       vvd_t jZq_equivalent(vd_t(0.0,neq),njacks), jSigma1_equivalent(vd_t(0.0,neq),njacks);
+
+       neq=nm;
+       vd_t m_eff_equivalent_Zq(0.0,neq);
+       ieq=0;
+
+#pragma omp parallel for collapse(2)
+       for(int m=0; m<nm; m++)
+	 for(int r=0; r<nr; r++)
+	   {
+	     ieq=m;
+	     m_eff_equivalent_Zq[ieq] += eff_mass[r+nr*m][r+nr*m]/nr; //charged channel
+	     for(int ijack=0;ijack<njacks;ijack++) jZq_equivalent[ijack][ieq] += jZq[ijack][r+nr*m]/nr;
+	     for(int ijack=0;ijack<njacks;ijack++) jSigma1_equivalent[ijack][ieq] += jSigma1[ijack][r+nr*m]/nr;
+	   }
+	    
+
+       vd_t Zq_ave(0.0,neq), sqr_Zq_ave(0.0,neq), Zq_err(0.0,neq);
+       vd_t Sigma1_ave(0.0,neq), sqr_Sigma1_ave(0.0,neq), Sigma1_err(0.0,neq);
+       
+       for(int i=0;i<neq;i++)
+	 {
+	   for(int ijack=0;ijack<njacks;ijack++)
+	     {
+	       Zq_ave[i]+=jZq_equivalent[ijack][i]/njacks;
+	       sqr_Zq_ave[i]+=jZq_equivalent[ijack][i]*jZq_equivalent[ijack][i]/njacks;
+
+	       Sigma1_ave[i]+=jSigma1_equivalent[ijack][i]/njacks;
+	       sqr_Sigma1_ave[i]+=jSigma1_equivalent[ijack][i]*jSigma1_equivalent[ijack][i]/njacks;
+	     }
+	   Zq_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[i]-Zq_ave[i]*Zq_ave[i]);
+	   Sigma1_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Sigma1_ave[i]-Sigma1_ave[i]*Sigma1_ave[i]);
+	 }
+       
+       //linear fit
+       t_min=0;
+       t_max=neq-1;
+
+       for(int i=0; i<neq; i++)
+	 {
+	   coord_linear[0][i] = 1.0;  //costante
+	   coord_linear[1][i] = m_eff_equivalent_Zq[i]*m_eff_equivalent_Zq[i];   //M^2 
+	 }
+
+       valarray<VectorXd> jack_Zq_pars=fit_par_jackknife(coord_linear,Zq_err,jZq_equivalent,t_min,t_max);  //jack_Zq_pars[ijack][par]
+       valarray<VectorXd> jack_Sigma1_pars=fit_par_jackknife(coord_linear,Sigma1_err,jSigma1_equivalent,t_min,t_max);  //jack_Zq_pars[ijack][par]
+       
+       vd_t jZq_chiral(njacks), jSigma1_chiral(njacks);
+
+       for(int ijack=0;ijack<njacks;ijack++)
+	 {
+	   jZq_chiral[ijack]=jack_Zq_pars[ijack][0];
+	   jSigma1_chiral[ijack]=jack_Sigma1_pars[ijack][0];
+	 }
+
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Chiral extrapolation of Zq in "<<t_span.count()<<" s ******"<<endl<<endl;
+
+       
+       //chiral jackknife Z's
+       t0=high_resolution_clock::now();
+       vvd_t jZ_chiral(vd_t(0.0,5),njacks), jZ1_chiral(vd_t(0.0,5),njacks);
+
+       for(int ijack=0;ijack<njacks;ijack++)
+	 {
+	   jZ_chiral[ijack][0] = jZq_chiral[ijack]/jGs_0_chiral[ijack];
+	   jZ_chiral[ijack][1] = jZq_chiral[ijack]/jGv_0_chiral[ijack];
+	   jZ_chiral[ijack][2] = jZq_chiral[ijack]/jGp_0_chiral[ijack];
+	   jZ_chiral[ijack][3] = jZq_chiral[ijack]/jGa_0_chiral[ijack];
+	   jZ_chiral[ijack][4] = jZq_chiral[ijack]/jGt_0_chiral[ijack];	   
+	 }
+
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Chiral Z's computation in "<<t_span.count()<<" s ******"<<endl<<endl;
        
        
 
+       
+       //----------TO DO LIST-----------------
+       //
+       // [X] Chiral extrapolation also for V,A,T
+       // [*] Save all the quantities of interest into a file
+       // [*] Average over equivalent momenta
+       // [*] Fit over momenta and zero momentum extrapolation for the Z's
+       //
+
+       t0=high_resolution_clock::now();
+       size_t count=0;
+       for(size_t i=0;i<imom;i++)
+	 {
+	   if(abs(p2_vector[i]-p2_vector[imom])<eps*p2_vector[i] &&	\
+	      abs( abs(mom_list[i][1])*abs(mom_list[i][2])*abs(mom_list[i][3])-(abs(mom_list[imom][1])*abs(mom_list[imom][2])*abs(mom_list[imom][3])))<eps )
+	     {
+	       tag_aux=tag_vector[i];
+	       tag_vector.push_back(tag_aux);
+	     }else count++;
+	   
+	   if(count==imom)
+	     {
+	       tag++;
+	       tag_vector.push_back(tag);
+	     }
+	 }
+
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Finding equivalent momenta in "<<t_span.count()<<" s ******"<<endl<<endl;
+
      }//moms loop
-    
+
+   int neq_moms = tag+1;
+   for(int imom=0;imom<neq_moms;imom++) cout<<imom<<"  "<<tag_vector[imom]<<endl;
   
+   
+   // //LO
+   // for(size_t imom=0;imom<mom_list.size();imom++)
+   //   {
+   //     size_t count=0;
+   //     for(size_t i=0;i<imom;i++)
+   // 	 {
+   // 	   if(abs(p2_vector[i]-p2_vector[imom])<eps*p2_vector[i] &&	\
+   // 	      abs( abs(mom_list[i][1])*abs(mom_list[i][2])*abs(mom_list[i][3])-(abs(mom_list[imom][1])*abs(mom_list[imom][2])*abs(mom_list[imom][3])))<eps )
+   // 	     {
+   // 	       tag_vector[imom]=tag_vector[i];
+   // 	     }else count++;
+	   
+   // 	   if(count==imom)
+   // 	     {
+   // 	       tag++;
+   // 	       tag_vector[imom]=tag;
+   // 	     }
+   // 	 }
+   //   }
+   // int neq_moms = tag+1;
+  
+  
+
+
+
+   
   // //Create new extended vector
   
   // cout<<"Creating the extended vector..."<<endl;
