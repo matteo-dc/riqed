@@ -1513,7 +1513,7 @@ int main(int narg,char **arg)
        t_span = duration_cast<duration<double>>(t1-t0);
        cout<<"***** Found equivalent momenta in "<<t_span.count()<<" s ******"<<endl<<endl;
 
-       pushback allmoms-vectors component
+       //pushback allmoms-vectors component
        jZq_allmoms.push_back(jZq);
        jSigma1_allmoms.push_back(jSigma1);
        jZq_em_allmoms.push_back(jZq_em);
