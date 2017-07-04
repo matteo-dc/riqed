@@ -1566,6 +1566,8 @@ int main(int narg,char **arg)
        {
 	 if(tag_vector[imom]==tag)  p2_vector_eqmoms[tag] = p2_vector[imom];  
        }
+
+   cout<<"000"<<endl;
    
    //Vector of interesting quantities (EQUIVALENT MOMS)
    vector<jZ_t> jZq_eqmoms(neq_moms), jSigma1_eqmoms(neq_moms), jZq_em_eqmoms(neq_moms), jSigma1_em_eqmoms(neq_moms);
@@ -1582,6 +1584,7 @@ int main(int narg,char **arg)
        {
 	 if(tag_vector[imom]==tag)
 	   {
+	     cout<<"a"<<endl;
 #pragma omp parallel for collapse(2)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mr=0;mr<nmr;mr++)
@@ -1595,6 +1598,7 @@ int main(int narg,char **arg)
 		   jZq_em_sub_eqmoms[tag][ijack][mr] += jZq_em_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
 		   jSigma1_em_sub_eqmoms[tag][ijack][mr] += jSigma1_em_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
 		 }
+	     cout<<"b"<<endl;
 #pragma omp parallel for collapse(4)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mrA=0;mrA<nmr;mrA++)
@@ -1610,6 +1614,7 @@ int main(int narg,char **arg)
 		       jZ_em_sub_eqmoms[tag][ijack][mrA][mrB][i] += jZ_em_sub_allmoms[imom][ijack][mrA][mrB][i] / count_tag_vector[tag];
 		       jZ1_em_sub_eqmoms[tag][ijack][mrA][mrB][i] += jZ1_em_sub_allmoms[imom][ijack][mrA][mrB][i] / count_tag_vector[tag];
 		     }
+	     cout<<"c"<<endl;
 #pragma omp parallel for
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       {
@@ -1621,6 +1626,7 @@ int main(int narg,char **arg)
 		 jZq_chiral_eqmoms[tag][ijack] += jZq_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
 		 jSigma1_chiral_eqmoms[tag][ijack] += jSigma1_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
 	       }
+	     cout<<"d"<<endl;
 #pragma omp parallel for collapse(2)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int ieq=0;ieq<neq;ieq++)
@@ -1629,7 +1635,8 @@ int main(int narg,char **arg)
 		   jGs_equivalent_eqmoms[tag][ijack][ieq] += jGs_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
 		   jGp_subpole_eqmoms[tag][ijack][ieq] += jGp_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
 		   jGs_subpole_eqmoms[tag][ijack][ieq] += jGs_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
-		 }	     
+		 }
+	     cout<<"e"<<endl;
 #pragma omp parallel for collapse(2)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int i=0;i<5;i++)
