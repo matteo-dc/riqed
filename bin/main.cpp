@@ -1516,6 +1516,9 @@ int main(int narg,char **arg)
      }//moms loop
 
    int neq_moms = tag+1;
+   cout<<"_____P2________"<<endl;
+   for(size_t imom=0;imom<mom_list.size();imom++) cout<<p2_vector[imom]<<endl;
+   
    for(int imom=0;imom<neq_moms;imom++) cout<<imom<<"  "<<tag_vector[imom]<<endl;
   
    
