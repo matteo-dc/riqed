@@ -1536,9 +1536,14 @@ int main(int narg,char **arg)
        jSigma1_chiral_allmoms.push_back(jSigma1_chiral);
        jZ_chiral_allmoms.push_back(jZ_chiral);
        jZ1_chiral_allmoms.push_back(jZ1_chiral);
-       
+     
      }//moms loop
 
+   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+   cout<<endl;
+   cout<<"***Exit loop on momenta***"<<endl;
+   
    t0=high_resolution_clock::now();
    
    int neq_moms = tag+1;
