@@ -1117,8 +1117,8 @@ int main(int narg,char **arg)
        for(int coord=0;coord<4;coord++)
 	 p4+=p_tilde[coord]*p_tilde[coord]*p_tilde[coord]*p_tilde[coord]; //for the democratic filter
        
-// //        p2_vector.push_back(p2);
-// //        p4_vector.push_back(p4);
+       p2_vector.push_back(p2);
+       p4_vector.push_back(p4);
 
 //        vector<double> c_q(3);
    
