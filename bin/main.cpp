@@ -1587,20 +1587,21 @@ int main(int narg,char **arg)
 		   jZq_em_sub_eqmoms[tag][ijack][mr] += jZq_em_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
 		   jSigma1_em_sub_eqmoms[tag][ijack][mr] += jSigma1_em_sub_allmoms[imom][ijack][mr] / count_tag_vector[tag];
 		 }
-#pragma omp parallel for collapse(3)
+#pragma omp parallel for collapse(4)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mrA=0;mrA<nmr;mrA++)
 		 for(int mrB=0;mrB<nmr;mrB++)
-		   {
-		     jZ_eqmoms[tag][ijack][mrA][mrB] += jZ_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
-		     jZ1_eqmoms[tag][ijack][mrA][mrB] += jZ1_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
-		     jZ_em_eqmoms[tag][ijack][mrA][mrB] += jZ_em_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
-		     jZ1_em_eqmoms[tag][ijack][mrA][mrB] += jZ1_em_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
-		     jZ_sub_eqmoms[tag][ijack][mrA][mrB] += jZ_sub_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
-		     jZ1_sub_eqmoms[tag][ijack][mrA][mrB] += jZ1_sub_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
-		     jZ_em_sub_eqmoms[tag][ijack][mrA][mrB] += jZ_em_sub_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
-		     jZ1_em_sub_eqmoms[tag][ijack][mrA][mrB] += jZ1_em_sub_allmoms[imom][ijack][mrA][mrB] / count_tag_vector[tag];
-		   }
+		   for(int i=0;i<5;i++)
+		     {
+		       jZ_eqmoms[tag][ijack][mrA][mrB][i] += jZ_allmoms[imom][ijack][mrA][mrB][i] / count_tag_vector[tag];
+		       jZ1_eqmoms[tag][ijack][mrA][mrB][i] += jZ1_allmoms[imom][ijack][mrA][mrB][i] / count_tag_vector[tag];
+		       jZ_em_eqmoms[tag][ijack][mrA][mrB][i] += jZ_em_allmoms[imom][ijack][mrA][mrB][i] / count_tag_vector[tag];
+		       jZ1_em_eqmoms[tag][ijack][mrA][mrB][i] += jZ1_em_allmoms[imom][ijack][mrA][mrB][i] / count_tag_vector[tag];
+		       jZ_sub_eqmoms[tag][ijack][mrA][mrB][i] += jZ_sub_allmoms[imom][ijack][mrA][mrB][i] / count_tag_vector[tag];
+		       jZ1_sub_eqmoms[tag][ijack][mrA][mrB][i] += jZ1_sub_allmoms[imom][ijack][mrA][mrB][i] / count_tag_vector[tag];
+		       jZ_em_sub_eqmoms[tag][ijack][mrA][mrB][i] += jZ_em_sub_allmoms[imom][ijack][mrA][mrB][i] / count_tag_vector[tag];
+		       jZ1_em_sub_eqmoms[tag][ijack][mrA][mrB][i] += jZ1_em_sub_allmoms[imom][ijack][mrA][mrB][i] / count_tag_vector[tag];
+		     }
 #pragma omp parallel for
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       {
