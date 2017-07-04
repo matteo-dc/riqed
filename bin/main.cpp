@@ -1492,20 +1492,22 @@ int main(int narg,char **arg)
        //
 
        t0=high_resolution_clock::now();
-       size_t count=0;
+       size_t count_no=0, count_yes=0;
        for(size_t i=0;i<imom;i++)
 	 {
 	   if(abs(p2_vector[i]-p2_vector[imom])<eps*p2_vector[i] &&	\
 	      abs( abs(mom_list[i][1])*abs(mom_list[i][2])*abs(mom_list[i][3])-(abs(mom_list[imom][1])*abs(mom_list[imom][2])*abs(mom_list[imom][3])))<eps ) //equivalence
 	     {
+	       count_yes++;
 	       tag_aux=tag_vector[i];
-	     }else count++;
+	     }else count_no++;
 	   
-	   if(count==imom)
+	   if(count_no==imom)
 	     {
 	       tag++;
 	       tag_vector.push_back(tag);
-	     }else tag_vector.push_back(tag_aux);
+	     }
+	   if(count_yes==imom) tag_vector.push_back(tag_aux);
 	 }
 
        t1=high_resolution_clock::now();
