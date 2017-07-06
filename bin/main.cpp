@@ -1234,7 +1234,6 @@ int main(int narg,char **arg)
        
        int ieq=0;
        
-#pragma omp parallel for collapse(3)
        for(int mA=0; mA<nm; mA++)
       	 for(int mB=mA; mB<nm; mB++)	     
 	   for(int r=0; r<nr; r++)
@@ -1244,7 +1243,7 @@ int main(int narg,char **arg)
 	       m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
 	       for(int ijack=0;ijack<njacks;ijack++) jGp_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][2]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
 	       for(int ijack=0;ijack<njacks;ijack++) jGs_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][0]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
-	     }     //ieq={00,01,02,03,11,12,13,22,23,33}
+	     }   //ieq={00,01,02,03,11,12,13,22,23,33}
        
 
        vd_t Gp_ave(0.0,neq), sqr_Gp_ave(0.0,neq), Gp_err(0.0,neq);
@@ -1353,19 +1352,18 @@ int main(int narg,char **arg)
        vvd_t jGa_equivalent(vd_t(0.0,neq),njacks);
        vvd_t jGt_equivalent(vd_t(0.0,neq),njacks);
 
-       ieq=0;
        for(int mA=0; mA<nm; mA++)
-	 for(int mB=mA; mB<nm; mB++)
-	   {	     
-	     for(int r=0; r<nr; r++)
-	       {
-		 m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
-		 for(int ijack=0;ijack<njacks;ijack++) jGv_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][1]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
-		 for(int ijack=0;ijack<njacks;ijack++) jGa_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][3]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
-		 for(int ijack=0;ijack<njacks;ijack++) jGt_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][4]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
-	       }
-	     ieq++;  //ieq={00,01,02,03,11,12,13,22,23,33}
-	   }
+	 for(int mB=mA; mB<nm; mB++)	     
+	   for(int r=0; r<nr; r++)
+	     {
+	       ieq=-(mA*mA/2)+mB+mA*(nm-0.5);
+		 
+	       m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
+	       for(int ijack=0;ijack<njacks;ijack++) jGv_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][1]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
+	       for(int ijack=0;ijack<njacks;ijack++) jGa_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][3]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
+	       for(int ijack=0;ijack<njacks;ijack++) jGt_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][4]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
+	     } //ieq={00,01,02,03,11,12,13,22,23,33}
+	   
 
        vd_t Gv_ave(0.0,neq), sqr_Gv_ave(0.0,neq), Gv_err(0.0,neq);
        vd_t Ga_ave(0.0,neq), sqr_Ga_ave(0.0,neq), Ga_err(0.0,neq);
