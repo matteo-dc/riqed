@@ -642,7 +642,7 @@ void print( vector< valarray<T> > vec, const char* path)
       outfile.close();
 
     }
-  else cout << "Unable to open the output file "<<name_file<<endl;
+  else cout << "Unable to open the output file "<<path<<endl;
 }
 
 
@@ -1902,7 +1902,7 @@ int main(int narg,char **arg)
    PRINT(jZ_em_chiral);
    PRINT(jZ1_em_chiral);
    
-
+#undef PRINT
    
    
    cout<<endl<<endl;
