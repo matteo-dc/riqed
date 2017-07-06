@@ -1855,13 +1855,52 @@ int main(int narg,char **arg)
    t_span = duration_cast<duration<double>>(t1-t0);
    cout<<"***** Computed averages over equivalent momenta in "<<t_span.count()<<" s ******"<<endl<<endl;
 
-   //Print on file
-   print(jZq_eqmoms,"eqmoms/jZq");
-   print(jSigma1_eqmoms,"eqmoms/jSigma1");
-   print(jZq_em_eqmoms,"eqmoms/jZq_
-
-
-
+#define PRINT(NAME)				\
+   print(NAME##_##allmoms,"allmoms/"#NAME);	\
+   print(NAME##_##eqmoms,"eqmoms/"#NAME)
+   
+   PRINT(jZq);
+   PRINT(jSigma1);
+   PRINT(jZq_em);
+   PRINT(jSigma1_em);
+   PRINT(jZ);
+   PRINT(jZ1);
+   PRINT(jZ_em);
+   PRINT(jZ1_em);
+   PRINT(jZq_sub);
+   PRINT(jSigma1_sub);
+   PRINT(jZq_em_sub);
+   PRINT(jSigma1_em_sub);
+   PRINT(jZ_sub);
+   PRINT(jZ1_sub);
+   PRINT(jZ_em_sub);
+   PRINT(jZ1_em_sub);
+   PRINT(jGp_equivalent);
+   PRINT(jGs_equivalent);
+   PRINT(jGp_subpole);
+   PRINT(jGs_subpole);
+   PRINT(jGp_em_equivalent);
+   PRINT(jGs_em_equivalent);
+   PRINT(jGp_em_subpole);
+   PRINT(jGs_em_subpole);
+   PRINT(jGp_0_chiral);
+   PRINT(jGa_0_chiral);
+   PRINT(jGv_0_chiral);
+   PRINT(jGs_0_chiral);
+   PRINT(jGt_0_chiral);
+   PRINT(jGp_em_a_b_chiral);
+   PRINT(jGa_em_a_b_chiral);
+   PRINT(jGv_em_a_b_chiral);
+   PRINT(jGs_em_a_b_chiral);
+   PRINT(jGt_em_a_b_chiral);
+   PRINT(jZq_chiral);
+   PRINT(jSigma1_chiral);
+   PRINT(jZq_em_chiral);
+   PRINT(jSigma1_em_chiral);
+   PRINT(jZ_chiral);
+   PRINT(jZ1_chiral);
+   PRINT(jZ_em_chiral);
+   PRINT(jZ1_em_chiral);
    
 
    
