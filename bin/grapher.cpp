@@ -93,9 +93,9 @@ void read_mom_list(const string &path)
 }
 
 //read file
-void read_internal(double t,ifstream& infile)
+void read_internal(double &t,ifstream& infile)
 { 
-  infile.read((char*) &t,sizeof(double));
+  infile.read((char*) t,sizeof(double));
 }
 //template <class T>
 void read_internal(VectorXd &V, ifstream& infile)
