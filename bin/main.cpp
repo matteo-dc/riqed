@@ -1982,7 +1982,7 @@ int main(int narg,char **arg)
    // PRINT(jSigma1_pars);
    // PRINT(jSigma1_em_pars);
    
-#undef PRINT
+   //#undef PRINT
 
    // print_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
    // print_vec(m_eff_equivalent,"eqmoms/m_eff_equivalent");
