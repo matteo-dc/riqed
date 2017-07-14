@@ -849,7 +849,7 @@ int main(int narg,char **arg)
    ifstream input[combo];
 
    //Vector of interesting quantities (ALL MOMS)
-   vector<jZ_t> jZq_allmoms(moms), jSigma1_allmoms(moms), jZq_em_allmoms(moms), jSigma1_em_allmoms(moms);
+   vector<jZ_t> jZq_allmoms(moms,vvd_t(vd_t(nmr),njacks)), jSigma1_allmoms(moms), jZq_em_allmoms(moms), jSigma1_em_allmoms(moms);
    vector<jZbil_t> jZ_allmoms(moms), jZ1_allmoms(moms), jZ_em_allmoms(moms), jZ1_em_allmoms(moms);
    vector<jZ_t> jZq_sub_allmoms(moms), jSigma1_sub_allmoms(moms), jZq_em_sub_allmoms(moms), jSigma1_em_sub_allmoms(moms);
    vector<jZbil_t> jZ_sub_allmoms(moms), jZ1_sub_allmoms(moms), jZ_em_sub_allmoms(moms), jZ1_em_sub_allmoms(moms);
@@ -1493,7 +1493,7 @@ int main(int narg,char **arg)
        
        vvd_t jZq_equivalent(vd_t(0.0,neq),njacks), jSigma1_equivalent(vd_t(0.0,neq),njacks);
        vvd_t jZq_em_equivalent(vd_t(0.0,neq),njacks), jSigma1_em_equivalent(vd_t(0.0,neq),njacks);       
-
+       
        vd_t m_eff_equivalent_Zq(0.0,neq2);
        ieq=0;
 
@@ -1636,7 +1636,10 @@ int main(int narg,char **arg)
        cout<<"***** Found equivalent momenta in "<<t_span.count()<<" s ******"<<endl<<endl;
 
        //pushback allmoms-vectors component
-       jZq_allmoms[imom]=jZq;
+       for(int ijack=0; ijack<njacks;ijack++)
+	 for(int mr=0; mr<nmr; mr++)
+	   jZq_allmoms[imom][ijack][mr]=jZq[ijack][mr];
+
        jSigma1_allmoms[imom]=jSigma1;
        jZq_em_allmoms[imom]=jZq_em;
        jSigma1_em_allmoms[imom]=jSigma1_em;
