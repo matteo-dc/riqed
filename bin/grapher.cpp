@@ -96,6 +96,7 @@ void read_mom_list(const string &path)
 void read_internal(double t,ifstream& infile)
 { 
   infile.read((char*) &t,sizeof(double));
+  cout<<t<<endl;
 }
 //template <class T>
 void read_internal(VectorXd &V, ifstream& infile)
@@ -120,7 +121,7 @@ void read_vec( T &vec, const char* path)
       infile.close();
 
     }
-  else cout << "Unable to open the output file "<<path<<endl;
+  else cout << "Unable to open the input file "<<path<<endl;
 }
 
 //factorial
@@ -202,10 +203,10 @@ int main(int narg,char **arg)
   
   int nconfs=stoi(arg[2]); 
   int njacks=stoi(arg[3]);
-  int clust_size=nconfs/njacks;
-  int conf_id[nconfs];
-  double L=stod(arg[4]),T=stod(arg[5]);
-  size_t nhits=1; //!
+  // int clust_size=nconfs/njacks;
+  // int conf_id[nconfs];
+  // double L=stod(arg[4]),T=stod(arg[5]);
+  // size_t nhits=1; //!
 
   nm = 4;  //! to be passed from command line
   nr = 2;
@@ -311,76 +312,76 @@ int main(int narg,char **arg)
    
    READ(p2_vector);
    READ(jZq);
-   READ(jSigma1);
-   READ(jZq_em);
-   READ(jSigma1_em);
-   READ(jZ);
-   READ(jZ1);
-   READ(jZ_em);
-   READ(jZ1_em);
-   READ(jZq_sub);
-   READ(jSigma1_sub);
-   READ(jZq_em_sub);
-   READ(jSigma1_em_sub);
-   READ(jZ_sub);
-   READ(jZ1_sub);
-   READ(jZ_em_sub);
-   READ(jZ1_em_sub);
-   READ(jGp_equivalent);
-   READ(jGs_equivalent);
-   READ(jGp_subpole);
-   READ(jGs_subpole);
-   READ(jGv_equivalent);
-   READ(jGa_equivalent);
-   READ(jGt_equivalent);
-   READ(jGp_em_equivalent);
-   READ(jGs_em_equivalent);
-   READ(jGp_em_subpole);
-   READ(jGs_em_subpole);
-   READ(jGv_em_equivalent);
-   READ(jGa_em_equivalent);
-   READ(jGt_em_equivalent);
-   READ(jZq_equivalent);
-   READ(jSigma1_equivalent);
-   READ(jZq_em_equivalent);
-   READ(jSigma1_em_equivalent);
-   READ(jGp_0_chiral);
-   READ(jGa_0_chiral);
-   READ(jGv_0_chiral);
-   READ(jGs_0_chiral);
-   READ(jGt_0_chiral);
-   READ(jGp_em_a_b_chiral);
-   READ(jGa_em_a_b_chiral);
-   READ(jGv_em_a_b_chiral);
-   READ(jGs_em_a_b_chiral);
-   READ(jGt_em_a_b_chiral);
-   READ(jZq_chiral);
-   READ(jSigma1_chiral);
-   READ(jZq_em_chiral);
-   READ(jSigma1_em_chiral);
-   READ(jZ_chiral);
-   READ(jZ1_chiral);
-   READ(jZ_em_chiral);
-   READ(jZ1_em_chiral);
-   READ(jGp_pars);
-   READ(jGp_em_pars);
-   READ(jGs_pars);
-   READ(jGs_em_pars);
-   READ(jGv_pars);
-   READ(jGv_em_pars);
-   READ(jGa_pars);
-   READ(jGa_em_pars);
-   READ(jGt_pars);
-   READ(jGt_em_pars);
-   READ(jZq_pars);
-   READ(jZq_em_pars);
-   READ(jSigma1_pars);
-   READ(jSigma1_em_pars);
+   // READ(jSigma1);
+   // READ(jZq_em);
+   // READ(jSigma1_em);
+   // READ(jZ);
+   // READ(jZ1);
+   // READ(jZ_em);
+   // READ(jZ1_em);
+   // READ(jZq_sub);
+   // READ(jSigma1_sub);
+   // READ(jZq_em_sub);
+   // READ(jSigma1_em_sub);
+   // READ(jZ_sub);
+   // READ(jZ1_sub);
+   // READ(jZ_em_sub);
+   // READ(jZ1_em_sub);
+   // READ(jGp_equivalent);
+   // READ(jGs_equivalent);
+   // READ(jGp_subpole);
+   // READ(jGs_subpole);
+   // READ(jGv_equivalent);
+   // READ(jGa_equivalent);
+   // READ(jGt_equivalent);
+   // READ(jGp_em_equivalent);
+   // READ(jGs_em_equivalent);
+   // READ(jGp_em_subpole);
+   // READ(jGs_em_subpole);
+   // READ(jGv_em_equivalent);
+   // READ(jGa_em_equivalent);
+   // READ(jGt_em_equivalent);
+   // READ(jZq_equivalent);
+   // READ(jSigma1_equivalent);
+   // READ(jZq_em_equivalent);
+   // READ(jSigma1_em_equivalent);
+   // READ(jGp_0_chiral);
+   // READ(jGa_0_chiral);
+   // READ(jGv_0_chiral);
+   // READ(jGs_0_chiral);
+   // READ(jGt_0_chiral);
+   // READ(jGp_em_a_b_chiral);
+   // READ(jGa_em_a_b_chiral);
+   // READ(jGv_em_a_b_chiral);
+   // READ(jGs_em_a_b_chiral);
+   // READ(jGt_em_a_b_chiral);
+   // READ(jZq_chiral);
+   // READ(jSigma1_chiral);
+   // READ(jZq_em_chiral);
+   // READ(jSigma1_em_chiral);
+   // READ(jZ_chiral);
+   // READ(jZ1_chiral);
+   // READ(jZ_em_chiral);
+   // READ(jZ1_em_chiral);
+   // READ(jGp_pars);
+   // READ(jGp_em_pars);
+   // READ(jGs_pars);
+   // READ(jGs_em_pars);
+   // READ(jGv_pars);
+   // READ(jGv_em_pars);
+   // READ(jGa_pars);
+   // READ(jGa_em_pars);
+   // READ(jGt_pars);
+   // READ(jGt_em_pars);
+   // READ(jZq_pars);
+   // READ(jZq_em_pars);
+   // READ(jSigma1_pars);
+   // READ(jSigma1_em_pars);
    
 #undef READ
 
-   read_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
-   read_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent");
+   // read_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
+   // read_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent");
    
 
    //   SECTIONS:
