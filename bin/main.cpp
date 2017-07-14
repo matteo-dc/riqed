@@ -229,7 +229,7 @@ string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, 
   return path;
 }
 
-//jackknife Propagator
+//jackknife double
 vvd_t jackknife_double(vvd_t &jd, int size, int nconf, int clust_size )
 {
   vd_t jSum(0.0,size);
@@ -580,7 +580,31 @@ void print_vec( T &vec, const char* path)
   else cout << "Unable to open the output file "<<path<<endl;
 }
 
+vvvd_t average_Zq(vector<jZ_t> jZq)
+{
+  int moms=jZq.size();
+  int njacks=jZq[0].size();
+  int nmr=jZq[0][0].size();
 
+  vvd_t Zq_ave(vd_t(nmr),moms), sqr_Zq_ave(vd_t(nmr),moms), Zq_err(vd_t(nmr),moms);
+  vvvd_t Zq_ave_err(vvd_t(vd_t(nmr),moms),2); 
+
+  for(int imom=0;imom<moms;imom++)
+    for(int ijack=0;ijack<njacks;ijack++)
+      for(int mr=0;mr<nmr;mr++)
+      {
+	Zq_ave[imom][mr]+=jZq[imom][ijack][mr]/njacks;
+	sqr_Zq_ave[imom][mr]+=jZq[imom][ijack][mr]*jZq[imom][ijack][mr]/njacks;
+      }
+  for(int imom=0;imom<moms;imom++)
+    for(int mr=0;mr<nmr;mr++)
+      Zq_err[imom][mr]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[imom][mr]-Zq_ave[imom][mr]*Zq_ave[imom][mr]);
+
+  Zq_ave_err[0]=Zq_ave;
+  Zq_ave_err[1]=Zq_err;
+
+  return Zq_ave_err;
+}
 
 
 
@@ -827,8 +851,11 @@ int main(int narg,char **arg)
    vector<jZbil_t> jZ_allmoms(moms), jZ1_allmoms(moms), jZ_em_allmoms(moms), jZ1_em_allmoms(moms);
    vector<jZ_t> jZq_sub_allmoms(moms), jSigma1_sub_allmoms(moms), jZq_em_sub_allmoms(moms), jSigma1_em_sub_allmoms(moms);
    vector<jZbil_t> jZ_sub_allmoms(moms), jZ1_sub_allmoms(moms), jZ_em_sub_allmoms(moms), jZ1_em_sub_allmoms(moms);
-   vector<vvd_t> jGp_equivalent_allmoms(moms), jGs_equivalent_allmoms(moms), jGp_subpole_allmoms(moms), jGs_subpole_allmoms(moms);
-   vector<vvd_t> jGp_em_equivalent_allmoms(moms), jGs_em_equivalent_allmoms(moms), jGp_em_subpole_allmoms(moms), jGs_em_subpole_allmoms(moms);
+   vector<vvd_t> jZq_equivalent_allmoms(moms), jSigma1_equivalent_allmoms(moms), jZq_em_equivalent_allmoms(moms), jSigma1_em_equivalent_allmoms(moms);
+   vector<vvd_t> jGp_equivalent_allmoms(moms), jGs_equivalent_allmoms(moms), jGp_subpole_allmoms(moms), jGs_subpole_allmoms(moms),\
+     jGv_equivalent_allmoms(moms), jGa_equivalent_allmoms(moms), jGt_equivalent_allmoms(moms);
+   vector<vvd_t> jGp_em_equivalent_allmoms(moms), jGs_em_equivalent_allmoms(moms), jGp_em_subpole_allmoms(moms), jGs_em_subpole_allmoms(moms),\
+     jGv_em_equivalent_allmoms(moms), jGa_em_equivalent_allmoms(moms), jGt_em_equivalent_allmoms(moms);
    vector<vd_t> jGp_0_chiral_allmoms(moms),jGa_0_chiral_allmoms(moms),jGv_0_chiral_allmoms(moms),jGs_0_chiral_allmoms(moms),jGt_0_chiral_allmoms(moms);
    vector<vd_t> jGp_em_a_b_chiral_allmoms(moms),jGa_em_a_b_chiral_allmoms(moms),jGv_em_a_b_chiral_allmoms(moms),jGs_em_a_b_chiral_allmoms(moms),jGt_em_a_b_chiral_allmoms(moms);
    vector<vd_t> jZq_chiral_allmoms(moms),jSigma1_chiral_allmoms(moms);
@@ -1631,10 +1658,23 @@ int main(int narg,char **arg)
        jGp_subpole_allmoms[imom]=jGp_subpole;
        jGs_subpole_allmoms[imom]=jGs_subpole;
 
+       jGv_equivalent_allmoms[imom]=jGv_equivalent;
+       jGa_equivalent_allmoms[imom]=jGa_equivalent;
+       jGt_equivalent_allmoms[imom]=jGa_equivalent;
+
        jGp_em_equivalent_allmoms[imom]=jGp_em_equivalent;
        jGs_em_equivalent_allmoms[imom]=jGs_em_equivalent;
        jGp_em_subpole_allmoms[imom]=jGp_em_subpole;
        jGs_em_subpole_allmoms[imom]=jGs_em_subpole;
+
+       jGv_em_equivalent_allmoms[imom]=jGv_em_equivalent;
+       jGa_em_equivalent_allmoms[imom]=jGa_em_equivalent;
+       jGt_em_equivalent_allmoms[imom]=jGa_em_equivalent;
+
+       jZq_equivalent_allmoms[imom]=jZq_equivalent;
+       jSigma1_equivalent_allmoms[imom]=jSigma1_equivalent;
+       jZq_em_equivalent_allmoms[imom]=jZq_em_equivalent;
+       jSigma1_em_equivalent_allmoms[imom]=jSigma1_em_equivalent;
        
        jGp_0_chiral_allmoms[imom]=jGp_0_chiral;
        jGv_0_chiral_allmoms[imom]=jGv_0_chiral;
@@ -1719,6 +1759,14 @@ int main(int narg,char **arg)
      jGp_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
    vector<vvd_t> jGp_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), \
      jGp_em_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_em_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
+
+   vector<vvd_t> jGv_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGa_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)),\
+     jGt_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
+   vector<vvd_t> jGv_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGa_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)),\
+     jGt_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
+
+   vector<vvd_t> jZq_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jSigma1_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)),\
+     jZq_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jSigma1_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)); 
    
    vector<vd_t> jGp_0_chiral_eqmoms(neq_moms,vd_t(njacks)),jGa_0_chiral_eqmoms(neq_moms,vd_t(njacks)),jGv_0_chiral_eqmoms(neq_moms,vd_t(njacks)),\
      jGs_0_chiral_eqmoms(neq_moms,vd_t(njacks)),jGt_0_chiral_eqmoms(neq_moms,vd_t(njacks));
@@ -1805,6 +1853,20 @@ int main(int narg,char **arg)
 		   jGs_em_equivalent_eqmoms[tag][ijack][ieq] += jGs_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
 		   jGp_em_subpole_eqmoms[tag][ijack][ieq] += jGp_em_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
 		   jGs_em_subpole_eqmoms[tag][ijack][ieq] += jGs_em_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+
+		   jGv_equivalent_eqmoms[tag][ijack][ieq] += jGv_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGa_equivalent_eqmoms[tag][ijack][ieq] += jGa_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGt_equivalent_eqmoms[tag][ijack][ieq] += jGt_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+
+		   jGv_em_equivalent_eqmoms[tag][ijack][ieq] += jGv_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGa_em_equivalent_eqmoms[tag][ijack][ieq] += jGa_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGt_em_equivalent_eqmoms[tag][ijack][ieq] += jGt_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+
+		   jZq_equivalent_eqmoms[tag][ijack][ieq] += jZq_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jSigma1_equivalent_eqmoms[tag][ijack][ieq] += jSigma1_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+
+		   jZq_em_equivalent_eqmoms[tag][ijack][ieq] += jZq_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jSigma1_em_equivalent_eqmoms[tag][ijack][ieq] += jSigma1_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
 		 }
 #pragma omp parallel for collapse(2)
 	     for(int ijack=0;ijack<njacks;ijack++)
@@ -1870,10 +1932,20 @@ int main(int narg,char **arg)
    PRINT(jGs_equivalent);
    PRINT(jGp_subpole);
    PRINT(jGs_subpole);
+   PRINT(jGv_equivalent);
+   PRINT(jGa_equivalent);
+   PRINT(jGt_equivalent);
    PRINT(jGp_em_equivalent);
    PRINT(jGs_em_equivalent);
    PRINT(jGp_em_subpole);
    PRINT(jGs_em_subpole);
+   PRINT(jGv_em_equivalent);
+   PRINT(jGa_em_equivalent);
+   PRINT(jGt_em_equivalent);
+   PRINT(jZq_equivalent);
+   PRINT(jSigma1_equivalent);
+   PRINT(jZq_em_equivalent);
+   PRINT(jSigma1_em_equivalent);
    PRINT(jGp_0_chiral);
    PRINT(jGa_0_chiral);
    PRINT(jGv_0_chiral);
@@ -1914,6 +1986,31 @@ int main(int narg,char **arg)
    print_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent");
    print_vec(m_eff_equivalent_Zq,"eqmoms/m_eff_equivalent");
    
+
+   vvvd_t Zq = average_Zq(jZq_eqmoms);  //Zq[ave/err][imom][nm]
+   
+   ofstream out("eqmoms/Zq.txt");
+
+   if (out.is_open())
+     {
+       out.precision(10);
+       for(size_t imom=0; imom<Zq[0].size(); imom++)
+	 {
+	   out<<p2_vector_eqmoms[imom]<<"\t"<<Zq[0][imom][0]<<"\t"<<Zq[1][imom][0]<<endl;
+	 }
+      
+       out.close();
+
+     }
+   else cout << "Unable to open the output file eqmoms/Zq.txt"<<endl;
+
+
+
+
+
+
+
+
    
    
    cout<<endl<<endl;
