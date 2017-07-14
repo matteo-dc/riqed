@@ -2010,10 +2010,50 @@ int main(int narg,char **arg)
 
 
    
-
+   vvvd_t Zq_allmoms=average_Zq(jZq_allmoms), Zq_eqmoms=average_Zq(jZq_eqmoms), Zq_sub_allmoms=average_Zq(jZq_sub_allmoms), Zq_sub_eqmoms=average_Zq(jZq_sub_eqmoms);
+   
+   vvvd_t Zq_ave_err(vvd_t(vd_t(nmr),moms),2); 
    
 
+   cout<<"_______ZQ ALLMOMS__(MO)____"<<endl;
+   for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
+     cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][0]<<"\t"<<Zq_eqmoms[1][imom][0]<<endl;
+   cout<<endl;
+   
+   cout<<"_______ZQ ALLMOMS__(M1)____"<<endl;
+   for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
+     cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][1]<<"\t"<<Zq_eqmoms[1][imom][1]<<endl;
+   cout<<endl;
 
+   cout<<"_______ZQ ALLMOMS__(M2)____"<<endl;
+   for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
+     cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][2]<<"\t"<<Zq_eqmoms[1][imom][2]<<endl;
+   cout<<endl;
+
+   cout<<"_______ZQ ALLMOMS__(MO)____"<<endl;
+   for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
+     cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][3]<<"\t"<<Zq_eqmoms[1][imom][3]<<endl;
+   cout<<endl;
+
+     cout<<"_______ZQ EQMOMS__(MO)____"<<endl;
+   for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
+     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_eqmoms[0][imom][0]<<"\t"<<Zq_eqmoms[1][imom][0]<<endl;
+   cout<<endl;
+   
+   cout<<"_______ZQ EQMOMS__(M1)____"<<endl;
+   for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
+     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_eqmoms[0][imom][1]<<"\t"<<Zq_eqmoms[1][imom][1]<<endl;
+   cout<<endl;
+
+   cout<<"_______ZQ EQMOMS__(M2)____"<<endl;
+   for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
+     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_eqmoms[0][imom][2]<<"\t"<<Zq_eqmoms[1][imom][2]<<endl;
+   cout<<endl;
+
+   cout<<"_______ZQ EQMOMS__(MO)____"<<endl;
+   for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
+     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_eqmoms[0][imom][3]<<"\t"<<Zq_eqmoms[1][imom][3]<<endl;
+   cout<<endl;
 
 
   
