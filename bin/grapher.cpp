@@ -404,11 +404,11 @@ int main(int narg,char **arg)
    plot_Zq(jZq_eqmoms,p2_vector_eqmoms,"jZq","eqmoms");
 
 
-    vector<jZ_t> jZq_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks))
-      for(int ieq=0;ieq<neq_moms;ieq++)
-	{
-	  cout<<p2_vector_eqmoms[ieq]<<"\t"<<jZq_eqmoms[ieq][0][0]<<endl;
-	}
+  
+   for(int ieq=0;ieq<neq_moms;ieq++)
+     {
+       cout<<p2_vector_eqmoms[ieq]<<"\t"<<jZq_eqmoms[ieq][0][0]<<endl;
+     }
 
    
   return 0;
