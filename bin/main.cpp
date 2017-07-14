@@ -588,12 +588,12 @@ vvvd_t average_Zq(vector<jZ_t> jZq)
   int njacks=jZq[0].size();
   int nmr=jZq[0][0].size();
 
-  vvd_t Zq_ave(vd_t(nmr),moms), sqr_Zq_ave(vd_t(nmr),moms), Zq_err(vd_t(nmr),moms);
-  vvvd_t Zq_ave_err(vvd_t(vd_t(nmr),moms),2); 
+  vvd_t Zq_ave(vd_t(0.0,nmr),moms), sqr_Zq_ave(vd_t(0.0,nmr),moms), Zq_err(vd_t(0.0,nmr),moms);
+  vvvd_t Zq_ave_err(vvd_t(vd_t(0.0,nmr),moms),2); 
 
   for(int imom=0;imom<moms;imom++)
-    for(int ijack=0;ijack<njacks;ijack++)
-      for(int mr=0;mr<nmr;mr++)
+    for(int mr=0;mr<nmr;mr++)
+      for(int ijack=0;ijack<njacks;ijack++)
 	{
 	  Zq_ave[imom][mr]+=jZq[imom][ijack][mr]/njacks;
 	  sqr_Zq_ave[imom][mr]+=jZq[imom][ijack][mr]*jZq[imom][ijack][mr]/njacks;
@@ -1910,23 +1910,23 @@ int main(int narg,char **arg)
    t_span = duration_cast<duration<double>>(t1-t0);
    cout<<"***** Computed averages over equivalent momenta in "<<t_span.count()<<" s ******"<<endl<<endl;
 
-#define PRINT(NAME)				\
-   print_vec(NAME##_##allmoms,"allmoms/"#NAME);	\
-   print_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
+// #define PRINT(NAME)				\
+//    print_vec(NAME##_##allmoms,"allmoms/"#NAME);	\
+//    print_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
    
-   PRINT(p2_vector);
-   PRINT(jZq);
-   PRINT(jSigma1);
-   PRINT(jZq_em);
-   PRINT(jSigma1_em);
+//    PRINT(p2_vector);
+//    PRINT(jZq);
+//    PRINT(jSigma1);
+//    PRINT(jZq_em);
+//    PRINT(jSigma1_em);
    // PRINT(jZ);
    // PRINT(jZ1);
    // PRINT(jZ_em);
    // PRINT(jZ1_em);
-   PRINT(jZq_sub);
-   PRINT(jSigma1_sub);
-   PRINT(jZq_em_sub);
-   PRINT(jSigma1_em_sub);
+   // PRINT(jZq_sub);
+   // PRINT(jSigma1_sub);
+   // PRINT(jZq_em_sub);
+   // PRINT(jSigma1_em_sub);
    // PRINT(jZ_sub);
    // PRINT(jZ1_sub);
    // PRINT(jZ_em_sub);
@@ -1945,10 +1945,10 @@ int main(int narg,char **arg)
    // PRINT(jGv_em_equivalent);
    // PRINT(jGa_em_equivalent);
    // PRINT(jGt_em_equivalent);
-   PRINT(jZq_equivalent);
-   PRINT(jSigma1_equivalent);
-   PRINT(jZq_em_equivalent);
-   PRINT(jSigma1_em_equivalent);
+   // PRINT(jZq_equivalent);
+   // PRINT(jSigma1_equivalent);
+   // PRINT(jZq_em_equivalent);
+   // PRINT(jSigma1_em_equivalent);
    // PRINT(jGp_0_chiral);
    // PRINT(jGa_0_chiral);
    // PRINT(jGv_0_chiral);
@@ -1959,10 +1959,10 @@ int main(int narg,char **arg)
    // PRINT(jGv_em_a_b_chiral);
    // PRINT(jGs_em_a_b_chiral);
    // PRINT(jGt_em_a_b_chiral);
-   PRINT(jZq_chiral);
-   PRINT(jSigma1_chiral);
-   PRINT(jZq_em_chiral);
-   PRINT(jSigma1_em_chiral);
+   // PRINT(jZq_chiral);
+   // PRINT(jSigma1_chiral);
+   // PRINT(jZq_em_chiral);
+   // PRINT(jSigma1_em_chiral);
    // PRINT(jZ_chiral);
    // PRINT(jZ1_chiral);
    // PRINT(jZ_em_chiral);
@@ -1977,17 +1977,17 @@ int main(int narg,char **arg)
    // PRINT(jGa_em_pars);
    // PRINT(jGt_pars);
    // PRINT(jGt_em_pars);
-   PRINT(jZq_pars);
-   PRINT(jZq_em_pars);
-   PRINT(jSigma1_pars);
-   PRINT(jSigma1_em_pars);
+   // PRINT(jZq_pars);
+   // PRINT(jZq_em_pars);
+   // PRINT(jSigma1_pars);
+   // PRINT(jSigma1_em_pars);
    
 #undef PRINT
 
-   print_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
-   print_vec(m_eff_equivalent,"eqmoms/m_eff_equivalent");
-   print_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent");
-   print_vec(m_eff_equivalent_Zq,"eqmoms/m_eff_equivalent");
+   // print_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
+   // print_vec(m_eff_equivalent,"eqmoms/m_eff_equivalent");
+   // print_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent");
+   // print_vec(m_eff_equivalent_Zq,"eqmoms/m_eff_equivalent");
 
  
    
