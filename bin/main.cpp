@@ -110,6 +110,7 @@ string path_to_conf(int i_conf,const string &name)
 {
   char path[1024];
   sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/fft_%s",i_conf,name.c_str());
+  // sprintf(path,"out/%04d/fft_%s",i_conf,name.c_str());
   return path;
 }
 
@@ -223,6 +224,7 @@ string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, 
   
   char path[1024];
   sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
+  //sprintf(path,"out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
 
   // cout<<path<<endl;
   
@@ -592,10 +594,10 @@ vvvd_t average_Zq(vector<jZ_t> jZq)
   for(int imom=0;imom<moms;imom++)
     for(int ijack=0;ijack<njacks;ijack++)
       for(int mr=0;mr<nmr;mr++)
-      {
-	Zq_ave[imom][mr]+=jZq[imom][ijack][mr]/njacks;
-	sqr_Zq_ave[imom][mr]+=jZq[imom][ijack][mr]*jZq[imom][ijack][mr]/njacks;
-      }
+	{
+	  Zq_ave[imom][mr]+=jZq[imom][ijack][mr]/njacks;
+	  sqr_Zq_ave[imom][mr]+=jZq[imom][ijack][mr]*jZq[imom][ijack][mr]/njacks;
+	}
   for(int imom=0;imom<moms;imom++)
     for(int mr=0;mr<nmr;mr++)
       Zq_err[imom][mr]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[imom][mr]-Zq_ave[imom][mr]*Zq_ave[imom][mr]);
@@ -1347,6 +1349,7 @@ int main(int narg,char **arg)
       	   jGs_em_a_b_chiral[ijack]=jGs_pars[ijack][0];	
       	 }
     
+
        // cout<<"---- M^2  ---- jG_p ---- jG_p_SUB --- (for each jackknife)"<<endl;
        // for(int ijack=0; ijack<njacks; ijack++)
        // 	 {
@@ -1743,6 +1746,7 @@ int main(int narg,char **arg)
        {
 	 if(tag_vector[imom]==tag)  p2_vector_eqmoms[tag] = p2_vector_allmoms[imom];  
        }
+
    
    //Vector of interesting quantities (EQUIVALENT MOMS)
    vector<jZ_t> jZq_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)),\
@@ -1784,9 +1788,7 @@ int main(int narg,char **arg)
      jGa_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jGt_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks));
    vector< vXd_t > jZq_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jSigma1_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)),\
      jZq_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jSigma1_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks));
-   
 
-   
 
    for(int tag=0;tag<neq_moms;tag++)
      for(int imom=0;imom<moms;imom++)
@@ -1985,25 +1987,24 @@ int main(int narg,char **arg)
    print_vec(m_eff_equivalent,"eqmoms/m_eff_equivalent");
    print_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent");
    print_vec(m_eff_equivalent_Zq,"eqmoms/m_eff_equivalent");
-   
 
-   vvvd_t Zq = average_Zq(jZq_eqmoms);  //Zq[ave/err][imom][nm]
+   vvvd_t Zq = average_Zq(jZq_allmoms);  //Zq[ave/err][imom][nm]
    
-   ofstream out("eqmoms/Zq.txt");
+   ofstream out("allmoms/Zq_chiral.txt");
 
    if (out.is_open())
      {
        out.precision(10);
        for(size_t imom=0; imom<Zq[0].size(); imom++)
-	 {
-	   out<<p2_vector_eqmoms[imom]<<"\t"<<Zq[0][imom][0]<<"\t"<<Zq[1][imom][0]<<endl;
-	 }
+   	 {
+   	   out<<p2_vector_eqmoms[imom]<<"\t"<<Zq[0][imom][2]<<"\t"<<Zq[1][imom][2]<<endl;
+   	 }
       
        out.close();
 
      }
    else cout << "Unable to open the output file eqmoms/Zq.txt"<<endl;
-
+   
 
 
 
