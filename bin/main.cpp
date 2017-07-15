@@ -849,7 +849,7 @@ int main(int narg,char **arg)
    ifstream input[combo];
 
    //Vector of interesting quantities (ALL MOMS)
-   vector<jZ_t> jZq_allmoms(moms,vvd_t(vd_t(nmr),njacks)), jSigma1_allmoms(moms), jZq_em_allmoms(moms), jSigma1_em_allmoms(moms);
+   vector<jZ_t> jZq_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_allmoms(moms), jZq_em_allmoms(moms), jSigma1_em_allmoms(moms);
    vector<jZbil_t> jZ_allmoms(moms), jZ1_allmoms(moms), jZ_em_allmoms(moms), jZ1_em_allmoms(moms);
    vector<jZ_t> jZq_sub_allmoms(moms), jSigma1_sub_allmoms(moms), jZq_em_sub_allmoms(moms), jSigma1_em_sub_allmoms(moms);
    vector<jZbil_t> jZ_sub_allmoms(moms), jZ1_sub_allmoms(moms), jZ_em_sub_allmoms(moms), jZ1_em_sub_allmoms(moms);
@@ -1753,7 +1753,7 @@ int main(int narg,char **arg)
 
    
    //Vector of interesting quantities (EQUIVALENT MOMS)
-   vector<jZ_t> jZq_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)),\
+   vector<jZ_t> jZq_eqmoms(neq_moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), \
      jZq_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
    vector<jZbil_t> jZ_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)),\
      jZ_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks));
@@ -2016,25 +2016,25 @@ int main(int narg,char **arg)
    vvvd_t Zq_allmoms=average_Zq(jZq_allmoms), Zq_eqmoms=average_Zq(jZq_eqmoms), Zq_sub_allmoms=average_Zq(jZq_sub_allmoms), Zq_sub_eqmoms=average_Zq(jZq_sub_eqmoms);
    
 
-   cout<<"_______ZQ ALLMOMS__(MO)____"<<endl;
-   for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
-     cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][0]<<"\t"<<Zq_allmoms[1][imom][0]<<endl;
-   cout<<endl;
+   // cout<<"_______ZQ ALLMOMS__(MO)____"<<endl;
+   // for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
+   //   cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][0]<<"\t"<<Zq_allmoms[1][imom][0]<<endl;
+   // cout<<endl;
    
-   cout<<"_______ZQ ALLMOMS__(M1)____"<<endl;
-   for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
-     cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][1]<<"\t"<<Zq_allmoms[1][imom][1]<<endl;
-   cout<<endl;
+   // cout<<"_______ZQ ALLMOMS__(M1)____"<<endl;
+   // for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
+   //   cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][1]<<"\t"<<Zq_allmoms[1][imom][1]<<endl;
+   // cout<<endl;
 
-   cout<<"_______ZQ ALLMOMS__(M2)____"<<endl;
-   for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
-     cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][2]<<"\t"<<Zq_allmoms[1][imom][2]<<endl;
-   cout<<endl;
+   // cout<<"_______ZQ ALLMOMS__(M2)____"<<endl;
+   // for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
+   //   cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][2]<<"\t"<<Zq_allmoms[1][imom][2]<<endl;
+   // cout<<endl;
 
-   cout<<"_______ZQ ALLMOMS__(M3)____"<<endl;
-   for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
-     cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][3]<<"\t"<<Zq_allmoms[1][imom][3]<<endl;
-   cout<<endl;
+   // cout<<"_______ZQ ALLMOMS__(M3)____"<<endl;
+   // for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
+   //   cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][3]<<"\t"<<Zq_allmoms[1][imom][3]<<endl;
+   // cout<<endl;
 
      cout<<"_______ZQ EQMOMS__(MO)____"<<endl;
    for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
@@ -2054,6 +2054,27 @@ int main(int narg,char **arg)
    cout<<"_______ZQ EQMOMS__(M3)____"<<endl;
    for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
      cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_eqmoms[0][imom][3]<<"\t"<<Zq_eqmoms[1][imom][3]<<endl;
+   cout<<endl;
+
+
+      cout<<"_______ZQ EQMOMS SUB__(MO)____"<<endl;
+   for(size_t imom=0;imom<Zq_sub_eqmoms[0].size();imom++)
+     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_sub_eqmoms[0][imom][0]<<"\t"<<Zq_sub_eqmoms[1][imom][0]<<endl;
+   cout<<endl;
+   
+   cout<<"_______ZQ EQMOMS SUB__(M1)____"<<endl;
+   for(size_t imom=0;imom<Zq_sub_eqmoms[0].size();imom++)
+     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_sub_eqmoms[0][imom][1]<<"\t"<<Zq_sub_eqmoms[1][imom][1]<<endl;
+   cout<<endl;
+
+   cout<<"_______ZQ EQMOMS SUB__(M2)____"<<endl;
+   for(size_t imom=0;imom<Zq_sub_eqmoms[0].size();imom++)
+     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_sub_eqmoms[0][imom][2]<<"\t"<<Zq_sub_eqmoms[1][imom][2]<<endl;
+   cout<<endl;
+
+   cout<<"_______ZQ EQMOMS SUB__(M3)____"<<endl;
+   for(size_t imom=0;imom<Zq_sub_eqmoms[0].size();imom++)
+     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_sub_eqmoms[0][imom][3]<<"\t"<<Zq_sub_eqmoms[1][imom][3]<<endl;
    cout<<endl;
 
 
