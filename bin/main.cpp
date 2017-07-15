@@ -332,8 +332,8 @@ vvd_t compute_jZq(vprop_t GAMMA, jprop_t jS_inv, double L, double T, int imom)
   prop_t p_slash(prop_t::Zero());
   double p2=0.0;
   
-  vvdcompl_t jZq(vdcompl_t(nmr),njacks);
-  vvd_t jZq_real(vd_t(nmr),njacks);
+  vvdcompl_t jZq(vdcompl_t(0.0,nmr),njacks);
+  vvd_t jZq_real(vd_t(0.0,nmr),njacks);
   dcompl I(0.0,1.0);
 
   int count=0;
@@ -381,8 +381,8 @@ vvd_t compute_jSigma1(vprop_t GAMMA, jprop_t jS_inv, double L, double T, int imo
   vd_t p_tilde(0.0,4);
   prop_t p_slash(prop_t::Zero());
 
-  vvdcompl_t jSigma1(vdcompl_t(nmr),njacks);
-  vvd_t jSigma1_real(vd_t(nmr),njacks);
+  vvdcompl_t jSigma1(vdcompl_t(0.0,nmr),njacks);
+  vvd_t jSigma1_real(vd_t(0.0,nmr),njacks);
   dcompl I(0.0,1.0);
 
   vvprop_t A(vprop_t(prop_t::Zero(),nmr),njacks);
@@ -582,7 +582,7 @@ void print_vec( T &vec, const char* path)
   else cout << "Unable to open the output file "<<path<<endl;
 }
 
-vvvd_t average_Zq(vector<jZ_t> jZq)
+vvvd_t average_Zq(vector<jZ_t> &jZq)
 {
   int moms=jZq.size();
   int njacks=jZq[0].size();
@@ -849,9 +849,11 @@ int main(int narg,char **arg)
    ifstream input[combo];
 
    //Vector of interesting quantities (ALL MOMS)
-   vector<jZ_t> jZq_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_allmoms(moms), jZq_em_allmoms(moms), jSigma1_em_allmoms(moms);
+   vector<jZ_t> jZq_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)),\
+     jZq_em_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_em_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks));
    vector<jZbil_t> jZ_allmoms(moms), jZ1_allmoms(moms), jZ_em_allmoms(moms), jZ1_em_allmoms(moms);
-   vector<jZ_t> jZq_sub_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_sub_allmoms(moms), jZq_em_sub_allmoms(moms), jSigma1_em_sub_allmoms(moms);
+   vector<jZ_t> jZq_sub_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_sub_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)),\
+     jZq_em_sub_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_em_sub_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks));
    vector<jZbil_t> jZ_sub_allmoms(moms), jZ1_sub_allmoms(moms), jZ_em_sub_allmoms(moms), jZ1_em_sub_allmoms(moms);
    vector<vvd_t> jZq_equivalent_allmoms(moms), jSigma1_equivalent_allmoms(moms), jZq_em_equivalent_allmoms(moms), jSigma1_em_equivalent_allmoms(moms);
    vector<vvd_t> jGp_equivalent_allmoms(moms), jGs_equivalent_allmoms(moms), jGp_subpole_allmoms(moms), jGs_subpole_allmoms(moms),\
@@ -1155,7 +1157,7 @@ int main(int narg,char **arg)
        
        //Subtraction of O(a^2) effects through perturbation theory
        
-       jZ_t jZq_sub(vd_t(nmr),njacks), jSigma1_sub(vd_t(nmr),njacks);
+       jZ_t jZq_sub(vd_t(0.0,nmr),njacks), jSigma1_sub(vd_t(0.0,nmr),njacks);
        jproj_t jG_0_sub(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks);
        jZbil_t jZ_sub(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks), jZ1_sub(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks);
 
@@ -1638,16 +1640,17 @@ int main(int narg,char **arg)
        //pushback allmoms-vectors component
        for(int ijack=0; ijack<njacks;ijack++)
 	 for(int mr=0; mr<nmr; mr++)
-	   jZq_allmoms[imom][ijack][mr]=jZq[ijack][mr];
-
-       jSigma1_allmoms[imom]=jSigma1;
-       jZq_em_allmoms[imom]=jZq_em;
-       jSigma1_em_allmoms[imom]=jSigma1_em;
-
-       jZq_sub_allmoms[imom]=jZq_sub;
-       jSigma1_sub_allmoms[imom]=jSigma1_sub;
-       jZq_em_sub_allmoms[imom]=jZq_em_sub;
-       jSigma1_em_sub_allmoms[imom]=jSigma1_em_sub;
+	   {
+	     jZq_allmoms[imom][ijack][mr]=jZq[ijack][mr];
+	     jSigma1_allmoms[imom][ijack][mr]=jSigma1[ijack][mr];
+	     jZq_em_allmoms[imom][ijack][mr]=jZq_em[ijack][mr];
+	     jSigma1_em_allmoms[imom][ijack][mr]=jSigma1_em[ijack][mr];
+	     
+	     jZq_sub_allmoms[imom][ijack][mr]=jZq_sub[ijack][mr];
+	     jSigma1_sub_allmoms[imom][ijack][mr]=jSigma1_sub[ijack][mr];
+	     jZq_em_sub_allmoms[imom][ijack][mr]=jZq_em_sub[ijack][mr];
+	     jSigma1_em_sub_allmoms[imom][ijack][mr]=jSigma1_em_sub[ijack][mr];
+	   }
        
        // jZ_allmoms[imom]=jZ;
        // jZ1_allmoms[imom]=jZ1;
@@ -1799,7 +1802,7 @@ int main(int narg,char **arg)
        {
 	 if(tag_vector[imom]==tag)
 	   {    
-#pragma omp parallel for collapse(2) shared(jZq_eqmoms,jSigma1_eqmoms,jZq_em_eqmoms,jSigma1_em_eqmoms,jZq_sub_eqmoms,jSigma1_sub_eqmoms,jZq_em_sub_eqmoms,jSigma1_em_sub_eqmoms)
+#pragma omp parallel for collapse(2) //shared(jZq_eqmoms,jSigma1_eqmoms,jZq_em_eqmoms,jSigma1_em_eqmoms,jZq_sub_eqmoms,jSigma1_sub_eqmoms,jZq_em_sub_eqmoms,jSigma1_em_sub_eqmoms)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mr=0;mr<nmr;mr++)
 		 {
