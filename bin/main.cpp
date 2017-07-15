@@ -869,8 +869,8 @@ int main(int narg,char **arg)
    // vector<vvd_t> jZ_em_chiral_allmoms(moms),jZ1_em_chiral_allmoms(moms);
    // vector<vXd_t> jGp_pars_allmoms(moms), jGs_pars_allmoms(moms), jGp_em_pars_allmoms(moms), jGs_em_pars_allmoms(moms);
    // vector<vXd_t> jGv_pars_allmoms(moms), jGa_pars_allmoms(moms),	jGt_pars_allmoms(moms), jGv_em_pars_allmoms(moms), jGa_em_pars_allmoms(moms), jGt_em_pars_allmoms(moms);
-   vector<vXd_t> jZq_pars_allmoms(moms,vd_t(VectorXd(n_par),njacks)), jSigma1_pars_allmoms(moms,vd_t(VectorXd(n_par),njacks)),\
-     jZq_em_pars_allmoms(moms,vd_t(VectorXd(n_par),njacks)), jSigma1_em_pars_allmoms(moms,vd_t(VectorXd(n_par),njacks));
+   // vector<vXd_t> jZq_pars_allmoms(moms,vd_t(VectorXd(n_par),njacks)), jSigma1_pars_allmoms(moms,vd_t(VectorXd(n_par),njacks)),\
+   //   jZq_em_pars_allmoms(moms,vd_t(VectorXd(n_par),njacks)), jSigma1_em_pars_allmoms(moms,vd_t(VectorXd(n_par),njacks));
 
    vd_t m_eff_equivalent(0.0,neq);
    vd_t m_eff_equivalent_Zq(0.0,neq2);
