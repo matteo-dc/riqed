@@ -940,7 +940,7 @@ int main(int narg,char **arg)
 	     
 	     vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),nt),njacks);  // S[ijack][type][mr]
 	       
-#pragma omp parallel for collapse(4)
+	     //#pragma omp parallel for collapse(4)
 	     for(int t=0;t<nt;t++)
 	       for(int m=0;m<nm;m++)
 		 for(int r=0;r<nr;r++)
@@ -966,7 +966,7 @@ int main(int narg,char **arg)
 		       if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);
 		     }
 	     
-#pragma omp parallel for collapse (2)
+	     //#pragma omp parallel for collapse (2)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mr=0;mr<nmr;mr++)
 		 {
