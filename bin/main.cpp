@@ -851,7 +851,7 @@ int main(int narg,char **arg)
    //Vector of interesting quantities (ALL MOMS)
    vector<jZ_t> jZq_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_allmoms(moms), jZq_em_allmoms(moms), jSigma1_em_allmoms(moms);
    vector<jZbil_t> jZ_allmoms(moms), jZ1_allmoms(moms), jZ_em_allmoms(moms), jZ1_em_allmoms(moms);
-   vector<jZ_t> jZq_sub_allmoms(moms), jSigma1_sub_allmoms(moms), jZq_em_sub_allmoms(moms), jSigma1_em_sub_allmoms(moms);
+   vector<jZ_t> jZq_sub_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_sub_allmoms(moms), jZq_em_sub_allmoms(moms), jSigma1_em_sub_allmoms(moms);
    vector<jZbil_t> jZ_sub_allmoms(moms), jZ1_sub_allmoms(moms), jZ_em_sub_allmoms(moms), jZ1_em_sub_allmoms(moms);
    vector<vvd_t> jZq_equivalent_allmoms(moms), jSigma1_equivalent_allmoms(moms), jZq_em_equivalent_allmoms(moms), jSigma1_em_equivalent_allmoms(moms);
    vector<vvd_t> jGp_equivalent_allmoms(moms), jGs_equivalent_allmoms(moms), jGp_subpole_allmoms(moms), jGs_subpole_allmoms(moms),\
@@ -1753,15 +1753,15 @@ int main(int narg,char **arg)
 
    
    //Vector of interesting quantities (EQUIVALENT MOMS)
-   vector<jZ_t> jZq_eqmoms(neq_moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), \
-     jZq_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
-   vector<jZbil_t> jZ_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)),\
-     jZ_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks));
+   vector<jZ_t> jZq_eqmoms(neq_moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_eqmoms(neq_moms,vvd_t(vd_t(0.0,nmr),njacks)), \
+     jZq_em_eqmoms(neq_moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_em_eqmoms(neq_moms,vvd_t(vd_t(0.0,nmr),njacks));
+   vector<jZbil_t> jZ_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)),	\
+     jZ_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks));
    
-   vector<jZ_t> jZq_sub_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_sub_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)),\
-     jZq_em_sub_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_em_sub_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
-   vector<jZbil_t> jZ_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)),\
-     jZ_em_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_em_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks));
+   vector<jZ_t> jZq_sub_eqmoms(neq_moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_sub_eqmoms(neq_moms,vvd_t(vd_t(0.0,nmr),njacks)), \
+     jZq_em_sub_eqmoms(neq_moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_em_sub_eqmoms(neq_moms,vvd_t(vd_t(0.0,nmr),njacks));
+   vector<jZbil_t> jZ_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), \
+     jZ_em_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_em_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks));
    
    vector<vvd_t> jGp_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)),\
      jGp_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
