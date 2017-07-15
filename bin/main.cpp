@@ -357,7 +357,7 @@ vvd_t compute_jZq(vprop_t GAMMA, jprop_t jS_inv, double L, double T, int imom)
   for(int coord=0;coord<4;coord++)
     p2+=p_tilde[coord]*p_tilde[coord];
 
-#pragma omp parallel for collapse(2)
+  //#pragma omp parallel for collapse(2)
   for(int ijack=0;ijack<njacks;ijack++)
     for(int mr=0;mr<nmr;mr++)
       {
