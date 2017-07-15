@@ -1169,7 +1169,7 @@ int main(int narg,char **arg)
 
        t0=high_resolution_clock::now();
 
-#pragma omp parallel for collapse(2)
+       //#pragma omp parallel for collapse(2)
        for(int ijack=0;ijack<njacks;ijack++)
       	 for(int mr=0; mr<nmr; mr++)
       	   {
