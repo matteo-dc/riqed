@@ -965,7 +965,7 @@ int main(int narg,char **arg)
 		       if(t==5) S[iconf][t][mr]*=dcompl(1.0,0.0);
 		     }
 	     
-#pragma omp simd collapse (2)
+	     //#pragma omp parallel for collapse (2)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mr=0;mr<nmr;mr++)
 		 {
@@ -1502,7 +1502,7 @@ int main(int narg,char **arg)
        vd_t m_eff_equivalent_Zq(0.0,neq2);
        ieq=0;
 
-       //#pragma omp simd collapse(2)
+       //#pragma omp parallel for collapse(2)
        for(int m=0; m<nm; m++)
 	 for(int r=0; r<nr; r++)
 	   {
@@ -1807,7 +1807,7 @@ int main(int narg,char **arg)
        {
 	 if(tag_vector[imom]==tag)
 	   {    
-#pragma omp simd collapse(2) //shared(jZq_eqmoms,jSigma1_eqmoms,jZq_em_eqmoms,jSigma1_em_eqmoms,jZq_sub_eqmoms,jSigma1_sub_eqmoms,jZq_em_sub_eqmoms,jSigma1_em_sub_eqmoms)
+#pragma omp parallel for collapse(2) //shared(jZq_eqmoms,jSigma1_eqmoms,jZq_em_eqmoms,jSigma1_em_eqmoms,jZq_sub_eqmoms,jSigma1_sub_eqmoms,jZq_em_sub_eqmoms,jSigma1_em_sub_eqmoms)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mr=0;mr<nmr;mr++)
 		 {
