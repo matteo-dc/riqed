@@ -302,7 +302,7 @@ jprop_t invert_jprop( const jprop_t &jprop){
 
   jprop_t jprop_inv(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
 
-  //#pragma omp parallel for collapse(2)
+#pragma omp parallel for collapse(2)
   for(int ijack=0;ijack<njacks;ijack++)
     for(int mr=0;mr<nmr;mr++)
       jprop_inv[ijack][mr]=jprop[ijack][mr].inverse();
