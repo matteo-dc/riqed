@@ -711,7 +711,7 @@ int main(int narg,char **arg)
   //delta m_cr
 
   //DEBUG
-  cout<<"Reading deltam_cr. "<<endl;
+  // cout<<"Reading deltam_cr. "<<endl;
   //DEBUG
 
   t0=high_resolution_clock::now();
@@ -1018,7 +1018,7 @@ int main(int narg,char **arg)
        // t0=high_resolution_clock::now();
 
 
-       //#pragma omp parallel for collapse(2) // shared(njacks,nmr,jS_em,jS_self_tad,deltam_cr,jS_p)
+#pragma omp parallel for collapse(2) // shared(njacks,nmr,jS_em,jS_self_tad,deltam_cr,jS_p)
        for(int ijack=0;ijack<njacks;ijack++)
 	 for(int mr=0;mr<nmr;mr++)
 	   {
@@ -1502,7 +1502,7 @@ int main(int narg,char **arg)
        vd_t m_eff_equivalent_Zq(0.0,neq2);
        ieq=0;
 
-       //#pragma omp parallel for collapse(2)
+       //#pragma omp simd collapse(2)
        for(int m=0; m<nm; m++)
 	 for(int r=0; r<nr; r++)
 	   {
