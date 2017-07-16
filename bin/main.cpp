@@ -256,7 +256,7 @@ jprop_t jackknife_prop(jprop_t &jS, const int nconf, const int clust_size, const
   valarray<prop_t> jSum(prop_t::Zero(),nmr);
 
   //sum of jS
-#pragma omp simd collapse(2)
+#pragma omp parallel for collapse(2)
   for(int mr=0;mr<nmr;mr++)
     for(size_t j=0;j<jS.size();j++)
       jSum[mr]+= jS[j][mr];
@@ -2024,6 +2024,9 @@ int main(int narg,char **arg)
    vvvd_t Zq_allmoms=average_Zq(jZq_allmoms), Zq_eqmoms=average_Zq(jZq_eqmoms), Zq_sub_allmoms=average_Zq(jZq_sub_allmoms), Zq_sub_eqmoms=average_Zq(jZq_sub_eqmoms);
    vvvd_t Sigma1_allmoms=average_Zq(jSigma1_allmoms), Sigma1_eqmoms=average_Zq(jSigma1_eqmoms),\
      Sigma1_sub_allmoms=average_Zq(jSigma1_sub_allmoms), Sigma1_sub_eqmoms=average_Zq(jSigma1_sub_eqmoms);
+   vvvd_t Zq_em_allmoms=average_Zq(jZq_em_allmoms), Zq_em_eqmoms=average_Zq(jZq_em_eqmoms), Zq_em_sub_allmoms=average_Zq(jZq_em_sub_allmoms), Zq_em_sub_eqmoms=average_Zq(jZq_em_sub_eqmoms);
+   vvvd_t Sigma1_em_allmoms=average_Zq(jSigma1_em_allmoms), Sigma1_em_eqmoms=average_Zq(jSigma1_em_eqmoms),\
+     Sigma1_em_sub_allmoms=average_Zq(jSigma1_em_sub_allmoms), Sigma1_em_sub_eqmoms=average_Zq(jSigma1_em_sub_eqmoms);
    
    ////////////////
    
@@ -2133,7 +2136,10 @@ int main(int narg,char **arg)
    cout<<"_______SIGMA1 EQMOMS SUB__(M3)____"<<endl;
    for(size_t imom=0;imom<Sigma1_sub_eqmoms[0].size();imom++)
      cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub_eqmoms[0][imom][3]<<"\t"<<Sigma1_sub_eqmoms[1][imom][3]<<endl;
-   cout<<endl;   
+   cout<<endl;
+
+
+   
 
   
   return 0;
