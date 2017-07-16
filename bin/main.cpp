@@ -250,13 +250,13 @@ vvd_t jackknife_double(vvd_t &jd, int size, int nconf, int clust_size )
 }
 
 //jackknife Propagator
-jprop_t jackknife_prop(jprop_t &jS, int nconf, int clust_size, size_t nhits)
+jprop_t jackknife_prop(jprop_t &jS, const int nconf, const int clust_size, const size_t nhits)
 {
   int nmr = jS[0].size();
   valarray<prop_t> jSum(prop_t::Zero(),nmr);
 
   //sum of jS
-  //#pragma omp parallel for collapse(2)
+#pragma omp parallel for collapse(2)
   for(size_t j=0;j<jS.size();j++)
     for(int mr=0;mr<nmr;mr++)
       jSum[mr]+= jS[j][mr];
