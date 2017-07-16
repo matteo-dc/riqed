@@ -930,16 +930,15 @@ int main(int narg,char **arg)
      
 
        t0=high_resolution_clock::now();
-       
+
+       vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),nt),nconfs);  // S[iconf][type][mr]	     
        
        for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
 	 for(size_t ihit=0;ihit<nhits;ihit++)
 	   {
 	     string hit_suffix = "";
 	     if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
-	     
-	     vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),nt),nconfs);  // S[iconf][type][mr]
-	       
+	     	       
 #pragma omp parallel for collapse(4)
 	     for(int t=0;t<nt;t++)
 	       for(int m=0;m<nm;m++)
