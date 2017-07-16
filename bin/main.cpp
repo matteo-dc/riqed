@@ -938,7 +938,7 @@ int main(int narg,char **arg)
 	     string hit_suffix = "";
 	     if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
 	     
-	     vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),nt),njacks);  // S[ijack][type][mr]
+	     vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),nt),nconfs);  // S[iconf][type][mr]
 	       
 #pragma omp parallel for collapse(4)
 	     for(int t=0;t<nt;t++)
@@ -960,20 +960,22 @@ int main(int narg,char **arg)
 		       //DEBUG
 		       
 		       //create all the propagators in a given conf and a given mom
-		       S[ijack][t][mr] = read_prop(input[icombo],path);
+		       S[iconf][t][mr] = read_prop(input[icombo],path);
 		       
-		       if(t==4) S[ijack][t][mr]*=dcompl(0.0,-1.0);
-		       if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);
+		       if(t==4) S[iconf][t][mr]*=dcompl(0.0,-1.0);
+		       if(t==5) S[iconf][t][mr]*=dcompl(1.0,0.0);
 		     }
 	     
 #pragma omp parallel for collapse (2)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mr=0;mr<nmr;mr++)
 		 {
-		   jS_0[ijack][mr] += S[ijack][0][mr];
-		   jS_self_tad[ijack][mr] += S[ijack][2][mr] + S[ijack][3][mr];
-		   jS_p[ijack][mr] += S[ijack][4][mr];
-		   // jS_s[ijack][mr] += S[ijack][5][mr];
+		   int iconf=clust_size*ijack+i_in_clust;
+		   
+		   jS_0[ijack][mr] += S[iconf][0][mr];
+		   jS_self_tad[ijack][mr] += S[iconf][2][mr] + S[iconf][3][mr];
+		   jS_p[ijack][mr] += S[iconf][4][mr];
+		   // jS_s[ijack][mr] += S[iconf][5][mr];
 		 }
 
 // #pragma omp parallel for collapse (4)
