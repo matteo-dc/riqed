@@ -253,17 +253,18 @@ vvd_t jackknife_double(vvd_t &jd, int size, int nconf, int clust_size )
 jprop_t jackknife_prop(jprop_t &jS, const int nconf, const int clust_size, const size_t nhits)
 {
   int nmr = jS[0].size();
+  int nj = jS.size();
   valarray<prop_t> jSum(prop_t::Zero(),nmr);
 
   //sum of jS
-#pragma omp parallel for collapse(2)
+  //#pragma omp parallel for collapse(2)
   for(int mr=0;mr<nmr;mr++)
-    for(size_t j=0;j<jS.size();j++)
+    for(int j=0;j<nj;j++)
       jSum[mr]+= jS[j][mr];
   
   //jackknife fluctuation
 #pragma omp parallel for collapse(2)
-  for(size_t j=0;j<jS.size();j++)
+  for(int j=0;j<nj;j++)
     for(int mr=0;mr<nmr;mr++)
       jS[j][mr]=(jSum[mr]-jS[j][mr])/((nconf-clust_size)/nhits);
 
@@ -965,7 +966,7 @@ int main(int narg,char **arg)
 		       if(t==5) S[iconf][t][mr]*=dcompl(1.0,0.0);
 		     }
 	     
-	     //#pragma omp parallel for collapse (2)
+	     #pragma omp parallel for collapse (2)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mr=0;mr<nmr;mr++)
 		 {
