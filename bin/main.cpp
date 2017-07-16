@@ -2058,11 +2058,12 @@ int main(int narg,char **arg)
    vvvd_t Zq_allmoms=average_Zq(jZq_allmoms), Zq_eqmoms=average_Zq(jZq_eqmoms), Zq_sub_allmoms=average_Zq(jZq_sub_allmoms), Zq_sub_eqmoms=average_Zq(jZq_sub_eqmoms);
    vvvd_t Sigma1_allmoms=average_Zq(jSigma1_allmoms), Sigma1_eqmoms=average_Zq(jSigma1_eqmoms),\
      Sigma1_sub_allmoms=average_Zq(jSigma1_sub_allmoms), Sigma1_sub_eqmoms=average_Zq(jSigma1_sub_eqmoms);
+
    vvvd_t Zq_em_allmoms=average_Zq(jZq_em_allmoms), Zq_em_eqmoms=average_Zq(jZq_em_eqmoms), Zq_em_sub_allmoms=average_Zq(jZq_em_sub_allmoms), Zq_em_sub_eqmoms=average_Zq(jZq_em_sub_eqmoms);
    vvvd_t Sigma1_em_allmoms=average_Zq(jSigma1_em_allmoms), Sigma1_em_eqmoms=average_Zq(jSigma1_em_eqmoms),\
      Sigma1_em_sub_allmoms=average_Zq(jSigma1_em_sub_allmoms), Sigma1_em_sub_eqmoms=average_Zq(jSigma1_em_sub_eqmoms);
 
-
+   vvd_t Zq_chiral_allmoms=average_Zq_chiral(jZq_chiral_allmoms), Zq_chiral_eqmoms=average_Zq_chiral(jZq_chiral_eqmoms);
    
    
    ////////////////
@@ -2262,7 +2263,13 @@ int main(int narg,char **arg)
    for(size_t imom=0;imom<Sigma1_em_sub_eqmoms[0].size();imom++)
      cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_sub_eqmoms[0][imom][3]<<"\t"<<Sigma1_em_sub_eqmoms[1][imom][3]<<endl;
    cout<<endl;
-   
+
+   ////////////
+
+           cout<<"_______ZQ_CHIRAL EQMOMS_____"<<endl;
+   for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
+     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_chiral_eqmoms[0][imom]<<"\t"<<Zq_chiral_eqmoms[1][imom]<<endl;
+   cout<<endl;
 
   
   return 0;
