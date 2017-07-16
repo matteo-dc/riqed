@@ -877,7 +877,7 @@ int main(int narg,char **arg)
 
    t0=high_resolution_clock::now();
 
-   //#pragma omp parallel for collapse(5)
+#pragma omp parallel for collapse(5)
    for(int iconf=0;iconf<nconfs;iconf++)
      for(size_t ihit=0;ihit<nhits;ihit++)
        for(int t=0;t<nt;t++)
