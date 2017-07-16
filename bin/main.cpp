@@ -256,7 +256,7 @@ jprop_t jackknife_prop(jprop_t &jS, const int nconf, const int clust_size, const
   valarray<prop_t> jSum(prop_t::Zero(),nmr);
 
   //sum of jS
-#pragma omp parallel for collapse(2)
+  //#pragma omp parallel for collapse(2)
   for(size_t j=0;j<jS.size();j++)
     for(int mr=0;mr<nmr;mr++)
       jSum[mr]+= jS[j][mr];
@@ -939,7 +939,7 @@ int main(int narg,char **arg)
 	     string hit_suffix = "";
 	     if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
 	     	       
-	     //#pragma omp parallel for collapse(4)
+#pragma omp parallel for collapse(4)
 	     for(int t=0;t<nt;t++)
 	       for(int m=0;m<nm;m++)
 		 for(int r=0;r<nr;r++)
