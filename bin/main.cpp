@@ -256,13 +256,13 @@ jprop_t jackknife_prop(jprop_t &jS, int nconf, int clust_size, size_t nhits)
   valarray<prop_t> jSum(prop_t::Zero(),nmr);
 
   //sum of jS
-#pragma omp parallel for collapse(2)
+  //#pragma omp parallel for collapse(2)
   for(size_t j=0;j<jS.size();j++)
     for(int mr=0;mr<nmr;mr++)
       jSum[mr]+= jS[j][mr];
   
   //jackknife fluctuation
-#pragma omp parallel for collapse(2)
+  //#pragma omp parallel for collapse(2)
   for(size_t j=0;j<jS.size();j++)
     for(int mr=0;mr<nmr;mr++)
       jS[j][mr]=(jSum[mr]-jS[j][mr])/((nconf-clust_size)/nhits);
@@ -277,14 +277,14 @@ jvert_t jackknife_vertex(jvert_t &jVert, int nconf, int clust_size, size_t nhits
   vert_t jSum(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
   
   //sum of the jVert
-#pragma omp parallel for collapse(4)
+  //#pragma omp parallel for collapse(4)
   for(size_t j=0;j<jVert.size();j++)
     for(int mrA=0;mrA<nmr;mrA++)
       for(int mrB=0;mrB<nmr;mrB++)
 	for(int igam=0;igam<16;igam++)
 	  jSum[mrA][mrB][igam] += jVert[j][mrA][mrB][igam];
   //jackknife fluctuation
-#pragma omp parallel for collapse(4)
+  //#pragma omp parallel for collapse(4)
   for(size_t j=0;j<jVert.size();j++)
     for(int mrA=0;mrA<nmr;mrA++)
       for(int mrB=0;mrB<nmr;mrB++)
@@ -302,7 +302,7 @@ jprop_t invert_jprop( const jprop_t &jprop){
 
   jprop_t jprop_inv(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
 
-#pragma omp parallel for collapse(2)
+  //#pragma omp parallel for collapse(2)
   for(int ijack=0;ijack<njacks;ijack++)
     for(int mr=0;mr<nmr;mr++)
       jprop_inv[ijack][mr]=jprop[ijack][mr].inverse();
@@ -430,7 +430,7 @@ jproj_t project(vprop_t GAMMA, const jvert_t &jLambda)
     for(int igam=10;igam<16;igam++)  //tensor
       P[igam]=GAMMA[igam].adjoint()/6.;
  
-#pragma omp parallel for collapse(3)
+    //#pragma omp parallel for collapse(3)
     for(int ijack=0;ijack<njacks;ijack++)
       for(int mr_fw=0;mr_fw<nmr;mr_fw++)
 	for(int mr_bw=0;mr_bw<nmr;mr_bw++)
@@ -877,7 +877,7 @@ int main(int narg,char **arg)
 
    t0=high_resolution_clock::now();
 
-#pragma omp parallel for collapse(5)
+   //#pragma omp parallel for collapse(5)
    for(int iconf=0;iconf<nconfs;iconf++)
      for(size_t ihit=0;ihit<nhits;ihit++)
        for(int t=0;t<nt;t++)
@@ -939,7 +939,7 @@ int main(int narg,char **arg)
 	     string hit_suffix = "";
 	     if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
 	     	       
-#pragma omp parallel for collapse(4)
+	     //#pragma omp parallel for collapse(4)
 	     for(int t=0;t<nt;t++)
 	       for(int m=0;m<nm;m++)
 		 for(int r=0;r<nr;r++)
@@ -965,7 +965,7 @@ int main(int narg,char **arg)
 		       if(t==5) S[iconf][t][mr]*=dcompl(1.0,0.0);
 		     }
 	     
-#pragma omp parallel for collapse (2)
+	     //#pragma omp parallel for collapse (2)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mr=0;mr<nmr;mr++)
 		 {
@@ -1018,7 +1018,7 @@ int main(int narg,char **arg)
        // t0=high_resolution_clock::now();
 
 
-#pragma omp parallel for collapse(2) shared(njacks,nmr,jS_em,jS_self_tad,deltam_cr,jS_p)
+       //#pragma omp parallel for collapse(2) shared(njacks,nmr,jS_em,jS_self_tad,deltam_cr,jS_p)
        for(int ijack=0;ijack<njacks;ijack++)
 	 for(int mr=0;mr<nmr;mr++)
 	   {
@@ -1502,7 +1502,7 @@ int main(int narg,char **arg)
        vd_t m_eff_equivalent_Zq(0.0,neq2);
        ieq=0;
 
-#pragma omp parallel for collapse(2)
+       //#pragma omp parallel for collapse(2)
        for(int m=0; m<nm; m++)
 	 for(int r=0; r<nr; r++)
 	   {
@@ -1523,7 +1523,7 @@ int main(int narg,char **arg)
        vd_t Zq_em_ave(0.0,neq2), sqr_Zq_em_ave(0.0,neq2), Zq_em_err(0.0,neq2);
        vd_t Sigma1_em_ave(0.0,neq2), sqr_Sigma1_em_ave(0.0,neq2), Sigma1_em_err(0.0,neq2);
        
-#pragma omp parallel for collapse(2)
+       //#pragma omp parallel for collapse(2)
        for(int i=0;i<neq2;i++)
 	 for(int ijack=0;ijack<njacks;ijack++)
 	   {
@@ -1807,7 +1807,7 @@ int main(int narg,char **arg)
        {
 	 if(tag_vector[imom]==tag)
 	   {    
-#pragma omp parallel for collapse(2) //shared(jZq_eqmoms,jSigma1_eqmoms,jZq_em_eqmoms,jSigma1_em_eqmoms,jZq_sub_eqmoms,jSigma1_sub_eqmoms,jZq_em_sub_eqmoms,jSigma1_em_sub_eqmoms)
+	     //#pragma omp parallel for collapse(2) //shared(jZq_eqmoms,jSigma1_eqmoms,jZq_em_eqmoms,jSigma1_em_eqmoms,jZq_sub_eqmoms,jSigma1_sub_eqmoms,jZq_em_sub_eqmoms,jSigma1_em_sub_eqmoms)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mr=0;mr<nmr;mr++)
 		 {
