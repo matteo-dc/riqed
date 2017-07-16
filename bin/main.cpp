@@ -955,7 +955,7 @@ int main(int narg,char **arg)
 		       printf(" i_in_clust %d  iconf %d   ijack %d \n",i_in_clust,iconf,ijack);
 		       
 		       //DEBUG
-		      // printf("  Reading propagator from %s\n",path.c_str());
+		       printf("  Reading propagator from %s\n",path.c_str());
 		       //DEBUG
 		       
 		       //create all the propagators in a given conf and a given mom
