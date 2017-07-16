@@ -277,14 +277,14 @@ jvert_t jackknife_vertex(jvert_t &jVert, int nconf, int clust_size, size_t nhits
   vert_t jSum(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
   
   //sum of the jVert
-#pragma omp parallel for collapse(4)
+  //#pragma omp parallel for collapse(4)
   for(size_t j=0;j<jVert.size();j++)
     for(int mrA=0;mrA<nmr;mrA++)
       for(int mrB=0;mrB<nmr;mrB++)
 	for(int igam=0;igam<16;igam++)
 	  jSum[mrA][mrB][igam] += jVert[j][mrA][mrB][igam];
   //jackknife fluctuation
-#pragma omp parallel for collapse(4)
+  //#pragma omp parallel for collapse(4)
   for(size_t j=0;j<jVert.size();j++)
     for(int mrA=0;mrA<nmr;mrA++)
       for(int mrB=0;mrB<nmr;mrB++)
