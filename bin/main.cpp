@@ -262,7 +262,7 @@ jprop_t jackknife_prop(jprop_t &jS, const int nconf, const int clust_size, const
       jSum[mr]+= jS[j][mr];
   
   //jackknife fluctuation
-  //#pragma omp parallel for collapse(2)
+#pragma omp parallel for collapse(2)
   for(size_t j=0;j<jS.size();j++)
     for(int mr=0;mr<nmr;mr++)
       jS[j][mr]=(jSum[mr]-jS[j][mr])/((nconf-clust_size)/nhits);
