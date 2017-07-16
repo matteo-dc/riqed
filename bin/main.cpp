@@ -965,7 +965,7 @@ int main(int narg,char **arg)
 		       if(t==5) S[iconf][t][mr]*=dcompl(1.0,0.0);
 		     }
 	     
-	     //#pragma omp parallel for collapse (2)
+#pragma omp simd collapse (2)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mr=0;mr<nmr;mr++)
 		 {
