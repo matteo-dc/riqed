@@ -2345,56 +2345,37 @@ int main(int narg,char **arg)
    ///////////////
 
    cout<<"_______Z_S EQMOMS (M0-M0)__ JACK 1 _____"<<endl;
-   for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][1][0][0][0]<<endl;
+   for(int ijack=0;ijack<njacks;ijack++)
+     {
+       cout<<"_____"<<ijack<<"_____"<<endl;
+       for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
+	 cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][1][0][0][0]<<endl;
+       cout<<endl;
+     }
    cout<<endl;
 
-    cout<<"_______Z_A EQMOMS (M0-M0)__ JACK 1 _____"<<endl;
-   for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][1][0][0][1]<<endl;
-   cout<<endl;
+   //  cout<<"_______Z_A EQMOMS (M0-M0)__ JACK 1 _____"<<endl;
+   // for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][1][0][0][1]<<endl;
+   // cout<<endl;
 
-    cout<<"_______Z_P EQMOMS (M0-M0)__ JACK 1 _____"<<endl;
-   for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][1][0][0][2]<<endl;
-   cout<<endl;
+   //  cout<<"_______Z_P EQMOMS (M0-M0)__ JACK 1 _____"<<endl;
+   // for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][1][0][0][2]<<endl;
+   // cout<<endl;
 
-    cout<<"_______Z_V EQMOMS (M0-M0)__ JACK 1 _____"<<endl;
-   for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][1][0][0][3]<<endl;
-   cout<<endl;
+   //  cout<<"_______Z_V EQMOMS (M0-M0)__ JACK 1 _____"<<endl;
+   // for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][1][0][0][3]<<endl;
+   // cout<<endl;
 
-     cout<<"_______Z_T EQMOMS (M0-M0)__ JACK 1 _____"<<endl;
-   for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][1][0][0][4]<<endl;
-   cout<<endl;
+   //   cout<<"_______Z_T EQMOMS (M0-M0)__ JACK 1 _____"<<endl;
+   // for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][1][0][0][4]<<endl;
+   // cout<<endl;
 
     ///////////////
 
-   cout<<"_______Z_S EQMOMS (M0-M0)__ JACK 2 _____"<<endl;
-   for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][2][0][0][0]<<endl;
-   cout<<endl;
-
-    cout<<"_______Z_A EQMOMS (M0-M0)__ JACK 2 _____"<<endl;
-   for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][2][0][0][1]<<endl;
-   cout<<endl;
-
-    cout<<"_______Z_P EQMOMS (M0-M0)__ JACK 2 _____"<<endl;
-   for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][2][0][0][2]<<endl;
-   cout<<endl;
-
-    cout<<"_______Z_V EQMOMS (M0-M0)__ JACK 2 _____"<<endl;
-   for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][2][0][0][3]<<endl;
-   cout<<endl;
-
-     cout<<"_______Z_T EQMOMS (M0-M0)__ JACK 2 _____"<<endl;
-   for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][2][0][0][4]<<endl;
-   cout<<endl;
   
   return 0;
 
