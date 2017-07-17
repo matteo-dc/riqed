@@ -273,7 +273,7 @@ jprop_t jackknife_prop(jprop_t &jS, const int nconf, const int clust_size, const
 }
 
 //jackknife Vertex
-jvert_t jackknife_vertex(jvert_t &jVert, int nconf, int clust_size, size_t nhits)
+jvert_t jackknife_vertex(jvert_t &jVert, const int nconf, const int clust_size, const size_t nhits)
 {
   int nmr = jVert[0].size();
   vert_t jSum(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
@@ -618,7 +618,7 @@ vvd_t average_Zq_chiral(vector<vd_t> &jZq)
 {
   int moms=jZq.size();
   int njacks=jZq[0].size();
-
+ 
   vd_t Zq_ave(0.0,moms), sqr_Zq_ave(0.0,moms), Zq_err(0.0,moms);
   vvd_t Zq_ave_err(vd_t(0.0,moms),2); 
 
