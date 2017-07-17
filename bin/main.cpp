@@ -2317,6 +2317,33 @@ int main(int narg,char **arg)
 
    ////////////
 
+  cout<<"_______Z_S ALLMOMS (M0-M0)_____"<<endl;
+   for(size_t imom=0;imom<Z_allmoms[0].size();imom++)
+     cout<<p2_vector_allmoms[imom]<<"\t"<<Z_allmoms[0][imom][0][0][0]<<"\t"<<Z_allmoms[1][imom][0][0][0]<<endl;
+   cout<<endl;
+
+    cout<<"_______Z_A ALLMOMS (M0-M0)_____"<<endl;
+   for(size_t imom=0;imom<Z_allmoms[0].size();imom++)
+     cout<<p2_vector_allmoms[imom]<<"\t"<<Z_allmoms[0][imom][0][0][1]<<"\t"<<Z_allmoms[1][imom][0][0][1]<<endl;
+   cout<<endl;
+
+    cout<<"_______Z_P ALLMOMS (M0-M0)_____"<<endl;
+   for(size_t imom=0;imom<Z_allmoms[0].size();imom++)
+     cout<<p2_vector_allmoms[imom]<<"\t"<<Z_allmoms[0][imom][0][0][2]<<"\t"<<Z_allmoms[1][imom][0][0][2]<<endl;
+   cout<<endl;
+
+    cout<<"_______Z_V ALLMOMS (M0-M0)_____"<<endl;
+   for(size_t imom=0;imom<Z_allmoms[0].size();imom++)
+     cout<<p2_vector_allmoms[imom]<<"\t"<<Z_allmoms[0][imom][0][0][3]<<"\t"<<Z_allmoms[1][imom][0][0][3]<<endl;
+   cout<<endl;
+
+     cout<<"_______Z_T ALLMOMS (M0-M0)_____"<<endl;
+   for(size_t imom=0;imom<Z_allmoms[0].size();imom++)
+     cout<<p2_vector_allmoms[imom]<<"\t"<<Z_allmoms[0][imom][0][0][4]<<"\t"<<Z_allmoms[1][imom][0][0][4]<<endl;
+   cout<<endl;
+
+   /////////////////
+   
     cout<<"_______Z_S EQMOMS (M0-M0)_____"<<endl;
    for(size_t imom=0;imom<Z_eqmoms[0].size();imom++)
      cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_eqmoms[0][imom][0][0][0]<<"\t"<<Z_eqmoms[1][imom][0][0][0]<<endl;
