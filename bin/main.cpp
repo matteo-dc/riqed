@@ -364,10 +364,7 @@ vvd_t compute_jZq(vprop_t GAMMA, jprop_t jS_inv, double L, double T, int imom)
 #pragma omp parallel for collapse(2)
   for(int ijack=0;ijack<njacks;ijack++)
     for(int mr=0;mr<nmr;mr++)
-      {
-	jZq_real[ijack][mr]=-(I*(p_slash*jS_inv[ijack][mr]).trace()).real()/p2/12./V;
-	//jZq_real[ijack][mr]=jZq[ijack][mr].real();
-      }
+      jZq_real[ijack][mr]=-(I*(p_slash*jS_inv[ijack][mr]).trace()).real()/p2/12./V;
   
   return jZq_real;
   
@@ -914,36 +911,46 @@ int main(int narg,char **arg)
      jZq_em_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_em_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks));
    vector<jZ_t> jZq_sub_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_sub_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)),\
      jZq_em_sub_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_em_sub_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks));
-   vector<vvd_t> jZq_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq),njacks)), jSigma1_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq),njacks)), \
-     jZq_em_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq),njacks)), jSigma1_em_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq),njacks));
+   vector<vvd_t> jZq_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq2),njacks)), jSigma1_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq2),njacks)), \
+     jZq_em_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq2),njacks)), jSigma1_em_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq2),njacks));
 
    vector<jZbil_t> jZ_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)),\
      jZ_em_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_em_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks));
    vector<jZbil_t> jZ_sub_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_sub_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)),\
      jZ_em_sub_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_em_sub_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks));
  
- 
-   // vector<vvd_t> jGp_equivalent_allmoms(moms), jGs_equivalent_allmoms(moms), jGp_subpole_allmoms(moms), jGs_subpole_allmoms(moms), \
-   //   jGv_equivalent_allmoms(moms), jGa_equivalent_allmoms(moms), jGt_equivalent_allmoms(moms);
-   // vector<vvd_t> jGp_em_equivalent_allmoms(moms), jGs_em_equivalent_allmoms(moms), jGp_em_subpole_allmoms(moms), jGs_em_subpole_allmoms(moms),\
-   //   jGv_em_equivalent_allmoms(moms), jGa_em_equivalent_allmoms(moms), jGt_em_equivalent_allmoms(moms);
+   vector<vvd_t> jGv_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGa_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), \
+     jGt_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks));
+   vector<vvd_t> jGp_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGs_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)),\
+     jGp_subpole_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGs_subpole_allmoms(moms,vvd_t(vd_t(neq),njacks));
 
-   // vector<vd_t> jGp_0_chiral_allmoms(moms),jGa_0_chiral_allmoms(moms),jGv_0_chiral_allmoms(moms),jGs_0_chiral_allmoms(moms),jGt_0_chiral_allmoms(moms);
-   // vector<vd_t> jGp_em_a_b_chiral_allmoms(moms),jGa_em_a_b_chiral_allmoms(moms),jGv_em_a_b_chiral_allmoms(moms),jGs_em_a_b_chiral_allmoms(moms),jGt_em_a_b_chiral_allmoms(moms);
+   vector<vvd_t> jGp_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGs_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), \
+     jGp_em_subpole_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGs_em_subpole_allmoms(moms,vvd_t(vd_t(neq),njacks));
+   vector<vvd_t> jGv_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGa_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)),\
+     jGt_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks));
+  
+   vector<vd_t> jGp_0_chiral_allmoms(moms,vd_t(njacks)),jGa_0_chiral_allmoms(moms,vd_t(njacks)),jGv_0_chiral_allmoms(moms,vd_t(njacks)),\
+     jGs_0_chiral_allmoms(moms,vd_t(njacks)),jGt_0_chiral_allmoms(moms,vd_t(njacks));
+   vector<vd_t> jGp_em_a_b_chiral_allmoms(moms,vd_t(njacks)),jGa_em_a_b_chiral_allmoms(moms,vd_t(njacks)),jGv_em_a_b_chiral_allmoms(moms,vd_t(njacks)), \
+     jGs_em_a_b_chiral_allmoms(moms,vd_t(njacks)),jGt_em_a_b_chiral_allmoms(moms,vd_t(njacks));
+ 
    vector<vd_t> jZq_chiral_allmoms(moms,vd_t(0.0,njacks)),jSigma1_chiral_allmoms(moms,vd_t(0.0,njacks));
    vector<vd_t> jZq_em_chiral_allmoms(moms,vd_t(0.0,njacks)),jSigma1_em_chiral_allmoms(moms,vd_t(0.0,njacks));
 
-   // vector<vvd_t> jZ_chiral_allmoms(moms),jZ1_chiral_allmoms(moms);
-   // vector<vvd_t> jZ_em_chiral_allmoms(moms),jZ1_em_chiral_allmoms(moms);
+   vector<vvd_t> jZ_chiral_allmoms(moms,vvd_t(vd_t(5),njacks)),jZ1_chiral_allmoms(moms,vvd_t(vd_t(5),njacks));
+   vector<vvd_t> jZ_em_chiral_allmoms(moms,vvd_t(vd_t(5),njacks)),jZ1_em_chiral_allmoms(moms,vvd_t(vd_t(5),njacks));
 
-   // vector<vXd_t> jGp_pars_allmoms(moms), jGs_pars_allmoms(moms), jGp_em_pars_allmoms(moms), jGs_em_pars_allmoms(moms);
-   // vector<vXd_t> jGv_pars_allmoms(moms), jGa_pars_allmoms(moms),	jGt_pars_allmoms(moms), jGv_em_pars_allmoms(moms), jGa_em_pars_allmoms(moms), jGt_em_pars_allmoms(moms);
-   // vector<vXd_t> jZq_pars_allmoms(moms,vd_t(VectorXd(n_par),njacks)), jSigma1_pars_allmoms(moms,vd_t(VectorXd(n_par),njacks)),\
-   //   jZq_em_pars_allmoms(moms,vd_t(VectorXd(n_par),njacks)), jSigma1_em_pars_allmoms(moms,vd_t(VectorXd(n_par),njacks));
+   vector< vXd_t > jGp_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), jGs_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), \
+     jGp_em_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), jGs_em_pars_allmoms(moms,vXd_t(VectorXd(3),njacks));
+   vector< vXd_t > jGv_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGa_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)),\
+     jGt_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGv_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)),\
+     jGa_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGt_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks));
+   vector< vXd_t > jZq_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jSigma1_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)),\
+     jZq_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jSigma1_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks));
 
    vd_t m_eff_equivalent(0.0,neq);
    vd_t m_eff_equivalent_Zq(0.0,neq2);
-
+   
    t0=high_resolution_clock::now();
 
 #pragma omp parallel for collapse(5)
@@ -1308,267 +1315,267 @@ int main(int narg,char **arg)
        jproj_t jG_em_a_b_sub = -jG_em_sub + jG_a_sub + jG_b_sub;
 
      
-//       //Goldstone pole subtraction from jG_p and jG_s & chiral extrapolation of jG_p and jG_s
-//        t0=high_resolution_clock::now();
+      //Goldstone pole subtraction from jG_p and jG_s & chiral extrapolation of jG_p and jG_s
+       t0=high_resolution_clock::now();
        
-//        vvd_t jGp_equivalent(vd_t(0.0,neq),njacks);
-//        vvd_t jGs_equivalent(vd_t(0.0,neq),njacks);
+       vvd_t jGp_equivalent(vd_t(0.0,neq),njacks);
+       vvd_t jGs_equivalent(vd_t(0.0,neq),njacks);
 
-//        vvd_t jGp_em_equivalent(vd_t(0.0,neq),njacks);
-//        vvd_t jGs_em_equivalent(vd_t(0.0,neq),njacks);       
+       vvd_t jGp_em_equivalent(vd_t(0.0,neq),njacks);
+       vvd_t jGs_em_equivalent(vd_t(0.0,neq),njacks);       
        
        int ieq=0;
        
-       // for(int mA=0; mA<nm; mA++)
-       // 	 for(int mB=mA; mB<nm; mB++)	     
-       // 	   for(int r=0; r<nr; r++)
-       // 	     {
-       // 	       ieq=-(mA*mA/2)+mB+mA*(nm-0.5);
+       for(int mA=0; mA<nm; mA++)
+       	 for(int mB=mA; mB<nm; mB++)	     
+       	   for(int r=0; r<nr; r++)
+       	     {
+       	       ieq=-(mA*mA/2)+mB+mA*(nm-0.5);
 		   
-       // 	       m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
+       	       m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
 	       
-       // 	       for(int ijack=0;ijack<njacks;ijack++) jGp_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][2]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
-       // 	       for(int ijack=0;ijack<njacks;ijack++) jGs_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][0]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
+       	       for(int ijack=0;ijack<njacks;ijack++) jGp_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][2]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
+       	       for(int ijack=0;ijack<njacks;ijack++) jGs_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][0]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
 	       
-       // 	       for(int ijack=0;ijack<njacks;ijack++) jGp_em_equivalent[ijack][ieq] += (jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][2]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
-       // 	       for(int ijack=0;ijack<njacks;ijack++) jGs_em_equivalent[ijack][ieq] += (jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][0]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
-       // 	     }   //ieq={00,01,02,03,11,12,13,22,23,33}
+       	       for(int ijack=0;ijack<njacks;ijack++) jGp_em_equivalent[ijack][ieq] += (jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][2]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
+       	       for(int ijack=0;ijack<njacks;ijack++) jGs_em_equivalent[ijack][ieq] += (jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][0]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
+       	     }   //ieq={00,01,02,03,11,12,13,22,23,33}
        
 
-//        vd_t Gp_ave(0.0,neq), sqr_Gp_ave(0.0,neq), Gp_err(0.0,neq);
-//        vd_t Gs_ave(0.0,neq), sqr_Gs_ave(0.0,neq), Gs_err(0.0,neq);
+       vd_t Gp_ave(0.0,neq), sqr_Gp_ave(0.0,neq), Gp_err(0.0,neq);
+       vd_t Gs_ave(0.0,neq), sqr_Gs_ave(0.0,neq), Gs_err(0.0,neq);
 
-//        vd_t Gp_em_ave(0.0,neq), sqr_Gp_em_ave(0.0,neq), Gp_em_err(0.0,neq);
-//        vd_t Gs_em_ave(0.0,neq), sqr_Gs_em_ave(0.0,neq), Gs_em_err(0.0,neq);
+       vd_t Gp_em_ave(0.0,neq), sqr_Gp_em_ave(0.0,neq), Gp_em_err(0.0,neq);
+       vd_t Gs_em_ave(0.0,neq), sqr_Gs_em_ave(0.0,neq), Gs_em_err(0.0,neq);
 
-// #pragma omp parallel for collapse(2)
-//        for(int i=0;i<neq;i++)
-// 	 for(int ijack=0;ijack<njacks;ijack++)
-// 	   {
-// 	     Gp_ave[i]+=jGp_equivalent[ijack][i]/njacks;
-// 	     sqr_Gp_ave[i]+=jGp_equivalent[ijack][i]*jGp_equivalent[ijack][i]/njacks;
+       //#pragma omp parallel for // collapse(2)
+       for(int i=0;i<neq;i++)
+	 for(int ijack=0;ijack<njacks;ijack++)
+	   {
+	     Gp_ave[i]+=jGp_equivalent[ijack][i]/njacks;
+	     sqr_Gp_ave[i]+=jGp_equivalent[ijack][i]*jGp_equivalent[ijack][i]/njacks;
 	     
-// 	     Gs_ave[i]+=jGs_equivalent[ijack][i]/njacks;
-// 	     sqr_Gs_ave[i]+=jGs_equivalent[ijack][i]*jGs_equivalent[ijack][i]/njacks;
+	     Gs_ave[i]+=jGs_equivalent[ijack][i]/njacks;
+	     sqr_Gs_ave[i]+=jGs_equivalent[ijack][i]*jGs_equivalent[ijack][i]/njacks;
 
-// 	     Gp_em_ave[i]+=jGp_em_equivalent[ijack][i]/njacks;
-// 	     sqr_Gp_em_ave[i]+=jGp_em_equivalent[ijack][i]*jGp_em_equivalent[ijack][i]/njacks;
+	     Gp_em_ave[i]+=jGp_em_equivalent[ijack][i]/njacks;
+	     sqr_Gp_em_ave[i]+=jGp_em_equivalent[ijack][i]*jGp_em_equivalent[ijack][i]/njacks;
 	     
-// 	     Gs_em_ave[i]+=jGs_em_equivalent[ijack][i]/njacks;
-// 	     sqr_Gs_em_ave[i]+=jGs_em_equivalent[ijack][i]*jGs_em_equivalent[ijack][i]/njacks;
-// 	   }
+	     Gs_em_ave[i]+=jGs_em_equivalent[ijack][i]/njacks;
+	     sqr_Gs_em_ave[i]+=jGs_em_equivalent[ijack][i]*jGs_em_equivalent[ijack][i]/njacks;
+	   }
        
-//        for(int i=0;i<neq;i++)
-// 	 { 
-// 	   Gp_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_ave[i]-Gp_ave[i]*Gp_ave[i]);
-// 	   Gs_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gs_ave[i]-Gs_ave[i]*Gs_ave[i]);
+       for(int i=0;i<neq;i++)
+	 { 
+	   Gp_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_ave[i]-Gp_ave[i]*Gp_ave[i]);
+	   Gs_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gs_ave[i]-Gs_ave[i]*Gs_ave[i]);
 
-// 	   Gp_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_em_ave[i]-Gp_em_ave[i]*Gp_em_ave[i]);
-// 	   Gs_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gs_em_ave[i]-Gs_em_ave[i]*Gs_em_ave[i]);  
-// 	 }
+	   Gp_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_em_ave[i]-Gp_em_ave[i]*Gp_em_ave[i]);
+	   Gs_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gs_em_ave[i]-Gs_em_ave[i]*Gs_em_ave[i]);  
+	 }
 
-//       //  cout<<"----- G_p average + error vs M^2 (for each jackknife) : error used for the fit ------"<<endl;
-//       //  for(int i=0;i<neq;i++) cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"  "<<Gp_ave[i]<<"  "<<Gp_err[i]<<endl; //////////
-//       //  cout<<endl;
+      //  cout<<"----- G_p average + error vs M^2 (for each jackknife) : error used for the fit ------"<<endl;
+      //  for(int i=0;i<neq;i++) cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"  "<<Gp_ave[i]<<"  "<<Gp_err[i]<<endl; //////////
+      //  cout<<endl;
       
        //range for the fit
        int t_min=0;
        int t_max=neq-1;
 
-//        vvd_t coord(vd_t(0.0,neq),3);
-//        for(int i=0; i<neq; i++)
-//       	 {
-//       	   coord[0][i] = 1.0;  //costante
-//       	   coord[1][i] = m_eff_equivalent[i]*m_eff_equivalent[i];   //M^2 
-//       	   coord[2][i] = 1.0/(m_eff_equivalent[i]*m_eff_equivalent[i]);  //1/M^2	   
-//       	 }
+       vvd_t coord(vd_t(0.0,neq),3);
+       for(int i=0; i<neq; i++)
+      	 {
+      	   coord[0][i] = 1.0;  //costante
+      	   coord[1][i] = m_eff_equivalent[i]*m_eff_equivalent[i];   //M^2 
+      	   coord[2][i] = 1.0/(m_eff_equivalent[i]*m_eff_equivalent[i]);  //1/M^2	   
+      	 }
 
-//        vXd_t jGp_pars=fit_par_jackknife(coord,Gp_err,jGp_equivalent,t_min,t_max);  //jGp_pars[ijack][par]
-//        vXd_t jGs_pars=fit_par_jackknife(coord,Gs_err,jGs_equivalent,t_min,t_max);
-//        vXd_t jGp_em_pars=fit_par_jackknife(coord,Gp_em_err,jGp_em_equivalent,t_min,t_max); 
-//        vXd_t jGs_em_pars=fit_par_jackknife(coord,Gs_em_err,jGs_em_equivalent,t_min,t_max);
+       vXd_t jGp_pars=fit_par_jackknife(coord,Gp_err,jGp_equivalent,t_min,t_max);  //jGp_pars[ijack](par)
+       vXd_t jGs_pars=fit_par_jackknife(coord,Gs_err,jGs_equivalent,t_min,t_max);
+       vXd_t jGp_em_pars=fit_par_jackknife(coord,Gp_em_err,jGp_em_equivalent,t_min,t_max); 
+       vXd_t jGs_em_pars=fit_par_jackknife(coord,Gs_em_err,jGs_em_equivalent,t_min,t_max);
 
-//        vd_t C_p(njacks), C_s(njacks), jGp_0_chiral(njacks), jGs_0_chiral(njacks);
-//        vd_t C_p_em(njacks), C_s_em(njacks), jGp_em_a_b_chiral(njacks), jGs_em_a_b_chiral(njacks);
-//        vvd_t jGp_subpole(vd_t(neq),njacks), jGs_subpole(vd_t(neq),njacks);
-//        vvd_t jGp_em_subpole(vd_t(neq),njacks), jGs_em_subpole(vd_t(neq),njacks);
+       vd_t C_p(njacks), C_s(njacks), jGp_0_chiral(njacks), jGs_0_chiral(njacks);
+       vd_t C_p_em(njacks), C_s_em(njacks), jGp_em_a_b_chiral(njacks), jGs_em_a_b_chiral(njacks);
+       vvd_t jGp_subpole(vd_t(neq),njacks), jGs_subpole(vd_t(neq),njacks);
+       vvd_t jGp_em_subpole(vd_t(neq),njacks), jGs_em_subpole(vd_t(neq),njacks);
 
-//        for(int ijack=0;ijack<njacks;ijack++)
-//       	 {
-//       	   C_p[ijack]=jGp_pars[ijack][2];
-//       	   C_s[ijack]=jGs_pars[ijack][2];
-// 	   C_p_em[ijack]=jGp_em_pars[ijack][2];
-//       	   C_s_em[ijack]=jGs_em_pars[ijack][2];
-//       	 }
+       for(int ijack=0;ijack<njacks;ijack++)
+      	 {
+      	   C_p[ijack]=jGp_pars[ijack](2);
+      	   C_s[ijack]=jGs_pars[ijack](2);
+	   C_p_em[ijack]=jGp_em_pars[ijack](2);
+      	   C_s_em[ijack]=jGs_em_pars[ijack](2);
+      	 }
 
-//       //  cout<<"----- Goldstone fit parameters (for each jackknife) ------"<<endl;
-//       //  for(int ijack=0;ijack<njacks;ijack++) cout<<jGp_pars[ijack][0]<<"  "<<jGp_pars[ijack][1]<<"  "<<C_p[ijack]<<endl;
-//       //  cout<<endl;
+      //  cout<<"----- Goldstone fit parameters (for each jackknife) ------"<<endl;
+      //  for(int ijack=0;ijack<njacks;ijack++) cout<<jGp_pars[ijack][0]<<"  "<<jGp_pars[ijack][1]<<"  "<<C_p[ijack]<<endl;
+      //  cout<<endl;
 
-// #pragma omp parallel for collapse(2)
-//        for(int ijack=0;ijack<njacks;ijack++)
-//       	 for(int i=0; i<neq; i++)
-//       	   {
-//       	     jGp_subpole[ijack][i] = jGp_equivalent[ijack][i] - C_p[ijack]/(m_eff_equivalent[i]*m_eff_equivalent[i]);
-//       	     jGs_subpole[ijack][i] = jGs_equivalent[ijack][i] - C_s[ijack]/(m_eff_equivalent[i]*m_eff_equivalent[i]);
+#pragma omp parallel for collapse(2)
+       for(int ijack=0;ijack<njacks;ijack++)
+      	 for(int i=0; i<neq; i++)
+      	   {
+      	     jGp_subpole[ijack][i] = jGp_equivalent[ijack][i] - C_p[ijack]/(m_eff_equivalent[i]*m_eff_equivalent[i]);
+      	     jGs_subpole[ijack][i] = jGs_equivalent[ijack][i] - C_s[ijack]/(m_eff_equivalent[i]*m_eff_equivalent[i]);
 	     
-// 	     jGp_em_subpole[ijack][i] = jGp_em_equivalent[ijack][i] - C_p_em[ijack]/(m_eff_equivalent[i]*m_eff_equivalent[i]);
-//       	     jGs_em_subpole[ijack][i] = jGs_em_equivalent[ijack][i] - C_s_em[ijack]/(m_eff_equivalent[i]*m_eff_equivalent[i]);
-//       	   }
+	     jGp_em_subpole[ijack][i] = jGp_em_equivalent[ijack][i] - C_p_em[ijack]/(m_eff_equivalent[i]*m_eff_equivalent[i]);
+      	     jGs_em_subpole[ijack][i] = jGs_em_equivalent[ijack][i] - C_s_em[ijack]/(m_eff_equivalent[i]*m_eff_equivalent[i]);
+      	   }
 
-//        for(int ijack=0;ijack<njacks;ijack++)
-//       	 {
-//       	   jGp_0_chiral[ijack]=jGp_pars[ijack][0];
-//       	   jGs_0_chiral[ijack]=jGs_pars[ijack][0];
+       for(int ijack=0;ijack<njacks;ijack++)
+      	 {
+      	   jGp_0_chiral[ijack]=jGp_pars[ijack](0);
+      	   jGs_0_chiral[ijack]=jGs_pars[ijack](0);
 	   
-// 	   jGp_em_a_b_chiral[ijack]=jGp_pars[ijack][0];
-//       	   jGs_em_a_b_chiral[ijack]=jGs_pars[ijack][0];	
-//       	 }
+	   jGp_em_a_b_chiral[ijack]=jGp_pars[ijack](0);
+      	   jGs_em_a_b_chiral[ijack]=jGs_pars[ijack](0);	
+      	 }
     
 
-//        // cout<<"---- M^2  ---- jG_p ---- jG_p_SUB --- (for each jackknife)"<<endl;
-//        // for(int ijack=0; ijack<njacks; ijack++)
-//        // 	 {
-//        // 	   for(int i=0; i<neq; i++)
-//        // 	     cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< jGp_equivalent[ijack][i]<<"\t"<< jGp_subpole[ijack][i]<<endl;
-//        // 	   cout<<endl;
-//        // 	 }
-//        // cout<<endl;
+       // cout<<"---- M^2  ---- jG_p ---- jG_p_SUB --- (for each jackknife)"<<endl;
+       // for(int ijack=0; ijack<njacks; ijack++)
+       // 	 {
+       // 	   for(int i=0; i<neq; i++)
+       // 	     cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< jGp_equivalent[ijack][i]<<"\t"<< jGp_subpole[ijack][i]<<endl;
+       // 	   cout<<endl;
+       // 	 }
+       // cout<<endl;
        
 
-//        // vd_t Gp_subpole(neq), sqr_Gp_subpole(neq), Gp_err_subpole(neq);
+       // vd_t Gp_subpole(neq), sqr_Gp_subpole(neq), Gp_err_subpole(neq);
        
-//        // for(int i=0;i<neq;i++)
-//        // 	 {
-//        // 	   for(int ijack=0; ijack<njacks; ijack++)
-//        // 	     {
-//        // 	       Gp_subpole[i]+=jGp_subpole[ijack][i]/njacks;
-//        // 	       sqr_Gp_subpole[i]+=jGp_subpole[ijack][i]*jGp_subpole[ijack][i]/njacks;
-//        // 	     }
-//        // 	   Gp_err_subpole[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_subpole[i]- Gp_subpole[i]*Gp_subpole[i]);
-//        // 	 }
+       // for(int i=0;i<neq;i++)
+       // 	 {
+       // 	   for(int ijack=0; ijack<njacks; ijack++)
+       // 	     {
+       // 	       Gp_subpole[i]+=jGp_subpole[ijack][i]/njacks;
+       // 	       sqr_Gp_subpole[i]+=jGp_subpole[ijack][i]*jGp_subpole[ijack][i]/njacks;
+       // 	     }
+       // 	   Gp_err_subpole[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_subpole[i]- Gp_subpole[i]*Gp_subpole[i]);
+       // 	 }
        
-//        // cout<<"---- M^2 ---- Gp_SUB average ---"<<endl;
-//        // for(int i=0;i<neq;i++)  cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< Gp_subpole[i]<<"\t"<<Gp_err_subpole[i]<<endl;
+       // cout<<"---- M^2 ---- Gp_SUB average ---"<<endl;
+       // for(int i=0;i<neq;i++)  cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< Gp_subpole[i]<<"\t"<<Gp_err_subpole[i]<<endl;
        
   
-//        t1=high_resolution_clock::now();
-//        t_span = duration_cast<duration<double>>(t1-t0);
-//        cout<<"***** Goldstone pole subtraction in "<<t_span.count()<<" s ******"<<endl<<endl;
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Goldstone pole subtraction in "<<t_span.count()<<" s ******"<<endl<<endl;
 
 
        
-//        //chiral extrapolation of Gv,Ga,Gt
-//        t0=high_resolution_clock::now();
+       //chiral extrapolation of Gv,Ga,Gt
+       t0=high_resolution_clock::now();
        
-//        //    m_eff_equivalent=0.0;
+       //    m_eff_equivalent=0.0;
        
-//        vvd_t jGv_equivalent(vd_t(0.0,neq),njacks);
-//        vvd_t jGa_equivalent(vd_t(0.0,neq),njacks);
-//        vvd_t jGt_equivalent(vd_t(0.0,neq),njacks);
+       vvd_t jGv_equivalent(vd_t(0.0,neq),njacks);
+       vvd_t jGa_equivalent(vd_t(0.0,neq),njacks);
+       vvd_t jGt_equivalent(vd_t(0.0,neq),njacks);
 
-//        vvd_t jGv_em_equivalent(vd_t(0.0,neq),njacks);
-//        vvd_t jGa_em_equivalent(vd_t(0.0,neq),njacks);
-//        vvd_t jGt_em_equivalent(vd_t(0.0,neq),njacks);
+       vvd_t jGv_em_equivalent(vd_t(0.0,neq),njacks);
+       vvd_t jGa_em_equivalent(vd_t(0.0,neq),njacks);
+       vvd_t jGt_em_equivalent(vd_t(0.0,neq),njacks);
 
-//        for(int mA=0; mA<nm; mA++)
-// 	 for(int mB=mA; mB<nm; mB++)	     
-// 	   for(int r=0; r<nr; r++)
-// 	     {
-// 	       ieq=-(mA*mA/2)+mB+mA*(nm-0.5);
+       for(int mA=0; mA<nm; mA++)
+	 for(int mB=mA; mB<nm; mB++)	     
+	   for(int r=0; r<nr; r++)
+	     {
+	       ieq=-(mA*mA/2)+mB+mA*(nm-0.5);
 		 
-// 	       //  m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
-// 	       for(int ijack=0;ijack<njacks;ijack++) jGv_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][1]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
-// 	       for(int ijack=0;ijack<njacks;ijack++) jGa_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][3]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
-// 	       for(int ijack=0;ijack<njacks;ijack++) jGt_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][4]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
+	       //  m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
+	       for(int ijack=0;ijack<njacks;ijack++) jGv_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][1]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
+	       for(int ijack=0;ijack<njacks;ijack++) jGa_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][3]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
+	       for(int ijack=0;ijack<njacks;ijack++) jGt_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][4]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
 
-// 	       for(int ijack=0;ijack<njacks;ijack++) jGv_em_equivalent[ijack][ieq] += (jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][1]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
-// 	       for(int ijack=0;ijack<njacks;ijack++) jGa_em_equivalent[ijack][ieq] += (jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][3]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
-// 	       for(int ijack=0;ijack<njacks;ijack++) jGt_em_equivalent[ijack][ieq] += (jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][4]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
+	       for(int ijack=0;ijack<njacks;ijack++) jGv_em_equivalent[ijack][ieq] += (jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][1]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
+	       for(int ijack=0;ijack<njacks;ijack++) jGa_em_equivalent[ijack][ieq] += (jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][3]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
+	       for(int ijack=0;ijack<njacks;ijack++) jGt_em_equivalent[ijack][ieq] += (jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][4]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
 
-// 	     } //ieq={00,01,02,03,11,12,13,22,23,33}
+	     } //ieq={00,01,02,03,11,12,13,22,23,33}
 	   
 
-//        vd_t Gv_ave(0.0,neq),sqr_Gv_ave(0.0,neq),Gv_err(0.0,neq),Ga_ave(0.0,neq),sqr_Ga_ave(0.0,neq),Ga_err(0.0,neq),Gt_ave(0.0,neq),sqr_Gt_ave(0.0,neq),Gt_err(0.0,neq);
-//        vd_t Gv_em_ave(0.0,neq),sqr_Gv_em_ave(0.0,neq),Gv_em_err(0.0,neq),Ga_em_ave(0.0,neq),sqr_Ga_em_ave(0.0,neq),Ga_em_err(0.0,neq),Gt_em_ave(0.0,neq),sqr_Gt_em_ave(0.0,neq),Gt_em_err(0.0,neq);
+       vd_t Gv_ave(0.0,neq),sqr_Gv_ave(0.0,neq),Gv_err(0.0,neq),Ga_ave(0.0,neq),sqr_Ga_ave(0.0,neq),Ga_err(0.0,neq),Gt_ave(0.0,neq),sqr_Gt_ave(0.0,neq),Gt_err(0.0,neq);
+       vd_t Gv_em_ave(0.0,neq),sqr_Gv_em_ave(0.0,neq),Gv_em_err(0.0,neq),Ga_em_ave(0.0,neq),sqr_Ga_em_ave(0.0,neq),Ga_em_err(0.0,neq),Gt_em_ave(0.0,neq),sqr_Gt_em_ave(0.0,neq),Gt_em_err(0.0,neq);
        
-// #pragma omp parallel for collapse(2)
-//        for(int i=0;i<neq;i++)
-// 	 for(int ijack=0;ijack<njacks;ijack++)
-// 	   {
-// 	     Gv_ave[i]+=jGv_equivalent[ijack][i]/njacks;
-// 	     sqr_Gv_ave[i]+=jGv_equivalent[ijack][i]*jGv_equivalent[ijack][i]/njacks;
+#pragma omp parallel for// collapse(2)
+       for(int i=0;i<neq;i++)
+	 for(int ijack=0;ijack<njacks;ijack++)
+	   {
+	     Gv_ave[i]+=jGv_equivalent[ijack][i]/njacks;
+	     sqr_Gv_ave[i]+=jGv_equivalent[ijack][i]*jGv_equivalent[ijack][i]/njacks;
 
-// 	     Ga_ave[i]+=jGa_equivalent[ijack][i]/njacks;
-// 	     sqr_Ga_ave[i]+=jGa_equivalent[ijack][i]*jGa_equivalent[ijack][i]/njacks;
+	     Ga_ave[i]+=jGa_equivalent[ijack][i]/njacks;
+	     sqr_Ga_ave[i]+=jGa_equivalent[ijack][i]*jGa_equivalent[ijack][i]/njacks;
 
-// 	     Gt_ave[i]+=jGt_equivalent[ijack][i]/njacks;
-// 	     sqr_Gt_ave[i]+=jGt_equivalent[ijack][i]*jGt_equivalent[ijack][i]/njacks;
+	     Gt_ave[i]+=jGt_equivalent[ijack][i]/njacks;
+	     sqr_Gt_ave[i]+=jGt_equivalent[ijack][i]*jGt_equivalent[ijack][i]/njacks;
 
-// 	     Gv_em_ave[i]+=jGv_em_equivalent[ijack][i]/njacks;
-// 	     sqr_Gv_em_ave[i]+=jGv_em_equivalent[ijack][i]*jGv_em_equivalent[ijack][i]/njacks;
+	     Gv_em_ave[i]+=jGv_em_equivalent[ijack][i]/njacks;
+	     sqr_Gv_em_ave[i]+=jGv_em_equivalent[ijack][i]*jGv_em_equivalent[ijack][i]/njacks;
 
-// 	     Ga_em_ave[i]+=jGa_em_equivalent[ijack][i]/njacks;
-// 	     sqr_Ga_em_ave[i]+=jGa_em_equivalent[ijack][i]*jGa_em_equivalent[ijack][i]/njacks;
+	     Ga_em_ave[i]+=jGa_em_equivalent[ijack][i]/njacks;
+	     sqr_Ga_em_ave[i]+=jGa_em_equivalent[ijack][i]*jGa_em_equivalent[ijack][i]/njacks;
 
-// 	     Gt_em_ave[i]+=jGt_em_equivalent[ijack][i]/njacks;
-// 	     sqr_Gt_em_ave[i]+=jGt_em_equivalent[ijack][i]*jGt_em_equivalent[ijack][i]/njacks;
-// 	   }
+	     Gt_em_ave[i]+=jGt_em_equivalent[ijack][i]/njacks;
+	     sqr_Gt_em_ave[i]+=jGt_em_equivalent[ijack][i]*jGt_em_equivalent[ijack][i]/njacks;
+	   }
 
-//        for(int i=0;i<neq;i++)
-// 	 {  
-// 	   Gv_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_ave[i]-Gv_ave[i]*Gv_ave[i]);
-// 	   Ga_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_ave[i]-Ga_ave[i]*Ga_ave[i]);      
-// 	   Gt_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_ave[i]-Gt_ave[i]*Gt_ave[i]);
+       for(int i=0;i<neq;i++)
+	 {  
+	   Gv_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_ave[i]-Gv_ave[i]*Gv_ave[i]);
+	   Ga_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_ave[i]-Ga_ave[i]*Ga_ave[i]);      
+	   Gt_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_ave[i]-Gt_ave[i]*Gt_ave[i]);
 
-// 	   Gv_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_em_ave[i]-Gv_em_ave[i]*Gv_em_ave[i]);
-// 	   Ga_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_em_ave[i]-Ga_em_ave[i]*Ga_em_ave[i]);      
-// 	   Gt_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_em_ave[i]-Gt_em_ave[i]*Gt_em_ave[i]);      
-// 	 }
+	   Gv_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_em_ave[i]-Gv_em_ave[i]*Gv_em_ave[i]);
+	   Ga_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_em_ave[i]-Ga_em_ave[i]*Ga_em_ave[i]);      
+	   Gt_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_em_ave[i]-Gt_em_ave[i]*Gt_em_ave[i]);      
+	 }
 
        //range for the fit
        t_min=0;
        t_max=neq-1;
 
        vvd_t coord_linear(vd_t(0.0,neq),2);
-//        for(int i=0; i<neq; i++)
-// 	 {
-// 	   coord[0][i] = 1.0;  //costante
-// 	   coord[1][i] = m_eff_equivalent[i]*m_eff_equivalent[i];   //M^2 
-// 	 }
+       for(int i=0; i<neq; i++)
+	 {
+	   coord[0][i] = 1.0;  //costante
+	   coord[1][i] = m_eff_equivalent[i]*m_eff_equivalent[i];   //M^2 
+	 }
 
-//        vXd_t jGv_pars=fit_par_jackknife(coord_linear,Gv_err,jGv_equivalent,t_min,t_max);  //jGp_pars[ijack][par]
-//        vXd_t jGa_pars=fit_par_jackknife(coord_linear,Ga_err,jGa_equivalent,t_min,t_max);
-//        vXd_t jGt_pars=fit_par_jackknife(coord_linear,Gt_err,jGt_equivalent,t_min,t_max);
+       vXd_t jGv_pars=fit_par_jackknife(coord_linear,Gv_err,jGv_equivalent,t_min,t_max);  //jGp_pars[ijack][par]
+       vXd_t jGa_pars=fit_par_jackknife(coord_linear,Ga_err,jGa_equivalent,t_min,t_max);
+       vXd_t jGt_pars=fit_par_jackknife(coord_linear,Gt_err,jGt_equivalent,t_min,t_max);
 
-//        vXd_t jGv_em_pars=fit_par_jackknife(coord_linear,Gv_em_err,jGv_em_equivalent,t_min,t_max);  //jGp_pars[ijack][par]
-//        vXd_t jGa_em_pars=fit_par_jackknife(coord_linear,Ga_em_err,jGa_em_equivalent,t_min,t_max);
-//        vXd_t jGt_em_pars=fit_par_jackknife(coord_linear,Gt_em_err,jGt_em_equivalent,t_min,t_max);
+       vXd_t jGv_em_pars=fit_par_jackknife(coord_linear,Gv_em_err,jGv_em_equivalent,t_min,t_max);  //jGp_pars[ijack][par]
+       vXd_t jGa_em_pars=fit_par_jackknife(coord_linear,Ga_em_err,jGa_em_equivalent,t_min,t_max);
+       vXd_t jGt_em_pars=fit_par_jackknife(coord_linear,Gt_em_err,jGt_em_equivalent,t_min,t_max);
 
-//        vd_t jGv_0_chiral(njacks), jGa_0_chiral(njacks), jGt_0_chiral(njacks);
-//        vd_t jGv_em_a_b_chiral(njacks), jGa_em_a_b_chiral(njacks), jGt_em_a_b_chiral(njacks);
+       vd_t jGv_0_chiral(njacks), jGa_0_chiral(njacks), jGt_0_chiral(njacks);
+       vd_t jGv_em_a_b_chiral(njacks), jGa_em_a_b_chiral(njacks), jGt_em_a_b_chiral(njacks);
 
-//        for(int ijack=0;ijack<njacks;ijack++)
-// 	 {
-// 	   jGv_0_chiral[ijack]=jGv_pars[ijack][0];
-// 	   jGa_0_chiral[ijack]=jGa_pars[ijack][0];
-// 	   jGt_0_chiral[ijack]=jGt_pars[ijack][0];
+       for(int ijack=0;ijack<njacks;ijack++)
+	 {
+	   jGv_0_chiral[ijack]=jGv_pars[ijack](0);
+	   jGa_0_chiral[ijack]=jGa_pars[ijack](0);
+	   jGt_0_chiral[ijack]=jGt_pars[ijack](0);
 
-// 	   jGv_em_a_b_chiral[ijack]=jGv_em_pars[ijack][0];
-// 	   jGa_em_a_b_chiral[ijack]=jGa_em_pars[ijack][0];
-// 	   jGt_em_a_b_chiral[ijack]=jGt_em_pars[ijack][0];
-// 	 }
+	   jGv_em_a_b_chiral[ijack]=jGv_em_pars[ijack](0);
+	   jGa_em_a_b_chiral[ijack]=jGa_em_pars[ijack](0);
+	   jGt_em_a_b_chiral[ijack]=jGt_em_pars[ijack](0);
+	 }
 
 
-//        t1=high_resolution_clock::now();
-//        t_span = duration_cast<duration<double>>(t1-t0);
-//        cout<<"***** Chiral extrapolation of Gv,Ga&Gt in "<<t_span.count()<<" s ******"<<endl<<endl;
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Chiral extrapolation of Gv,Ga&Gt in "<<t_span.count()<<" s ******"<<endl<<endl;
 
        //chiral extrapolation of Zq
        t0=high_resolution_clock::now();
        
-       vvd_t jZq_equivalent(vd_t(0.0,neq),njacks), jSigma1_equivalent(vd_t(0.0,neq),njacks);
-       vvd_t jZq_em_equivalent(vd_t(0.0,neq),njacks), jSigma1_em_equivalent(vd_t(0.0,neq),njacks);       
+       vvd_t jZq_equivalent(vd_t(0.0,neq2),njacks), jSigma1_equivalent(vd_t(0.0,neq2),njacks);
+       vvd_t jZq_em_equivalent(vd_t(0.0,neq2),njacks), jSigma1_em_equivalent(vd_t(0.0,neq2),njacks);       
        
        vd_t m_eff_equivalent_Zq(0.0,neq2);
        ieq=0;
@@ -1594,7 +1601,7 @@ int main(int narg,char **arg)
        vd_t Zq_em_ave(0.0,neq2), sqr_Zq_em_ave(0.0,neq2), Zq_em_err(0.0,neq2);
        vd_t Sigma1_em_ave(0.0,neq2), sqr_Sigma1_em_ave(0.0,neq2), Sigma1_em_err(0.0,neq2);
        
-       //#pragma omp parallel for collapse(2)
+       //#pragma omp parallel for //collapse(2)
        for(int i=0;i<neq2;i++)
 	 for(int ijack=0;ijack<njacks;ijack++)
 	   {
@@ -1640,11 +1647,11 @@ int main(int narg,char **arg)
 
        for(int ijack=0;ijack<njacks;ijack++)
 	 {
-	   jZq_chiral[ijack]=jZq_pars[ijack][0];
-	   jSigma1_chiral[ijack]=jSigma1_pars[ijack][0];
+	   jZq_chiral[ijack]=jZq_pars[ijack](0);
+	   jSigma1_chiral[ijack]=jSigma1_pars[ijack](0);
 
-	   jZq_em_chiral[ijack]=jZq_pars[ijack][0];
-	   jSigma1_em_chiral[ijack]=jSigma1_pars[ijack][0];
+	   jZq_em_chiral[ijack]=jZq_pars[ijack](0);
+	   jSigma1_em_chiral[ijack]=jSigma1_pars[ijack](0);
 	 }
 
        t1=high_resolution_clock::now();
@@ -1652,41 +1659,41 @@ int main(int narg,char **arg)
        cout<<"***** Chiral extrapolation of Zq in "<<t_span.count()<<" s ******"<<endl<<endl;
 
        
-       // //chiral jackknife Z's
-       // t0=high_resolution_clock::now();
-       // vvd_t jZ_chiral(vd_t(0.0,5),njacks), jZ1_chiral(vd_t(0.0,5),njacks);
-       // vvd_t jZ_em_chiral(vd_t(0.0,5),njacks), jZ1_em_chiral(vd_t(0.0,5),njacks);
+       //chiral jackknife Z's
+       t0=high_resolution_clock::now();
+       vvd_t jZ_chiral(vd_t(0.0,5),njacks), jZ1_chiral(vd_t(0.0,5),njacks);
+       vvd_t jZ_em_chiral(vd_t(0.0,5),njacks), jZ1_em_chiral(vd_t(0.0,5),njacks);
 
-       // for(int ijack=0;ijack<njacks;ijack++)
-       // 	 {
-       // 	   jZ_chiral[ijack][0] = jZq_chiral[ijack]/jGs_0_chiral[ijack];
-       // 	   jZ_chiral[ijack][1] = jZq_chiral[ijack]/jGv_0_chiral[ijack];
-       // 	   jZ_chiral[ijack][2] = jZq_chiral[ijack]/jGp_0_chiral[ijack];
-       // 	   jZ_chiral[ijack][3] = jZq_chiral[ijack]/jGa_0_chiral[ijack];
-       // 	   jZ_chiral[ijack][4] = jZq_chiral[ijack]/jGt_0_chiral[ijack];
+       for(int ijack=0;ijack<njacks;ijack++)
+       	 {
+       	   jZ_chiral[ijack][0] = jZq_chiral[ijack]/jGs_0_chiral[ijack];
+       	   jZ_chiral[ijack][1] = jZq_chiral[ijack]/jGv_0_chiral[ijack];
+       	   jZ_chiral[ijack][2] = jZq_chiral[ijack]/jGp_0_chiral[ijack];
+       	   jZ_chiral[ijack][3] = jZq_chiral[ijack]/jGa_0_chiral[ijack];
+       	   jZ_chiral[ijack][4] = jZq_chiral[ijack]/jGt_0_chiral[ijack];
 
-       // 	   jZ1_chiral[ijack][0] = jSigma1_chiral[ijack]/jGs_0_chiral[ijack];
-       // 	   jZ1_chiral[ijack][1] = jSigma1_chiral[ijack]/jGv_0_chiral[ijack];
-       // 	   jZ1_chiral[ijack][2] = jSigma1_chiral[ijack]/jGp_0_chiral[ijack];
-       // 	   jZ1_chiral[ijack][3] = jSigma1_chiral[ijack]/jGa_0_chiral[ijack];
-       // 	   jZ1_chiral[ijack][4] = jSigma1_chiral[ijack]/jGt_0_chiral[ijack];
+       	   jZ1_chiral[ijack][0] = jSigma1_chiral[ijack]/jGs_0_chiral[ijack];
+       	   jZ1_chiral[ijack][1] = jSigma1_chiral[ijack]/jGv_0_chiral[ijack];
+       	   jZ1_chiral[ijack][2] = jSigma1_chiral[ijack]/jGp_0_chiral[ijack];
+       	   jZ1_chiral[ijack][3] = jSigma1_chiral[ijack]/jGa_0_chiral[ijack];
+       	   jZ1_chiral[ijack][4] = jSigma1_chiral[ijack]/jGt_0_chiral[ijack];
 
-       // 	   jZ_em_chiral[ijack][0] = jGs_em_a_b_chiral[ijack]/jGs_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
-       // 	   jZ_em_chiral[ijack][1] = jGv_em_a_b_chiral[ijack]/jGv_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
-       // 	   jZ_em_chiral[ijack][2] = jGp_em_a_b_chiral[ijack]/jGp_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
-       // 	   jZ_em_chiral[ijack][3] = jGa_em_a_b_chiral[ijack]/jGa_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
-       // 	   jZ_em_chiral[ijack][4] = jGt_em_a_b_chiral[ijack]/jGt_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
+       	   jZ_em_chiral[ijack][0] = jGs_em_a_b_chiral[ijack]/jGs_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
+       	   jZ_em_chiral[ijack][1] = jGv_em_a_b_chiral[ijack]/jGv_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
+       	   jZ_em_chiral[ijack][2] = jGp_em_a_b_chiral[ijack]/jGp_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
+       	   jZ_em_chiral[ijack][3] = jGa_em_a_b_chiral[ijack]/jGa_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
+       	   jZ_em_chiral[ijack][4] = jGt_em_a_b_chiral[ijack]/jGt_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
 
-       // 	   jZ1_em_chiral[ijack][0] = jGs_em_a_b_chiral[ijack]/jGs_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];
-       // 	   jZ1_em_chiral[ijack][1] = jGv_em_a_b_chiral[ijack]/jGv_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];
-       // 	   jZ1_em_chiral[ijack][2] = jGp_em_a_b_chiral[ijack]/jGp_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];
-       // 	   jZ1_em_chiral[ijack][3] = jGa_em_a_b_chiral[ijack]/jGa_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];
-       // 	   jZ1_em_chiral[ijack][4] = jGt_em_a_b_chiral[ijack]/jGt_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];	   
-       // 	 }
+       	   jZ1_em_chiral[ijack][0] = jGs_em_a_b_chiral[ijack]/jGs_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];
+       	   jZ1_em_chiral[ijack][1] = jGv_em_a_b_chiral[ijack]/jGv_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];
+       	   jZ1_em_chiral[ijack][2] = jGp_em_a_b_chiral[ijack]/jGp_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];
+       	   jZ1_em_chiral[ijack][3] = jGa_em_a_b_chiral[ijack]/jGa_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];
+       	   jZ1_em_chiral[ijack][4] = jGt_em_a_b_chiral[ijack]/jGt_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];	   
+       	 }
 
-       // t1=high_resolution_clock::now();
-       // t_span = duration_cast<duration<double>>(t1-t0);
-       // cout<<"***** Chiral Z's computation in "<<t_span.count()<<" s ******"<<endl<<endl;
+       t1=high_resolution_clock::now();
+       t_span = duration_cast<duration<double>>(t1-t0);
+       cout<<"***** Chiral Z's computation in "<<t_span.count()<<" s ******"<<endl<<endl;
        
 
        //Tag assignment
@@ -1741,70 +1748,88 @@ int main(int narg,char **arg)
 		 jZ1_sub_allmoms[imom][ijack][mr_fw][mr_bw][k]=jZ1_sub[ijack][mr_fw][mr_bw][k];
 		 jZ_em_sub_allmoms[imom][ijack][mr_fw][mr_bw][k]=jZ_em_sub[ijack][mr_fw][mr_bw][k];
 		 jZ1_em_sub_allmoms[imom][ijack][mr_fw][mr_bw][k]=jZ1_em_sub[ijack][mr_fw][mr_bw][k];
-	       }
-     
+	       } 
+#pragma omp parallel for collapse(2)
+       for(int ijack=0;ijack<njacks;ijack++)
+	 for(int ieq=0; ieq<neq; ieq++)
+	   {
+	     jGp_equivalent_allmoms[imom][ijack][ieq]=jGp_equivalent[ijack][ieq];
+	     jGs_equivalent_allmoms[imom][ijack][ieq]=jGs_equivalent[ijack][ieq];
+	     jGp_subpole_allmoms[imom][ijack][ieq]=jGp_subpole[ijack][ieq];
+	     jGs_subpole_allmoms[imom][ijack][ieq]=jGs_subpole[ijack][ieq];
+	     
+	     jGv_equivalent_allmoms[imom][ijack][ieq]=jGv_equivalent[ijack][ieq];
+	     jGa_equivalent_allmoms[imom][ijack][ieq]=jGa_equivalent[ijack][ieq];
+	     jGt_equivalent_allmoms[imom][ijack][ieq]=jGa_equivalent[ijack][ieq];
+
+	     jGp_em_equivalent_allmoms[imom][ijack][ieq]=jGp_em_equivalent[ijack][ieq];
+	     jGs_em_equivalent_allmoms[imom][ijack][ieq]=jGs_em_equivalent[ijack][ieq];
+	     jGp_em_subpole_allmoms[imom][ijack][ieq]=jGp_em_subpole[ijack][ieq];
+	     jGs_em_subpole_allmoms[imom][ijack][ieq]=jGs_em_subpole[ijack][ieq];
+
+	     jGv_em_equivalent_allmoms[imom][ijack][ieq]=jGv_em_equivalent[ijack][ieq];
+	     jGa_em_equivalent_allmoms[imom][ijack][ieq]=jGa_em_equivalent[ijack][ieq];
+	     jGt_em_equivalent_allmoms[imom][ijack][ieq]=jGa_em_equivalent[ijack][ieq];
+	   }
+#pragma omp parallel for collapse(2)
+       for(int ijack=0;ijack<njacks;ijack++)
+	 for(int ieq=0; ieq<neq2; ieq++)
+	   {
+	     jZq_equivalent_allmoms[imom]=jZq_equivalent;
+	     jSigma1_equivalent_allmoms[imom]=jSigma1_equivalent;
+	     jZq_em_equivalent_allmoms[imom]=jZq_em_equivalent;
+	     jSigma1_em_equivalent_allmoms[imom]=jSigma1_em_equivalent;
+	   }
+#pragma omp parallel for
+       for(int ijack=0;ijack<njacks;ijack++)
+	 {
+	   jGp_0_chiral_allmoms[imom][ijack]=jGp_0_chiral[ijack];
+	   jGv_0_chiral_allmoms[imom][ijack]=jGv_0_chiral[ijack];
+	   jGs_0_chiral_allmoms[imom][ijack]=jGs_0_chiral[ijack];
+	   jGa_0_chiral_allmoms[imom][ijack]=jGa_0_chiral[ijack];
+	   jGt_0_chiral_allmoms[imom][ijack]=jGt_0_chiral[ijack];
+	   
+	   jGp_em_a_b_chiral_allmoms[imom][ijack]=jGp_em_a_b_chiral[ijack];
+	   jGv_em_a_b_chiral_allmoms[imom][ijack]=jGv_em_a_b_chiral[ijack];
+	   jGs_em_a_b_chiral_allmoms[imom][ijack]=jGs_em_a_b_chiral[ijack];
+	   jGa_em_a_b_chiral_allmoms[imom][ijack]=jGa_em_a_b_chiral[ijack];
+	   jGt_em_a_b_chiral_allmoms[imom][ijack]=jGt_em_a_b_chiral[ijack];
+	 
+	   jZq_chiral_allmoms[imom][ijack]=jZq_chiral[ijack];
+	   jSigma1_chiral_allmoms[imom][ijack]=jSigma1_chiral[ijack];
+	   jZ_chiral_allmoms[imom][ijack]=jZ_chiral[ijack];
+	   jZ1_chiral_allmoms[imom][ijack]=jZ1_chiral[ijack];
+
+	   jZq_em_chiral_allmoms[imom][ijack]=jZq_em_chiral[ijack];
+	   jSigma1_em_chiral_allmoms[imom][ijack]=jSigma1_em_chiral[ijack];
+	   jZ_em_chiral_allmoms[imom][ijack]=jZ_em_chiral[ijack];
+	   jZ1_em_chiral_allmoms[imom][ijack]=jZ1_em_chiral[ijack];
+	 }
+#pragma omp parallel for collapse(2)
+	 for(int ijack=0;ijack<njacks;ijack++)
+	   for(size_t k=0; k<3; k++)
+	     {
+	       jGp_pars_allmoms[imom][ijack](k)=jGp_pars[ijack](k);
+	       jGs_pars_allmoms[imom][ijack](k)=jGs_pars[ijack](k);
+	       jGp_em_pars_allmoms[imom][ijack](k)=jGp_em_pars[ijack](k);
+	       jGs_em_pars_allmoms[imom][ijack](k)=jGs_em_pars[ijack](k);
+	     }
+#pragma omp parallel for collapse(2)
+	 for(int ijack=0;ijack<njacks;ijack++)
+	   for(size_t k=0; k<2; k++)
+	     {
+	       jGv_pars_allmoms[imom][ijack](k)=jGv_pars[ijack](k);
+	       jGa_pars_allmoms[imom][ijack](k)=jGa_pars[ijack](k);
+	       jGt_pars_allmoms[imom][ijack](k)=jGt_pars[ijack](k);
+	       jGv_em_pars_allmoms[imom][ijack](k)=jGv_em_pars[ijack](k);
+	       jGa_em_pars_allmoms[imom][ijack](k)=jGa_em_pars[ijack](k);
+	       jGt_em_pars_allmoms[imom][ijack](k)=jGt_em_pars[ijack](k);
        
-       // jGp_equivalent_allmoms[imom]=jGp_equivalent;
-       // jGs_equivalent_allmoms[imom]=jGs_equivalent;
-       // jGp_subpole_allmoms[imom]=jGp_subpole;
-       // jGs_subpole_allmoms[imom]=jGs_subpole;
-
-       // jGv_equivalent_allmoms[imom]=jGv_equivalent;
-       // jGa_equivalent_allmoms[imom]=jGa_equivalent;
-       // jGt_equivalent_allmoms[imom]=jGa_equivalent;
-
-       // jGp_em_equivalent_allmoms[imom]=jGp_em_equivalent;
-       // jGs_em_equivalent_allmoms[imom]=jGs_em_equivalent;
-       // jGp_em_subpole_allmoms[imom]=jGp_em_subpole;
-       // jGs_em_subpole_allmoms[imom]=jGs_em_subpole;
-
-       // jGv_em_equivalent_allmoms[imom]=jGv_em_equivalent;
-       // jGa_em_equivalent_allmoms[imom]=jGa_em_equivalent;
-       // jGt_em_equivalent_allmoms[imom]=jGa_em_equivalent;
-
-       // jZq_equivalent_allmoms[imom]=jZq_equivalent;
-       // jSigma1_equivalent_allmoms[imom]=jSigma1_equivalent;
-       // jZq_em_equivalent_allmoms[imom]=jZq_em_equivalent;
-       // jSigma1_em_equivalent_allmoms[imom]=jSigma1_em_equivalent;
-       
-       // jGp_0_chiral_allmoms[imom]=jGp_0_chiral;
-       // jGv_0_chiral_allmoms[imom]=jGv_0_chiral;
-       // jGs_0_chiral_allmoms[imom]=jGs_0_chiral;
-       // jGa_0_chiral_allmoms[imom]=jGa_0_chiral;
-       // jGt_0_chiral_allmoms[imom]=jGt_0_chiral;
-
-       // jGp_em_a_b_chiral_allmoms[imom]=jGp_em_a_b_chiral;
-       // jGv_em_a_b_chiral_allmoms[imom]=jGv_em_a_b_chiral;
-       // jGs_em_a_b_chiral_allmoms[imom]=jGs_em_a_b_chiral;
-       // jGa_em_a_b_chiral_allmoms[imom]=jGa_em_a_b_chiral;
-       // jGt_em_a_b_chiral_allmoms[imom]=jGt_em_a_b_chiral;
-       
-       jZq_chiral_allmoms[imom]=jZq_chiral;
-       jSigma1_chiral_allmoms[imom]=jSigma1_chiral;
-       // jZ_chiral_allmoms[imom]=jZ_chiral;
-       // jZ1_chiral_allmoms[imom]=jZ1_chiral;
-
-       // jZq_em_chiral_allmoms[imom]=jZq_em_chiral;
-       // jSigma1_em_chiral_allmoms[imom]=jSigma1_em_chiral;
-       // jZ_em_chiral_allmoms[imom]=jZ_em_chiral;
-       // jZ1_em_chiral_allmoms[imom]=jZ1_em_chiral;
-
-       // jGp_pars_allmoms[imom]=jGp_pars;
-       // jGs_pars_allmoms[imom]=jGs_pars;
-       // jGp_em_pars_allmoms[imom]=jGp_em_pars;
-       // jGs_em_pars_allmoms[imom]=jGs_em_pars;
-       // jGv_pars_allmoms[imom]=jGv_pars;
-       // jGa_pars_allmoms[imom]=jGa_pars;
-       // jGt_pars_allmoms[imom]=jGt_pars;
-       // jGv_em_pars_allmoms[imom]=jGv_em_pars;
-       // jGa_em_pars_allmoms[imom]=jGa_em_pars;
-       // jGt_em_pars_allmoms[imom]=jGt_em_pars;
-
-       // jZq_pars_allmoms[imom]=jZq_pars;
-       // jSigma1_pars_allmoms[imom]=jSigma1_pars;
-       // jZq_em_pars_allmoms[imom]=jZq_em_pars;
-       // jSigma1_em_pars_allmoms[imom]=jSigma1_em_pars;
-       
+	       jZq_pars_allmoms[imom][ijack](k)=jZq_pars[ijack](k);
+	       jSigma1_pars_allmoms[imom][ijack](k)=jSigma1_pars[ijack](k);
+	       jZq_em_pars_allmoms[imom][ijack](k)=jZq_em_pars[ijack](k);
+	       jSigma1_em_pars_allmoms[imom][ijack](k)=jSigma1_em_pars[ijack](k);
+	     }
      }//moms loop
 
    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -1850,36 +1875,36 @@ int main(int narg,char **arg)
    vector<jZbil_t> jZ_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), \
      jZ_em_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_em_sub_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks));
    
-   // vector<vvd_t> jGp_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)),\
-   //   jGp_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
-   // vector<vvd_t> jGp_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), \
-   //   jGp_em_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_em_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
+   vector<vvd_t> jGp_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)),\
+     jGp_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
+   vector<vvd_t> jGp_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), \
+     jGp_em_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_em_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
 
-   // vector<vvd_t> jGv_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGa_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)),\
-   //   jGt_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
-   // vector<vvd_t> jGv_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGa_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)),\
-   //   jGt_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
+   vector<vvd_t> jGv_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGa_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)),\
+     jGt_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
+   vector<vvd_t> jGv_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGa_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)),\
+     jGt_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
 
-   // vector<vvd_t> jZq_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jSigma1_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)),\
-   // jZq_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jSigma1_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)); 
+   vector<vvd_t> jZq_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq2),njacks)), jSigma1_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq2),njacks)),\
+   jZq_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq2),njacks)), jSigma1_em_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq2),njacks)); 
    
-   // vector<vd_t> jGp_0_chiral_eqmoms(neq_moms,vd_t(njacks)),jGa_0_chiral_eqmoms(neq_moms,vd_t(njacks)),jGv_0_chiral_eqmoms(neq_moms,vd_t(njacks)),\
-   //   jGs_0_chiral_eqmoms(neq_moms,vd_t(njacks)),jGt_0_chiral_eqmoms(neq_moms,vd_t(njacks));
-   // vector<vd_t> jGp_em_a_b_chiral_eqmoms(neq_moms,vd_t(njacks)),jGa_em_a_b_chiral_eqmoms(neq_moms,vd_t(njacks)),jGv_em_a_b_chiral_eqmoms(neq_moms,vd_t(njacks)), \
-   //   jGs_em_a_b_chiral_eqmoms(neq_moms,vd_t(njacks)),jGt_em_a_b_chiral_eqmoms(neq_moms,vd_t(njacks));
+   vector<vd_t> jGp_0_chiral_eqmoms(neq_moms,vd_t(njacks)),jGa_0_chiral_eqmoms(neq_moms,vd_t(njacks)),jGv_0_chiral_eqmoms(neq_moms,vd_t(njacks)),\
+     jGs_0_chiral_eqmoms(neq_moms,vd_t(njacks)),jGt_0_chiral_eqmoms(neq_moms,vd_t(njacks));
+   vector<vd_t> jGp_em_a_b_chiral_eqmoms(neq_moms,vd_t(njacks)),jGa_em_a_b_chiral_eqmoms(neq_moms,vd_t(njacks)),jGv_em_a_b_chiral_eqmoms(neq_moms,vd_t(njacks)), \
+     jGs_em_a_b_chiral_eqmoms(neq_moms,vd_t(njacks)),jGt_em_a_b_chiral_eqmoms(neq_moms,vd_t(njacks));
    vector<vd_t> jZq_chiral_eqmoms(neq_moms,vd_t(0.0,njacks)),jSigma1_chiral_eqmoms(neq_moms,vd_t(0.0,njacks));
-   // vector<vd_t> jZq_em_chiral_eqmoms(neq_moms,vd_t(njacks)),jSigma1_em_chiral_eqmoms(neq_moms,vd_t(njacks));
-   // vector<vvd_t> jZ_chiral_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)),jZ1_chiral_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
-   // vector<vvd_t> jZ_em_chiral_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)),jZ1_em_chiral_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
+   vector<vd_t> jZq_em_chiral_eqmoms(neq_moms,vd_t(njacks)),jSigma1_em_chiral_eqmoms(neq_moms,vd_t(njacks));
+   vector<vvd_t> jZ_chiral_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)),jZ1_chiral_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
+   vector<vvd_t> jZ_em_chiral_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)),jZ1_em_chiral_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
 
-   // vector< vXd_t > jGp_pars_eqmoms(neq_moms,vXd_t(VectorXd(3),njacks)), jGs_pars_eqmoms(neq_moms,vXd_t(VectorXd(3),njacks)), \
-   //   jGp_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(3),njacks)), jGs_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(3),njacks));
-   // vector< vXd_t > jGv_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jGa_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)),\
-   //   jGt_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jGv_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)),\
-   //   jGa_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jGt_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks));
-   // vector< vXd_t > jZq_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jSigma1_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)),\
-   //   jZq_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jSigma1_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks));
-
+   vector< vXd_t > jGp_pars_eqmoms(neq_moms,vXd_t(VectorXd(3),njacks)), jGs_pars_eqmoms(neq_moms,vXd_t(VectorXd(3),njacks)), \
+     jGp_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(3),njacks)), jGs_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(3),njacks));
+   vector< vXd_t > jGv_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jGa_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)),\
+     jGt_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jGv_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)),\
+     jGa_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jGt_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks));
+   vector< vXd_t > jZq_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jSigma1_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)),\
+     jZq_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jSigma1_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks));
+   
 
    for(int tag=0;tag<neq_moms;tag++)
      for(int imom=0;imom<moms;imom++)
@@ -1919,82 +1944,86 @@ int main(int narg,char **arg)
 #pragma omp parallel for
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       {
-// 		 jGp_0_chiral_eqmoms[tag][ijack] += jGp_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
-// 		 jGa_0_chiral_eqmoms[tag][ijack] += jGa_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
-// 		 jGv_0_chiral_eqmoms[tag][ijack] += jGv_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
-// 		 jGs_0_chiral_eqmoms[tag][ijack] += jGs_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
-// 		 jGt_0_chiral_eqmoms[tag][ijack] += jGt_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jGp_0_chiral_eqmoms[tag][ijack] += jGp_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jGa_0_chiral_eqmoms[tag][ijack] += jGa_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jGv_0_chiral_eqmoms[tag][ijack] += jGv_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jGs_0_chiral_eqmoms[tag][ijack] += jGs_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jGt_0_chiral_eqmoms[tag][ijack] += jGt_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
 		 jZq_chiral_eqmoms[tag][ijack] += jZq_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
 		 jSigma1_chiral_eqmoms[tag][ijack] += jSigma1_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
 
-// 		 jGp_em_a_b_chiral_eqmoms[tag][ijack] += jGp_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
-// 		 jGa_em_a_b_chiral_eqmoms[tag][ijack] += jGa_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
-// 		 jGv_em_a_b_chiral_eqmoms[tag][ijack] += jGv_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
-// 		 jGs_em_a_b_chiral_eqmoms[tag][ijack] += jGs_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
-// 		 jGt_em_a_b_chiral_eqmoms[tag][ijack] += jGt_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
-// 		 jZq_em_chiral_eqmoms[tag][ijack] += jZq_em_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
-// 		 jSigma1_em_chiral_eqmoms[tag][ijack] += jSigma1_em_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jGp_em_a_b_chiral_eqmoms[tag][ijack] += jGp_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jGa_em_a_b_chiral_eqmoms[tag][ijack] += jGa_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jGv_em_a_b_chiral_eqmoms[tag][ijack] += jGv_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jGs_em_a_b_chiral_eqmoms[tag][ijack] += jGs_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jGt_em_a_b_chiral_eqmoms[tag][ijack] += jGt_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jZq_em_chiral_eqmoms[tag][ijack] += jZq_em_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+		 jSigma1_em_chiral_eqmoms[tag][ijack] += jSigma1_em_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
 	       }
-// #pragma omp parallel for collapse(2)
-// 	     for(int ijack=0;ijack<njacks;ijack++)
-// 	       for(int ieq=0;ieq<neq;ieq++)
-// 		 {
-// 		   jGp_equivalent_eqmoms[tag][ijack][ieq] += jGp_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
-// 		   jGs_equivalent_eqmoms[tag][ijack][ieq] += jGs_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
-// 		   jGp_subpole_eqmoms[tag][ijack][ieq] += jGp_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
-// 		   jGs_subpole_eqmoms[tag][ijack][ieq] += jGs_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+#pragma omp parallel for collapse(2)
+	     for(int ijack=0;ijack<njacks;ijack++)
+	       for(int ieq=0;ieq<neq;ieq++)
+		 {
+		   jGp_equivalent_eqmoms[tag][ijack][ieq] += jGp_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGs_equivalent_eqmoms[tag][ijack][ieq] += jGs_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGp_subpole_eqmoms[tag][ijack][ieq] += jGp_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGs_subpole_eqmoms[tag][ijack][ieq] += jGs_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
 
-// 		   jGp_em_equivalent_eqmoms[tag][ijack][ieq] += jGp_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
-// 		   jGs_em_equivalent_eqmoms[tag][ijack][ieq] += jGs_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
-// 		   jGp_em_subpole_eqmoms[tag][ijack][ieq] += jGp_em_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
-// 		   jGs_em_subpole_eqmoms[tag][ijack][ieq] += jGs_em_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGp_em_equivalent_eqmoms[tag][ijack][ieq] += jGp_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGs_em_equivalent_eqmoms[tag][ijack][ieq] += jGs_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGp_em_subpole_eqmoms[tag][ijack][ieq] += jGp_em_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGs_em_subpole_eqmoms[tag][ijack][ieq] += jGs_em_subpole_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
 
-// 		   jGv_equivalent_eqmoms[tag][ijack][ieq] += jGv_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
-// 		   jGa_equivalent_eqmoms[tag][ijack][ieq] += jGa_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
-// 		   jGt_equivalent_eqmoms[tag][ijack][ieq] += jGt_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGv_equivalent_eqmoms[tag][ijack][ieq] += jGv_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGa_equivalent_eqmoms[tag][ijack][ieq] += jGa_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGt_equivalent_eqmoms[tag][ijack][ieq] += jGt_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
 
-// 		   jGv_em_equivalent_eqmoms[tag][ijack][ieq] += jGv_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
-// 		   jGa_em_equivalent_eqmoms[tag][ijack][ieq] += jGa_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
-// 		   jGt_em_equivalent_eqmoms[tag][ijack][ieq] += jGt_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGv_em_equivalent_eqmoms[tag][ijack][ieq] += jGv_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGa_em_equivalent_eqmoms[tag][ijack][ieq] += jGa_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jGt_em_equivalent_eqmoms[tag][ijack][ieq] += jGt_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		 }
+#pragma omp parallel for collapse(2)
+	     for(int ijack=0;ijack<njacks;ijack++)
+	       for(int ieq=0;ieq<neq2;ieq++)
+		 {
+		   jZq_equivalent_eqmoms[tag][ijack][ieq] += jZq_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jSigma1_equivalent_eqmoms[tag][ijack][ieq] += jSigma1_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
 
-// 		   jZq_equivalent_eqmoms[tag][ijack][ieq] += jZq_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
-// 		   jSigma1_equivalent_eqmoms[tag][ijack][ieq] += jSigma1_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jZq_em_equivalent_eqmoms[tag][ijack][ieq] += jZq_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		   jSigma1_em_equivalent_eqmoms[tag][ijack][ieq] += jSigma1_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
+		 }
+#pragma omp parallel for collapse(2)
+	     for(int ijack=0;ijack<njacks;ijack++)
+	       for(int i=0;i<5;i++)
+		 {
+		   jZ_chiral_eqmoms[tag][ijack][i] += jZ_chiral_allmoms[imom][ijack][i] / count_tag_vector[tag];
+		   jZ1_chiral_eqmoms[tag][ijack][i] += jZ1_chiral_allmoms[imom][ijack][i] / count_tag_vector[tag];
+		   jZ_em_chiral_eqmoms[tag][ijack][i] += jZ_em_chiral_allmoms[imom][ijack][i] / count_tag_vector[tag];
+		   jZ1_em_chiral_eqmoms[tag][ijack][i] += jZ1_em_chiral_allmoms[imom][ijack][i] / count_tag_vector[tag];
+		 }
 
-// 		   jZq_em_equivalent_eqmoms[tag][ijack][ieq] += jZq_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
-// 		   jSigma1_em_equivalent_eqmoms[tag][ijack][ieq] += jSigma1_em_equivalent_allmoms[imom][ijack][ieq] / count_tag_vector[tag];
-// 		 }
-// #pragma omp parallel for collapse(2)
-// 	     for(int ijack=0;ijack<njacks;ijack++)
-// 	       for(int i=0;i<5;i++)
-// 		 {
-// 		   jZ_chiral_eqmoms[tag][ijack][i] += jZ_chiral_allmoms[imom][ijack][i] / count_tag_vector[tag];
-// 		   jZ1_chiral_eqmoms[tag][ijack][i] += jZ1_chiral_allmoms[imom][ijack][i] / count_tag_vector[tag];
-// 		   jZ_em_chiral_eqmoms[tag][ijack][i] += jZ_em_chiral_allmoms[imom][ijack][i] / count_tag_vector[tag];
-// 		   jZ1_em_chiral_eqmoms[tag][ijack][i] += jZ1_em_chiral_allmoms[imom][ijack][i] / count_tag_vector[tag];
-// 		 }
-
-// 	     for(int ijack=0;ijack<njacks;ijack++)
-// 	       for(int k=0;k<3;k++)
-// 		 {
-// 		   jGp_pars_eqmoms[tag][ijack](k) += jGp_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
-// 		   jGp_em_pars_eqmoms[tag][ijack](k) += jGp_em_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
-// 		   jGs_pars_eqmoms[tag][ijack](k) += jGs_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
-// 		   jGs_em_pars_eqmoms[tag][ijack](k) += jGs_em_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
-// 		 }
-	     // for(int ijack=0;ijack<njacks;ijack++)
-	     //   for(int k=0;k<2;k++)
-	     // 	 {
-		   // jGv_pars_eqmoms[tag][ijack](k) += jGv_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
-		   // jGv_em_pars_eqmoms[tag][ijack](k) += jGv_em_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
-		   // jGa_pars_eqmoms[tag][ijack](k) += jGa_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
-		   // jGa_em_pars_eqmoms[tag][ijack](k) += jGa_em_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
-		   // jGt_pars_eqmoms[tag][ijack](k) += jGt_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
-		   // jGt_em_pars_eqmoms[tag][ijack](k) += jGt_em_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
-		   // jZq_pars_eqmoms[tag][ijack](k) += jZq_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
-		   // jZq_em_pars_eqmoms[tag][ijack](k) += jZq_em_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
-		   // jSigma1_pars_eqmoms[tag][ijack](k) += jSigma1_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
-		   // jSigma1_em_pars_eqmoms[tag][ijack](k) += jSigma1_em_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
-		 // } 
+	     for(int ijack=0;ijack<njacks;ijack++)
+	       for(int k=0;k<3;k++)
+		 {
+		   jGp_pars_eqmoms[tag][ijack](k) += jGp_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
+		   jGp_em_pars_eqmoms[tag][ijack](k) += jGp_em_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
+		   jGs_pars_eqmoms[tag][ijack](k) += jGs_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
+		   jGs_em_pars_eqmoms[tag][ijack](k) += jGs_em_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
+		 }
+	     for(int ijack=0;ijack<njacks;ijack++)
+	       for(int k=0;k<2;k++)
+	     	 {
+		   jGv_pars_eqmoms[tag][ijack](k) += jGv_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
+		   jGv_em_pars_eqmoms[tag][ijack](k) += jGv_em_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
+		   jGa_pars_eqmoms[tag][ijack](k) += jGa_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
+		   jGa_em_pars_eqmoms[tag][ijack](k) += jGa_em_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
+		   jGt_pars_eqmoms[tag][ijack](k) += jGt_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
+		   jGt_em_pars_eqmoms[tag][ijack](k) += jGt_em_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
+		   jZq_pars_eqmoms[tag][ijack](k) += jZq_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
+		   jZq_em_pars_eqmoms[tag][ijack](k) += jZq_em_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
+		   jSigma1_pars_eqmoms[tag][ijack](k) += jSigma1_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
+		   jSigma1_em_pars_eqmoms[tag][ijack](k) += jSigma1_em_pars_allmoms[imom][ijack](k) / count_tag_vector[tag];
+		 } 
 	   }
        }
 
@@ -2002,94 +2031,84 @@ int main(int narg,char **arg)
    t_span = duration_cast<duration<double>>(t1-t0);
    cout<<"***** Computed averages over equivalent momenta in "<<t_span.count()<<" s ******"<<endl<<endl;
 
-// #define PRINT(NAME)				\
-//    print_vec(NAME##_##allmoms,"allmoms/"#NAME);	\
-//    print_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
+#define PRINT(NAME)				\
+   print_vec(NAME##_##allmoms,"allmoms/"#NAME);	\
+   print_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
    
-//    PRINT(p2_vector);
-//    PRINT(jZq);
-//    PRINT(jSigma1);
-//    PRINT(jZq_em);
-//    PRINT(jSigma1_em);
-   // PRINT(jZ);
-   // PRINT(jZ1);
-   // PRINT(jZ_em);
-   // PRINT(jZ1_em);
-   // PRINT(jZq_sub);
-   // PRINT(jSigma1_sub);
-   // PRINT(jZq_em_sub);
-   // PRINT(jSigma1_em_sub);
-   // PRINT(jZ_sub);
-   // PRINT(jZ1_sub);
-   // PRINT(jZ_em_sub);
-   // PRINT(jZ1_em_sub);
-   // PRINT(jGp_equivalent);
-   // PRINT(jGs_equivalent);
-   // PRINT(jGp_subpole);
-   // PRINT(jGs_subpole);
-   // PRINT(jGv_equivalent);
-   // PRINT(jGa_equivalent);
-   // PRINT(jGt_equivalent);
-   // PRINT(jGp_em_equivalent);
-   // PRINT(jGs_em_equivalent);
-   // PRINT(jGp_em_subpole);
-   // PRINT(jGs_em_subpole);
-   // PRINT(jGv_em_equivalent);
-   // PRINT(jGa_em_equivalent);
-   // PRINT(jGt_em_equivalent);
-   // PRINT(jZq_equivalent);
-   // PRINT(jSigma1_equivalent);
-   // PRINT(jZq_em_equivalent);
-   // PRINT(jSigma1_em_equivalent);
-   // PRINT(jGp_0_chiral);
-   // PRINT(jGa_0_chiral);
-   // PRINT(jGv_0_chiral);
-   // PRINT(jGs_0_chiral);
-   // PRINT(jGt_0_chiral);
-   // PRINT(jGp_em_a_b_chiral);
-   // PRINT(jGa_em_a_b_chiral);
-   // PRINT(jGv_em_a_b_chiral);
-   // PRINT(jGs_em_a_b_chiral);
-   // PRINT(jGt_em_a_b_chiral);
-   // PRINT(jZq_chiral);
-   // PRINT(jSigma1_chiral);
-   // PRINT(jZq_em_chiral);
-   // PRINT(jSigma1_em_chiral);
-   // PRINT(jZ_chiral);
-   // PRINT(jZ1_chiral);
-   // PRINT(jZ_em_chiral);
-   // PRINT(jZ1_em_chiral);
-   // PRINT(jGp_pars);
-   // PRINT(jGp_em_pars);
-   // PRINT(jGs_pars);
-   // PRINT(jGs_em_pars);
-   // PRINT(jGv_pars);
-   // PRINT(jGv_em_pars);
-   // PRINT(jGa_pars);
-   // PRINT(jGa_em_pars);
-   // PRINT(jGt_pars);
-   // PRINT(jGt_em_pars);
-   // PRINT(jZq_pars);
-   // PRINT(jZq_em_pars);
-   // PRINT(jSigma1_pars);
-   // PRINT(jSigma1_em_pars);
+   PRINT(p2_vector);
+   PRINT(jZq);
+   PRINT(jSigma1);
+   PRINT(jZq_em);
+   PRINT(jSigma1_em);
+   PRINT(jZ);
+   PRINT(jZ1);
+   PRINT(jZ_em);
+   PRINT(jZ1_em);
+   PRINT(jZq_sub);
+   PRINT(jSigma1_sub);
+   PRINT(jZq_em_sub);
+   PRINT(jSigma1_em_sub);
+   PRINT(jZ_sub);
+   PRINT(jZ1_sub);
+   PRINT(jZ_em_sub);
+   PRINT(jZ1_em_sub);
+   PRINT(jGp_equivalent);
+   PRINT(jGs_equivalent);
+   PRINT(jGp_subpole);
+   PRINT(jGs_subpole);
+   PRINT(jGv_equivalent);
+   PRINT(jGa_equivalent);
+   PRINT(jGt_equivalent);
+   PRINT(jGp_em_equivalent);
+   PRINT(jGs_em_equivalent);
+   PRINT(jGp_em_subpole);
+   PRINT(jGs_em_subpole);
+   PRINT(jGv_em_equivalent);
+   PRINT(jGa_em_equivalent);
+   PRINT(jGt_em_equivalent);
+   PRINT(jZq_equivalent);
+   PRINT(jSigma1_equivalent);
+   PRINT(jZq_em_equivalent);
+   PRINT(jSigma1_em_equivalent);
+   PRINT(jGp_0_chiral);
+   PRINT(jGa_0_chiral);
+   PRINT(jGv_0_chiral);
+   PRINT(jGs_0_chiral);
+   PRINT(jGt_0_chiral);
+   PRINT(jGp_em_a_b_chiral);
+   PRINT(jGa_em_a_b_chiral);
+   PRINT(jGv_em_a_b_chiral);
+   PRINT(jGs_em_a_b_chiral);
+   PRINT(jGt_em_a_b_chiral);
+   PRINT(jZq_chiral);
+   PRINT(jSigma1_chiral);
+   PRINT(jZq_em_chiral);
+   PRINT(jSigma1_em_chiral);
+   PRINT(jZ_chiral);
+   PRINT(jZ1_chiral);
+   PRINT(jZ_em_chiral);
+   PRINT(jZ1_em_chiral);
+   PRINT(jGp_pars);
+   PRINT(jGp_em_pars);
+   PRINT(jGs_pars);
+   PRINT(jGs_em_pars);
+   PRINT(jGv_pars);
+   PRINT(jGv_em_pars);
+   PRINT(jGa_pars);
+   PRINT(jGa_em_pars);
+   PRINT(jGt_pars);
+   PRINT(jGt_em_pars);
+   PRINT(jZq_pars);
+   PRINT(jZq_em_pars);
+   PRINT(jSigma1_pars);
+   PRINT(jSigma1_em_pars);
    
-   //#undef PRINT
+   #undef PRINT
 
-   // print_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
-   // print_vec(m_eff_equivalent,"eqmoms/m_eff_equivalent");
-   // print_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent");
-   // print_vec(m_eff_equivalent_Zq,"eqmoms/m_eff_equivalent");
-
- 
-   
-
-   
-
-
-
-
-
+   print_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
+   print_vec(m_eff_equivalent,"eqmoms/m_eff_equivalent");
+   print_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent");
+   print_vec(m_eff_equivalent_Zq,"eqmoms/m_eff_equivalent");
 
 
    
@@ -2102,278 +2121,278 @@ int main(int narg,char **arg)
 
 
    
-   vvvd_t Zq_allmoms=average_Zq(jZq_allmoms), Zq_eqmoms=average_Zq(jZq_eqmoms), Zq_sub_allmoms=average_Zq(jZq_sub_allmoms), Zq_sub_eqmoms=average_Zq(jZq_sub_eqmoms);
-   vvvd_t Sigma1_allmoms=average_Zq(jSigma1_allmoms), Sigma1_eqmoms=average_Zq(jSigma1_eqmoms),\
-     Sigma1_sub_allmoms=average_Zq(jSigma1_sub_allmoms), Sigma1_sub_eqmoms=average_Zq(jSigma1_sub_eqmoms);
+   // vvvd_t Zq_allmoms=average_Zq(jZq_allmoms), Zq_eqmoms=average_Zq(jZq_eqmoms), Zq_sub_allmoms=average_Zq(jZq_sub_allmoms), Zq_sub_eqmoms=average_Zq(jZq_sub_eqmoms);
+   // vvvd_t Sigma1_allmoms=average_Zq(jSigma1_allmoms), Sigma1_eqmoms=average_Zq(jSigma1_eqmoms),\
+   //   Sigma1_sub_allmoms=average_Zq(jSigma1_sub_allmoms), Sigma1_sub_eqmoms=average_Zq(jSigma1_sub_eqmoms);
 
-   vvvd_t Zq_em_allmoms=average_Zq(jZq_em_allmoms), Zq_em_eqmoms=average_Zq(jZq_em_eqmoms), Zq_em_sub_allmoms=average_Zq(jZq_em_sub_allmoms), Zq_em_sub_eqmoms=average_Zq(jZq_em_sub_eqmoms);
-   vvvd_t Sigma1_em_allmoms=average_Zq(jSigma1_em_allmoms), Sigma1_em_eqmoms=average_Zq(jSigma1_em_eqmoms),\
-     Sigma1_em_sub_allmoms=average_Zq(jSigma1_em_sub_allmoms), Sigma1_em_sub_eqmoms=average_Zq(jSigma1_em_sub_eqmoms);
+   // vvvd_t Zq_em_allmoms=average_Zq(jZq_em_allmoms), Zq_em_eqmoms=average_Zq(jZq_em_eqmoms), Zq_em_sub_allmoms=average_Zq(jZq_em_sub_allmoms), Zq_em_sub_eqmoms=average_Zq(jZq_em_sub_eqmoms);
+   // vvvd_t Sigma1_em_allmoms=average_Zq(jSigma1_em_allmoms), Sigma1_em_eqmoms=average_Zq(jSigma1_em_eqmoms),\
+   //   Sigma1_em_sub_allmoms=average_Zq(jSigma1_em_sub_allmoms), Sigma1_em_sub_eqmoms=average_Zq(jSigma1_em_sub_eqmoms);
 
-   vvd_t Zq_chiral_allmoms=average_Zq_chiral(jZq_chiral_allmoms), Zq_chiral_eqmoms=average_Zq_chiral(jZq_chiral_eqmoms);
+   // vvd_t Zq_chiral_allmoms=average_Zq_chiral(jZq_chiral_allmoms), Zq_chiral_eqmoms=average_Zq_chiral(jZq_chiral_eqmoms);
 
-   vvvvvd_t /*Z_allmoms=average_Z(jZ_allmoms),*/ Z_eqmoms=average_Z(jZ_eqmoms),/*Z1_allmoms=average_Z(jZ1_allmoms),*/ Z1_eqmoms=average_Z(jZ1_eqmoms);
-   vvvvvd_t /*Z_sub_allmoms=average_Z(jZ_sub_allmoms),*/ Z_sub_eqmoms=average_Z(jZ_sub_eqmoms),/*Z1_sub_allmoms=average_Z(jZ1_sub_allmoms),*/ Z1_sub_eqmoms=average_Z(jZ1_sub_eqmoms);
+   // vvvvvd_t /*Z_allmoms=average_Z(jZ_allmoms),*/ Z_eqmoms=average_Z(jZ_eqmoms),/*Z1_allmoms=average_Z(jZ1_allmoms),*/ Z1_eqmoms=average_Z(jZ1_eqmoms);
+   // vvvvvd_t /*Z_sub_allmoms=average_Z(jZ_sub_allmoms),*/ Z_sub_eqmoms=average_Z(jZ_sub_eqmoms),/*Z1_sub_allmoms=average_Z(jZ1_sub_allmoms),*/ Z1_sub_eqmoms=average_Z(jZ1_sub_eqmoms);
    
    
-   ////////////////
+   // ////////////////
    
-   // cout<<"_______ZQ ALLMOMS__(MO)____"<<endl;
-   // for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
-   //   cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][0]<<"\t"<<Zq_allmoms[1][imom][0]<<endl;
+   // // cout<<"_______ZQ ALLMOMS__(MO)____"<<endl;
+   // // for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
+   // //   cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][0]<<"\t"<<Zq_allmoms[1][imom][0]<<endl;
+   // // cout<<endl;
+   
+   // // cout<<"_______ZQ ALLMOMS__(M1)____"<<endl;
+   // // for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
+   // //   cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][1]<<"\t"<<Zq_allmoms[1][imom][1]<<endl;
+   // // cout<<endl;
+
+   // // cout<<"_______ZQ ALLMOMS__(M2)____"<<endl;
+   // // for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
+   // //   cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][2]<<"\t"<<Zq_allmoms[1][imom][2]<<endl;
+   // // cout<<endl;
+
+   // // cout<<"_______ZQ ALLMOMS__(M3)____"<<endl;
+   // // for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
+   // //   cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][3]<<"\t"<<Zq_allmoms[1][imom][3]<<endl;
+   // // cout<<endl;
+
+   // /////////////////
+   
+   //      cout<<"_______ZQ EQMOMS__(MO)____"<<endl;
+   // for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_eqmoms[0][imom][0]<<"\t"<<Zq_eqmoms[1][imom][0]<<endl;
    // cout<<endl;
    
-   // cout<<"_______ZQ ALLMOMS__(M1)____"<<endl;
-   // for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
-   //   cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][1]<<"\t"<<Zq_allmoms[1][imom][1]<<endl;
+   // cout<<"_______ZQ EQMOMS__(M1)____"<<endl;
+   // for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_eqmoms[0][imom][1]<<"\t"<<Zq_eqmoms[1][imom][1]<<endl;
    // cout<<endl;
 
-   // cout<<"_______ZQ ALLMOMS__(M2)____"<<endl;
-   // for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
-   //   cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][2]<<"\t"<<Zq_allmoms[1][imom][2]<<endl;
+   // cout<<"_______ZQ EQMOMS__(M2)____"<<endl;
+   // for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_eqmoms[0][imom][2]<<"\t"<<Zq_eqmoms[1][imom][2]<<endl;
    // cout<<endl;
 
-   // cout<<"_______ZQ ALLMOMS__(M3)____"<<endl;
-   // for(size_t imom=0;imom<Zq_allmoms[0].size();imom++)
-   //   cout<<p2_vector_allmoms[imom]<<"\t"<<Zq_allmoms[0][imom][3]<<"\t"<<Zq_allmoms[1][imom][3]<<endl;
+   // cout<<"_______ZQ EQMOMS__(M3)____"<<endl;
+   // for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_eqmoms[0][imom][3]<<"\t"<<Zq_eqmoms[1][imom][3]<<endl;
    // cout<<endl;
 
-   /////////////////
+   // //////////////
+
+   //    cout<<"_______ZQ EQMOMS SUB__(MO)____"<<endl;
+   // for(size_t imom=0;imom<Zq_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_sub_eqmoms[0][imom][0]<<"\t"<<Zq_sub_eqmoms[1][imom][0]<<endl;
+   // cout<<endl;
    
-        cout<<"_______ZQ EQMOMS__(MO)____"<<endl;
-   for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_eqmoms[0][imom][0]<<"\t"<<Zq_eqmoms[1][imom][0]<<endl;
-   cout<<endl;
+   // cout<<"_______ZQ EQMOMS SUB__(M1)____"<<endl;
+   // for(size_t imom=0;imom<Zq_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_sub_eqmoms[0][imom][1]<<"\t"<<Zq_sub_eqmoms[1][imom][1]<<endl;
+   // cout<<endl;
+
+   // cout<<"_______ZQ EQMOMS SUB__(M2)____"<<endl;
+   // for(size_t imom=0;imom<Zq_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_sub_eqmoms[0][imom][2]<<"\t"<<Zq_sub_eqmoms[1][imom][2]<<endl;
+   // cout<<endl;
+
+   // cout<<"_______ZQ EQMOMS SUB__(M3)____"<<endl;
+   // for(size_t imom=0;imom<Zq_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_sub_eqmoms[0][imom][3]<<"\t"<<Zq_sub_eqmoms[1][imom][3]<<endl;
+   // cout<<endl;
+
+   // /////////////////
+
+   //     cout<<"_______SIGMA1 EQMOMS__(MO)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_eqmoms[0][imom][0]<<"\t"<<Sigma1_eqmoms[1][imom][0]<<endl;
+   // cout<<endl;
    
-   cout<<"_______ZQ EQMOMS__(M1)____"<<endl;
-   for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_eqmoms[0][imom][1]<<"\t"<<Zq_eqmoms[1][imom][1]<<endl;
-   cout<<endl;
+   // cout<<"_______SIGMA1 EQMOMS__(M1)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_eqmoms[0][imom][1]<<"\t"<<Sigma1_eqmoms[1][imom][1]<<endl;
+   // cout<<endl;
 
-   cout<<"_______ZQ EQMOMS__(M2)____"<<endl;
-   for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_eqmoms[0][imom][2]<<"\t"<<Zq_eqmoms[1][imom][2]<<endl;
-   cout<<endl;
+   // cout<<"_______SIGMA1 EQMOMS__(M2)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_eqmoms[0][imom][2]<<"\t"<<Sigma1_eqmoms[1][imom][2]<<endl;
+   // cout<<endl;
 
-   cout<<"_______ZQ EQMOMS__(M3)____"<<endl;
-   for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_eqmoms[0][imom][3]<<"\t"<<Zq_eqmoms[1][imom][3]<<endl;
-   cout<<endl;
+   // cout<<"_______SIGMA1 EQMOMS__(M3)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_eqmoms[0][imom][3]<<"\t"<<Sigma1_eqmoms[1][imom][3]<<endl;
+   // cout<<endl;
 
-   //////////////
+   // //////////////
 
-      cout<<"_______ZQ EQMOMS SUB__(MO)____"<<endl;
-   for(size_t imom=0;imom<Zq_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_sub_eqmoms[0][imom][0]<<"\t"<<Zq_sub_eqmoms[1][imom][0]<<endl;
-   cout<<endl;
+   //    cout<<"_______SIGMA1 EQMOMS SUB__(MO)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub_eqmoms[0][imom][0]<<"\t"<<Sigma1_sub_eqmoms[1][imom][0]<<endl;
+   // cout<<endl;
    
-   cout<<"_______ZQ EQMOMS SUB__(M1)____"<<endl;
-   for(size_t imom=0;imom<Zq_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_sub_eqmoms[0][imom][1]<<"\t"<<Zq_sub_eqmoms[1][imom][1]<<endl;
-   cout<<endl;
+   // cout<<"_______SIGMA1 EQMOMS SUB__(M1)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub_eqmoms[0][imom][1]<<"\t"<<Sigma1_sub_eqmoms[1][imom][1]<<endl;
+   // cout<<endl;
 
-   cout<<"_______ZQ EQMOMS SUB__(M2)____"<<endl;
-   for(size_t imom=0;imom<Zq_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_sub_eqmoms[0][imom][2]<<"\t"<<Zq_sub_eqmoms[1][imom][2]<<endl;
-   cout<<endl;
+   // cout<<"_______SIGMA1 EQMOMS SUB__(M2)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub_eqmoms[0][imom][2]<<"\t"<<Sigma1_sub_eqmoms[1][imom][2]<<endl;
+   // cout<<endl;
 
-   cout<<"_______ZQ EQMOMS SUB__(M3)____"<<endl;
-   for(size_t imom=0;imom<Zq_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_sub_eqmoms[0][imom][3]<<"\t"<<Zq_sub_eqmoms[1][imom][3]<<endl;
-   cout<<endl;
+   // cout<<"_______SIGMA1 EQMOMS SUB__(M3)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub_eqmoms[0][imom][3]<<"\t"<<Sigma1_sub_eqmoms[1][imom][3]<<endl;
+   // cout<<endl;
 
-   /////////////////
+   // //////////////
 
-       cout<<"_______SIGMA1 EQMOMS__(MO)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_eqmoms[0][imom][0]<<"\t"<<Sigma1_eqmoms[1][imom][0]<<endl;
-   cout<<endl;
+   //        cout<<"_______ZQ_EM EQMOMS__(MO)____"<<endl;
+   // for(size_t imom=0;imom<Zq_em_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_eqmoms[0][imom][0]<<"\t"<<Zq_em_eqmoms[1][imom][0]<<endl;
+   // cout<<endl;
    
-   cout<<"_______SIGMA1 EQMOMS__(M1)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_eqmoms[0][imom][1]<<"\t"<<Sigma1_eqmoms[1][imom][1]<<endl;
-   cout<<endl;
+   // cout<<"_______ZQ_EM EQMOMS__(M1)____"<<endl;
+   // for(size_t imom=0;imom<Zq_em_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_eqmoms[0][imom][1]<<"\t"<<Zq_em_eqmoms[1][imom][1]<<endl;
+   // cout<<endl;
 
-   cout<<"_______SIGMA1 EQMOMS__(M2)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_eqmoms[0][imom][2]<<"\t"<<Sigma1_eqmoms[1][imom][2]<<endl;
-   cout<<endl;
+   // cout<<"_______ZQ_EM EQMOMS__(M2)____"<<endl;
+   // for(size_t imom=0;imom<Zq_em_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_eqmoms[0][imom][2]<<"\t"<<Zq_em_eqmoms[1][imom][2]<<endl;
+   // cout<<endl;
 
-   cout<<"_______SIGMA1 EQMOMS__(M3)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_eqmoms[0][imom][3]<<"\t"<<Sigma1_eqmoms[1][imom][3]<<endl;
-   cout<<endl;
+   // cout<<"_______ZQ_EM EQMOMS__(M3)____"<<endl;
+   // for(size_t imom=0;imom<Zq_em_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_eqmoms[0][imom][3]<<"\t"<<Zq_em_eqmoms[1][imom][3]<<endl;
+   // cout<<endl;
 
-   //////////////
+   // //////////////
 
-      cout<<"_______SIGMA1 EQMOMS SUB__(MO)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub_eqmoms[0][imom][0]<<"\t"<<Sigma1_sub_eqmoms[1][imom][0]<<endl;
-   cout<<endl;
+   //    cout<<"_______ZQ_EM EQMOMS SUB__(MO)____"<<endl;
+   // for(size_t imom=0;imom<Zq_em_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_sub_eqmoms[0][imom][0]<<"\t"<<Zq_em_sub_eqmoms[1][imom][0]<<endl;
+   // cout<<endl;
    
-   cout<<"_______SIGMA1 EQMOMS SUB__(M1)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub_eqmoms[0][imom][1]<<"\t"<<Sigma1_sub_eqmoms[1][imom][1]<<endl;
-   cout<<endl;
+   // cout<<"_______ZQ_EM EQMOMS SUB__(M1)____"<<endl;
+   // for(size_t imom=0;imom<Zq_em_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_sub_eqmoms[0][imom][1]<<"\t"<<Zq_em_sub_eqmoms[1][imom][1]<<endl;
+   // cout<<endl;
 
-   cout<<"_______SIGMA1 EQMOMS SUB__(M2)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub_eqmoms[0][imom][2]<<"\t"<<Sigma1_sub_eqmoms[1][imom][2]<<endl;
-   cout<<endl;
+   // cout<<"_______ZQ_EM EQMOMS SUB__(M2)____"<<endl;
+   // for(size_t imom=0;imom<Zq_em_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_sub_eqmoms[0][imom][2]<<"\t"<<Zq_em_sub_eqmoms[1][imom][2]<<endl;
+   // cout<<endl;
 
-   cout<<"_______SIGMA1 EQMOMS SUB__(M3)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub_eqmoms[0][imom][3]<<"\t"<<Sigma1_sub_eqmoms[1][imom][3]<<endl;
-   cout<<endl;
+   // cout<<"_______ZQ_EM EQMOMS SUB__(M3)____"<<endl;
+   // for(size_t imom=0;imom<Zq_em_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_sub_eqmoms[0][imom][3]<<"\t"<<Zq_em_sub_eqmoms[1][imom][3]<<endl;
+   // cout<<endl;
 
-   //////////////
+   // /////////////////
 
-          cout<<"_______ZQ_EM EQMOMS__(MO)____"<<endl;
-   for(size_t imom=0;imom<Zq_em_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_eqmoms[0][imom][0]<<"\t"<<Zq_em_eqmoms[1][imom][0]<<endl;
-   cout<<endl;
+   //     cout<<"_______SIGMA1_EM EQMOMS__(MO)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_em_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_eqmoms[0][imom][0]<<"\t"<<Sigma1_em_eqmoms[1][imom][0]<<endl;
+   // cout<<endl;
    
-   cout<<"_______ZQ_EM EQMOMS__(M1)____"<<endl;
-   for(size_t imom=0;imom<Zq_em_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_eqmoms[0][imom][1]<<"\t"<<Zq_em_eqmoms[1][imom][1]<<endl;
-   cout<<endl;
+   // cout<<"_______SIGMA1_EM EQMOMS__(M1)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_em_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_eqmoms[0][imom][1]<<"\t"<<Sigma1_em_eqmoms[1][imom][1]<<endl;
+   // cout<<endl;
 
-   cout<<"_______ZQ_EM EQMOMS__(M2)____"<<endl;
-   for(size_t imom=0;imom<Zq_em_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_eqmoms[0][imom][2]<<"\t"<<Zq_em_eqmoms[1][imom][2]<<endl;
-   cout<<endl;
+   // cout<<"_______SIGMA1_EM EQMOMS__(M2)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_em_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_eqmoms[0][imom][2]<<"\t"<<Sigma1_em_eqmoms[1][imom][2]<<endl;
+   // cout<<endl;
 
-   cout<<"_______ZQ_EM EQMOMS__(M3)____"<<endl;
-   for(size_t imom=0;imom<Zq_em_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_eqmoms[0][imom][3]<<"\t"<<Zq_em_eqmoms[1][imom][3]<<endl;
-   cout<<endl;
+   // cout<<"_______SIGMA1_EM EQMOMS__(M3)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_em_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_eqmoms[0][imom][3]<<"\t"<<Sigma1_em_eqmoms[1][imom][3]<<endl;
+   // cout<<endl;
 
-   //////////////
+   // //////////////
 
-      cout<<"_______ZQ_EM EQMOMS SUB__(MO)____"<<endl;
-   for(size_t imom=0;imom<Zq_em_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_sub_eqmoms[0][imom][0]<<"\t"<<Zq_em_sub_eqmoms[1][imom][0]<<endl;
-   cout<<endl;
+   //    cout<<"_______SIGMA1_EM EQMOMS SUB__(MO)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_em_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_sub_eqmoms[0][imom][0]<<"\t"<<Sigma1_em_sub_eqmoms[1][imom][0]<<endl;
+   // cout<<endl;
    
-   cout<<"_______ZQ_EM EQMOMS SUB__(M1)____"<<endl;
-   for(size_t imom=0;imom<Zq_em_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_sub_eqmoms[0][imom][1]<<"\t"<<Zq_em_sub_eqmoms[1][imom][1]<<endl;
-   cout<<endl;
+   // cout<<"_______SIGMA1_EM EQMOMS SUB__(M1)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_em_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_sub_eqmoms[0][imom][1]<<"\t"<<Sigma1_em_sub_eqmoms[1][imom][1]<<endl;
+   // cout<<endl;
 
-   cout<<"_______ZQ_EM EQMOMS SUB__(M2)____"<<endl;
-   for(size_t imom=0;imom<Zq_em_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_sub_eqmoms[0][imom][2]<<"\t"<<Zq_em_sub_eqmoms[1][imom][2]<<endl;
-   cout<<endl;
+   // cout<<"_______SIGMA1_EM EQMOMS SUB__(M2)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_em_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_sub_eqmoms[0][imom][2]<<"\t"<<Sigma1_em_sub_eqmoms[1][imom][2]<<endl;
+   // cout<<endl;
 
-   cout<<"_______ZQ_EM EQMOMS SUB__(M3)____"<<endl;
-   for(size_t imom=0;imom<Zq_em_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_em_sub_eqmoms[0][imom][3]<<"\t"<<Zq_em_sub_eqmoms[1][imom][3]<<endl;
-   cout<<endl;
+   // cout<<"_______SIGMA1_EM EQMOMS SUB__(M3)____"<<endl;
+   // for(size_t imom=0;imom<Sigma1_em_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_sub_eqmoms[0][imom][3]<<"\t"<<Sigma1_em_sub_eqmoms[1][imom][3]<<endl;
+   // cout<<endl;
 
-   /////////////////
+   // ////////////
 
-       cout<<"_______SIGMA1_EM EQMOMS__(MO)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_em_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_eqmoms[0][imom][0]<<"\t"<<Sigma1_em_eqmoms[1][imom][0]<<endl;
-   cout<<endl;
+   // cout<<"_______ZQ_CHIRAL EQMOMS_____"<<endl;
+   // for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_chiral_eqmoms[0][imom]<<"\t"<<Zq_chiral_eqmoms[1][imom]<<endl;
+   // cout<<endl;
+
+   // /////////////////
    
-   cout<<"_______SIGMA1_EM EQMOMS__(M1)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_em_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_eqmoms[0][imom][1]<<"\t"<<Sigma1_em_eqmoms[1][imom][1]<<endl;
-   cout<<endl;
+   //  cout<<"_______Z_S EQMOMS (M0-M0)_____"<<endl;
+   // for(size_t imom=0;imom<Z_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_eqmoms[0][imom][0][0][0]<<"\t"<<Z_eqmoms[1][imom][0][0][0]<<endl;
+   // cout<<endl;
 
-   cout<<"_______SIGMA1_EM EQMOMS__(M2)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_em_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_eqmoms[0][imom][2]<<"\t"<<Sigma1_em_eqmoms[1][imom][2]<<endl;
-   cout<<endl;
+   //  cout<<"_______Z_A EQMOMS (M0-M0)_____"<<endl;
+   // for(size_t imom=0;imom<Z_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_eqmoms[0][imom][0][0][1]<<"\t"<<Z_eqmoms[1][imom][0][0][1]<<endl;
+   // cout<<endl;
 
-   cout<<"_______SIGMA1_EM EQMOMS__(M3)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_em_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_eqmoms[0][imom][3]<<"\t"<<Sigma1_em_eqmoms[1][imom][3]<<endl;
-   cout<<endl;
+   //  cout<<"_______Z_P EQMOMS (M0-M0)_____"<<endl;
+   // for(size_t imom=0;imom<Z_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_eqmoms[0][imom][0][0][2]<<"\t"<<Z_eqmoms[1][imom][0][0][2]<<endl;
+   // cout<<endl;
 
-   //////////////
+   //  cout<<"_______Z_V EQMOMS (M0-M0)_____"<<endl;
+   // for(size_t imom=0;imom<Z_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_eqmoms[0][imom][0][0][3]<<"\t"<<Z_eqmoms[1][imom][0][0][3]<<endl;
+   // cout<<endl;
 
-      cout<<"_______SIGMA1_EM EQMOMS SUB__(MO)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_em_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_sub_eqmoms[0][imom][0]<<"\t"<<Sigma1_em_sub_eqmoms[1][imom][0]<<endl;
-   cout<<endl;
+   //   cout<<"_______Z_T EQMOMS (M0-M0)_____"<<endl;
+   // for(size_t imom=0;imom<Z_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_eqmoms[0][imom][0][0][4]<<"\t"<<Z_eqmoms[1][imom][0][0][4]<<endl;
+   // cout<<endl;
+
+   //  /////////////////
    
-   cout<<"_______SIGMA1_EM EQMOMS SUB__(M1)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_em_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_sub_eqmoms[0][imom][1]<<"\t"<<Sigma1_em_sub_eqmoms[1][imom][1]<<endl;
-   cout<<endl;
+   //  cout<<"_______Z_SUB_S EQMOMS (M0-M0)_____"<<endl;
+   // for(size_t imom=0;imom<Z_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_sub_eqmoms[0][imom][0][0][0]<<"\t"<<Z_sub_eqmoms[1][imom][0][0][0]<<endl;
+   // cout<<endl;
 
-   cout<<"_______SIGMA1_EM EQMOMS SUB__(M2)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_em_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_sub_eqmoms[0][imom][2]<<"\t"<<Sigma1_em_sub_eqmoms[1][imom][2]<<endl;
-   cout<<endl;
+   //  cout<<"_______Z_SUB_A EQMOMS (M0-M0)_____"<<endl;
+   // for(size_t imom=0;imom<Z_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_sub_eqmoms[0][imom][0][0][1]<<"\t"<<Z_sub_eqmoms[1][imom][0][0][1]<<endl;
+   // cout<<endl;
 
-   cout<<"_______SIGMA1_EM EQMOMS SUB__(M3)____"<<endl;
-   for(size_t imom=0;imom<Sigma1_em_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_em_sub_eqmoms[0][imom][3]<<"\t"<<Sigma1_em_sub_eqmoms[1][imom][3]<<endl;
-   cout<<endl;
+   //  cout<<"_______Z_SUB_P EQMOMS (M0-M0)_____"<<endl;
+   // for(size_t imom=0;imom<Z_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_sub_eqmoms[0][imom][0][0][2]<<"\t"<<Z_sub_eqmoms[1][imom][0][0][2]<<endl;
+   // cout<<endl;
 
-   ////////////
+   //  cout<<"_______Z_SUB_V EQMOMS (M0-M0)_____"<<endl;
+   // for(size_t imom=0;imom<Z_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_sub_eqmoms[0][imom][0][0][3]<<"\t"<<Z_sub_eqmoms[1][imom][0][0][3]<<endl;
+   // cout<<endl;
 
-   cout<<"_______ZQ_CHIRAL EQMOMS_____"<<endl;
-   for(size_t imom=0;imom<Zq_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Zq_chiral_eqmoms[0][imom]<<"\t"<<Zq_chiral_eqmoms[1][imom]<<endl;
-   cout<<endl;
-
-   /////////////////
-   
-    cout<<"_______Z_S EQMOMS (M0-M0)_____"<<endl;
-   for(size_t imom=0;imom<Z_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_eqmoms[0][imom][0][0][0]<<"\t"<<Z_eqmoms[1][imom][0][0][0]<<endl;
-   cout<<endl;
-
-    cout<<"_______Z_A EQMOMS (M0-M0)_____"<<endl;
-   for(size_t imom=0;imom<Z_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_eqmoms[0][imom][0][0][1]<<"\t"<<Z_eqmoms[1][imom][0][0][1]<<endl;
-   cout<<endl;
-
-    cout<<"_______Z_P EQMOMS (M0-M0)_____"<<endl;
-   for(size_t imom=0;imom<Z_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_eqmoms[0][imom][0][0][2]<<"\t"<<Z_eqmoms[1][imom][0][0][2]<<endl;
-   cout<<endl;
-
-    cout<<"_______Z_V EQMOMS (M0-M0)_____"<<endl;
-   for(size_t imom=0;imom<Z_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_eqmoms[0][imom][0][0][3]<<"\t"<<Z_eqmoms[1][imom][0][0][3]<<endl;
-   cout<<endl;
-
-     cout<<"_______Z_T EQMOMS (M0-M0)_____"<<endl;
-   for(size_t imom=0;imom<Z_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_eqmoms[0][imom][0][0][4]<<"\t"<<Z_eqmoms[1][imom][0][0][4]<<endl;
-   cout<<endl;
-
-    /////////////////
-   
-    cout<<"_______Z_SUB_S EQMOMS (M0-M0)_____"<<endl;
-   for(size_t imom=0;imom<Z_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_sub_eqmoms[0][imom][0][0][0]<<"\t"<<Z_sub_eqmoms[1][imom][0][0][0]<<endl;
-   cout<<endl;
-
-    cout<<"_______Z_SUB_A EQMOMS (M0-M0)_____"<<endl;
-   for(size_t imom=0;imom<Z_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_sub_eqmoms[0][imom][0][0][1]<<"\t"<<Z_sub_eqmoms[1][imom][0][0][1]<<endl;
-   cout<<endl;
-
-    cout<<"_______Z_SUB_P EQMOMS (M0-M0)_____"<<endl;
-   for(size_t imom=0;imom<Z_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_sub_eqmoms[0][imom][0][0][2]<<"\t"<<Z_sub_eqmoms[1][imom][0][0][2]<<endl;
-   cout<<endl;
-
-    cout<<"_______Z_SUB_V EQMOMS (M0-M0)_____"<<endl;
-   for(size_t imom=0;imom<Z_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_sub_eqmoms[0][imom][0][0][3]<<"\t"<<Z_sub_eqmoms[1][imom][0][0][3]<<endl;
-   cout<<endl;
-
-     cout<<"_______Z_SUB_T EQMOMS (M0-M0)_____"<<endl;
-   for(size_t imom=0;imom<Z_sub_eqmoms[0].size();imom++)
-     cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_sub_eqmoms[0][imom][0][0][4]<<"\t"<<Z_sub_eqmoms[1][imom][0][0][4]<<endl;
-   cout<<endl;
+   //   cout<<"_______Z_SUB_T EQMOMS (M0-M0)_____"<<endl;
+   // for(size_t imom=0;imom<Z_sub_eqmoms[0].size();imom++)
+   //   cout<<p2_vector_eqmoms[imom]<<"\t"<<Z_sub_eqmoms[0][imom][0][0][4]<<"\t"<<Z_sub_eqmoms[1][imom][0][0][4]<<endl;
+   // cout<<endl;
 
   
 
