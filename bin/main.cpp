@@ -1000,7 +1000,7 @@ int main(int narg,char **arg)
 
        t0=high_resolution_clock::now();
 
-       vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),nt),nconfs);  // S[iconf][type][mr]	     
+       vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),nt),njacks);  // S[iconf][type][mr]	     
        
        for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
 	 for(size_t ihit=0;ihit<nhits;ihit++)
@@ -1028,22 +1028,22 @@ int main(int narg,char **arg)
 		       //DEBUG
 		       
 		       //create all the propagators in a given conf and a given mom
-		       S[iconf][t][mr] = read_prop(input[icombo],path);
+		       S[ijack][t][mr] = read_prop(input[icombo],path);
 		       
-		       if(t==4) S[iconf][t][mr]*=dcompl(0.0,-1.0);
-		       if(t==5) S[iconf][t][mr]*=dcompl(1.0,0.0);
+		       if(t==4) S[ijack][t][mr]*=dcompl(0.0,-1.0);
+		       if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);
 		     }
 	     
 #pragma omp parallel for collapse (2)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mr=0;mr<nmr;mr++)
 		 {
-		   int iconf=clust_size*ijack+i_in_clust;
+		   //int iconf=clust_size*ijack+i_in_clust;
 		   
-		   jS_0[ijack][mr] += S[iconf][0][mr];
-		   jS_self_tad[ijack][mr] += S[iconf][2][mr] + S[iconf][3][mr];
-		   jS_p[ijack][mr] += S[iconf][4][mr];
-		   // jS_s[ijack][mr] += S[iconf][5][mr];
+		   jS_0[ijack][mr] += S[ijack][0][mr];
+		   jS_self_tad[ijack][mr] += S[ijack][2][mr] + S[ijack][3][mr];
+		   jS_p[ijack][mr] += S[ijack][4][mr];
+		   // jS_s[ijack][mr] += S[ijack][5][mr];
 		 }
 
 #pragma omp parallel for collapse (4)
@@ -1052,6 +1052,8 @@ int main(int narg,char **arg)
 		 for(int mr_bw=0;mr_bw<nmr;mr_bw++)
 		   for(int igam=0;igam<16;igam++)
 		     {
+		       //int iconf=clust_size*ijack+i_in_clust;
+		       
 		       jVert_0[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw], S[ijack][0][mr_bw],igam,GAMMA);
 		       jVert_11_self_tad[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][1][mr_fw],S[ijack][1][mr_bw],igam,GAMMA)\
 			 +make_vertex(S[ijack][0][mr_fw],S[ijack][2][mr_bw],igam,GAMMA)+make_vertex(S[ijack][2][mr_fw],S[ijack][0][mr_bw],igam,GAMMA)\
