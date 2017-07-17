@@ -2349,7 +2349,7 @@ int main(int narg,char **arg)
      {
        cout<<"_____"<<ijack<<"_____"<<endl;
        for(size_t imom=0;imom<jZ_eqmoms.size();imom++)
-	 cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][1][0][0][0]<<endl;
+	 cout<<p2_vector_eqmoms[imom]<<"\t"<<jZ_eqmoms[imom][ijack][0][0][0]<<endl;
        cout<<endl;
      }
    cout<<endl;
