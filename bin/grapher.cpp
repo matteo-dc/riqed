@@ -448,7 +448,7 @@ int main(int narg,char **arg)
 #undef READ
 
    read_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
-   read_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent");
+   read_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent_Zq");
    
 
    //   SECTIONS:
