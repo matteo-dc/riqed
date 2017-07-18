@@ -158,6 +158,29 @@ vvvd_t average_Zq(vector<jZ_t> jZq)
   return Zq_ave_err;
 }
 
+vvd_t average_Zq_chiral(vector<vd_t> jZq)
+{
+  int moms=jZq.size();
+  int njacks=jZq[0].size();
+
+  vd_t Zq_ave(moms), sqr_Zq_ave(moms), Zq_err(moms);
+  vvd_t Zq_ave_err(vd_t(moms),2); 
+
+  for(int imom=0;imom<moms;imom++)
+    for(int ijack=0;ijack<njacks;ijack++)
+      {
+	Zq_ave[imom]+=jZq[imom][ijack]/njacks;
+	sqr_Zq_ave[imom]+=jZq[imom][ijack]*jZq[imom][ijack]/njacks;
+      }
+  for(int imom=0;imom<moms;imom++)
+    Zq_err[imom]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[imom]-Zq_ave[imom]*Zq_ave[imom]);
+
+  Zq_ave_err[0]=Zq_ave;
+  Zq_ave_err[1]=Zq_err;
+
+  return Zq_ave_err;
+}
+
 void plot_Zq(vector<jZ_t> jZq, vector<double> p2_vector, const string &name, const string &all_or_eq_moms)
 {
   vvvd_t Zq = average_Zq(jZq);  //Zq[ave/err][imom][nm]
@@ -173,13 +196,12 @@ void plot_Zq(vector<jZ_t> jZq, vector<double> p2_vector, const string &name, con
   ofstream scriptfile("plot_"+name+"_"+all_or_eq_moms+"_script.txt");
 
   scriptfile<<"set autoscale xy"<<endl;
-  scriptfile<<"set xlabel 'p_{tilde}^2'"<<endl;
+  scriptfile<<"set xlabel '$\\tilde{p}^2$'"<<endl;
   scriptfile<<"set ylabel 'Z_q'"<<endl;
-  scriptfile<<"plot 'plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue'"<<endl;
   scriptfile<<"set terminal png size 1200,800 enhanced font 'Helvetica,20'"<<endl;
   if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".png'"<<endl;
   else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".png'"<<endl;
-  scriptfile<<"replot"<<endl;
+  scriptfile<<"plot 'plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue'"<<endl;
 
   scriptfile.close();
 
@@ -200,7 +222,7 @@ int main(int narg,char **arg)
   }
 
   
-  int nconfs=stoi(arg[2]); 
+ //  int nconfs=stoi(arg[2]); 
   int njacks=stoi(arg[3]);
   // int clust_size=nconfs/njacks;
   // int conf_id[nconfs];
@@ -260,7 +282,7 @@ int main(int narg,char **arg)
   vector< vXd_t > jZq_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jSigma1_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)),\
     jZq_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jSigma1_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)); 
 
-  vd_t m_eff_equivalent(0.0,neq);
+  vd_t m_eff_equivalent(1.0,neq);
   vd_t m_eff_equivalent_Zq(0.0,neq2);
 
   vector<double> p2_vector_eqmoms(neq_moms);
@@ -306,81 +328,81 @@ int main(int narg,char **arg)
     jZq_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jSigma1_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)); 
 
 #define READ(NAME)				\
-   read_vec(NAME##_##allmoms,"allmoms/"#NAME);	\
-   read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
+  read_vec(NAME##_##allmoms,"allmoms/"#NAME);	\
+  read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
    
-   READ(p2_vector);
-   READ(jZq);
-   // READ(jSigma1);
-   // READ(jZq_em);
-   // READ(jSigma1_em);
-   // READ(jZ);
-   // READ(jZ1);
-   // READ(jZ_em);
-   // READ(jZ1_em);
-   // READ(jZq_sub);
-   // READ(jSigma1_sub);
-   // READ(jZq_em_sub);
-   // READ(jSigma1_em_sub);
-   // READ(jZ_sub);
-   // READ(jZ1_sub);
-   // READ(jZ_em_sub);
-   // READ(jZ1_em_sub);
-   // READ(jGp_equivalent);
-   // READ(jGs_equivalent);
-   // READ(jGp_subpole);
-   // READ(jGs_subpole);
-   // READ(jGv_equivalent);
-   // READ(jGa_equivalent);
-   // READ(jGt_equivalent);
-   // READ(jGp_em_equivalent);
-   // READ(jGs_em_equivalent);
-   // READ(jGp_em_subpole);
-   // READ(jGs_em_subpole);
-   // READ(jGv_em_equivalent);
-   // READ(jGa_em_equivalent);
-   // READ(jGt_em_equivalent);
-   // READ(jZq_equivalent);
-   // READ(jSigma1_equivalent);
-   // READ(jZq_em_equivalent);
-   // READ(jSigma1_em_equivalent);
-   // READ(jGp_0_chiral);
-   // READ(jGa_0_chiral);
-   // READ(jGv_0_chiral);
-   // READ(jGs_0_chiral);
-   // READ(jGt_0_chiral);
-   // READ(jGp_em_a_b_chiral);
-   // READ(jGa_em_a_b_chiral);
-   // READ(jGv_em_a_b_chiral);
-   // READ(jGs_em_a_b_chiral);
-   // READ(jGt_em_a_b_chiral);
-   // READ(jZq_chiral);
-   // READ(jSigma1_chiral);
-   // READ(jZq_em_chiral);
-   // READ(jSigma1_em_chiral);
-   // READ(jZ_chiral);
-   // READ(jZ1_chiral);
-   // READ(jZ_em_chiral);
-   // READ(jZ1_em_chiral);
-   // READ(jGp_pars);
-   // READ(jGp_em_pars);
-   // READ(jGs_pars);
-   // READ(jGs_em_pars);
-   // READ(jGv_pars);
-   // READ(jGv_em_pars);
-   // READ(jGa_pars);
-   // READ(jGa_em_pars);
-   // READ(jGt_pars);
-   // READ(jGt_em_pars);
-   // READ(jZq_pars);
-   // READ(jZq_em_pars);
-   // READ(jSigma1_pars);
-   // READ(jSigma1_em_pars);
+  READ(p2_vector);
+  READ(jZq);
+  READ(jSigma1);
+  READ(jZq_em);
+  READ(jSigma1_em);
+  READ(jZ);
+  READ(jZ1);
+  READ(jZ_em);
+  READ(jZ1_em);
+  READ(jZq_sub);
+  READ(jSigma1_sub);
+  READ(jZq_em_sub);
+  READ(jSigma1_em_sub);
+  READ(jZ_sub);
+  READ(jZ1_sub);
+  READ(jZ_em_sub);
+  READ(jZ1_em_sub);
+  READ(jGp_equivalent);
+  READ(jGs_equivalent);
+  READ(jGp_subpole);
+  READ(jGs_subpole);
+  READ(jGv_equivalent);
+  READ(jGa_equivalent);
+  READ(jGt_equivalent);
+  READ(jGp_em_equivalent);
+  READ(jGs_em_equivalent);
+  READ(jGp_em_subpole);
+  READ(jGs_em_subpole);
+  READ(jGv_em_equivalent);
+  READ(jGa_em_equivalent);
+  READ(jGt_em_equivalent);
+  READ(jZq_equivalent);
+  READ(jSigma1_equivalent);
+  READ(jZq_em_equivalent);
+  READ(jSigma1_em_equivalent);
+  READ(jGp_0_chiral);
+  READ(jGa_0_chiral);
+  READ(jGv_0_chiral);
+  READ(jGs_0_chiral);
+  READ(jGt_0_chiral);
+  READ(jGp_em_a_b_chiral);
+  READ(jGa_em_a_b_chiral);
+  READ(jGv_em_a_b_chiral);
+  READ(jGs_em_a_b_chiral);
+  READ(jGt_em_a_b_chiral);
+  READ(jZq_chiral);
+  READ(jSigma1_chiral);
+  READ(jZq_em_chiral);
+  READ(jSigma1_em_chiral);
+  READ(jZ_chiral);
+  READ(jZ1_chiral);
+  READ(jZ_em_chiral);
+  READ(jZ1_em_chiral);
+  READ(jGp_pars);
+  READ(jGp_em_pars);
+  READ(jGs_pars);
+  READ(jGs_em_pars);
+  READ(jGv_pars);
+  READ(jGv_em_pars);
+  READ(jGa_pars);
+  READ(jGa_em_pars);
+  READ(jGt_pars);
+  READ(jGt_em_pars);
+  READ(jZq_pars);
+  READ(jZq_em_pars);
+  READ(jSigma1_pars);
+  READ(jSigma1_em_pars);
    
 #undef READ
 
-   // read_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
-   // read_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent");
+   read_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
+   read_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent");
    
 
    //   SECTIONS:
@@ -399,28 +421,33 @@ int main(int narg,char **arg)
    // plot_Zq (Zq, Sigma1, ...)  
    // plot_Z
 
-   plot_Zq(jZq_allmoms,p2_vector_allmoms,"jZq","allmoms");
+   // plot_Zq(jZq_allmoms,p2_vector_allmoms,"jZq","allmoms");
    plot_Zq(jZq_eqmoms,p2_vector_eqmoms,"jZq","eqmoms");
 
-
+   // vvd_t Zq_eq = average_Zq_chiral(jZq_chiral_eqmoms); 
   
-   for(int ieq=0;ieq<neq_moms;ieq++)
-     {
-       cout<<p2_vector_eqmoms[ieq]<<"\t"<<jZq_eqmoms[ieq][0][0]<<endl;
-     }
+   // for(int ieq=0;ieq<neq;ieq++)
+   //   {
+   //     cout<<m_eff_equivalent[ieq]<<"\t"<<jGp_equivalent_eqmoms[0][0][ieq]<<endl;
+   //   }
 
    
   return 0;
 }
-    
 
 
-// vvd_t average_Z(vector<jZbil_t> jZ)
-// {
-//   int moms=jZq.size();
-//   int njacks=jZq[0].size();
-//   int nmr=jZq[0][0].size();
+ // vvvd_t Zq_allmoms=average_Zq(jZq_allmoms), Zq_eqmoms=average_Zq(jZq_eqmoms), Zq_sub_allmoms=average_Zq(jZq_sub_allmoms), Zq_sub_eqmoms=average_Zq(jZq_sub_eqmoms);
+   // vvvd_t Sigma1_allmoms=average_Zq(jSigma1_allmoms), Sigma1_eqmoms=average_Zq(jSigma1_eqmoms),\
+   //   Sigma1_sub_allmoms=average_Zq(jSigma1_sub_allmoms), Sigma1_sub_eqmoms=average_Zq(jSigma1_sub_eqmoms);
 
-//   vvvd_t Zq_ave(vvd_tnmr,vd_t(nmr),moms), sqr_Zq_ave(vd_t(nmr),moms), Zq_err(vd_t(nmr),moms);
-  
-// }
+   // vvvd_t Zq_em_allmoms=average_Zq(jZq_em_allmoms), Zq_em_eqmoms=average_Zq(jZq_em_eqmoms), Zq_em_sub_allmoms=average_Zq(jZq_em_sub_allmoms), Zq_em_sub_eqmoms=average_Zq(jZq_em_sub_eqmoms);
+   // vvvd_t Sigma1_em_allmoms=average_Zq(jSigma1_em_allmoms), Sigma1_em_eqmoms=average_Zq(jSigma1_em_eqmoms),\
+   //   Sigma1_em_sub_allmoms=average_Zq(jSigma1_em_sub_allmoms), Sigma1_em_sub_eqmoms=average_Zq(jSigma1_em_sub_eqmoms);
+
+   // vvd_t Zq_chiral_allmoms=average_Zq_chiral(jZq_chiral_allmoms), Zq_chiral_eqmoms=average_Zq_chiral(jZq_chiral_eqmoms);
+
+   // vvvvvd_t /*Z_allmoms=average_Z(jZ_allmoms),*/ Z_eqmoms=average_Z(jZ_eqmoms),/*Z1_allmoms=average_Z(jZ1_allmoms),*/ Z1_eqmoms=average_Z(jZ1_eqmoms);
+   // vvvvvd_t /*Z_sub_allmoms=average_Z(jZ_sub_allmoms),*/ Z_sub_eqmoms=average_Z(jZ_sub_eqmoms),/*Z1_sub_allmoms=average_Z(jZ1_sub_allmoms),*/ Z1_sub_eqmoms=average_Z(jZ1_sub_eqmoms);
+   
+ 
+
