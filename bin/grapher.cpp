@@ -181,7 +181,7 @@ vvd_t average_Zq_chiral(vector<vd_t> jZq)
   return Zq_ave_err;
 }
 
-void plot_Zq_sub(vector<jZ_t> jZq, vector<double> p2_vector, const string &name, const string &all_or_eq_moms)
+void plot_Zq_sub(vector<jZ_t> jZq, vector<jZ_t> jZq_sub, vector<double> p2_vector, const string &name, const string &all_or_eq_moms)
 {
   vvvd_t Zq = average_Zq(jZq);  //Zq[ave/err][imom][nm]
   vvvd_t Zq_sub = average_Zq(jZq_sub);  //Zq[ave/err][imom][nm]
@@ -431,7 +431,7 @@ int main(int narg,char **arg)
    // plot_Z
 
    // plot_Zq(jZq_allmoms,p2_vector_allmoms,"jZq","allmoms");
-   plot_Zq(jZq_eqmoms,p2_vector_eqmoms,"jZq","eqmoms");
+   plot_Zq(jZq_eqmoms,jZq_sub_eqmoms,p2_vector_eqmoms,"jZq","eqmoms");
 
    // vvd_t Zq_eq = average_Zq_chiral(jZq_chiral_eqmoms); 
   
