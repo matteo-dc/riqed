@@ -209,8 +209,8 @@ void plot_Zq_sub(vector<jZ_t> jZq, vector<jZ_t> jZq_sub, vector<double> p2_vecto
   scriptfile<<"set xlabel '$\\tilde{p}^2$'"<<endl;
   scriptfile<<"set ylabel '$Z_q$'"<<endl;
   // scriptfile<<"set yrange [0.7:0.9]"<<endl;
-  scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_Q$'"<<endl;
-  scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'red' title '$Z_Q$ corrected'"<<endl;
+  scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$'"<<endl;
+  scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'red' title '$Z_q$ corrected'"<<endl;
   scriptfile<<"set terminal epslatex color"<<endl;
   if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<"_sub.tex'"<<endl;
   else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<"_sub.tex'"<<endl;
@@ -222,6 +222,39 @@ void plot_Zq_sub(vector<jZ_t> jZq, vector<jZ_t> jZq_sub, vector<double> p2_vecto
   
   system(command.c_str());
   
+}
+
+void plot_Zq_chiral_extrapolation(vector<vvd_t> jZq_equivalent,  vd_t m_eff_equivalent_Zq, const string &name, const string &all_or_eq_moms)
+{
+  vvvd_t Zq_equivalent = average_Zq(jZq_equivalent);  //Zq[ave/err][imom][ieq]
+  
+  ofstream datafile1("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data.txt");
+
+  for(size_t ieq=0;ieq<m_eff_equivalent_Zq.size();ieq++)
+    {
+      datafile1<<m_eff_equivalent_Zq[ieq]*m_eff_equivalent_Zq[ieq]<<"\t"<<Zq_equivalent[0][4][ieq]<<"\t"<<Zq_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+    }
+  datafile1.close();
+  
+  
+  ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
+
+  scriptfile<<"set autoscale xy"<<endl;
+  scriptfile<<"set xlabel '$M_{eff}^2$'"<<endl;
+  scriptfile<<"set ylabel '$Z_Q$'"<<endl;
+  // scriptfile<<"set yrange [0.7:0.9]"<<endl;
+  scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$'"<<endl;
+  scriptfile<<"set terminal epslatex color"<<endl;
+  if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
+  else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
+  scriptfile<<"replot"<<endl;
+  
+  scriptfile.close();
+
+  string command="gnuplot plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt";
+  
+  system(command.c_str());
+
 }
 
 ///*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*///
@@ -434,6 +467,8 @@ int main(int narg,char **arg)
    // plot_Zq (Zq, Sigma1, ...)  
    // plot_Z
 
+   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq with subtraction ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+   
    plot_Zq_sub(jZq_eqmoms,jZq_sub_eqmoms,p2_vector_eqmoms,"Zq","eqmoms");
    plot_Zq_sub(jSigma1_eqmoms,jSigma1_sub_eqmoms,p2_vector_eqmoms,"Sigma1","eqmoms");
 
@@ -455,9 +490,17 @@ int main(int narg,char **arg)
    plot_Zq_sub(jZq_with_em_eqmoms,jZq_sub_with_em_eqmoms,p2_vector_eqmoms,"Zq_with_em","eqmoms");
    plot_Zq_sub(jSigma1_with_em_eqmoms,jSigma1_sub_with_em_eqmoms,p2_vector_eqmoms,"Sigma1_with_em","eqmoms");
 
+   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq chiral extrapolation  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-   // plot_Zq_sub(jSigma1_eqmoms,jSigma1_sub_eqmoms,p2_vector_eqmoms,"jZq","eqmoms");
+   plot_Zq_chiral_extrapolation(jZq_equivalent_eqmoms,m_eff_equivalent_Zq,"Zq_chiral_extrapolation","eqmoms");
+   plot_Zq_chiral_extrapolation(jSigma1_equivalent_eqmoms,m_eff_equivalent_Zq,"Zq_chiral_extrapolation","eqmoms");
+   
 
+
+   
+   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+     
    // vvd_t Zq_eq = average_Zq_chiral(jZq_chiral_eqmoms); 
   
    // for(int ieq=0;ieq<neq;ieq++)
