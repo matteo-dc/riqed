@@ -441,7 +441,7 @@ int main(int narg,char **arg)
    vector<jZ_t> jZq_sub_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_sub_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
 
 #pragma omp parallel for collapse(3)
-   for(int imom=0;imom<moms;imom++)
+   for(int imom=0;imom<neq_moms;imom++)
      for(int mr=0;mr<nmr;mr++)
        for(int ijack=0;ijack<njacks;ijack++)
 	 {
