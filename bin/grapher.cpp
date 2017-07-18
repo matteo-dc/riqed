@@ -181,27 +181,36 @@ vvd_t average_Zq_chiral(vector<vd_t> jZq)
   return Zq_ave_err;
 }
 
-void plot_Zq(vector<jZ_t> jZq, vector<double> p2_vector, const string &name, const string &all_or_eq_moms)
+void plot_Zq_sub(vector<jZ_t> jZq, vector<double> p2_vector, const string &name, const string &all_or_eq_moms)
 {
   vvvd_t Zq = average_Zq(jZq);  //Zq[ave/err][imom][nm]
+  vvvd_t Zq_sub = average_Zq(jZq_sub);  //Zq[ave/err][imom][nm]
   
-  ofstream datafile("plot_"+name+"_"+all_or_eq_moms+"_data.txt");
+  ofstream datafile1("plot_"+name+"_"+all_or_eq_moms+"_data.txt");
+  ofstream datafile2("plot_"+name+"_sub_"+all_or_eq_moms+"_data.txt");
 
   for(size_t imom=0;imom<p2_vector.size();imom++)
     {
-      datafile<<p2_vector[imom]<<"\t"<<Zq[0][imom][0]<<"\t"<<Zq[1][imom][0]<<endl;  //print only for M0R0
+      datafile1<<p2_vector[imom]<<"\t"<<Zq[0][imom][0]<<"\t"<<Zq[1][imom][0]<<endl;  //print only for M0R0
     }
-  datafile.close();
+  datafile1.close();
+   for(size_t imom=0;imom<p2_vector.size();imom++)
+    {
+      datafile2<<p2_vector[imom]<<"\t"<<Zq_sub[0][imom][0]<<"\t"<<Zq_sub[1][imom][0]<<endl;  //print only for M0R0
+    }
+  datafile2.close();
   
   ofstream scriptfile("plot_"+name+"_"+all_or_eq_moms+"_script.txt");
 
   scriptfile<<"set autoscale xy"<<endl;
   scriptfile<<"set xlabel '$\\tilde{p}^2$'"<<endl;
-  scriptfile<<"set ylabel 'Z_q'"<<endl;
+  scriptfile<<"set ylabel '$Z_q$'"<<endl;
+  scriptfile<<"set yrange [0.7:0.9]"<<endl;
   scriptfile<<"set terminal epslatex color"<<endl;
   if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
   else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
-  scriptfile<<"plot 'plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue'"<<endl;
+  scriptfile<<"plot 'plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_Q$'"<<endl;
+  scriptfile<<"replot 'plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'red' title '$Z_Q corrected$'"<<endl;
 
   scriptfile.close();
 
