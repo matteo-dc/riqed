@@ -189,8 +189,8 @@ void plot_Zq_sub(vector<jZ_t> jZq, vector<jZ_t> jZq_sub, vector<double> p2_vecto
   vvvd_t Zq = average_Zq(jZq);  //Zq[ave/err][imom][nm]
   vvvd_t Zq_sub = average_Zq(jZq_sub);  //Zq[ave/err][imom][nm]
   
-  ofstream datafile1("plot_"+name+"_"+all_or_eq_moms+"_data.txt");
-  ofstream datafile2("plot_"+name+"_sub_"+all_or_eq_moms+"_data.txt");
+  ofstream datafile1("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data.txt");
+  ofstream datafile2("plot_data_and_script/plot_"+name+"_sub_"+all_or_eq_moms+"_data.txt");
 
   for(size_t imom=0;imom<p2_vector.size();imom++)
     {
@@ -203,7 +203,7 @@ void plot_Zq_sub(vector<jZ_t> jZq, vector<jZ_t> jZq_sub, vector<double> p2_vecto
     }
   datafile2.close();
   
-  ofstream scriptfile("plot_"+name+"_"+all_or_eq_moms+"_script.txt");
+  ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
 
   scriptfile<<"set autoscale xy"<<endl;
   scriptfile<<"set xlabel '$\\tilde{p}^2$'"<<endl;
