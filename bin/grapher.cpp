@@ -449,6 +449,10 @@ int main(int narg,char **arg)
 
    read_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
    read_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent_Zq");
+
+   for(int i=0;i<neq;i++) cout<<m_eff_equivalent[ieq]<<endl;
+   cout<<endl;
+   for(int i=0;i<neq2;i++) cout<<m_eff_equivalent_Zq[ieq]<<endl;
    
 
    //   SECTIONS:
