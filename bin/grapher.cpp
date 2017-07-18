@@ -184,6 +184,30 @@ vvd_t average_Zq_chiral(vector<vd_t> jZq)
   return Zq_ave_err;
 }
 
+vvd_t average_pars(vXd_t jZq_pars)
+{
+  int njacks=jZq_pars.size();
+  int pars=jZq_pars[0].size();
+
+  vd_t Zq_par_ave(pars), sqr_Zq_par_ave(pars), Zq_par_err(pars);
+  vvd_t Zq_par_ave_err(vd_t(pars),2); 
+
+#pragma omp parallel for
+  for(int ipar=0;ipar<pars;ipar++)
+    for(int ijack=0;ijack<njacks;ijack++)
+      {
+	Zq_par_ave[ipar]+=jZq_pars[ijack](ipar)/njacks;
+	sqr_Zq_par_ave[ipar]+=jZq_pars[ijack](ipar)*jZq_pars[ijack](ipar)/njacks;
+      }
+  for(int ipar=0;ipar<pars;ipar++)
+    Zq_par_err[ipar]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_par_ave[ipar]-Zq_par_ave[ipar]*Zq_par_ave[ipar]);
+
+  Zq_par_ave_err[0]=Zq_par_ave;
+  Zq_par_ave_err[1]=Zq_par_err;
+
+  return Zq_par_ave_err;
+}
+
 void plot_Zq_sub(vector<jZ_t> jZq, vector<jZ_t> jZq_sub, vector<double> p2_vector, const string &name, const string &all_or_eq_moms)
 {
   vvvd_t Zq = average_Zq(jZq);  //Zq[ave/err][imom][nm]
@@ -224,18 +248,21 @@ void plot_Zq_sub(vector<jZ_t> jZq, vector<jZ_t> jZq_sub, vector<double> p2_vecto
   
 }
 
-void plot_Zq_chiral_extrapolation(vector<vvd_t> jZq_equivalent,  vd_t m_eff_equivalent_Zq, const string &name, const string &all_or_eq_moms)
+void plot_Zq_chiral_extrapolation(vector<vvd_t> jZq_equivalent, vvd_t Zq_pars, vd_t m_eff_equivalent_Zq, const string &name, const string &all_or_eq_moms)
 {
   vvvd_t Zq_equivalent = average_Zq(jZq_equivalent);  //Zq[ave/err][imom][ieq]
   
   ofstream datafile1("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data.txt");
 
+  datafile1<<0<<"\t"<<Zq_pars[0][0]<<"\t"<<Zq_pars[1][0]<<endl;
   for(size_t ieq=0;ieq<m_eff_equivalent_Zq.size();ieq++)
     {
       datafile1<<m_eff_equivalent_Zq[ieq]*m_eff_equivalent_Zq[ieq]<<"\t"<<Zq_equivalent[0][4][ieq]<<"\t"<<Zq_equivalent[1][4][ieq]<<endl;  //print only for p2~1
     }
   datafile1.close();
   
+  double A=Zq_pars[0][0];
+  double B=Zq_pars[0][1];
   
   ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
 
@@ -244,6 +271,9 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> jZq_equivalent,  vd_t m_eff_equi
   scriptfile<<"set ylabel '$Z_Q$'"<<endl;
   // scriptfile<<"set yrange [0.7:0.9]"<<endl;
   scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$'"<<endl;
+  scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 7 lc rgb 'black' title '$Z_q$ chiral extr.'"<<endl;
+  scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
+  scriptfile<<"replot f(x) notitle"<<endl;
   scriptfile<<"set terminal epslatex color"<<endl;
   if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
   else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
@@ -448,29 +478,10 @@ int main(int narg,char **arg)
 #undef READ
 
    read_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
-   read_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent_Zq");
+   read_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent_Zq");  
 
-   for(int i=0;i<neq;i++) cout<<m_eff_equivalent[i]<<endl;
-   cout<<endl;
-   for(int i=0;i<neq2;i++) cout<<m_eff_equivalent_Zq[i]<<endl;
+
    
-
-   //   SECTIONS:
-   // plot;
-   // plot_with_em;
-   // plot_sub;
-   // plot_sub_with_em;
-   // plot_Goldstone;
-   // plot_chiral_extrapolation;
-   // plot_Golstone_with_em;
-   // plot_chiral_extrapolation_with_em;
-   // plot_chiral;
-   // plot_chiral_with_em;
-
-   //   SUBSECTIONS:
-   // plot_Zq (Zq, Sigma1, ...)  
-   // plot_Z
-
    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq with subtraction ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
    
    plot_Zq_sub(jZq_eqmoms,jZq_sub_eqmoms,p2_vector_eqmoms,"Zq","eqmoms");
@@ -496,8 +507,13 @@ int main(int narg,char **arg)
 
    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq chiral extrapolation  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-   plot_Zq_chiral_extrapolation(jZq_equivalent_eqmoms,m_eff_equivalent_Zq,"Zq_chiral_extrapolation","eqmoms");
-   plot_Zq_chiral_extrapolation(jSigma1_equivalent_eqmoms,m_eff_equivalent_Zq,"Sigma1_chiral_extrapolation","eqmoms");
+
+   vvd_t Zq_pars=average_pars(jZq_pars_eqmoms[4]); //p2~1
+   vvd_t Sigma1_pars=average_pars(jSigma1_pars_eqmoms[4]); //p2~1
+   
+   plot_Zq_chiral_extrapolation(jZq_equivalent_eqmoms,Zq_pars,m_eff_equivalent_Zq,"Zq_chiral_extrapolation","eqmoms");
+   plot_Zq_chiral_extrapolation(jSigma1_equivalent_eqmoms,Sigma1_pars,m_eff_equivalent_Zq,"Sigma1_chiral_extrapolation","eqmoms");
+   
    
 
 
