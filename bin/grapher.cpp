@@ -435,7 +435,7 @@ int main(int narg,char **arg)
    // plot_Z
 
    plot_Zq_sub(jZq_eqmoms,jZq_sub_eqmoms,p2_vector_eqmoms,"Zq","eqmoms");
-   plot_Zq_sub(jSigma1_eqmoms,jSigma1_sub_eqmoms,p2_vector_eqmoms,"Zq","eqmoms");
+   plot_Zq_sub(jSigma1_eqmoms,jSigma1_sub_eqmoms,p2_vector_eqmoms,"Sigma1","eqmoms");
 
    vector<jZ_t> jZq_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
    vector<jZ_t> jZq_sub_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_sub_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
