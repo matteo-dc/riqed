@@ -198,7 +198,7 @@ void plot_Zq(vector<jZ_t> jZq, vector<double> p2_vector, const string &name, con
   scriptfile<<"set autoscale xy"<<endl;
   scriptfile<<"set xlabel '$\\tilde{p}^2$'"<<endl;
   scriptfile<<"set ylabel 'Z_q'"<<endl;
-  scriptfile<<"set terminal latex"<<endl;
+  scriptfile<<"set terminal epslatex color"<<endl;
   if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
   else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
   scriptfile<<"plot 'plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue'"<<endl;
