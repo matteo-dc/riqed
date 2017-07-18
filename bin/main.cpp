@@ -1325,6 +1325,8 @@ int main(int narg,char **arg)
        vvd_t jGs_em_equivalent(vd_t(0.0,neq),njacks);       
        
        int ieq=0;
+
+       //  m_eff_equivalent=0.0;
        
        for(int mA=0; mA<nm; mA++)
        	 for(int mB=mA; mB<nm; mB++)	     
@@ -1332,7 +1334,7 @@ int main(int narg,char **arg)
        	     {
        	       ieq=-(mA*mA/2)+mB+mA*(nm-0.5);
 		   
-       	       m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
+       	       if(imom==0) m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
 	       
        	       for(int ijack=0;ijack<njacks;ijack++) jGp_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][2]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
        	       for(int ijack=0;ijack<njacks;ijack++) jGs_equivalent[ijack][ieq] += (jG_0_sub[ijack][r+nr*mA][r+nr*mB][0]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
@@ -1577,7 +1579,7 @@ int main(int narg,char **arg)
        vvd_t jZq_equivalent(vd_t(0.0,neq2),njacks), jSigma1_equivalent(vd_t(0.0,neq2),njacks);
        vvd_t jZq_em_equivalent(vd_t(0.0,neq2),njacks), jSigma1_em_equivalent(vd_t(0.0,neq2),njacks);       
        
-       vd_t m_eff_equivalent_Zq(0.0,neq2);
+       // m_eff_equivalent_Zq=0.0;
        ieq=0;
 
        //#pragma omp parallel for collapse(2)
@@ -1585,7 +1587,7 @@ int main(int narg,char **arg)
 	 for(int r=0; r<nr; r++)
 	   {
 	     ieq=m;
-	     m_eff_equivalent_Zq[ieq] += eff_mass[r+nr*m][r+nr*m]/nr; //charged channel
+	     if(imom==0)  m_eff_equivalent_Zq[ieq] += eff_mass[r+nr*m][r+nr*m]/nr; //charged channel
 	     //LO
 	     for(int ijack=0;ijack<njacks;ijack++) jZq_equivalent[ijack][ieq] += jZq_sub[ijack][r+nr*m]/nr;
 	     for(int ijack=0;ijack<njacks;ijack++) jSigma1_equivalent[ijack][ieq] += jSigma1_sub[ijack][r+nr*m]/nr;
