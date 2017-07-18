@@ -141,17 +141,19 @@ vvvd_t average_Zq(vector<jZ_t> jZq)
   vvd_t Zq_ave(vd_t(nmr),moms), sqr_Zq_ave(vd_t(nmr),moms), Zq_err(vd_t(nmr),moms);
   vvvd_t Zq_ave_err(vvd_t(vd_t(nmr),moms),2); 
 
+#pragma omp parallel for collapse(2)
   for(int imom=0;imom<moms;imom++)
-    for(int ijack=0;ijack<njacks;ijack++)
-      for(int mr=0;mr<nmr;mr++)
-      {
-	Zq_ave[imom][mr]+=jZq[imom][ijack][mr]/njacks;
-	sqr_Zq_ave[imom][mr]+=jZq[imom][ijack][mr]*jZq[imom][ijack][mr]/njacks;
-      }
+    for(int mr=0;mr<nmr;mr++)
+      for(int ijack=0;ijack<njacks;ijack++)
+	{
+	  Zq_ave[imom][mr]+=jZq[imom][ijack][mr]/njacks;
+	  sqr_Zq_ave[imom][mr]+=jZq[imom][ijack][mr]*jZq[imom][ijack][mr]/njacks;
+	}
+#pragma omp parallel for collapse(2)
   for(int imom=0;imom<moms;imom++)
     for(int mr=0;mr<nmr;mr++)
       Zq_err[imom][mr]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[imom][mr]-Zq_ave[imom][mr]*Zq_ave[imom][mr]);
-
+  
   Zq_ave_err[0]=Zq_ave;
   Zq_ave_err[1]=Zq_err;
 
@@ -166,6 +168,7 @@ vvd_t average_Zq_chiral(vector<vd_t> jZq)
   vd_t Zq_ave(moms), sqr_Zq_ave(moms), Zq_err(moms);
   vvd_t Zq_ave_err(vd_t(moms),2); 
 
+#pragma omp parallel for
   for(int imom=0;imom<moms;imom++)
     for(int ijack=0;ijack<njacks;ijack++)
       {
@@ -207,10 +210,10 @@ void plot_Zq_sub(vector<jZ_t> jZq, vector<jZ_t> jZq_sub, vector<double> p2_vecto
   scriptfile<<"set ylabel '$Z_q$'"<<endl;
   scriptfile<<"set yrange [0.7:0.9]"<<endl;
   scriptfile<<"plot 'plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_Q$'"<<endl;
-  scriptfile<<"replot 'plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'red' title '$Z_Q corrected$'"<<endl;
+  scriptfile<<"replot 'plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'red' title '$Z_Q$ corrected'"<<endl;
   scriptfile<<"set terminal epslatex color"<<endl;
-  if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
-  else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
+  if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<"_sub.tex'"<<endl;
+  else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<"_sub.tex'"<<endl;
   scriptfile<<"replot"<<endl;
   
   scriptfile.close();
@@ -431,8 +434,29 @@ int main(int narg,char **arg)
    // plot_Zq (Zq, Sigma1, ...)  
    // plot_Z
 
-   // plot_Zq(jZq_allmoms,p2_vector_allmoms,"jZq","allmoms");
-   plot_Zq_sub(jZq_eqmoms,jZq_sub_eqmoms,p2_vector_eqmoms,"jZq","eqmoms");
+   plot_Zq_sub(jZq_eqmoms,jZq_sub_eqmoms,p2_vector_eqmoms,"Zq","eqmoms");
+   plot_Zq_sub(jSigma1_eqmoms,jSigma1_sub_eqmoms,p2_vector_eqmoms,"Zq","eqmoms");
+
+   vector<jZ_t> jZq_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
+   vector<jZ_t> jZq_sub_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_sub_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
+
+#pragma omp parallel for collapse(3)
+   for(int imom=0;imom<moms;imom++)
+     for(int mr=0;mr<nmr;mr++)
+       for(int ijack=0;ijack<njacks;ijack++)
+	 {
+	   jZq_with_em_eqmoms[imom][ijack][mr]=jZq_eqmoms[imom][ijack][mr]+jZq_em_eqmoms[imom][ijack][mr];
+	   jSigma1_with_em_eqmoms[imom][ijack][mr]=jSigma1_eqmoms[imom][ijack][mr]+jSigma1_em_eqmoms[imom][ijack][mr];
+	   jZq_sub_with_em_eqmoms[imom][ijack][mr]=jZq_sub_eqmoms[imom][ijack][mr]+jZq_em_sub_eqmoms[imom][ijack][mr];
+	   jSigma1_sub_with_em_eqmoms[imom][ijack][mr]=jSigma1_sub_eqmoms[imom][ijack][mr]+jSigma1_em_sub_eqmoms[imom][ijack][mr];
+	 }
+
+   
+   plot_Zq_sub(jZq_with_em_eqmoms,jZq_sub_with_em_eqmoms,p2_vector_eqmoms,"Zq_with_em","eqmoms");
+   plot_Zq_sub(jSigma1_with_em_eqmoms,jSigma1_sub_with_em_eqmoms,p2_vector_eqmoms,"Sigma1_with_em","eqmoms");
+
+
+   // plot_Zq_sub(jSigma1_eqmoms,jSigma1_sub_eqmoms,p2_vector_eqmoms,"jZq","eqmoms");
 
    // vvd_t Zq_eq = average_Zq_chiral(jZq_chiral_eqmoms); 
   
