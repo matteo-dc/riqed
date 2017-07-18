@@ -188,11 +188,9 @@ void plot_Zq_sub(vector<jZ_t> jZq, vector<jZ_t> jZq_sub, vector<double> p2_vecto
 {
   vvvd_t Zq = average_Zq(jZq);  //Zq[ave/err][imom][nm]
   vvvd_t Zq_sub = average_Zq(jZq_sub);  //Zq[ave/err][imom][nm]
-
-  system("cd plot_data_and_script");
   
-  ofstream datafile1("plot_"+name+"_"+all_or_eq_moms+"_data.txt");
-  ofstream datafile2("plot_"+name+"_sub_"+all_or_eq_moms+"_data.txt");
+  ofstream datafile1("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data.txt");
+  ofstream datafile2("plot_data_and_script/plot_"+name+"_sub_"+all_or_eq_moms+"_data.txt");
 
   for(size_t imom=0;imom<p2_vector.size();imom++)
     {
@@ -205,14 +203,14 @@ void plot_Zq_sub(vector<jZ_t> jZq, vector<jZ_t> jZq_sub, vector<double> p2_vecto
     }
   datafile2.close();
   
-  ofstream scriptfile("plot_"+name+"_"+all_or_eq_moms+"_script.txt");
+  ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
 
   scriptfile<<"set autoscale xy"<<endl;
   scriptfile<<"set xlabel '$\\tilde{p}^2$'"<<endl;
   scriptfile<<"set ylabel '$Z_q$'"<<endl;
   scriptfile<<"set yrange [0.7:0.9]"<<endl;
-  scriptfile<<"plot 'plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_Q$'"<<endl;
-  scriptfile<<"replot 'plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'red' title '$Z_Q$ corrected'"<<endl;
+  scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_Q$'"<<endl;
+  scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'red' title '$Z_Q$ corrected'"<<endl;
   scriptfile<<"set terminal epslatex color"<<endl;
   if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<"_sub.tex'"<<endl;
   else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<"_sub.tex'"<<endl;
@@ -223,7 +221,6 @@ void plot_Zq_sub(vector<jZ_t> jZq, vector<jZ_t> jZq_sub, vector<double> p2_vecto
   string command="gnuplot plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt";
   
   system(command.c_str());
-  system("cd -");
   
 }
 
