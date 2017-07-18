@@ -218,7 +218,7 @@ void plot_Zq_sub(vector<jZ_t> jZq, vector<jZ_t> jZq_sub, vector<double> p2_vecto
   
   scriptfile.close();
 
-  string command="gnuplot plot_"+name+"_"+all_or_eq_moms+"_script.txt";
+  string command="gnuplot plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt";
   
   system(command.c_str());
   
