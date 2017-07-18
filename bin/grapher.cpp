@@ -493,7 +493,7 @@ int main(int narg,char **arg)
    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq chiral extrapolation  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
    plot_Zq_chiral_extrapolation(jZq_equivalent_eqmoms,m_eff_equivalent_Zq,"Zq_chiral_extrapolation","eqmoms");
-   plot_Zq_chiral_extrapolation(jSigma1_equivalent_eqmoms,m_eff_equivalent_Zq,"Zq_chiral_extrapolation","eqmoms");
+   plot_Zq_chiral_extrapolation(jSigma1_equivalent_eqmoms,m_eff_equivalent_Zq,"Sigma1_chiral_extrapolation","eqmoms");
    
 
 
