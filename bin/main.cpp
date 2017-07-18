@@ -1911,7 +1911,7 @@ int main(int narg,char **arg)
        {
 	 if(tag_vector[imom]==tag)
 	   {    
-#pragma omp parallel for collapse(2) //shared(jZq_eqmoms,jSigma1_eqmoms,jZq_em_eqmoms,jSigma1_em_eqmoms,jZq_sub_eqmoms,jSigma1_sub_eqmoms,jZq_em_sub_eqmoms,jSigma1_em_sub_eqmoms)
+#pragma omp parallel for collapse(2)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mr=0;mr<nmr;mr++)
 		 {
