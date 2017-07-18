@@ -138,8 +138,8 @@ vvvd_t average_Zq(vector<jZ_t> jZq)
   int njacks=jZq[0].size();
   int nmr=jZq[0][0].size();
 
-  vvd_t Zq_ave(vd_t(nmr),moms), sqr_Zq_ave(vd_t(nmr),moms), Zq_err(vd_t(nmr),moms);
-  vvvd_t Zq_ave_err(vvd_t(vd_t(nmr),moms),2); 
+  vvd_t Zq_ave(vd_t(0.0,nmr),moms), sqr_Zq_ave(vd_t(0.0,nmr),moms), Zq_err(vd_t(0.0,nmr),moms);
+  vvvd_t Zq_ave_err(vvd_t(vd_t(0.0,nmr),moms),2); 
 
 #pragma omp parallel for collapse(2)
   for(int imom=0;imom<moms;imom++)
@@ -165,8 +165,8 @@ vvd_t average_Zq_chiral(vector<vd_t> jZq)
   int moms=jZq.size();
   int njacks=jZq[0].size();
 
-  vd_t Zq_ave(moms), sqr_Zq_ave(moms), Zq_err(moms);
-  vvd_t Zq_ave_err(vd_t(moms),2); 
+  vd_t Zq_ave(0.0,moms), sqr_Zq_ave(0.0,moms), Zq_err(0.0,moms);
+  vvd_t Zq_ave_err(vd_t(0.0,moms),2); 
 
 #pragma omp parallel for
   for(int imom=0;imom<moms;imom++)
@@ -189,8 +189,8 @@ vvd_t average_pars(vXd_t jZq_pars)
   int njacks=jZq_pars.size();
   int pars=jZq_pars[0].size();
 
-  vd_t Zq_par_ave(pars), sqr_Zq_par_ave(pars), Zq_par_err(pars);
-  vvd_t Zq_par_ave_err(vd_t(pars),2); 
+  vd_t Zq_par_ave(0.0,pars), sqr_Zq_par_ave(0.0,pars), Zq_par_err(0.0,pars);
+  vvd_t Zq_par_ave_err(vd_t(0.0,pars),2); 
 
 #pragma omp parallel for
   for(int ipar=0;ipar<pars;ipar++)
