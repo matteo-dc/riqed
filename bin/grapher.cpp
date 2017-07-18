@@ -431,7 +431,7 @@ int main(int narg,char **arg)
    // plot_Z
 
    // plot_Zq(jZq_allmoms,p2_vector_allmoms,"jZq","allmoms");
-   plot_Zq(jZq_eqmoms,jZq_sub_eqmoms,p2_vector_eqmoms,"jZq","eqmoms");
+   plot_Zq_sub(jZq_eqmoms,jZq_sub_eqmoms,p2_vector_eqmoms,"jZq","eqmoms");
 
    // vvd_t Zq_eq = average_Zq_chiral(jZq_chiral_eqmoms); 
   
