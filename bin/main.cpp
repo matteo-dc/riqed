@@ -2107,8 +2107,8 @@ int main(int narg,char **arg)
 
    print_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
    print_vec(m_eff_equivalent,"eqmoms/m_eff_equivalent");
-   print_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent");
-   print_vec(m_eff_equivalent_Zq,"eqmoms/m_eff_equivalent");
+   print_vec(m_eff_equivalent_Zq,"allmoms/m_eff_equivalent_Zq");
+   print_vec(m_eff_equivalent_Zq,"eqmoms/m_eff_equivalent_Zq");
 
 
    
