@@ -392,7 +392,7 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
 
   for(int i=0;i<5;i++)
     {
-      datafile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+all_or_eq_moms+"_data.txt");
+      datafile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_data.txt");
       datafile_sub[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_sub_"+all_or_eq_moms+"_data.txt");
     }
   
