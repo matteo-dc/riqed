@@ -408,29 +408,32 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
       datafile_sub[i].close();
     }
     
-  ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
+  vector<ofstream> scriptfile(5);
 
-  scriptfile<<"set autoscale xy"<<endl;
-  scriptfile<<"set xlabel '$\\tilde{p}^2$'"<<endl;
-  // scriptfile<<"set yrange [0.7:0.9]"<<endl;
+ 
   for(int i=0;i<5;i++)
     {
-      scriptfile<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
-      scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_"<<bil[i]<<"$'"<<endl;
-      scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'red' title '$Z_"<<bil[i]<<"$ corrected'"<<endl;
-      scriptfile<<"set terminal epslatex color"<<endl;
-      if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<"_"<<bil[i]<<"_sub.tex'"<<endl;
-      else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<"_"<<bil[i]<<"_sub.tex'"<<endl;
-      scriptfile<<"replot"<<endl;
-      scriptfile<<"set term unknown"<<endl;
+      scriptfile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_script.txt");
+      scriptfile[i]<<"set autoscale xy"<<endl;
+      scriptfile[i]<<"set xlabel '$\\tilde{p}^2$'"<<endl;
+      // scriptfile[i]<<"set yrange [0.7:0.9]"<<endl;
+      scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
+      scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_"<<bil[i]<<"$'"<<endl;
+      scriptfile[i]<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'red' title '$Z_"<<bil[i]<<"$ corrected'"<<endl;
+      scriptfile[i]<<"set terminal epslatex color"<<endl;
+      if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile[i]<<"set output 'allmoms/"<<name<<"_"<<bil[i]<<"_sub.tex'"<<endl;
+      else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile[i]<<"set output 'eqmoms/"<<name<<"_"<<bil[i]<<"_sub.tex'"<<endl;
+      scriptfile[i]<<"replot"<<endl;
+      scriptfile[i]<<"set term unknown"<<endl;
+
+      scriptfile[i].close();
+
+      string command="gnuplot plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_script.txt";
+
+      system(command.c_str());
     }
   
-  scriptfile.close();
 
-  string command="gnuplot plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt";
-  
-  system(command.c_str());
-  
 }
 
 ///*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*///
