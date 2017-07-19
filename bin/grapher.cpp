@@ -279,10 +279,13 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> jZq_equivalent, vector<vXd_t> jZ
   
   ofstream datafile1("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data.txt");
 
-  datafile1<<0<<"\t"<<Zq_equivalent[0][4][0]<<"\t"<<Zq_equivalent[1][4][0]<<endl;
-  for(size_t ieq=1;ieq<neq+1;ieq++)
+  //datafile1<<0<<"\t"<<Zq_pars[0][0]<<"\t"<<Zq_pars[1][0]<<endl;
+  for(size_t ieq=0;ieq<m_eff_equivalent_Zq.size()+1;ieq++)
     {
-      datafile1<<m_eff_equivalent_Zq[ieq]*m_eff_equivalent_Zq[ieq]<<"\t"<<Zq_equivalent[0][4][ieq]<<"\t"<<Zq_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+      if(ieq==0)
+	datafile1<<0<<"\t"<<Zq_equivalent[0][4][ieq]<<"\t"<<Zq_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+      else
+	datafile1<<m_eff_equivalent_Zq[ieq-1]*m_eff_equivalent_Zq[ieq-1]<<"\t"<<Zq_equivalent[0][4][ieq]<<"\t"<<Zq_equivalent[1][4][ieq]<<endl;  //print only for p2~1
     }
   datafile1.close();
   
