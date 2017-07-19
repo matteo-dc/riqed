@@ -51,6 +51,7 @@ using vvd_t=valarray< valarray<double> > ;
 //valarray of valarray of valarray of complex double
 using vvvd_t=valarray< valarray< valarray<double> > >;
 using vvvvd_t=valarray<vvvd_t>;
+using vvvvvd_t=valarray<vvvvd_t>;
 
 //valarray of complex double
 using vdcompl_t=valarray<dcompl>;
@@ -213,6 +214,39 @@ vvvd_t average_pars(vector<vXd_t> &jZq_pars)
   
 }
 
+vvvvvd_t average_Z(vector<jZbil_t> &jZ)
+{
+  int moms=jZ.size();
+  int njacks=jZ[0].size();
+  int nmr=jZ[0][0].size();
+  int nbil=5;
+
+  vvvvd_t Z_ave(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),moms), sqr_Z_ave(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),moms), Z_err(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),moms);
+  vvvvvd_t Z_ave_err(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),moms),2); 
+
+#pragma omp parallel for collapse(4)
+  for(int imom=0;imom<moms;imom++)
+    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+      for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+	for(int k=0;k<nbil;k++)
+	  for(int ijack=0;ijack<njacks;ijack++)
+	    {
+	      Z_ave[imom][mr_fw][mr_bw][k]+=jZ[imom][ijack][mr_fw][mr_bw][k]/njacks;
+	      sqr_Z_ave[imom][mr_fw][mr_bw][k]+=jZ[imom][ijack][mr_fw][mr_bw][k]*jZ[imom][ijack][mr_fw][mr_bw][k]/njacks;
+	    }
+#pragma omp parallel for collapse(4)
+  for(int imom=0;imom<moms;imom++)
+    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+      for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+	for(int k=0;k<nbil;k++)
+	  Z_err[imom][mr_fw][mr_bw][k]=sqrt((double)(njacks-1))*sqrt(sqr_Z_ave[imom][mr_fw][mr_bw][k]-Z_ave[imom][mr_fw][mr_bw][k]*Z_ave[imom][mr_fw][mr_bw][k]);
+  
+  Z_ave_err[0]=Z_ave;
+  Z_ave_err[1]=Z_err;
+
+  return Z_ave_err;
+}
+
 void plot_Zq_sub(vector<jZ_t> &jZq, vector<jZ_t> &jZq_sub, vector<double> &p2_vector, const string &name, const string &all_or_eq_moms)
 {
   vvvd_t Zq = average_Zq(jZq);  //Zq[ave/err][imom][nm]
@@ -338,6 +372,58 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
   if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
   else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
   scriptfile<<"replot"<<endl;
+  
+  scriptfile.close();
+
+  string command="gnuplot plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt";
+  
+  system(command.c_str());
+  
+}
+
+void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2_vector, const string &name, const string &all_or_eq_moms)
+{
+  vvvvvd_t Z = average_Z(jZ);  //Z[ave/err][imom][mr][mr2][k]
+  vvvvvd_t Z_sub = average_Z(jZ_sub);  //Z[ave/err][imom][mr][mr2][k]
+
+  vector<string> bil={"S","A","P","V","T"};
+  
+  vector<ofstream> datafile(5), datafile_sub(5);
+
+  for(int i=0;i<5;i++)
+    {
+      datafile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+all_or_eq_moms+"_data.txt");
+      datafile_sub[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_sub_"+all_or_eq_moms+"_data.txt");
+    }
+  
+   for(int i=0;i<5;i++)
+    for(size_t imom=0;imom<p2_vector.size();imom++)
+      {
+	datafile[i]<<p2_vector[imom]<<"\t"<<Z[0][imom][0][0][i]<<"\t"<<Z[1][imom][0][0][i]<<endl;  //print only for M0R0-M0R0
+	datafile_sub[i]<<p2_vector[imom]<<"\t"<<Z_sub[0][imom][0][0][i]<<"\t"<<Z_sub[1][imom][0][0][i]<<endl; 
+      }
+  for(int i=0;i<5;i++)
+    {
+      datafile[i].close();
+      datafile_sub[i].close();
+    }
+    
+  ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
+
+  scriptfile<<"set autoscale xy"<<endl;
+  scriptfile<<"set xlabel '$\\tilde{p}^2$'"<<endl;
+  // scriptfile<<"set yrange [0.7:0.9]"<<endl;
+  for(int i=0;i<5;i++)
+    {
+      scriptfile<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
+      scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_"<<bil[i]<<"$'"<<endl;
+      scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'red' title '$Z_"<<bil[i]<<"$ corrected'"<<endl;
+      scriptfile<<"set terminal epslatex color"<<endl;
+      if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<"_"<<bil[i]<<"_sub.tex'"<<endl;
+      else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<"_"<<bil[i]<<"_sub.tex'"<<endl;
+      scriptfile<<"replot"<<endl;
+      scriptfile<<"set term x11"<<endl;
+    }
   
   scriptfile.close();
 
@@ -570,10 +656,41 @@ int main(int narg,char **arg)
    plot_Zq_chiral_extrapolation(jZq_equivalent_eqmoms,jZq_pars_eqmoms,m_eff_equivalent_Zq,"Zq_chiral_extrapolation","eqmoms");
    plot_Zq_chiral_extrapolation(jSigma1_equivalent_eqmoms,jSigma1_pars_eqmoms,m_eff_equivalent_Zq,"Sigma1_chiral_extrapolation","eqmoms"); 
    
-   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
   
    plot_Zq_chiral(jZq_chiral_eqmoms,p2_vector_eqmoms,"Zq_chiral","eqmoms");
    plot_Zq_chiral(jSigma1_chiral_eqmoms,p2_vector_eqmoms,"Sigma1_chiral","eqmoms");
+
+   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z with subtraction ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+   plot_Z_sub(jZ_eqmoms,jZ_sub_eqmoms,p2_vector_eqmoms,"Z","eqmoms");
+   plot_Z_sub(jZ1_eqmoms,jZ1_sub_eqmoms,p2_vector_eqmoms,"Z1","eqmoms");
+
+   vector<jZbil_t> jZ_with_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_with_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks));
+   vector<jZbil_t> jZ_sub_with_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_sub_with_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks));
+ 
+#pragma omp parallel for collapse(5)
+   for(int imom=0;imom<neq_moms;imom++)
+     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+       for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+	 for(int ijack=0;ijack<njacks;ijack++)
+	   for(int k=0;k<5;k++)
+	     {
+	       jZ_with_em_eqmoms[imom][ijack][mr_fw][mr_bw][k]=jZ_eqmoms[imom][ijack][mr_fw][mr_bw][k]+jZ_em_eqmoms[imom][ijack][mr_fw][mr_bw][k];
+	       jZ1_with_em_eqmoms[imom][ijack][mr_fw][mr_bw][k]=jZ1_eqmoms[imom][ijack][mr_fw][mr_bw][k]+jZ1_em_eqmoms[imom][ijack][mr_fw][mr_bw][k];
+	       jZ_sub_with_em_eqmoms[imom][ijack][mr_fw][mr_bw][k]=jZ_sub_eqmoms[imom][ijack][mr_fw][mr_bw][k]+jZ_em_sub_eqmoms[imom][ijack][mr_fw][mr_bw][k];
+	       jZ1_sub_with_em_eqmoms[imom][ijack][mr_fw][mr_bw][k]=jZ1_sub_eqmoms[imom][ijack][mr_fw][mr_bw][k]+jZ1_em_sub_eqmoms[imom][ijack][mr_fw][mr_bw][k];
+	     }
+
+   plot_Z_sub(jZ_with_em_eqmoms,jZ_sub_with_em_eqmoms,p2_vector_eqmoms,"Z_with_em","eqmoms");
+   plot_Z_sub(jZ1_with_em_eqmoms,jZ1_sub_with_em_eqmoms,p2_vector_eqmoms,"Z1_with_em","eqmoms");
+
+
+
+
+
+
+   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
    
   return 0;
 }
