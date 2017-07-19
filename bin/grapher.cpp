@@ -514,9 +514,12 @@ int main(int narg,char **arg)
    plot_Zq_chiral_extrapolation(jZq_equivalent_eqmoms,Zq_pars,m_eff_equivalent_Zq,"Zq_chiral_extrapolation","eqmoms");
    plot_Zq_chiral_extrapolation(jSigma1_equivalent_eqmoms,Sigma1_pars,m_eff_equivalent_Zq,"Sigma1_chiral_extrapolation","eqmoms");
    
+   for(int ijack=0;ijack<njacks;ijack++)
+     for(int ipar=0;ipar<2;ipar++)
+       {
+	 cout<<"ijack "<<ijack<<" ipar "<<ipar<<"  "<<jZq_pars_eqmoms[4][ijack](ipar)<<endl;
+       }
    
-
-
    
    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
