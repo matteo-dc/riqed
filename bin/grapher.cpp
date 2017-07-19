@@ -422,7 +422,7 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
       if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<"_"<<bil[i]<<"_sub.tex'"<<endl;
       else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<"_"<<bil[i]<<"_sub.tex'"<<endl;
       scriptfile<<"replot"<<endl;
-      scriptfile<<"set term x11"<<endl;
+      scriptfile<<"set term unknown"<<endl;
     }
   
   scriptfile.close();
