@@ -184,28 +184,33 @@ vvd_t average_Zq_chiral(vector<vd_t> jZq)
   return Zq_ave_err;
 }
 
-vvd_t average_pars(vXd_t jZq_pars)
+vvvd_t average_pars(vector<vXd_t> jZq_pars)
 {
-  int njacks=jZq_pars.size();
-  int pars=jZq_pars[0].size();
+  int moms=jZq_pars.size();
+  int njacks=jZq_pars[0].size();
+  int pars=jZq_pars[0][0].size();
 
-  vd_t Zq_par_ave(0.0,pars), sqr_Zq_par_ave(0.0,pars), Zq_par_err(0.0,pars);
-  vvd_t Zq_par_ave_err(vd_t(0.0,pars),2); 
+  vvd_t Zq_par_ave(vd_t(0.0,pars),moms), sqr_Zq_par_ave(vd_t(0.0,pars),moms), Zq_par_err(vd_t(0.0,pars),moms);
+  vvvd_t Zq_par_ave_err(vvd_t(vd_t(0.0,pars),moms),2); 
 
-#pragma omp parallel for
-  for(int ipar=0;ipar<pars;ipar++)
-    for(int ijack=0;ijack<njacks;ijack++)
-      {
-	Zq_par_ave[ipar]+=jZq_pars[ijack](ipar)/njacks;
-	sqr_Zq_par_ave[ipar]+=jZq_pars[ijack](ipar)*jZq_pars[ijack](ipar)/njacks;
-      }
-  for(int ipar=0;ipar<pars;ipar++)
-    Zq_par_err[ipar]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_par_ave[ipar]-Zq_par_ave[ipar]*Zq_par_ave[ipar]);
-
+#pragma omp parallel for collapse(2)
+  for(int imom=0;imom<moms;imom++)
+    for(int ipar=0;ipar<pars;ipar++)
+      for(int ijack=0;ijack<njacks;ijack++)
+	{
+	  Zq_par_ave[imom][ipar]+=jZq_pars[imom][ijack](ipar)/njacks;
+	  sqr_Zq_par_ave[imom][ipar]+=jZq_pars[imom][ijack](ipar)*jZq_pars[imom][ijack](ipar)/njacks;
+	}
+#pragma omp parallel for collapse(2)
+  for(int imom=0;imom<moms;imom++)
+    for(int ipar=0;ipar<pars;ipar++)
+      Zq_par_err[imom][ipar]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_par_ave[imom][ipar]-Zq_par_ave[imom][ipar]*Zq_par_ave[imom][ipar]);
+  
   Zq_par_ave_err[0]=Zq_par_ave;
   Zq_par_ave_err[1]=Zq_par_err;
-
+  
   return Zq_par_ave_err;
+  
 }
 
 void plot_Zq_sub(vector<jZ_t> jZq, vector<jZ_t> jZq_sub, vector<double> p2_vector, const string &name, const string &all_or_eq_moms)
@@ -248,21 +253,41 @@ void plot_Zq_sub(vector<jZ_t> jZq, vector<jZ_t> jZq_sub, vector<double> p2_vecto
   
 }
 
-void plot_Zq_chiral_extrapolation(vector<vvd_t> jZq_equivalent, vvd_t Zq_pars, vd_t m_eff_equivalent_Zq, const string &name, const string &all_or_eq_moms)
+void plot_Zq_chiral_extrapolation(vector<vvd_t> jZq_equivalent, vector<vXd_t> jZq_pars, vd_t m_eff_equivalent_Zq, const string &name, const string &all_or_eq_moms)
 {
-  vvvd_t Zq_equivalent = average_Zq(jZq_equivalent);  //Zq[ave/err][imom][ieq]
+  int moms=jZq_equivalent.size();
+  int njacks=jZq_equivalent[0].size();
+  int neq=jZq_equivalent[0][0].size();
+  vector<vvd_t> jZq_equivalent_and_chiral_extr(moms,vvd_t(vd_t(neq+1),njacks));
+
+#pragma omp parallel for collapse(2)
+  for(int imom=0;imom<moms;imom++)
+    for(int ijack=0;ijack<njacks;ijack++)
+      {
+	jZq_equivalent_and_chiral_extr[imom][ijack][0]=jZq_pars[imom][ijack](0);
+      }
+#pragma omp parallel for collapse(3)
+  for(int imom=0;imom<moms;imom++)
+    for(int ijack=0;ijack<njacks;ijack++)
+      for(int ieq=0;ieq<neq;ieq++)
+	{
+	  jZq_equivalent_and_chiral_extr[imom][ijack][ieq+1]=jZq_equivalent[imom][ijack][ieq];
+	}
+  
+  vvvd_t Zq_equivalent = average_Zq(jZq_equivalent_and_chiral_extr);  //Zq[ave/err][imom][ieq]
+  vvvd_t Zq_pars=average_pars(jZq_pars); 
   
   ofstream datafile1("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data.txt");
 
-  datafile1<<0<<"\t"<<Zq_pars[0][0]<<"\t"<<Zq_pars[1][0]<<endl;
+  // datafile1<<0<<"\t"<<Zq_pars[0][0]<<"\t"<<Zq_pars[1][0]<<endl;
   for(size_t ieq=0;ieq<m_eff_equivalent_Zq.size();ieq++)
     {
       datafile1<<m_eff_equivalent_Zq[ieq]*m_eff_equivalent_Zq[ieq]<<"\t"<<Zq_equivalent[0][4][ieq]<<"\t"<<Zq_equivalent[1][4][ieq]<<endl;  //print only for p2~1
     }
   datafile1.close();
   
-  double A=Zq_pars[0][0];
-  double B=Zq_pars[0][1];
+  double A=Zq_pars[0][4][0];
+  double B=Zq_pars[0][4][1];
   
   ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
 
@@ -508,11 +533,11 @@ int main(int narg,char **arg)
    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq chiral extrapolation  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
-   vvd_t Zq_pars=average_pars(jZq_pars_eqmoms[4]); //p2~1
-   vvd_t Sigma1_pars=average_pars(jSigma1_pars_eqmoms[4]); //p2~1
+   // vvd_t Zq_pars=average_pars(jZq_pars_eqmoms[4]); //p2~1
+   //vvd_t Sigma1_pars=average_pars(jSigma1_pars_eqmoms[4]); //p2~1
    
-   plot_Zq_chiral_extrapolation(jZq_equivalent_eqmoms,Zq_pars,m_eff_equivalent_Zq,"Zq_chiral_extrapolation","eqmoms");
-   plot_Zq_chiral_extrapolation(jSigma1_equivalent_eqmoms,Sigma1_pars,m_eff_equivalent_Zq,"Sigma1_chiral_extrapolation","eqmoms");
+   plot_Zq_chiral_extrapolation(jZq_equivalent_eqmoms,jZq_pars_eqmoms,m_eff_equivalent_Zq,"Zq_chiral_extrapolation","eqmoms");
+   plot_Zq_chiral_extrapolation(jSigma1_equivalent_eqmoms,jSigma1_pars_eqmoms,m_eff_equivalent_Zq,"Sigma1_chiral_extrapolation","eqmoms");
    
    for(int ijack=0;ijack<njacks;ijack++)
      for(int ipar=0;ipar<2;ipar++)
