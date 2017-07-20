@@ -1501,7 +1501,7 @@ int main(int narg,char **arg)
        vd_t Gv_ave(0.0,neq),sqr_Gv_ave(0.0,neq),Gv_err(0.0,neq),Ga_ave(0.0,neq),sqr_Ga_ave(0.0,neq),Ga_err(0.0,neq),Gt_ave(0.0,neq),sqr_Gt_ave(0.0,neq),Gt_err(0.0,neq);
        vd_t Gv_em_ave(0.0,neq),sqr_Gv_em_ave(0.0,neq),Gv_em_err(0.0,neq),Ga_em_ave(0.0,neq),sqr_Ga_em_ave(0.0,neq),Ga_em_err(0.0,neq),Gt_em_ave(0.0,neq),sqr_Gt_em_ave(0.0,neq),Gt_em_err(0.0,neq);
        
-#pragma omp parallel for// collapse(2)
+#pragma omp parallel for
        for(int i=0;i<neq;i++)
 	 for(int ijack=0;ijack<njacks;ijack++)
 	   {
@@ -1523,13 +1523,13 @@ int main(int narg,char **arg)
 	     Gt_em_ave[i]+=jGt_em_equivalent[ijack][i]/njacks;
 	     sqr_Gt_em_ave[i]+=jGt_em_equivalent[ijack][i]*jGt_em_equivalent[ijack][i]/njacks;
 	   }
-
+#pragma omp parallel for
        for(int i=0;i<neq;i++)
 	 {  
 	   Gv_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_ave[i]-Gv_ave[i]*Gv_ave[i]);
 	   Ga_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_ave[i]-Ga_ave[i]*Ga_ave[i]);      
 	   Gt_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_ave[i]-Gt_ave[i]*Gt_ave[i]);
-
+	   
 	   Gv_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_em_ave[i]-Gv_em_ave[i]*Gv_em_ave[i]);
 	   Ga_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_em_ave[i]-Ga_em_ave[i]*Ga_em_ave[i]);      
 	   Gt_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_em_ave[i]-Gt_em_ave[i]*Gt_em_ave[i]);      
@@ -1542,8 +1542,8 @@ int main(int narg,char **arg)
        vvd_t coord_linear(vd_t(0.0,neq),2);
        for(int i=0; i<neq; i++)
 	 {
-	   coord[0][i] = 1.0;  //costante
-	   coord[1][i] = m_eff_equivalent[i]*m_eff_equivalent[i];   //M^2 
+	   coord_linear[0][i] = 1.0;  //costante
+	   coord_linear[1][i] = m_eff_equivalent[i]*m_eff_equivalent[i];   //M^2 
 	 }
 
        vXd_t jGv_pars=fit_par_jackknife(coord_linear,Gv_err,jGv_equivalent,t_min,t_max);  //jGp_pars[ijack][par]
