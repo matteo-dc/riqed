@@ -474,7 +474,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
       datafile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_data.txt");
   
       for(size_t imom=0;imom<p2_vector.size();imom++)
-	datafile[i]<<p2_vector[imom]<<"\t"<<Z_chiral[0][imom][i]<<"\t"<<Z_chiral[1][imom][i]<<endl;  //print only for M0R0-M0R0
+	datafile[i]<<p2_vector[imom]<<"\t"<<Z_chiral[0][imom][i]<<"\t"<<Z_chiral[1][imom][i]<<endl; 
 
       datafile[i].close();
     }
@@ -502,6 +502,48 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
 
       system(command.c_str());
     }
+
+  int moms=p2_vector.size();
+  int njacks=jZ_chiral[0].size();
+  vector<vd_t> jZP_over_S(moms,vd_t(0.0,njacks));
+
+#pragma omp parallel for collapse(2)
+  for(int imom=0;imom<moms;imom++)
+    for(int ijack=0;ijack<njacks;ijack++)
+      jZP_over_S[imom][ijack]=jZ_chiral[imom][ijack][2]/jZ_chiral[imom][ijack][0];
+
+  vvd_t ZP_over_S=average_Zq_chiral(jZP_over_S);
+
+  ofstream datafile2;
+
+
+  datafile2.open("plot_data_and_script/plot_"+name+"_P_over_S_"+all_or_eq_moms+"_data.txt");
+  
+  for(size_t imom=0;imom<p2_vector.size();imom++)
+    datafile2<<p2_vector[imom]<<"\t"<<ZP_over_S[0][imom]<<"\t"<<ZP_over_S[1][imom]<<endl;
+
+  datafile2.close();
+ 
+    
+  ofstream scriptfile2;
+
+  scriptfile2.open("plot_data_and_script/plot_"+name+"_P_over_S_"+all_or_eq_moms+"_script.txt");
+  scriptfile2<<"set autoscale xy"<<endl;
+  scriptfile2<<"set xlabel '$\\tilde{p}^2$'"<<endl;
+  // scriptfile2<<"set yrange [0.7:0.9]"<<endl;
+  scriptfile2<<"set ylabel '$Z_P/Z_S$'"<<endl;
+  scriptfile2<<"plot 'plot_data_and_script/plot_"<<name<<"_P_over_S_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_P/Z_S$ chiral'"<<endl;
+  scriptfile2<<"set terminal epslatex color"<<endl;
+  if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile2<<"set output 'allmoms/"<<name<<"_P_over_S.tex'"<<endl;
+  else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile2<<"set output 'eqmoms/"<<name<<"_P_over_S.tex'"<<endl;
+  scriptfile2<<"replot"<<endl;
+  scriptfile2<<"set term unknown"<<endl;
+
+  scriptfile2.close();
+
+  string command2="gnuplot plot_data_and_script/plot_"+name+"_P_over_S_"+all_or_eq_moms+"_script.txt";
+
+  system(command2.c_str());
 
 }
 
@@ -769,6 +811,9 @@ int main(int narg,char **arg)
 
    plot_Z_sub(jZ_with_em_eqmoms,jZ_sub_with_em_eqmoms,p2_vector_eqmoms,"Z_with_em","eqmoms");
    plot_Z_sub(jZ1_with_em_eqmoms,jZ1_sub_with_em_eqmoms,p2_vector_eqmoms,"Z1_with_em","eqmoms");
+
+
+   
 
 
    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z chiral extrapolation  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
