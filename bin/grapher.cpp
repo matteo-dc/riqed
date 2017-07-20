@@ -788,6 +788,20 @@ int main(int narg,char **arg)
    plot_Zq_chiral(jZq_chiral_with_em_eqmoms,p2_vector_eqmoms,"Zq_chiral_with_em","eqmoms");
    plot_Zq_chiral(jSigma1_chiral_with_em_eqmoms,p2_vector_eqmoms,"Sigma1_chiral_with_em","eqmoms");
 
+   vector<vd_t> jZq_over_Sigma1_eqmoms(neq_moms,vd_t(njacks)), jZq_over_Sigma1_with_em_eqmoms(neq_moms,vd_t(njacks));
+
+   #pragma omp parallel for collapse(2)
+   for(int imom=0;imom<neq_moms;imom++)
+       for(int ijack=0;ijack<njacks;ijack++)
+	 {
+	   jZq_over_Sigma1_eqmoms[imom][ijack]=jZq_chiral_eqmoms[imom][ijack]/jSigma1_chiral_eqmoms[imom][ijack];
+	   jZq_over_Sigma1_with_em_eqmoms[imom][ijack]=jZq_chiral_with_em_eqmoms[imom][ijack]/jSigma1_chiral_with_em_chiral_eqmoms[imom][ijack];
+	 }
+
+   plot_Zq_chiral(jZq_over_Sigma1_eqmoms,p2_vector_eqmoms,"Zq_over_Sigma1_chiral","eqmoms");
+   plot_Zq_chiral(jZq_over_Sigma1_with_em_eqmoms,p2_vector_eqmoms,"Zq_over_Sigma1_chiral_with_em","eqmoms");
+
+
    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z with subtraction ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
    plot_Z_sub(jZ_eqmoms,jZ_sub_eqmoms,p2_vector_eqmoms,"Z","eqmoms");
