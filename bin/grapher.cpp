@@ -776,30 +776,24 @@ int main(int narg,char **arg)
    
    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
   
-  //  plot_Z_chiral(jZ_chiral_eqmoms,p2_vector_eqmoms,"Z_chiral","eqmoms");
-//    plot_Z_chiral(jZ1_chiral_eqmoms,p2_vector_eqmoms,"Z1_chiral","eqmoms");
+   plot_Z_chiral(jZ_chiral_eqmoms,p2_vector_eqmoms,"Z_chiral","eqmoms");
+   plot_Z_chiral(jZ1_chiral_eqmoms,p2_vector_eqmoms,"Z1_chiral","eqmoms");
 
-//    vector<vvd_t> jZ_chiral_with_em_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)), jZ1_chiral_with_em_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
+   vector<vvd_t> jZ_chiral_with_em_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)), jZ1_chiral_with_em_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
  
-// #pragma omp parallel for collapse(3)
-//    for(int imom=0;imom<neq_moms;imom++)
-//      for(int ijack=0;ijack<njacks;ijack++)
-//        for(int k=0;k<5;k++)
-// 	 {
-// 	   jZ_chiral_with_em_eqmoms[imom][ijack][k]=jZ_chiral_eqmoms[imom][ijack][k]+jZ_em_chiral_eqmoms[imom][ijack][k];
-// 	   jZ1_chiral_with_em_eqmoms[imom][ijack][k]=jZ1_chiral_eqmoms[imom][ijack][k]+jZ1_em_chiral_eqmoms[imom][ijack][k];
-// 	 }
-
-//    plot_Z_chiral(jZ_chiral_with_em_eqmoms,p2_vector_eqmoms,"Z_chiral_with_em","eqmoms");
-//    plot_Z_chiral(jZ1_chiral_with_em_eqmoms,p2_vector_eqmoms,"Z1_chiral_with_em","eqmoms");
-
+#pragma omp parallel for collapse(3)
    for(int imom=0;imom<neq_moms;imom++)
-     {
-       for(int ijack=0;ijack<njacks;ijack++)
-	 cout<<jZ_chiral_eqmoms[imom][ijack][1]<<endl;
-       cout<<endl;
-     }
-   
+     for(int ijack=0;ijack<njacks;ijack++)
+       for(int k=0;k<5;k++)
+	 {
+	   jZ_chiral_with_em_eqmoms[imom][ijack][k]=jZ_chiral_eqmoms[imom][ijack][k]+jZ_em_chiral_eqmoms[imom][ijack][k];
+	   jZ1_chiral_with_em_eqmoms[imom][ijack][k]=jZ1_chiral_eqmoms[imom][ijack][k]+jZ1_em_chiral_eqmoms[imom][ijack][k];
+	 }
+
+   plot_Z_chiral(jZ_chiral_with_em_eqmoms,p2_vector_eqmoms,"Z_chiral_with_em","eqmoms");
+   plot_Z_chiral(jZ1_chiral_with_em_eqmoms,p2_vector_eqmoms,"Z1_chiral_with_em","eqmoms");
+
+    
    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
    
   return 0;
