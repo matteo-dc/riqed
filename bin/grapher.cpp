@@ -488,7 +488,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
       scriptfile[i]<<"set autoscale xy"<<endl;
       scriptfile[i]<<"set xlabel '$\\tilde{p}^2$'"<<endl;
       // scriptfile[i]<<"set yrange [0.7:0.9]"<<endl;
-      scriptfile[i]<<"set ylabel '$Z_chiral_"<<bil[i]<<"$'"<<endl;
+      scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
       scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_"<<bil[i]<<"$ chiral'"<<endl;
       scriptfile[i]<<"set terminal epslatex color"<<endl;
       if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile[i]<<"set output 'allmoms/"<<name<<"_"<<bil[i]<<".tex'"<<endl;
