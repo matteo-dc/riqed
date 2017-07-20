@@ -795,7 +795,7 @@ int main(int narg,char **arg)
        for(int ijack=0;ijack<njacks;ijack++)
 	 {
 	   jZq_over_Sigma1_eqmoms[imom][ijack]=jZq_chiral_eqmoms[imom][ijack]/jSigma1_chiral_eqmoms[imom][ijack];
-	   jZq_over_Sigma1_with_em_eqmoms[imom][ijack]=jZq_chiral_with_em_eqmoms[imom][ijack]/jSigma1_chiral_with_em_chiral_eqmoms[imom][ijack];
+	   jZq_over_Sigma1_with_em_eqmoms[imom][ijack]=jZq_chiral_with_em_eqmoms[imom][ijack]/jSigma1_chiral_with_em_eqmoms[imom][ijack];
 	 }
 
    plot_Zq_chiral(jZq_over_Sigma1_eqmoms,p2_vector_eqmoms,"Zq_over_Sigma1_chiral","eqmoms");
