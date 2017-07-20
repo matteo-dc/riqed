@@ -1430,8 +1430,8 @@ int main(int narg,char **arg)
       	   jGp_0_chiral[ijack]=jGp_pars[ijack](0);
       	   jGs_0_chiral[ijack]=jGs_pars[ijack](0);
 	   
-	   jGp_em_a_b_chiral[ijack]=jGp_pars[ijack](0);
-      	   jGs_em_a_b_chiral[ijack]=jGs_pars[ijack](0);	
+	   jGp_em_a_b_chiral[ijack]=jGp_em_pars[ijack](0);
+      	   jGs_em_a_b_chiral[ijack]=jGs_em_pars[ijack](0);	
       	 }
     
 
