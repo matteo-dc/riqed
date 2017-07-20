@@ -1652,8 +1652,8 @@ int main(int narg,char **arg)
 	   jZq_chiral[ijack]=jZq_pars[ijack](0);
 	   jSigma1_chiral[ijack]=jSigma1_pars[ijack](0);
 
-	   jZq_em_chiral[ijack]=jZq_pars[ijack](0);
-	   jSigma1_em_chiral[ijack]=jSigma1_pars[ijack](0);
+	   jZq_em_chiral[ijack]=jZq_em_pars[ijack](0);
+	   jSigma1_em_chiral[ijack]=jSigma1_em_pars[ijack](0);
 	 }
 
        t1=high_resolution_clock::now();
