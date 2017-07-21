@@ -826,8 +826,8 @@ int main(int narg,char **arg)
    plot_Z_sub(jZ_with_em_eqmoms,jZ_sub_with_em_eqmoms,p2_vector_eqmoms,"Z_with_em","eqmoms");
    plot_Z_sub(jZ1_with_em_eqmoms,jZ1_sub_with_em_eqmoms,p2_vector_eqmoms,"Z1_with_em","eqmoms");
 
-
-   
+   plot_Z_sub(jZ_em_eqmoms,jZ_em_sub_eqmoms,p2_vector_eqmoms,"Z_em_correction","eqmoms");
+   plot_Z_sub(jZ1_em_eqmoms,jZ1_em_sub_eqmoms,p2_vector_eqmoms,"Z1_em_correction","eqmoms");   
 
 
    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z chiral extrapolation  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -851,6 +851,9 @@ int main(int narg,char **arg)
 
    plot_Z_chiral(jZ_chiral_with_em_eqmoms,p2_vector_eqmoms,"Z_chiral_with_em","eqmoms");
    plot_Z_chiral(jZ1_chiral_with_em_eqmoms,p2_vector_eqmoms,"Z1_chiral_with_em","eqmoms");
+
+   plot_Z_chiral(jZ_em_chiral_eqmoms,p2_vector_eqmoms,"Z_chiral_em_correction","eqmoms");
+   plot_Z_chiral(jZ1_em_chiral_eqmoms,p2_vector_eqmoms,"Z1_chiral_em_correction","eqmoms");
 
     
    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
