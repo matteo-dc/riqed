@@ -765,6 +765,10 @@ int main(int narg,char **arg)
    plot_Zq_sub(jZq_with_em_eqmoms,jZq_sub_with_em_eqmoms,p2_vector_eqmoms,"Zq_with_em","eqmoms");
    plot_Zq_sub(jSigma1_with_em_eqmoms,jSigma1_sub_with_em_eqmoms,p2_vector_eqmoms,"Sigma1_with_em","eqmoms");
 
+   plot_Zq_sub(jZq_em_eqmoms,jZq_em_sub_eqmoms,p2_vector_eqmoms,"Zq_em_correction","eqmoms");
+   plot_Zq_sub(jSigma1_em_eqmoms,jSigma1_em_sub_eqmoms,p2_vector_eqmoms,"Sigma1_em_correction","eqmoms");
+
+
    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq chiral extrapolation  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
    plot_Zq_chiral_extrapolation(jZq_equivalent_eqmoms,jZq_pars_eqmoms,m_eff_equivalent_Zq,"Zq_chiral_extrapolation","eqmoms");
@@ -787,6 +791,10 @@ int main(int narg,char **arg)
 
    plot_Zq_chiral(jZq_chiral_with_em_eqmoms,p2_vector_eqmoms,"Zq_chiral_with_em","eqmoms");
    plot_Zq_chiral(jSigma1_chiral_with_em_eqmoms,p2_vector_eqmoms,"Sigma1_chiral_with_em","eqmoms");
+
+   plot_Zq_chiral(jZq_em_chiral_eqmoms,p2_vector_eqmoms,"Zq_chiral_em_correction","eqmoms");
+   plot_Zq_chiral(jSigma1_em_chiral_eqmoms,p2_vector_eqmoms,"Sigma1_chiral_em_correction","eqmoms");
+
 
    vector<vd_t> jZq_over_Sigma1_eqmoms(neq_moms,vd_t(njacks)), jZq_over_Sigma1_with_em_eqmoms(neq_moms,vd_t(njacks));
 
