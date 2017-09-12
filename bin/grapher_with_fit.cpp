@@ -160,7 +160,7 @@ valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, const vd_t &error, c
     cout<<"DEBUG----(d)"<<endl;
     
     //definition
-    for(int i=range_min; i<=range_max; i++)
+    for(int i=range_min; i<range_max; i++)
     {
         for(int j=0; j<n_par; j++)
             for(int k=0; k<n_par; k++)
