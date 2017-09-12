@@ -794,8 +794,11 @@ int main(int narg,char **arg)
 
    plot_Zq_chiral(jZq_em_chiral_eqmoms,p2_vector_eqmoms,"Zq_chiral_em_correction","eqmoms");
    plot_Zq_chiral(jSigma1_em_chiral_eqmoms,p2_vector_eqmoms,"Sigma1_chiral_em_correction","eqmoms");
+    
+    
 
-
+ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq over Sigma1 chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    
    vector<vd_t> jZq_over_Sigma1_eqmoms(neq_moms,vd_t(njacks)), jZq_over_Sigma1_with_em_eqmoms(neq_moms,vd_t(njacks));
 
    #pragma omp parallel for collapse(2)
