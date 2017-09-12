@@ -416,12 +416,16 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
 
 void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const string &name, const string &all_or_eq_moms)
 {
-    vvd_t Zq_chiral = average_Zq_chiral(jZq_chiral);  //Zq[ave/err][imom][nm]
+    cout<<"DEBUG----(A)"<<endl;
+    
+    vvd_t Zq_chiral = average_Zq_chiral(jZq_chiral);  //Zq[ave/err][imom]
+
+      cout<<"DEBUG----(B)"<<endl;
     
     ///**************************///
     //linear fit
     int p2_min=4;  //a2p2~1
-    int p2_max=p2_vector.size();
+    int p2_max=(int)p2_vector.size();
     
     vvd_t coord_linear(vd_t(0.0,p2_vector.size()),2);
     
@@ -430,16 +434,24 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
         coord_linear[0][i] = 1.0;  //costante
         coord_linear[1][i] = p2_vector[i];   //p^2
     }
+
+    cout<<"DEBUG----(C)"<<endl;
     
     vXd_t jZq_chiral_par=fit_chiral_jackknife(coord_linear,Zq_chiral[1],jZq_chiral,p2_min,p2_max);  //jZq_chiral_par[ijack][par]
+
+    cout<<"DEBUG----(D)"<<endl;
 
     //   vvvd_t Zq_chiral_par=average_pars(jZq_chiral_par); //Zq[ave/err][imom][ieq]
 
     int njacks=jZq_chiral_par.size();
     int pars=jZq_chiral_par[0].size();
+
+    cout<<"DEBUG----(E)"<<endl;
     
     vd_t Zq_par_ave(0.0,pars), sqr_Zq_par_ave(0.0,pars), Zq_par_err(0.0,pars);
     vvd_t Zq_par_ave_err(vd_t(0.0,pars),2);
+
+    cout<<"DEBUG----(F)"<<endl;
     
     for(int ipar=0;ipar<pars;ipar++)
       for(int ijack=0;ijack<njacks;ijack++)
@@ -454,12 +466,15 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     Zq_par_ave_err[0]=Zq_par_ave; //Zq_par_ave_err[ave/err][par]
     Zq_par_ave_err[1]=Zq_par_err;
 
+    cout<<"DEBUG----(G)"<<endl;
     
     
     double A=Zq_par_ave_err[0][0];
     double A_err=Zq_par_ave_err[1][0];
     double B=Zq_par_ave_err[0][1];
     double B_err=Zq_par_ave_err[1][1];
+
+    cout<<"DEBUG----(H)"<<endl;
 
 
     cout<<endl;
@@ -477,7 +492,7 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     datafile1.close();
 
     ofstream datafile2("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data_fit.txt");
-    datafile2<<0<<"\t"<<A<<"\t"<<A_err<<endl;
+    datafile2<<"0"<<"\t"<<A<<"\t"<<A_err<<endl;
     datafile2.close();    
     
     ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
