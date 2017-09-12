@@ -618,7 +618,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
     ///************************///
  
     
-    valarray<vXd_t> jZ_chiral_par=fit_chiral_Z_jackknife(coord_linear,Zq_chiral[1],jZq_chiral,p2_min,p2_max);  //jZ_chiral_par[ibil][ijack][ipar]
+    valarray<vXd_t> jZ_chiral_par=fit_chiral_Z_jackknife(coord_linear,Z_chiral[1],jZ_chiral,p2_min,p2_max);  //jZ_chiral_par[ibil][ijack][ipar]
 
     int nbil=jZ_chiral_par.size();
     int njacks=jZ_chiral_par[0].size();
@@ -637,19 +637,19 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
 
     for(int ibil=0; ibil<nbil;ibil++)
       for(int ipar=0;ipar<pars;ipar++)
-	Zq_par_err[ibil][ipar]=sqrt((double)(njacks-1))*sqrt(sqr_Z_par_ave[ibil][ipar]-Zq_par_ave[ibil][ipar]*Zq_par_ave[ibil][ipar]);
+	Z_par_err[ibil][ipar]=sqrt((double)(njacks-1))*sqrt(sqr_Z_par_ave[ibil][ipar]-Z_par_ave[ibil][ipar]*Z_par_ave[ibil][ipar]);
     
-    Zq_par_ave_err[0]=Zq_par_ave; //Zq_par_ave_err[ave/err][ibil][par]
-    Zq_par_ave_err[1]=Zq_par_err;  
+    Z_par_ave_err[0]=Z_par_ave; //Z_par_ave_err[ave/err][ibil][par]
+    Z_par_ave_err[1]=Z_par_err;  
 
     vd_t A(0.0,nbil),A_err(0.0,nbil),B(0.0,nbil),B_err(0.0,nbil);
 
     for(int ibil=0; ibil<nbil;ibil++)
       {
-	A[ibil]=Zq_par_ave_err[0][ibil][0];
-	A_err[ibil]=Zq_par_ave_err[1][ibil][0];
-	B[ibil]=Zq_par_ave_err[0][ibil][1];
-	B_err[ibil]=Zq_par_ave_err[1][ibil][1];
+	A[ibil]=Z_par_ave_err[0][ibil][0];
+	A_err[ibil]=Z_par_ave_err[1][ibil][0];
+	B[ibil]=Z_par_ave_err[0][ibil][1];
+	B_err[ibil]=Z_par_ave_err[1][ibil][1];
       }
     
     ///*****************************///
@@ -663,20 +663,19 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
     
     for(int i=0;i<5;i++)
     {
-
       cout<<endl;
-      cout<<"Z"<<bil[i]<<" continuum limit extrapolation: Z"<<bil[i]" = "<<A[i]<<" +/- "<<A_err[i]<<endl<<endl; 
+      cout<<"Z"<<bil[i]<<" continuum limit extrapolation: Z"<<bil[i]<<" = "<<A[i]<<" +/- "<<A_err[i]<<endl<<endl; 
       
-        datafile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_data.txt");
-        
-        for(size_t imom=0;imom<p2_vector.size();imom++)
-            datafile[i]<<p2_vector[imom]<<"\t"<<Z_chiral[0][imom][i]<<"\t"<<Z_chiral[1][imom][i]<<endl;
-        
-        datafile[i].close();
-
-	datafile2[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_data_fit.txt");
-        datafile2[i]<<"0"<<"\t"<<A[i]<<"\t"<<A_err[i]<<endl;
-        datafile2[i].close();
+      datafile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_data.txt");
+      
+      for(size_t imom=0;imom<p2_vector.size();imom++)
+	datafile[i]<<p2_vector[imom]<<"\t"<<Z_chiral[0][imom][i]<<"\t"<<Z_chiral[1][imom][i]<<endl;
+      
+      datafile[i].close();
+      
+      datafile2[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_data_fit.txt");
+      datafile2[i]<<"0"<<"\t"<<A[i]<<"\t"<<A_err[i]<<endl;
+      datafile2[i].close();
     }
     
     vector<ofstream> scriptfile(5);
@@ -707,8 +706,8 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
         system(command.c_str());
     }
     
-    int moms=p2_vector.size();
-    int njacks=jZ_chiral[0].size();
+    //   int moms=p2_vector.size();
+    // int njacks=jZ_chiral[0].size();
     vector<vd_t> jZP_over_S(moms,vd_t(0.0,njacks));
     
 #pragma omp parallel for collapse(2)
