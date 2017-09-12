@@ -195,9 +195,9 @@ valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, const 
   for(int ibil=0; ibil<nbil;ibil++)
     for(int ijack=0; ijack<njacks; ijack++)
       {
-	cout<<"a"<<endl;
+	//cout<<"a"<<endl;
 	Sy[ibil][ijack]=VectorXd::Zero(n_par);
-	cout<<"b"<<endl;
+	//cout<<"b"<<endl;
 	jpars[ibil][ijack]=VectorXd::Zero(n_par);
       }
 
@@ -1044,8 +1044,10 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
             jZq_over_Sigma1_eqmoms[imom][ijack]=jZq_chiral_eqmoms[imom][ijack]/jSigma1_chiral_eqmoms[imom][ijack];
             jZq_over_Sigma1_with_em_eqmoms[imom][ijack]=jZq_chiral_with_em_eqmoms[imom][ijack]/jSigma1_chiral_with_em_eqmoms[imom][ijack];
         }
-    
+
+    cout<<"Zq over Sigma1 chiral"<<endl;
     plot_Zq_chiral(jZq_over_Sigma1_eqmoms,p2_vector_eqmoms,"Zq_over_Sigma1_chiral","eqmoms");
+    cout<<"Zq over Sigma1 chiral with em"<<endl;
     plot_Zq_chiral(jZq_over_Sigma1_with_em_eqmoms,p2_vector_eqmoms,"Zq_over_Sigma1_chiral_with_em","eqmoms");
     
     
