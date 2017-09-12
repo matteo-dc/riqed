@@ -195,11 +195,13 @@ valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, const 
   for(int ibil=0; ibil<nbil;ibil++)
     for(int ijack=0; ijack<njacks; ijack++)
       {
+	cout<<"a"<<endl;
 	Sy[ibil][ijack]=VectorXd::Zero(n_par);
+	cout<<"b"<<endl;
 	jpars[ibil][ijack]=VectorXd::Zero(n_par);
       }
 
-  cout<<"DEBUG---(d)"<<endl;
+  cout<<"DEBUG---(d')"<<endl;
     
   //definition
   for(int i=range_min; i<range_max; i++)
