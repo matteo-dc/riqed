@@ -444,8 +444,8 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     for(int ipar=0;ipar<pars;ipar++)
       for(int ijack=0;ijack<njacks;ijack++)
 	{
-	  Zq_par_ave[ipar]+=jZq_pars[ijack](ipar)/njacks;
-	  sqr_Zq_par_ave[ipar]+=jZq_pars[ijack](ipar)*jZq_pars[ijack](ipar)/njacks;
+	  Zq_par_ave[ipar]+=jZq_chiral_par[ijack](ipar)/njacks;
+	  sqr_Zq_par_ave[ipar]+=jZq_chiral_par[ijack](ipar)*jZq_chiral_par[ijack](ipar)/njacks;
 	}
   
     for(int ipar=0;ipar<pars;ipar++)
@@ -456,10 +456,10 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
 
     
     
-    double A=Zq_chiral_fit_par[0][0];
-    double A_err=Zq_chiral_fit_par[1][0];
-    double B=Zq_chiral_fit_par[0][1];
-    double B_err=Zq_chiral_fit_par[1][1];
+    double A=Zq_par_ave_err[0][0];
+    double A_err=Zq_par_ave_err[1][0];
+    double B=Zq_par_ave_err[0][1];
+    double B_err=Zq_par_ave_err[1][1];
 
 
     cout<<endl;
