@@ -135,12 +135,19 @@ int fact(int n)
 
 valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, const vd_t &error, const vector<vd_t> &y, const int range_min, const int range_max)
 {
+
+    cout<<"DEBUG----(a)"<<endl;
+    
     int n_par = coord.size();
     int njacks = y[0].size();
+
+    cout<<"DEBUG----(b)"<<endl;
     
     MatrixXd S(n_par,n_par);
     valarray<VectorXd> Sy(VectorXd(n_par),njacks);
     valarray<VectorXd> jpars(VectorXd(n_par),njacks);
+
+    cout<<"DEBUG----(c)"<<endl;
     
     //initialization
     S=MatrixXd::Zero(n_par,n_par);
@@ -149,6 +156,8 @@ valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, const vd_t &error, c
         Sy[ijack]=VectorXd::Zero(n_par);
         jpars[ijack]=VectorXd::Zero(n_par);
     }
+
+    cout<<"DEBUG----(d)"<<endl;
     
     //definition
     for(int i=range_min; i<=range_max; i++)
@@ -161,9 +170,13 @@ valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, const vd_t &error, c
             for(int k=0; k<n_par; k++)
                 if(isnan(error[i])==0) Sy[ijack](k) += y[i][ijack]*coord[k][i]/(error[i]*error[i]);
     }
+
+    cout<<"DEBUG----(e)"<<endl;
     
     for(int ijack=0; ijack<njacks; ijack++)
         jpars[ijack] = S.colPivHouseholderQr().solve(Sy[ijack]);
+
+    cout<<"DEBUG----(f)"<<endl;
     
     return jpars;
     
