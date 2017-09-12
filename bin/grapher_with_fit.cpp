@@ -172,25 +172,25 @@ valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, const vd_t &error, c
 
 valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, const vvd_t &error, const vector<vvd_t> &y, const int range_min, const int range_max)
 {
-  cout<<"DEBUG---(a)"<<endl;
+  // cout<<"DEBUG---(a)"<<endl;
   
   int n_par = coord.size();
   int njacks = y[0].size();
   int nbil = y[0][0].size();
 
-  cout<<"DEBUG---(b)"<<endl;
+  // cout<<"DEBUG---(b)"<<endl;
     
   valarray<MatrixXd> S(MatrixXd(n_par,n_par),nbil);
   valarray< valarray<VectorXd> > Sy(valarray<VectorXd>(VectorXd(n_par),njacks),nbil);
   valarray< valarray<VectorXd> > jpars(valarray<VectorXd>(VectorXd(n_par),njacks),nbil);
 
-  cout<<"DEBUG---(c)"<<endl;
+  // cout<<"DEBUG---(c)"<<endl;
     
   //initialization
   for(int ibil=0; ibil<nbil;ibil++)
     S[ibil]=MatrixXd::Zero(n_par,n_par);
 
-  cout<<"DEBUG---(d)"<<endl;
+  // cout<<"DEBUG---(d)"<<endl;
 
   for(int ibil=0; ibil<nbil;ibil++)
     for(int ijack=0; ijack<njacks; ijack++)
@@ -201,7 +201,7 @@ valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, const 
 	jpars[ibil][ijack]=VectorXd::Zero(n_par);
       }
 
-  cout<<"DEBUG---(d')"<<endl;
+  // cout<<"DEBUG---(d')"<<endl;
     
   //definition
   for(int i=range_min; i<range_max; i++)
@@ -217,13 +217,13 @@ valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, const 
 	    if(isnan(error[i][ibil])==0) Sy[ibil][ijack](k) += y[i][ijack][ibil]*coord[k][i]/(error[i][ibil]*error[i][ibil]);
     }
 
-  cout<<"DEBUG---(e)"<<endl;
+  // cout<<"DEBUG---(e)"<<endl;
 
   for(int ibil=0; ibil<nbil;ibil++)
     for(int ijack=0; ijack<njacks; ijack++)
       jpars[ibil][ijack] = S[ibil].colPivHouseholderQr().solve(Sy[ibil][ijack]);
 
-  cout<<"DEBUG---(f)"<<endl;
+  // cout<<"DEBUG---(f)"<<endl;
     
   return jpars; //jpars[ibil][ijack][ipar]
     
@@ -518,7 +518,7 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     double B=Zq_par_ave_err[0][1];
     double B_err=Zq_par_ave_err[1][1];
 
-    cout<<"Zq = "<<A<<" +/- "<<A_err<<endl<<endl; 
+    cout<<A<<" +/- "<<A_err<<endl<<endl; 
     
     ///*****************************///
                     
@@ -612,10 +612,10 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
 
 void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const string &name, const string &all_or_eq_moms)
 {
-  cout<<"DEBUG---(A)"<<endl;
+  //  cout<<"DEBUG---(A)"<<endl;
   vvvd_t Z_chiral = average_Z_chiral(jZ_chiral);  //Z_chiral[ave/err][imom][k]
 
-  cout<<"DEBUG---(B)"<<endl;
+  // cout<<"DEBUG---(B)"<<endl;
     
   ///**************************///
   //linear fit
@@ -632,11 +632,11 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
 
   ///************************///
 
-  cout<<"DEBUG---(C)"<<endl;
+  // cout<<"DEBUG---(C)"<<endl;
     
   valarray<vXd_t> jZ_chiral_par=fit_chiral_Z_jackknife(coord_linear,Z_chiral[1],jZ_chiral,p2_min,p2_max);  //jZ_chiral_par[ibil][ijack][ipar]
 
-  cout<<"DEBUG---(D)"<<endl;
+  // cout<<"DEBUG---(D)"<<endl;
 
   int nbil=jZ_chiral_par.size();
   int njacks=jZ_chiral_par[0].size();
@@ -645,7 +645,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
   vvd_t Z_par_ave(vd_t(0.0,pars),nbil), sqr_Z_par_ave(vd_t(0.0,pars),nbil), Z_par_err(vd_t(0.0,pars),nbil); //Z
   vvvd_t Z_par_ave_err(vvd_t(vd_t(0.0,pars),nbil),2);  //Zq_par_ave_err[ave/err][ibil][par]
 
-  cout<<"DEBUG---(E)"<<endl;
+  // cout<<"DEBUG---(E)"<<endl;
 
   for(int ibil=0; ibil<nbil;ibil++)
     for(int ipar=0;ipar<pars;ipar++)
@@ -655,18 +655,18 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
 	  sqr_Z_par_ave[ibil][ipar]+=jZ_chiral_par[ibil][ijack](ipar)*jZ_chiral_par[ibil][ijack](ipar)/njacks;
 	}
 
-  cout<<"DEBUG---(F)"<<endl;
+  //  cout<<"DEBUG---(F)"<<endl;
 
   for(int ibil=0; ibil<nbil;ibil++)
     for(int ipar=0;ipar<pars;ipar++)
       Z_par_err[ibil][ipar]=sqrt((double)(njacks-1))*sqrt(sqr_Z_par_ave[ibil][ipar]-Z_par_ave[ibil][ipar]*Z_par_ave[ibil][ipar]);
 
-  cout<<"DEBUG---(G)"<<endl;
+  // cout<<"DEBUG---(G)"<<endl;
     
   Z_par_ave_err[0]=Z_par_ave; //Z_par_ave_err[ave/err][ibil][par]
   Z_par_ave_err[1]=Z_par_err;
 
-  cout<<"DEBUG---(H)"<<endl;
+  // cout<<"DEBUG---(H)"<<endl;
 
   vd_t A(0.0,nbil),A_err(0.0,nbil),B(0.0,nbil),B_err(0.0,nbil);
 
@@ -689,8 +689,8 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
     
   for(int i=0;i<5;i++)
     {
-      cout<<endl;
-      cout<<"Z"<<bil[i]<<" = "<<A[i]<<" +/- "<<A_err[i]<<endl<<endl; 
+      //   cout<<endl;
+      cout<<"Z"<<bil[i]<<" = "<<A[i]<<" +/- "<<A_err[i]<<endl; 
       
       datafile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_data.txt");
       
@@ -703,6 +703,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
       datafile_fit[i]<<"0"<<"\t"<<A[i]<<"\t"<<A_err[i]<<endl;
       datafile_fit[i].close();
     }
+  cout<<endl;
     
   vector<ofstream> scriptfile(5);
     
@@ -1005,9 +1006,9 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-    cout<<"Zq chiral"<<endl<<endl;
+    cout<<"Zq chiral"<<endl;
     plot_Zq_chiral(jZq_chiral_eqmoms,p2_vector_eqmoms,"Zq_chiral","eqmoms");
-    cout<<"Sigma1 chiral"<<endl<<endl;
+    cout<<"Sigma1 chiral"<<endl;
     plot_Zq_chiral(jSigma1_chiral_eqmoms,p2_vector_eqmoms,"Sigma1_chiral","eqmoms");
     
     vector<vd_t> jZq_chiral_with_em_eqmoms(neq_moms,vd_t(njacks)), jSigma1_chiral_with_em_eqmoms(neq_moms,vd_t(njacks));
@@ -1020,14 +1021,14 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
             jSigma1_chiral_with_em_eqmoms[imom][ijack]=jSigma1_chiral_eqmoms[imom][ijack]+jSigma1_em_chiral_eqmoms[imom][ijack];
         }
     
-    cout<<"Zq chiral with em"<<endl<<endl;
+    cout<<"Zq chiral with em"<<endl;
     plot_Zq_chiral(jZq_chiral_with_em_eqmoms,p2_vector_eqmoms,"Zq_chiral_with_em","eqmoms");
-    cout<<"Sigma1 chiral with em"<<endl<<endl;
+    cout<<"Sigma1 chiral with em"<<endl;
     plot_Zq_chiral(jSigma1_chiral_with_em_eqmoms,p2_vector_eqmoms,"Sigma1_chiral_with_em","eqmoms");
 
-    cout<<"Zq chiral em correction"<<endl<<endl;
+    cout<<"Zq chiral em correction"<<endl;
     plot_Zq_chiral(jZq_em_chiral_eqmoms,p2_vector_eqmoms,"Zq_chiral_em_correction","eqmoms");
-    cout<<"Sigma1 chiral em correction"<<endl<<endl;
+    cout<<"Sigma1 chiral em correction"<<endl;
     plot_Zq_chiral(jSigma1_em_chiral_eqmoms,p2_vector_eqmoms,"Sigma1_chiral_em_correction","eqmoms");
     
     
@@ -1081,9 +1082,9 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-    cout<<"Z chiral"<<endl<<endl;
+    cout<<"Z chiral"<<endl;
     plot_Z_chiral(jZ_chiral_eqmoms,p2_vector_eqmoms,"Z_chiral","eqmoms");
-    cout<<"Z1 chiral"<<endl<<endl;
+    cout<<"Z1 chiral"<<endl;
     plot_Z_chiral(jZ1_chiral_eqmoms,p2_vector_eqmoms,"Z1_chiral","eqmoms");
     
     vector<vvd_t> jZ_chiral_with_em_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)), jZ1_chiral_with_em_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
@@ -1097,14 +1098,14 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
                 jZ1_chiral_with_em_eqmoms[imom][ijack][k]=jZ1_chiral_eqmoms[imom][ijack][k]+jZ1_em_chiral_eqmoms[imom][ijack][k];
             }
 
-    cout<<"Z chiral with em"<<endl<<endl;
+    cout<<"Z chiral with em"<<endl;
     plot_Z_chiral(jZ_chiral_with_em_eqmoms,p2_vector_eqmoms,"Z_chiral_with_em","eqmoms");
-    cout<<"Z1 chiral with em"<<endl<<endl;
+    cout<<"Z1 chiral with em"<<endl;
     plot_Z_chiral(jZ1_chiral_with_em_eqmoms,p2_vector_eqmoms,"Z1_chiral_with_em","eqmoms");
 
-    cout<<"Z chiral em correction"<<endl<<endl;
+    cout<<"Z chiral em correction"<<endl;
     plot_Z_chiral(jZ_em_chiral_eqmoms,p2_vector_eqmoms,"Z_chiral_em_correction","eqmoms");
-    cout<<"Z1 chiral em correction"<<endl<<endl;
+    cout<<"Z1 chiral em correction"<<endl;
     plot_Z_chiral(jZ1_em_chiral_eqmoms,p2_vector_eqmoms,"Z1_chiral_em_correction","eqmoms");
     
     
