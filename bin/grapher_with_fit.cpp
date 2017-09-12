@@ -492,12 +492,12 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
     
     scriptfile<<"set autoscale xy"<<endl;
-    scriptfile<<"set xrange [-0.01:2.5]"<<endl;
+    scriptfile<<"set xrange [-0.05:2.5]"<<endl;
     scriptfile<<"set xlabel '$\\tilde{p}^2$'"<<endl;
     scriptfile<<"set ylabel '$Z_q$'"<<endl;
     // scriptfile<<"set yrange [0.7:0.9]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$ chiral'"<<endl;
-    scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 7 lc rgb 'red' ps 1 notitle"<<endl;
+    scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'red' ps 1 notitle"<<endl;
     scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
     scriptfile<<"replot f(x) lw 3 notitle"<<endl;
     scriptfile<<"set terminal epslatex color"<<endl;
