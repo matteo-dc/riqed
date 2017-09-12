@@ -706,7 +706,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
         system(command.c_str());
     }
     
-    //   int moms=p2_vector.size();
+    int moms=p2_vector.size();
     // int njacks=jZ_chiral[0].size();
     vector<vd_t> jZP_over_S(moms,vd_t(0.0,njacks));
     
