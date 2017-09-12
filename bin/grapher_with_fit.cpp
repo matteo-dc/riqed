@@ -659,7 +659,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
     vector<string> bil={"S","A","P","V","T"};
     
     vector<ofstream> datafile(5);
-    vector<ofstream> datafile2(5);
+    vector<ofstream> datafile_fit(5);
     
     for(int i=0;i<5;i++)
     {
@@ -673,9 +673,9 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
       
       datafile[i].close();
       
-      datafile2[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_data_fit.txt");
-      datafile2[i]<<"0"<<"\t"<<A[i]<<"\t"<<A_err[i]<<endl;
-      datafile2[i].close();
+      datafile_fit[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_data_fit.txt");
+      datafile_fit[i]<<"0"<<"\t"<<A[i]<<"\t"<<A_err[i]<<endl;
+      datafile_fit[i].close();
     }
     
     vector<ofstream> scriptfile(5);
