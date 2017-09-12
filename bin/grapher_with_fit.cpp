@@ -135,19 +135,13 @@ int fact(int n)
 
 valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, const vd_t &error, const vector<vd_t> &y, const int range_min, const int range_max)
 {
-
-    cout<<"DEBUG----(a)"<<endl;
     
     int n_par = coord.size();
     int njacks = y[0].size();
-
-    cout<<"DEBUG----(b)"<<endl;
     
     MatrixXd S(n_par,n_par);
     valarray<VectorXd> Sy(VectorXd(n_par),njacks);
     valarray<VectorXd> jpars(VectorXd(n_par),njacks);
-
-    cout<<"DEBUG----(c)"<<endl;
     
     //initialization
     S=MatrixXd::Zero(n_par,n_par);
@@ -156,8 +150,6 @@ valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, const vd_t &error, c
         Sy[ijack]=VectorXd::Zero(n_par);
         jpars[ijack]=VectorXd::Zero(n_par);
     }
-
-    cout<<"DEBUG----(d)"<<endl;
     
     //definition
     for(int i=range_min; i<range_max; i++)
@@ -170,13 +162,9 @@ valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, const vd_t &error, c
             for(int k=0; k<n_par; k++)
                 if(isnan(error[i])==0) Sy[ijack](k) += y[i][ijack]*coord[k][i]/(error[i]*error[i]);
     }
-
-    cout<<"DEBUG----(e)"<<endl;
     
     for(int ijack=0; ijack<njacks; ijack++)
         jpars[ijack] = S.colPivHouseholderQr().solve(Sy[ijack]);
-
-    cout<<"DEBUG----(f)"<<endl;
     
     return jpars;
     
@@ -429,11 +417,10 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
 
 void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const string &name, const string &all_or_eq_moms)
 {
-    cout<<"DEBUG----(A)"<<endl;
+
     
     vvd_t Zq_chiral = average_Zq_chiral(jZq_chiral);  //Zq[ave/err][imom]
 
-      cout<<"DEBUG----(B)"<<endl;
     
     ///**************************///
     //linear fit
@@ -448,23 +435,19 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
         coord_linear[1][i] = p2_vector[i];   //p^2
     }
 
-    cout<<"DEBUG----(C)"<<endl;
     
     vXd_t jZq_chiral_par=fit_chiral_jackknife(coord_linear,Zq_chiral[1],jZq_chiral,p2_min,p2_max);  //jZq_chiral_par[ijack][par]
 
-    cout<<"DEBUG----(D)"<<endl;
 
     //   vvvd_t Zq_chiral_par=average_pars(jZq_chiral_par); //Zq[ave/err][imom][ieq]
 
     int njacks=jZq_chiral_par.size();
     int pars=jZq_chiral_par[0].size();
 
-    cout<<"DEBUG----(E)"<<endl;
     
     vd_t Zq_par_ave(0.0,pars), sqr_Zq_par_ave(0.0,pars), Zq_par_err(0.0,pars);
     vvd_t Zq_par_ave_err(vd_t(0.0,pars),2);
 
-    cout<<"DEBUG----(F)"<<endl;
     
     for(int ipar=0;ipar<pars;ipar++)
       for(int ijack=0;ijack<njacks;ijack++)
@@ -479,7 +462,6 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     Zq_par_ave_err[0]=Zq_par_ave; //Zq_par_ave_err[ave/err][par]
     Zq_par_ave_err[1]=Zq_par_err;
 
-    cout<<"DEBUG----(G)"<<endl;
     
     
     double A=Zq_par_ave_err[0][0];
@@ -487,7 +469,6 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     double B=Zq_par_ave_err[0][1];
     double B_err=Zq_par_ave_err[1][1];
 
-    cout<<"DEBUG----(H)"<<endl;
 
 
     cout<<endl;
@@ -515,9 +496,9 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     scriptfile<<"set ylabel '$Z_q$'"<<endl;
     // scriptfile<<"set yrange [0.7:0.9]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$ chiral'"<<endl;
-    scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 5 lc rgb 'red' notitle"<<endl;
+    scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 5 lc rgb 'red' ps 2 notitle"<<endl;
     scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
-    scriptfile<<"replot f(x) notitle"<<endl;
+    scriptfile<<"replot f(x) lw 2 notitle"<<endl;
     scriptfile<<"set terminal epslatex color"<<endl;
     if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
     else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
