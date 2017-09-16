@@ -1251,7 +1251,7 @@ int main(int narg,char **arg)
 
 	   // c_q_em={-0.0112397+2.26296238/(double)Np[imom],31./240.-101./120./(double)Np[imom],17./120.};
 
-	   c_q_em={10.+10./(double)Np[imom],10.-10./(double)Np[imom],10.}
+	   c_q_em={10.+10./(double)Np[imom],10.-10./(double)Np[imom],10.};
 	   
 	 }
        if(strcmp(arg[10],"iwa")==0) c_q={0.6202244+1.8490436/(double)Np[imom],-0.0748167-0.963033/(double)Np[imom],0.0044};      //Iwasaki action
