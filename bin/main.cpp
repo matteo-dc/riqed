@@ -720,6 +720,7 @@ int main(int narg,char **arg)
 
   double beta=0.0, plaquette=0.0;
   vector<double> c_v(3), c_a(3), c_s(3), c_p(3), c_t(3);
+  vector<double> c_v_em(3), c_a_em(3), c_s_em(3), c_p_em(3), c_t_em(3);
   
   //beta & plaquette
   if(strcmp(arg[10],"iwa")==0)  //Nf=4 (Iwasaki)
@@ -745,6 +746,12 @@ int main(int narg,char **arg)
       c_s={2.3547298,-1./4.,0.5};        
       c_p={0.70640549,-1./4.,0.5};
       c_t={0.9724758,-13./36.,-161./216.};
+
+      c_a_em={0.3997992,1./16.,-13./48.};
+      c_v_em={-0.0242332,-3./16.,-1./4.};
+      c_s_em={0.32682365,1./2.,5./12.};        
+      c_p_em={0.00609817,0.,5./12.};
+      c_t_em={0.3706701,-1./6.,-17./36.};
 
       cout<<"Action:  Symanzik"<<endl;
     }
@@ -1230,9 +1237,14 @@ int main(int narg,char **arg)
        p2_vector_allmoms.push_back(p2);
        p4_vector.push_back(p4);
 
-       vector<double> c_q(3);
-   
-       if(strcmp(arg[10],"sym")==0) c_q={1.14716212+2.07733285/(double)Np[imom],-73./360.-157./180./(double)Np[imom],7./240.};   //Symanzik action
+       vector<double> c_q(3), c_q_em(3);
+       
+       if(strcmp(arg[10],"sym")==0)
+	 {
+	   c_q={1.14716212+2.07733285/(double)Np[imom],-73./360.-157./180./(double)Np[imom],7./240.};   //Symanzik action
+
+	   c_q_em={-0.0112397+2.26296238/(double)Np[imom],31./240.-27./40./(double)Np[imom],17./120.};
+	 }
        if(strcmp(arg[10],"iwa")==0) c_q={0.6202244+1.8490436/(double)Np[imom],-0.0748167-0.963033/(double)Np[imom],0.0044};      //Iwasaki action
 
        
@@ -1256,8 +1268,8 @@ int main(int narg,char **arg)
       	     jZq_sub[ijack][mr]=subtract(c_q,jZq[ijack][mr],p2,p4,g2_tilde);
       	     jSigma1_sub[ijack][mr]=subtract(c_q,jSigma1[ijack][mr],p2,p4,g2_tilde);
 	     //subtraction of O(e^2a^2) effects
-      	     jZq_em_sub[ijack][mr]=subtract(c_q,jZq_em[ijack][mr],p2,p4,3/4);
-      	     jSigma1_em_sub[ijack][mr]=subtract(c_q,jSigma1_em[ijack][mr],p2,p4,3/4);
+      	     jZq_em_sub[ijack][mr]=subtract(c_q_em,jZq_em[ijack][mr],p2,p4,3/4);
+      	     jSigma1_em_sub[ijack][mr]=subtract(c_q_em,jSigma1_em[ijack][mr],p2,p4,3/4);
 	   }
 #pragma omp parallel for collapse(3)
        for(int ijack=0;ijack<njacks;ijack++)
@@ -1272,23 +1284,23 @@ int main(int narg,char **arg)
 	       jG_0_sub[ijack][mr][mr2][4]=subtract(c_t,jG_0[ijack][mr][mr2][4],p2,p4,g2_tilde);
 	      
 	       //subtraction of O(e^2a^2) effects
-	       jG_em_sub[ijack][mr][mr2][0]=subtract(c_s,jG_em[ijack][mr][mr2][0],p2,p4,3/4);
-	       jG_em_sub[ijack][mr][mr2][1]=subtract(c_a,jG_em[ijack][mr][mr2][1],p2,p4,3/4);
-	       jG_em_sub[ijack][mr][mr2][2]=subtract(c_p,jG_em[ijack][mr][mr2][2],p2,p4,3/4);
-	       jG_em_sub[ijack][mr][mr2][3]=subtract(c_v,jG_em[ijack][mr][mr2][3],p2,p4,3/4);
-	       jG_em_sub[ijack][mr][mr2][4]=subtract(c_t,jG_em[ijack][mr][mr2][4],p2,p4,3/4);
+	       jG_em_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_em[ijack][mr][mr2][0],p2,p4,3/4);
+	       jG_em_sub[ijack][mr][mr2][1]=subtract(c_a_em,jG_em[ijack][mr][mr2][1],p2,p4,3/4);
+	       jG_em_sub[ijack][mr][mr2][2]=subtract(c_p_em,jG_em[ijack][mr][mr2][2],p2,p4,3/4);
+	       jG_em_sub[ijack][mr][mr2][3]=subtract(c_v_em,jG_em[ijack][mr][mr2][3],p2,p4,3/4);
+	       jG_em_sub[ijack][mr][mr2][4]=subtract(c_t_em,jG_em[ijack][mr][mr2][4],p2,p4,3/4);
 
-	       jG_a_sub[ijack][mr][mr2][0]=subtract(c_s,jG_a[ijack][mr][mr2][0],p2,p4,3/4);
-	       jG_a_sub[ijack][mr][mr2][1]=subtract(c_a,jG_a[ijack][mr][mr2][1],p2,p4,3/4);
-	       jG_a_sub[ijack][mr][mr2][2]=subtract(c_p,jG_a[ijack][mr][mr2][2],p2,p4,3/4);
-	       jG_a_sub[ijack][mr][mr2][3]=subtract(c_v,jG_a[ijack][mr][mr2][3],p2,p4,3/4);
-	       jG_a_sub[ijack][mr][mr2][4]=subtract(c_t,jG_a[ijack][mr][mr2][4],p2,p4,3/4);
+	       jG_a_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_a[ijack][mr][mr2][0],p2,p4,3/4);
+	       jG_a_sub[ijack][mr][mr2][1]=subtract(c_a_em,jG_a[ijack][mr][mr2][1],p2,p4,3/4);
+	       jG_a_sub[ijack][mr][mr2][2]=subtract(c_p_em,jG_a[ijack][mr][mr2][2],p2,p4,3/4);
+	       jG_a_sub[ijack][mr][mr2][3]=subtract(c_v_em,jG_a[ijack][mr][mr2][3],p2,p4,3/4);
+	       jG_a_sub[ijack][mr][mr2][4]=subtract(c_t_em,jG_a[ijack][mr][mr2][4],p2,p4,3/4);
 
-	       jG_b_sub[ijack][mr][mr2][0]=subtract(c_s,jG_b[ijack][mr][mr2][0],p2,p4,3/4);
-	       jG_b_sub[ijack][mr][mr2][1]=subtract(c_a,jG_b[ijack][mr][mr2][1],p2,p4,3/4);
-	       jG_b_sub[ijack][mr][mr2][2]=subtract(c_p,jG_b[ijack][mr][mr2][2],p2,p4,3/4);
-	       jG_b_sub[ijack][mr][mr2][3]=subtract(c_v,jG_b[ijack][mr][mr2][3],p2,p4,3/4);
-	       jG_b_sub[ijack][mr][mr2][4]=subtract(c_t,jG_b[ijack][mr][mr2][4],p2,p4,3/4);
+	       jG_b_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_b[ijack][mr][mr2][0],p2,p4,3/4);
+	       jG_b_sub[ijack][mr][mr2][1]=subtract(c_a_em,jG_b[ijack][mr][mr2][1],p2,p4,3/4);
+	       jG_b_sub[ijack][mr][mr2][2]=subtract(c_p_em,jG_b[ijack][mr][mr2][2],p2,p4,3/4);
+	       jG_b_sub[ijack][mr][mr2][3]=subtract(c_v_em,jG_b[ijack][mr][mr2][3],p2,p4,3/4);
+	       jG_b_sub[ijack][mr][mr2][4]=subtract(c_t_em,jG_b[ijack][mr][mr2][4],p2,p4,3/4);
 	     }
 #pragma omp parallel for collapse(4)
        for(int ijack=0;ijack<njacks;ijack++)
