@@ -1234,7 +1234,7 @@ int main(int narg,char **arg)
        p_tilde={sin(p[0]),sin(p[1]),sin(p[2]),sin(p[3])};
 
        for(int coord=0;coord<4;coord++)
-	 p2+=p_tilde[coord]*p_tilde[coord]*100.  ////DEBUG!
+	 p2+=p_tilde[coord]*p_tilde[coord]*100.;  ////DEBUG!
 	 // p2+=p_tilde[coord]*p_tilde[coord];
        for(int coord=0;coord<3;coord++)
 	 p2_space+=p_tilde[coord]*p_tilde[coord];
