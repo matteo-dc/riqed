@@ -398,10 +398,9 @@ void plot_Zq_sub(vector<jZ_t> &jZq, vector<jZ_t> &jZq_sub, vector<double> &p2_ve
     scriptfile<<"set xlabel '$\\tilde{p}^2$'"<<endl;
     scriptfile<<"set ylabel '$Z_q$'"<<endl;
     scriptfile<<"set xrange [0.1:2.3]"<<endl;
-    scriptfile<<"set xrange [0.1:2.3]"<<endl;
     // scriptfile<<"set yrange [0.7:0.9]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$'"<<endl;
-    scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'red' title '$Z_q$ corrected'"<<endl;
+    scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lt 1 lc rgb 'red' title '$Z_q$ corrected'"<<endl;
     scriptfile<<"set terminal epslatex color"<<endl;
     if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<"_sub.tex'"<<endl;
     else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<"_sub.tex'"<<endl;
@@ -461,7 +460,7 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     scriptfile<<"set ylabel '$Z_Q$'"<<endl;
     scriptfile<<"set xrange [-0.003:0.05]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$'"<<endl;
-    scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 7 lc rgb 'black' title '$Z_q$ chiral extr.'"<<endl;
+    scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'black' title '$Z_q$ chiral extr.'"<<endl;
     scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
     scriptfile<<"replot f(x) notitle"<<endl;
     scriptfile<<"set terminal epslatex color"<<endl;
@@ -593,10 +592,11 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
         scriptfile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_script.txt");
         scriptfile[i]<<"set autoscale xy"<<endl;
         scriptfile[i]<<"set xlabel '$\\tilde{p}^2$'"<<endl;
+	scriptfile[i]<<"set xrange [0.1:2.3]"<<endl;
         // scriptfile[i]<<"set yrange [0.7:0.9]"<<endl;
         scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
         scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_"<<bil[i]<<"$'"<<endl;
-        scriptfile[i]<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'red' title '$Z_"<<bil[i]<<"$ corrected'"<<endl;
+        scriptfile[i]<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lt 1 lc rgb 'red' title '$Z_"<<bil[i]<<"$ corrected'"<<endl;
         scriptfile[i]<<"set terminal epslatex color"<<endl;
         if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile[i]<<"set output 'allmoms/"<<name<<"_"<<bil[i]<<"_sub.tex'"<<endl;
         else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile[i]<<"set output 'eqmoms/"<<name<<"_"<<bil[i]<<"_sub.tex'"<<endl;
