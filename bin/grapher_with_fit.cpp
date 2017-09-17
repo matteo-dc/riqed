@@ -397,6 +397,8 @@ void plot_Zq_sub(vector<jZ_t> &jZq, vector<jZ_t> &jZq_sub, vector<double> &p2_ve
     scriptfile<<"set autoscale xy"<<endl;
     scriptfile<<"set xlabel '$\\tilde{p}^2$'"<<endl;
     scriptfile<<"set ylabel '$Z_q$'"<<endl;
+    scriptfile<<"set xrange [0.1:2.3]"<<endl;
+    scriptfile<<"set xrange [0.1:2.3]"<<endl;
     // scriptfile<<"set yrange [0.7:0.9]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$'"<<endl;
     scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'red' title '$Z_q$ corrected'"<<endl;
