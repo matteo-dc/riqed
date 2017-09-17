@@ -564,6 +564,15 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
 {
     vvvvvd_t Z = average_Z(jZ);  //Z[ave/err][imom][mr][mr2][k]
     vvvvvd_t Z_sub = average_Z(jZ_sub);  //Z[ave/err][imom][mr][mr2][k]
+
+    ///////DEBUG
+    if(name=="Z1" && all_or_eq_moms=="eqmoms")
+      for(int imom=0;imom<p2_vector.size();imom++)
+	{
+	  cout<<p2_vector[imom]<<"\t"<<jZ[imom][0][0][0][2]<<endl;	    
+	}
+    cout<<endl;
+    /////////
     
     vector<string> bil={"S","A","P","V","T"};
     
@@ -595,7 +604,7 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
 	scriptfile[i]<<"set xrange [0:2.5]"<<endl;
 	if(i==0 && name=="Z1")scriptfile[i]<<"set yrange [*:0.82]"<<endl;
 	if(i==2 && name=="Z1")scriptfile[i]<<"set yrange [*:0.52]"<<endl;
-	if(i==0 && name=="Z1_em_correction")scriptfile[i]<<"set yrange [*:-0.07]"<<endl;
+	if(i==0 && name=="Z1_em_correction")scriptfile[i]<<"set yrange [-0,28:-0.04]"<<endl;
 
 	// scriptfile[i]<<"set yrange [0.7:0.9]"<<endl;
         scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
