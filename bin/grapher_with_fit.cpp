@@ -603,7 +603,7 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
         scriptfile[i]<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
 	scriptfile[i]<<"set xrange [0:2.5]"<<endl;
 	if(i==0 && name=="Z1")scriptfile[i]<<"set yrange [*:0.82]"<<endl;
-	if(i==2 && name=="Z1")scriptfile[i]<<"set yrange [*:0.52]"<<endl;
+	if(i==2 && name=="Z1")scriptfile[i]<<"set yrange [*:0.55]"<<endl;
 	if(i==0 && name=="Z1_em_correction")scriptfile[i]<<"set yrange [-0,28:-0.04]"<<endl;
 
 	// scriptfile[i]<<"set yrange [0.7:0.9]"<<endl;
