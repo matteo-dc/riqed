@@ -606,7 +606,7 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
 	if(i==0 && name=="Z1")scriptfile[i]<<"set yrange [*:0.82]"<<endl;
 	if(i==2 && name=="Z1")scriptfile[i]<<"set yrange [*:0.55]"<<endl;
 	
-	if(i==0 && name=="Z1_em_correction")scriptfile[i]<<"set yrange [-0,28:-0.04]"<<endl;
+	if(i==0 && name=="Z1_em_correction")scriptfile[i]<<"set yrange [-0.28:-0.04]"<<endl;
 	if(i==1 && name=="Z1_em_correction")scriptfile[i]<<"set yrange [-0,12:-0.07]"<<endl;
 	if(i==3 && name=="Z1_em_correction")scriptfile[i]<<"set yrange [-0.17:-0.11]"<<endl;
 	
