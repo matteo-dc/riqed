@@ -1008,7 +1008,7 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
         cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1[0][imom][0]<<"\t"<<Sigma1[1][imom][0]<<endl;  //print only for M0R0
     }
     cout<<endl<<"Zq_SUB"<<endl<<"------------------------------"<<endl;
-    for(size_t imom=0;imom<p2_vector.size();imom++)
+    for(size_t imom=0;imom<p2_vector_eqmoms.size();imom++)
     {
        cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub[0][imom][0]<<"\t"<<Sigma1_sub[1][imom][0]<<endl;  //print only for M0R0
     }
