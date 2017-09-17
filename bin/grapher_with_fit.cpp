@@ -395,9 +395,9 @@ void plot_Zq_sub(vector<jZ_t> &jZq, vector<jZ_t> &jZq_sub, vector<double> &p2_ve
     ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
     
     scriptfile<<"set autoscale xy"<<endl;
-    scriptfile<<"set xlabel '$\\tilde{p}^2$'"<<endl;
+    scriptfile<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
     scriptfile<<"set ylabel '$Z_q$'"<<endl;
-    scriptfile<<"set xrange [0.1:2.3]"<<endl;
+    scriptfile<<"set xrange [0:2.5]"<<endl;
     // scriptfile<<"set yrange [0.7:0.9]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$'"<<endl;
     scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lt 1 lc rgb 'red' title '$Z_q$ corrected'"<<endl;
@@ -540,7 +540,7 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     
     scriptfile<<"set autoscale xy"<<endl;
     scriptfile<<"set xrange [-0.05:2.5]"<<endl;
-    scriptfile<<"set xlabel '$\\tilde{p}^2$'"<<endl;
+    scriptfile<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
     scriptfile<<"set ylabel '$Z_q$'"<<endl;
     // scriptfile<<"set yrange [0.7:0.9]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$ chiral'"<<endl;
@@ -591,8 +591,8 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
     {
         scriptfile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_script.txt");
         scriptfile[i]<<"set autoscale xy"<<endl;
-        scriptfile[i]<<"set xlabel '$\\tilde{p}^2$'"<<endl;
-	scriptfile[i]<<"set xrange [0.1:2.3]"<<endl;
+        scriptfile[i]<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
+	scriptfile[i]<<"set xrange [0:2.5]"<<endl;
         // scriptfile[i]<<"set yrange [0.7:0.9]"<<endl;
         scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
         scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_"<<bil[i]<<"$'"<<endl;
@@ -714,7 +714,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
     {
       scriptfile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_script.txt");
       scriptfile[i]<<"set autoscale xy"<<endl;
-      scriptfile[i]<<"set xlabel '$\\tilde{p}^2$'"<<endl;
+      scriptfile[i]<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
       // scriptfile[i]<<"set yrange [0.7:0.9]"<<endl;
       scriptfile[i]<<"set xrange [-0.05:2.3]"<<endl;
       scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
@@ -761,7 +761,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
     
   scriptfile2.open("plot_data_and_script/plot_"+name+"_P_over_S_"+all_or_eq_moms+"_script.txt");
   scriptfile2<<"set autoscale xy"<<endl;
-  scriptfile2<<"set xlabel '$\\tilde{p}^2$'"<<endl;
+  scriptfile2<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
   // scriptfile2<<"set yrange [0.7:0.9]"<<endl;
   scriptfile2<<"set ylabel '$Z_P/Z_S$'"<<endl;
   scriptfile2<<"plot 'plot_data_and_script/plot_"<<name<<"_P_over_S_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_P/Z_S$ chiral'"<<endl;
