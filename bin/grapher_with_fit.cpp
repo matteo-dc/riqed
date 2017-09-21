@@ -697,7 +697,7 @@ void plot_ZPandS_chiral_extrapolation(vector<vvd_t> &jZ_equivalent, vector<vvd_t
     scriptfile<<"set yrange [1:4]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$G_P$'"<<endl;
     scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_subpole.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'blue' title '$G_P$ sub'"<<endl;
-    scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 9 lt 1 lc rgb 'black' title '$Z_q$ chiral extr.'"<<endl;
+    scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 5 lt 1 lc rgb 'black' title '$Z_q$ chiral extr.'"<<endl;
     if(Z_pars[0][4].size()==2)
       scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
     if(Z_pars[0][4].size()==3)
@@ -1211,6 +1211,7 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z chiral extrapolation  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     
     plot_ZPandS_chiral_extrapolation(jGp_equivalent_eqmoms,jGp_subpole_eqmoms,jGp_pars_eqmoms,m_eff_equivalent,"Gp_chiral_extrapolation","eqmoms");
+    plot_ZPandS_chiral_extrapolation(jGs_equivalent_eqmoms,jGs_subpole_eqmoms,jGs_pars_eqmoms,m_eff_equivalent,"Gs_chiral_extrapolation","eqmoms");
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
