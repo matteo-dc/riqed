@@ -657,9 +657,9 @@ void plot_ZPandS_chiral_extrapolation(vector<vvd_t> &jZ_equivalent, vector<vvd_t
                 jZ_equivalent_and_chiral_extr[imom][ijack][ieq+1]=jZ_equivalent[imom][ijack][ieq];
             }
     
-    vvvd_t Z_equivalent = average_Z(jZ_equivalent_and_chiral_extr);  //Z[ave/err][imom][ieq]
+    vvvd_t Z_equivalent = average_Zq(jZ_equivalent_and_chiral_extr);  //Z[ave/err][imom][ieq]
     vvvd_t Z_pars=average_pars(jZ_pars);
-    vvvd_t G_subpole = average_Z(jG_subpole);
+    vvvd_t G_subpole = average_Zq(jG_subpole);
     
     ofstream datafile1("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data.txt");
     
