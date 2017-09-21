@@ -695,7 +695,7 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
     scriptfile<<"set ylabel '$\\Gamma_"<<bil<<"$'"<<endl;
     scriptfile<<"set xrange [-0.003:0.05]"<<endl;
     if(bil=="P") scriptfile<<"set yrange [1:4]"<<endl;
-    if(bil=="S") scriptfile<<"set yrange [0.9:1.1]"<<endl;
+    if(bil=="S") scriptfile<<"set yrange [0.95:1.15]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
     scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_subpole.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'blue' title '$\\Gamma_"<<bil<<"^{sub}$'"<<endl;
     scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 5 lt 1 lc rgb 'black' title '$\\Gamma_"<<bil<<"$ chiral extr.'"<<endl;
@@ -706,6 +706,70 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
     scriptfile<<"replot f(x) lt 1 lc rgb 'blue' title 'fit curve'"<<endl;
     scriptfile<<"g(x)="<<A<<"+"<<B<<"*x"<<endl;
     scriptfile<<"replot g(x) lt 2 lc rgb 'red' title 'linear fit'"<<endl;
+    scriptfile<<"set terminal epslatex color"<<endl;
+    if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
+    else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
+    scriptfile<<"replot"<<endl;
+    
+    scriptfile.close();
+    
+    string command="gnuplot plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt";
+    
+    system(command.c_str());
+    
+}
+
+void plot_ZVAT_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equivalent, vector<vXd_t> &jZ_pars, vd_t &m_eff_equivalent_Z, const string &name, const string &all_or_eq_moms)
+{
+    int moms=jZ_equivalent.size();
+    int njacks=jZ_equivalent[0].size();
+    int neq=jZ_equivalent[0][0].size();
+    vector<vvd_t> jZ_equivalent_and_chiral_extr(moms,vvd_t(vd_t(neq+1),njacks));
+    
+#pragma omp parallel for collapse(2)
+    for(int imom=0;imom<moms;imom++)
+        for(int ijack=0;ijack<njacks;ijack++)
+        {
+            jZ_equivalent_and_chiral_extr[imom][ijack][0]=jZ_pars[imom][ijack](0);
+        }
+#pragma omp parallel for collapse(3)
+    for(int imom=0;imom<moms;imom++)
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int ieq=0;ieq<neq;ieq++)
+            {
+                jZ_equivalent_and_chiral_extr[imom][ijack][ieq+1]=jZ_equivalent[imom][ijack][ieq];
+            }
+    
+    vvvd_t Z_equivalent = average_Zq(jZ_equivalent_and_chiral_extr);  //Z[ave/err][imom][ieq]
+    vvvd_t Z_pars=average_pars(jZ_pars);
+ 
+    ofstream datafile1("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data.txt");
+    
+    //datafile1<<0<<"\t"<<Z_pars[0][0]<<"\t"<<Z_pars[1][0]<<endl;
+    for(size_t ieq=0;ieq<m_eff_equivalent_Z.size()+1;ieq++)
+    {
+        if(ieq==0)
+            datafile1<<0<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+        else
+            datafile1<<m_eff_equivalent_Z[ieq-1]*m_eff_equivalent_Z[ieq-1]<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+    }
+    datafile1.close();
+    
+    double A=Z_pars[0][4][0];
+    double B=Z_pars[0][4][1];
+  
+    ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
+    
+    scriptfile<<"set autoscale xy"<<endl;
+    scriptfile<<"set xlabel '$M_{PS}^2$'"<<endl;
+    scriptfile<<"set ylabel '$\\Gamma_"<<bil<<"$'"<<endl;
+    scriptfile<<"set xrange [-0.003:0.05]"<<endl;
+    if(bil=="P") scriptfile<<"set yrange [1:4]"<<endl;
+    if(bil=="S") scriptfile<<"set yrange [0.95:1.15]"<<endl;
+    scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
+    scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 5 lt 1 lc rgb 'black' title '$\\Gamma_"<<bil<<"$ chiral extr.'"<<endl;
+    scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
+    scriptfile<<"replot f(x) lt 2 lc rgb 'red' title 'linear fit'"<<endl;
     scriptfile<<"set terminal epslatex color"<<endl;
     if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
     else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
@@ -1213,6 +1277,16 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     
     plot_ZPandS_chiral_extrapolation("P",jGp_equivalent_eqmoms,jGp_subpole_eqmoms,jGp_pars_eqmoms,m_eff_equivalent,"Gp_chiral_extrapolation","eqmoms");
     plot_ZPandS_chiral_extrapolation("S",jGs_equivalent_eqmoms,jGs_subpole_eqmoms,jGs_pars_eqmoms,m_eff_equivalent,"Gs_chiral_extrapolation","eqmoms");
+    plot_ZVAT_chiral_extrapolation("V",jGv_equivalent_eqmoms,jGv_pars_eqmoms,m_eff_equivalent,"Gv_chiral_extrapolation","eqmoms");
+    plot_ZVAT_chiral_extrapolation("A",jGa_equivalent_eqmoms,jGa_pars_eqmoms,m_eff_equivalent,"Ga_chiral_extrapolation","eqmoms");
+    plot_ZVAT_chiral_extrapolation("T",jGt_equivalent_eqmoms,jGt_pars_eqmoms,m_eff_equivalent,"Gt_chiral_extrapolation","eqmoms");
+    
+    plot_ZPandS_chiral_extrapolation("P",jGp_em_equivalent_eqmoms,jGp_em_subpole_eqmoms,jGp_em_pars_eqmoms,m_eff_equivalent,"Gp_em_chiral_extrapolation","eqmoms");
+    plot_ZPandS_chiral_extrapolation("S",jGs_em_equivalent_eqmoms,jGs_em_subpole_eqmoms,jGs_em_pars_eqmoms,m_eff_equivalent,"Gs_em_chiral_extrapolation","eqmoms");
+    plot_ZVAT_chiral_extrapolation("V",jGv_em_equivalent_eqmoms,jGv_em_pars_eqmoms,m_eff_equivalent,"Gv_em_chiral_extrapolation","eqmoms");
+    plot_ZVAT_chiral_extrapolation("A",jGa_em_equivalent_eqmoms,jGa_em_pars_eqmoms,m_eff_equivalent,"Ga_em_chiral_extrapolation","eqmoms");
+    plot_ZVAT_chiral_extrapolation("T",jGt_em_equivalent_eqmoms,jGt_em_pars_eqmoms,m_eff_equivalent,"Gt_em_chiral_extrapolation","eqmoms");
+    
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
