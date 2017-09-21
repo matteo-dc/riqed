@@ -674,6 +674,57 @@ vvvvvd_t average_Z(vector<jZbil_t> &jZ)
 //////////////////////
 
 
+
+double alphas(int Nf,double ainv,double mu2)
+{
+  
+   int CF;
+   CF = (Nc*Nc-1.)/(2.*Nc);
+
+   double lam0,L2,LL2,b1,b2,b3;
+   double als0, als1, als2, als3;
+   double beta_0,beta_1,beta_2,beta_3;
+
+      beta_0 = (11.*Nc-2.*Nf)/3.;
+
+      beta_1 = 34./3.*pow(Nc,2) - 10./3.*Nc*Nf-2*CF*Nf;
+      beta_2 = (2857./54.)*pow(Nc,3) + pow(CF,2)*Nf -
+             205./18.*CF*Nc*Nf -1415./54.*pow(Nc,2)*Nf +
+             11./9.*CF*pow(Nf,2) + 79./54.*Nc*pow(Nf,2);
+
+      beta_3 = (150653./486. - 44./9.*Z3)*pow(Nc,4) +
+            (-39143./162. + 68./3.*Z3)*pow(Nc,3)*Nf +
+            (7073./486. - 328./9.*Z3)*CF*pow(Nc,2)*Nf +
+            (-2102./27. + 176./9.*Z3)*pow(CF,2)*Nc*Nf +
+             23.*pow(CF,3)*Nf + (3965./162. + 56./9.*Z3)*pow(Nc,2)*pow(Nf,2) +
+            (338./27. - 176./9.*Z3)*pow(CF,2)*pow(Nf,2) +
+            (4288./243. + 112./9.*Z3)*CF*Nc*pow(Nf,2) + 53./243.*Nc*pow(Nf,3) +
+             154./243.*CF*pow(Nf,3) +
+            (-10./27. + 88./9.*Z3)*pow(Nc,2)*(pow(Nc,2)+36.) +
+            (32./27. - 104./9.*Z3)*Nc*(pow(Nc,2)+6)*Nf +
+            (-22./27. + 16./9.*Z3)*(pow(Nc,4) - 6.*pow(Nc,2) + 18.)/pow(Nc,2)*pow(Nf,2);
+
+      b1=beta_1/beta_0/4./PI;
+      b2=beta_2/beta_0/16./pow(PI,2);
+      b3=beta_3/beta_0/64./pow(PI,3);
+
+      lam0=lambdaQCD/ainv;
+
+      L2   = log( mu2/(pow(lam0,2) ) );
+      LL2  = log( L2 );
+
+      als0 = 4.*PI/beta_0/L2;
+      als1 = als0 - pow(als0,2)*b1*LL2;
+      als2 = als1 + pow(als0,3)*(pow(b1,2)*(pow(LL2,2) - LL2 -1.) + b2);
+      als3 = als2 + pow(als0,4)*(pow(b1,3)*(-pow(LL2,3)+5./2.*pow(LL2,2)+2*LL2-1./2.)-
+                              3.*b1*b2*LL2 + b3/2.);
+
+     return als3; 
+
+}
+
+
+
 ///////////////////////////////////
 // evolution from mu=p to mu0=1/a
 // Z(mu0)=Z(mu) c(mu0)/c(mu)
@@ -829,56 +880,6 @@ double T_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
 
         return cmu/cmu0;
 }
-
-
-double alphas(int Nf,double ainv,double mu2)
-{
-  
-   int CF;
-   CF = (Nc*Nc-1.)/(2.*Nc);
-
-   double lam0,L2,LL2,b1,b2,b3;
-   double als0, als1, als2, als3;
-   double beta_0,beta_1,beta_2,beta_3;
-
-      beta_0 = (11.*Nc-2.*Nf)/3.;
-
-      beta_1 = 34./3.*pow(Nc,2) - 10./3.*Nc*Nf-2*CF*Nf;
-      beta_2 = (2857./54.)*pow(Nc,3) + pow(CF,2)*Nf -
-             205./18.*CF*Nc*Nf -1415./54.*pow(Nc,2)*Nf +
-             11./9.*CF*pow(Nf,2) + 79./54.*Nc*pow(Nf,2);
-
-      beta_3 = (150653./486. - 44./9.*Z3)*pow(Nc,4) +
-            (-39143./162. + 68./3.*Z3)*pow(Nc,3)*Nf +
-            (7073./486. - 328./9.*Z3)*CF*pow(Nc,2)*Nf +
-            (-2102./27. + 176./9.*Z3)*pow(CF,2)*Nc*Nf +
-             23.*pow(CF,3)*Nf + (3965./162. + 56./9.*Z3)*pow(Nc,2)*pow(Nf,2) +
-            (338./27. - 176./9.*Z3)*pow(CF,2)*pow(Nf,2) +
-            (4288./243. + 112./9.*Z3)*CF*Nc*pow(Nf,2) + 53./243.*Nc*pow(Nf,3) +
-             154./243.*CF*pow(Nf,3) +
-            (-10./27. + 88./9.*Z3)*pow(Nc,2)*(pow(Nc,2)+36.) +
-            (32./27. - 104./9.*Z3)*Nc*(pow(Nc,2)+6)*Nf +
-            (-22./27. + 16./9.*Z3)*(pow(Nc,4) - 6.*pow(Nc,2) + 18.)/pow(Nc,2)*pow(Nf,2);
-
-      b1=beta_1/beta_0/4./PI;
-      b2=beta_2/beta_0/16./pow(PI,2);
-      b3=beta_3/beta_0/64./pow(PI,3);
-
-      lam0=lambdaQCD/ainv;
-
-      L2   = log( mu2/(pow(lam0,2) ) );
-      LL2  = log( L2 );
-
-      als0 = 4.*PI/beta_0/L2;
-      als1 = als0 - pow(als0,2)*b1*LL2;
-      als2 = als1 + pow(als0,3)*(pow(b1,2)*(pow(LL2,2) - LL2 -1.) + b2);
-      als3 = als2 + pow(als0,4)*(pow(b1,3)*(-pow(LL2,3)+5./2.*pow(LL2,2)+2*LL2-1./2.)-
-                              3.*b1*b2*LL2 + b3/2.);
-
-     return als3; 
-
-}
-
 
 
 /////////////////////
@@ -1956,7 +1957,7 @@ int main(int narg,char **arg)
        vvd_t  jZO_RIp_ainv(vd_t(0.0,5),njacks);
        
        double cq;
-       v_d cO(0.0,5);
+       vd_t cO(0.0,5);
 
        // Note that ZV  ZA are RGI because they're protected by the WIs
        cq=q_evolution_to_RIp_ainv(Nf,ainv,p2);
