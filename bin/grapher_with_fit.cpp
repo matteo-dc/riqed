@@ -694,7 +694,7 @@ void plot_ZPandS_chiral_extrapolation(vector<vvd_t> &jZ_equivalent, vector<vvd_t
     scriptfile<<"set xlabel '$M_{eff}^2$'"<<endl;
     scriptfile<<"set ylabel '$Z_P$'"<<endl;
     scriptfile<<"set xrange [-0.003:0.05]"<<endl;
-    scriptfile<<"set yrange [0:5]"<<endl;
+    scriptfile<<"set yrange [1:4]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$G_P$'"<<endl;
     scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_subpole.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'blue' title '$G_P$ sub'"<<endl;
     scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 9 lt 1 lc rgb 'black' title '$Z_q$ chiral extr.'"<<endl;
@@ -702,7 +702,7 @@ void plot_ZPandS_chiral_extrapolation(vector<vvd_t> &jZ_equivalent, vector<vvd_t
       scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
     if(Z_pars[0][4].size()==3)
       scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<"+"<<C<<"/x"<<endl;
-    scriptfile<<"replot f(x) lt 1 lc rgb 'blu' title 'fit curve'"<<endl;
+    scriptfile<<"replot f(x) lt 1 lc rgb 'blue' title 'fit curve'"<<endl;
     scriptfile<<"g(x)="<<A<<"+"<<B<<"*x"<<endl;
     scriptfile<<"replot g(x) lt 2 lc rgb 'red' title 'linear fit'"<<endl;
     scriptfile<<"set terminal epslatex color"<<endl;
