@@ -1781,7 +1781,7 @@ int main(int narg,char **arg)
 	     
 	     jGv_equivalent_allmoms[imom][ijack][ieq]=jGv_equivalent[ijack][ieq];
 	     jGa_equivalent_allmoms[imom][ijack][ieq]=jGa_equivalent[ijack][ieq];
-	     jGt_equivalent_allmoms[imom][ijack][ieq]=jGa_equivalent[ijack][ieq];
+	     jGt_equivalent_allmoms[imom][ijack][ieq]=jGt_equivalent[ijack][ieq];
 
 	     jGp_em_equivalent_allmoms[imom][ijack][ieq]=jGp_em_equivalent[ijack][ieq];
 	     jGs_em_equivalent_allmoms[imom][ijack][ieq]=jGs_em_equivalent[ijack][ieq];
@@ -1790,7 +1790,7 @@ int main(int narg,char **arg)
 
 	     jGv_em_equivalent_allmoms[imom][ijack][ieq]=jGv_em_equivalent[ijack][ieq];
 	     jGa_em_equivalent_allmoms[imom][ijack][ieq]=jGa_em_equivalent[ijack][ieq];
-	     jGt_em_equivalent_allmoms[imom][ijack][ieq]=jGa_em_equivalent[ijack][ieq];
+	     jGt_em_equivalent_allmoms[imom][ijack][ieq]=jGt_em_equivalent[ijack][ieq];
 	   }
 #pragma omp parallel for collapse(2)
        for(int ijack=0;ijack<njacks;ijack++)
