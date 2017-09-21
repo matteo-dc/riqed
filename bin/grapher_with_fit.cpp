@@ -453,6 +453,8 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     
     double A=Zq_pars[0][4][0];
     double B=Zq_pars[0][4][1];
+    if(Zq_pars[0][4].size()==3)
+      double C=Zq_pars[0][4][2];
     
     ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
     
@@ -463,7 +465,10 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     scriptfile<<"set yrange [0.5:1]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$'"<<endl;
     scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'black' title '$Z_q$ chiral extr.'"<<endl;
-    scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
+    if(Zq_pars[0][4].size()==2)
+      scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
+    if(Zq_pars[0][4].size()==3)
+      scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<"+"<<C<<"*x*x"<<endl;
     scriptfile<<"replot f(x) notitle"<<endl;
     scriptfile<<"set terminal epslatex color"<<endl;
     if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
@@ -629,6 +634,73 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
     }
     
 }
+
+
+void plot_Z_chiral_extrapolation(vector<vvd_t> &jGp_equivalent,vector<vXd_t> &jGp_pars_eqmoms, vd_t &m_eff_equivalent,const string &name, const string &all_or_eq_moms)
+{
+
+  int moms=jZq_equivalent.size();
+  int njacks=jZq_equivalent[0].size();
+  int neq=jZq_equivalent[0][0].size();
+  vector<vvd_t> jZq_equivalent_and_chiral_extr(moms,vvd_t(vd_t(neq+1),njacks));
+    
+#pragma omp parallel for collapse(2)
+  for(int imom=0;imom<moms;imom++)
+    for(int ijack=0;ijack<njacks;ijack++)
+      {
+	jZq_equivalent_and_chiral_extr[imom][ijack][0]=jZq_pars[imom][ijack](0);
+      }
+#pragma omp parallel for collapse(3)
+  for(int imom=0;imom<moms;imom++)
+    for(int ijack=0;ijack<njacks;ijack++)
+      for(int ieq=0;ieq<neq;ieq++)
+	{
+	  jZq_equivalent_and_chiral_extr[imom][ijack][ieq+1]=jZq_equivalent[imom][ijack][ieq];
+	}
+    
+  vvvd_t Zq_equivalent = average_Zq(jZq_equivalent_and_chiral_extr);  //Zq[ave/err][imom][ieq]
+  vvvd_t Zq_pars=average_pars(jZq_pars);
+    
+  ofstream datafile1("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data.txt");
+    
+  //datafile1<<0<<"\t"<<Zq_pars[0][0]<<"\t"<<Zq_pars[1][0]<<endl;
+  for(size_t ieq=0;ieq<m_eff_equivalent_Zq.size()+1;ieq++)
+    {
+      if(ieq==0)
+	datafile1<<0<<"\t"<<Zq_equivalent[0][4][ieq]<<"\t"<<Zq_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+      else
+	datafile1<<m_eff_equivalent_Zq[ieq-1]*m_eff_equivalent_Zq[ieq-1]<<"\t"<<Zq_equivalent[0][4][ieq]<<"\t"<<Zq_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+    }
+  datafile1.close();
+    
+  double A=Zq_pars[0][4][0];
+  double B=Zq_pars[0][4][1];
+    
+  ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
+    
+  scriptfile<<"set autoscale xy"<<endl;
+  scriptfile<<"set xlabel '$M_{eff}^2$'"<<endl;
+  scriptfile<<"set ylabel '$Z_Q$'"<<endl;
+  scriptfile<<"set xrange [-0.003:0.05]"<<endl;
+  scriptfile<<"set yrange [0.5:1]"<<endl;
+  scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$'"<<endl;
+  scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'black' title '$Z_q$ chiral extr.'"<<endl;
+  scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
+  scriptfile<<"replot f(x) notitle"<<endl;
+  scriptfile<<"set terminal epslatex color"<<endl;
+  if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
+  else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
+  scriptfile<<"replot"<<endl;
+    
+  scriptfile.close();
+    
+  string command="gnuplot plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt";
+    
+  system(command.c_str());  
+
+}
+
+
 
 void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const string &name, const string &all_or_eq_moms)
 {
@@ -1121,6 +1193,7 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z chiral extrapolation  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     
+    plot_Z_chiral_extrapolation(jGp_equivalent_eqmoms,jGp_pars_eqmoms,m_eff_equivalent,"Gp_chiral_extrapolation","eqmoms");
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
