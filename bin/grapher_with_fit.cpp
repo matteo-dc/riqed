@@ -696,7 +696,7 @@ void plot_ZPandS_chiral_extrapolation(vector<vvd_t> &jZ_equivalent, vector<vvd_t
     scriptfile<<"set xrange [-0.003:0.05]"<<endl;
     scriptfile<<"set yrange [0:5]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$G_P$'"<<endl;
-    scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_subpole.txt' u 1:2:3 with errorbars pt 7 lc lt 1 rgb 'blue' title '$G_P$ sub'"<<endl;
+    scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_subpole.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'blue' title '$G_P$ sub'"<<endl;
     scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 9 lt 1 lc rgb 'black' title '$Z_q$ chiral extr.'"<<endl;
     if(Z_pars[0][4].size()==2)
       scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
