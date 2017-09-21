@@ -469,7 +469,7 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     if(Zq_pars[0][4].size()==2)
       scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
     if(Zq_pars[0][4].size()==3)
-      scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<"+"<<C<<"*x*x"<<endl;
+      scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<"+"<<C<<"/x"<<endl;
     scriptfile<<"replot f(x) notitle"<<endl;
     scriptfile<<"set terminal epslatex color"<<endl;
     if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
