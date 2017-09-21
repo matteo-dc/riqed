@@ -14,7 +14,8 @@
 
 #define lambdaQCD 0.250
 #define Z3 1.20206
-#define Nc=3.;
+#define Nc 3.0
+#define PI M_PI
 
 using namespace std;
 using namespace Eigen;
