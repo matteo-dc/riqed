@@ -453,8 +453,9 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     
     double A=Zq_pars[0][4][0];
     double B=Zq_pars[0][4][1];
+    double C=0;
     if(Zq_pars[0][4].size()==3)
-      double C=Zq_pars[0][4][2];
+      C=Zq_pars[0][4][2];
     
     ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
     
@@ -636,7 +637,7 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
 }
 
 
-void plot_Z_chiral_extrapolation(vector<vvd_t> &jGp_equivalent,vector<vXd_t> &jGp_pars_eqmoms, vd_t &m_eff_equivalent,const string &name, const string &all_or_eq_moms)
+/*void plot_Z_chiral_extrapolation(vector<vvd_t> &jGp_equivalent,vector<vXd_t> &jGp_pars_eqmoms, vd_t &m_eff_equivalent,const string &name, const string &all_or_eq_moms)
 {
 
   int moms=jZq_equivalent.size();
@@ -698,7 +699,7 @@ void plot_Z_chiral_extrapolation(vector<vvd_t> &jGp_equivalent,vector<vXd_t> &jG
     
   system(command.c_str());  
 
-}
+  }*/
 
 
 
@@ -1193,7 +1194,7 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z chiral extrapolation  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     
-    plot_Z_chiral_extrapolation(jGp_equivalent_eqmoms,jGp_pars_eqmoms,m_eff_equivalent,"Gp_chiral_extrapolation","eqmoms");
+    plot_Zq_chiral_extrapolation(jGp_equivalent_eqmoms,jGp_pars_eqmoms,m_eff_equivalent,"Gp_chiral_extrapolation","eqmoms");
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
