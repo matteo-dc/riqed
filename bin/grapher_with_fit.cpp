@@ -763,9 +763,9 @@ void plot_ZVAT_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equival
     scriptfile<<"set autoscale xy"<<endl;
     scriptfile<<"set xlabel '$M_{PS}^2$'"<<endl;
     scriptfile<<"set ylabel '$\\Gamma_"<<bil<<"$'"<<endl;
-    scriptfile<<"set xrange [-0.003:0.05]"<<endl;
-    if(bil=="P") scriptfile<<"set yrange [1:4]"<<endl;
-    if(bil=="S") scriptfile<<"set yrange [0.95:1.15]"<<endl;
+    // scriptfile<<"set xrange [-0.003:0.05]"<<endl;
+    //if(bil=="P") scriptfile<<"set yrange [1:4]"<<endl;
+    //if(bil=="S") scriptfile<<"set yrange [0.95:1.15]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
     scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 5 lt 1 lc rgb 'black' title '$\\Gamma_"<<bil<<"$ chiral extr.'"<<endl;
     scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
@@ -1316,8 +1316,22 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     cout<<"Z1 chiral em correction"<<endl;
     plot_Z_chiral(jZ1_em_chiral_eqmoms,p2_vector_eqmoms,"Z1_chiral_em_correction","eqmoms");
     
+
+      
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z RIp_ainv  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+    cout<<"Z1(1/a)"<<endl;
+    plot_Z_chiral(jZO_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_RIp_ainv","eqmoms");
+
+    cout<<"Z1(1/a) em correction"<<endl;
+    plot_Z_chiral(jZO_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_RIp_ainv","eqmoms");
+
+    cout<<"Sigma1(1/a)"<<endl;
+    plot_Zq_chiral(jSigma1_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_RIp_ainv_correction","eqmoms");
+
+    cout<<"Sigma1(1/a) em correction"<<endl;
+    plot_Zq_chiral(jSigma1_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_em_RIp_ainv_correction","eqmoms");
     
-    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     
     return 0;
 }
