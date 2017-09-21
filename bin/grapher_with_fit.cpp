@@ -1021,6 +1021,9 @@ int main(int narg,char **arg)
     jGa_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGt_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks));
     vector< vXd_t > jZq_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jSigma1_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)),\
     jZq_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jSigma1_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks));
+
+    vector<vd_t> jSigma1_RIp_ainv_allmoms(moms,vd_t(0.0,njacks)),jSigma1_em_RIp_ainv_allmoms(moms,vd_t(0.0,njacks));
+    vector<vvd_t> jZO_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks)),jZO_em_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks));
     
     vd_t m_eff_equivalent(1.0,neq);
     vd_t m_eff_equivalent_Zq(0.0,neq2);
@@ -1066,6 +1069,11 @@ int main(int narg,char **arg)
     jGa_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jGt_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks));
     vector< vXd_t > jZq_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jSigma1_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)),\
     jZq_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jSigma1_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks));
+
+    vector<vd_t> jSigma1_RIp_ainv_eqmoms(neq_moms,vd_t(0.0,njacks)),jSigma1_em_RIp_ainv_eqmoms(neq_moms,vd_t(0.0,njacks));
+    vector<vvd_t> jZO_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)),jZO_em_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
+ 
+
     
 #define READ(NAME)				\
 read_vec(NAME##_##allmoms,"allmoms/"#NAME);	\
@@ -1138,6 +1146,10 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     READ(jZq_em_pars);
     READ(jSigma1_pars);
     READ(jSigma1_em_pars);
+    READ(jSigma1_RIp_ainv);
+    READ(jSigma1_em_RIp_ainv);
+    READ(jZO_RIp_ainv);
+    READ(jZO_em_RIp_ainv);
     
 #undef READ
     
