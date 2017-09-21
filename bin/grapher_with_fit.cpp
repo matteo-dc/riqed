@@ -1339,10 +1339,10 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     plot_Z_chiral(jZO_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_RIp_ainv","eqmoms");
 
     cout<<"Sigma1(1/a)"<<endl;
-    plot_Zq_chiral(jSigma1_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_RIp_ainv_correction","eqmoms");
+    plot_Zq_chiral(jSigma1_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_RIp_ainv","eqmoms");
 
     cout<<"Sigma1(1/a) em correction"<<endl;
-    plot_Zq_chiral(jSigma1_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_em_RIp_ainv_correction","eqmoms");
+    plot_Zq_chiral(jSigma1_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_em_RIp_ainv","eqmoms");
     
     
     return 0;
