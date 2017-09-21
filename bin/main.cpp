@@ -12,6 +12,10 @@
 #include <chrono>
 #include <omp.h>
 
+#define lambdaQCD 0.250
+#define Z3 1.20206
+#define Nc=3.;
+
 using namespace std;
 using namespace Eigen;
 using namespace std::chrono;
@@ -665,6 +669,224 @@ vvvvvd_t average_Z(vector<jZbil_t> &jZ)
 
   return Z_ave_err;
 }
+
+//////////////////////
+
+
+///////////////////////////////////
+// evolution from mu=p to mu0=1/a
+// Z(mu0)=Z(mu) c(mu0)/c(mu)
+// def: c=c(mu)/c(mu0)
+// -> Z(mu=1/a) = Z(mu) /c
+//////////////////////////////////
+double q_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
+{
+	double cmu, cmu0; // c=cmu/cmu0
+	//mu_2=a2*p2 (adimensional quantity)
+	//mu0_2=a2*(1/a^2)=1
+	double mu0_2=1; 	
+		
+	// alphas @ NNLO
+	double alm, al0;
+	alm=alphas(Nf,ainv,mu_2)/(4*PI);
+	al0=alphas(Nf,ainv,mu0_2)/(4*PI);
+
+	////////////////////////////////
+        // N3LO FORMULA
+	// Assuming landau gauge
+	///////////////////////////////////
+       if(Nf==2){
+        cmu = 1. + 2.03448 * alm + 35.9579 * pow(alm,2) + 1199.16 * pow(alm,3);
+        cmu0 = 1. + 2.03448 * al0 + 35.9579 * pow(al0,2) + 1199.16 * pow(al0,3);
+       }if(Nf==0){
+        cmu = 1. + 2.0303 * alm + 42.1268 * pow(alm,2) + 1728.43 * pow(alm,3);
+        cmu0 = 1. + 2.0303 * al0 + 42.1268 * pow(al0,2) + 1728.43 * pow(al0,3);
+       }if(Nf==4){
+        cmu = 1. + 2.4000 * alm + 29.6724 * pow(alm,2) + 719.141 * pow(alm,3);
+        cmu0 = 1. + 2.4000 * al0 + 29.6724 * pow(al0,2) + 719.141 * pow(al0,3);
+       }
+
+
+
+	return cmu/cmu0;
+}
+double S_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
+{
+        double cmu, cmu0; // c=cmu/cmu0
+        //mu_2=a2*p2 (adimensional quantity)
+        //mu0_2=a2*(1/a^2)=1
+        double mu0_2=1;
+        
+        // alphas @ NNLO
+        double alm, al0;
+        alm=alphas(Nf,ainv,mu_2)/(4*PI);
+        al0=alphas(Nf,ainv,mu0_2)/(4*PI);
+
+        ////////////////////////////////
+        // N3LO FORMULA
+        // Assuming landau gauge
+        ///////////////////////////////////
+
+      if(Nf==2){
+        cmu = pow(alm,-12./29) * (1. - 8.55727 * alm - 125.423 * pow(alm,2) -
+             3797.71 * pow(alm,3));
+
+        cmu0 = pow(al0,-12./29) * (1. - 8.55727 * al0 - 125.423 * pow(al0,2) -
+             3797.71 * pow(al0,3));
+      }if(Nf==0){
+        cmu = pow(alm,-4./11) * (1. - 8.08264 * alm - 151.012 * pow(alm,2) -
+             5247.93 * pow(alm,3));
+
+        cmu0 = pow(al0,-4./11) * (1. - 8.08264 * al0 - 151.012 * pow(al0,2) -
+             5247.93 * pow(al0,3));
+      }if(Nf==4){
+        cmu = pow(alm,-12./25) * (1. - 9.38987 * alm - 96.2883 * pow(alm,2) -
+             2403.82 * pow(alm,3));
+
+        cmu0 = pow(al0,-12./25) * (1. - 9.38987 * al0 - 96.2883 * pow(al0,2) -
+             2403.82 * pow(al0,3));
+      }
+
+
+
+        return cmu/cmu0;
+}
+
+double P_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
+{
+        double cmu, cmu0; // c=cmu/cmu0
+        //mu_2=a2*p2 (adimensional quantity)
+        //mu0_2=a2*(1/a^2)=1
+        double mu0_2=1;
+        
+        // alphas @ NNLO
+        double alm, al0;
+        alm=alphas(Nf,ainv,mu_2)/(4*PI);
+        al0=alphas(Nf,ainv,mu0_2)/(4*PI);
+
+        ////////////////////////////////
+        // N3LO FORMULA
+        // Assuming landau gauge
+        ///////////////////////////////////
+      if(Nf==2){
+        cmu = pow(alm,-12./29) * (1. - 8.55727 * alm - 125.423 * pow(alm,2) -
+             3797.71 * pow(alm,3));
+
+        cmu0 = pow(al0,-12./29) * (1. - 8.55727 * al0 - 125.423 * pow(al0,2) -
+             3797.71 * pow(al0,3));
+      }if(Nf==0){
+        cmu = pow(alm,-4./11) * (1. - 8.08264 * alm - 151.012 * pow(alm,2) -
+             5247.93 * pow(alm,3));
+
+        cmu0 = pow(al0,-4./11) * (1. - 8.08264 * al0 - 151.012 * pow(al0,2) -
+             5247.93 * pow(al0,3));
+      }if(Nf==4){
+        cmu = pow(alm,-12./25) * (1. - 9.38987 * alm - 96.2883 * pow(alm,2) -
+             2403.82 * pow(alm,3));
+
+        cmu0 = pow(al0,-12./25) * (1. - 9.38987 * al0 - 96.2883 * pow(al0,2) -
+             2403.82 * pow(al0,3));
+      }
+
+
+
+
+        return cmu/cmu0;
+}
+double T_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
+{
+        double cmu, cmu0; // c=cmu/cmu0
+        //mu_2=a2*p2 (adimensional quantity)
+        //mu0_2=a2*(1/a^2)=1
+        double mu0_2=1;
+        
+        // alphas @ NNLO
+        double alm, al0;
+        alm=alphas(Nf,ainv,mu_2)/(4*PI);
+        al0=alphas(Nf,ainv,mu0_2)/(4*PI);
+
+        ////////////////////////////////
+        // N2LO FORMULA
+        // Assuming landau gauge
+        ///////////////////////////////////
+
+       if(Nf==2){
+        cmu = pow(alm,4./29) * (1. + 2.66852 * alm + 47.9701 * pow(alm,2));
+
+        cmu0 = pow(al0,4./29) * (1. + 2.66852 * al0 + 47.9701 * pow(al0,2));
+       }if(Nf==0){
+        cmu = pow(alm,4./33) * (1. + 2.53260 * alm + 57.8740 * pow(alm,2));
+
+        cmu0 = pow(al0,4./33) * (1. + 2.53260 * al0 + 57.8740 * pow(al0,2));
+       }if(Nf==4){
+        cmu = pow(alm,4./25) * (1. + 2.91662 * alm + 37.9471 * pow(alm,2));
+
+        cmu0 = pow(al0,4./25) * (1. + 2.91662 * al0 + 37.9471 * pow(al0,2));
+       }
+
+
+
+        return cmu/cmu0;
+}
+
+
+double alphas(int Nf,double ainv,double mu2)
+{
+  
+   int CF;
+   CF = (Nc*Nc-1.)/(2.*Nc);
+
+   double lam0,L2,LL2,b1,b2,b3;
+   double als0, als1, als2, als3;
+   double beta_0,beta_1,beta_2,beta_3;
+
+      beta_0 = (11.*Nc-2.*Nf)/3.;
+
+      beta_1 = 34./3.*pow(Nc,2) - 10./3.*Nc*Nf-2*CF*Nf;
+      beta_2 = (2857./54.)*pow(Nc,3) + pow(CF,2)*Nf -
+             205./18.*CF*Nc*Nf -1415./54.*pow(Nc,2)*Nf +
+             11./9.*CF*pow(Nf,2) + 79./54.*Nc*pow(Nf,2);
+
+      beta_3 = (150653./486. - 44./9.*Z3)*pow(Nc,4) +
+            (-39143./162. + 68./3.*Z3)*pow(Nc,3)*Nf +
+            (7073./486. - 328./9.*Z3)*CF*pow(Nc,2)*Nf +
+            (-2102./27. + 176./9.*Z3)*pow(CF,2)*Nc*Nf +
+             23.*pow(CF,3)*Nf + (3965./162. + 56./9.*Z3)*pow(Nc,2)*pow(Nf,2) +
+            (338./27. - 176./9.*Z3)*pow(CF,2)*pow(Nf,2) +
+            (4288./243. + 112./9.*Z3)*CF*Nc*pow(Nf,2) + 53./243.*Nc*pow(Nf,3) +
+             154./243.*CF*pow(Nf,3) +
+            (-10./27. + 88./9.*Z3)*pow(Nc,2)*(pow(Nc,2)+36.) +
+            (32./27. - 104./9.*Z3)*Nc*(pow(Nc,2)+6)*Nf +
+            (-22./27. + 16./9.*Z3)*(pow(Nc,4) - 6.*pow(Nc,2) + 18.)/pow(Nc,2)*pow(Nf,2);
+
+      b1=beta_1/beta_0/4./PI;
+      b2=beta_2/beta_0/16./pow(PI,2);
+      b3=beta_3/beta_0/64./pow(PI,3);
+
+      lam0=lambdaQCD/ainv;
+
+      L2   = log( mu2/(pow(lam0,2) ) );
+      LL2  = log( L2 );
+
+      als0 = 4.*PI/beta_0/L2;
+      als1 = als0 - pow(als0,2)*b1*LL2;
+      als2 = als1 + pow(als0,3)*(pow(b1,2)*(pow(LL2,2) - LL2 -1.) + b2);
+      als3 = als2 + pow(als0,4)*(pow(b1,3)*(-pow(LL2,3)+5./2.*pow(LL2,2)+2*LL2-1./2.)-
+                              3.*b1*b2*LL2 + b3/2.);
+
+     return als3; 
+
+}
+
+
+
+/////////////////////
+
+
+
+
+
+
   
 
 
@@ -1275,7 +1497,7 @@ int main(int narg,char **arg)
       	     jZq_sub[ijack][mr]=subtract(c_q,jZq[ijack][mr],p2,p4,g2_tilde);
       	     jSigma1_sub[ijack][mr]=subtract(c_q,jSigma1[ijack][mr],p2,p4,g2_tilde);
 	     //subtraction of O(e^2a^2) effects
-      	     jZq_em_sub[ijack][mr]=subtract(c_q_em,jZq_em[ijack][mr],p2,p4,3./4.);
+      	     jZq_em_sub[ijack][mr]=subtract(c_q_em,jZq_em[ijack][mr],p2,p4,3./4.);          //Wilson Action
       	     jSigma1_em_sub[ijack][mr]=subtract(c_q_em,jSigma1_em[ijack][mr],p2,p4,3./4.);
 	   }
 #pragma omp parallel for collapse(3)
@@ -1291,13 +1513,13 @@ int main(int narg,char **arg)
 	       jG_0_sub[ijack][mr][mr2][4]=subtract(c_t,jG_0[ijack][mr][mr2][4],p2,p4,g2_tilde);
 	      
 	       //subtraction of O(e^2a^2) effects
-	       jG_em_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_em[ijack][mr][mr2][0],p2,p4,3./4.);   ///!!!!!
+	       jG_em_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_em[ijack][mr][mr2][0],p2,p4,3./4.);   ///!!!!!  with Wilson Action
 	       jG_em_sub[ijack][mr][mr2][1]=subtract(c_a_em,jG_em[ijack][mr][mr2][1],p2,p4,3./4.);
 	       jG_em_sub[ijack][mr][mr2][2]=subtract(c_p_em,jG_em[ijack][mr][mr2][2],p2,p4,3./4.);
 	       jG_em_sub[ijack][mr][mr2][3]=subtract(c_v_em,jG_em[ijack][mr][mr2][3],p2,p4,3./4.);
 	       jG_em_sub[ijack][mr][mr2][4]=subtract(c_t_em,jG_em[ijack][mr][mr2][4],p2,p4,3./4.);
 
-	       jG_a_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_a[ijack][mr][mr2][0],p2,p4,3./4.);
+	       jG_a_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_a[ijack][mr][mr2][0],p2,p4,3./4.); 
 	       jG_a_sub[ijack][mr][mr2][1]=subtract(c_a_em,jG_a[ijack][mr][mr2][1],p2,p4,3./4.);
 	       jG_a_sub[ijack][mr][mr2][2]=subtract(c_p_em,jG_a[ijack][mr][mr2][2],p2,p4,3./4.);
 	       jG_a_sub[ijack][mr][mr2][3]=subtract(c_v_em,jG_a[ijack][mr][mr2][3],p2,p4,3./4.);
@@ -1332,7 +1554,8 @@ int main(int narg,char **arg)
 
 
        jproj_t jG_em_a_b_sub = -jG_em_sub + jG_a_sub + jG_b_sub;
-
+   
+              
      
       //Goldstone pole subtraction from jG_p and jG_s & chiral extrapolation of jG_p and jG_s
        t0=high_resolution_clock::now();
@@ -1715,6 +1938,56 @@ int main(int narg,char **arg)
        t1=high_resolution_clock::now();
        t_span = duration_cast<duration<double>>(t1-t0);
        cout<<"***** Chiral Z's computation in "<<t_span.count()<<" s ******"<<endl<<endl;
+
+
+
+
+
+
+       //-------------------------------------------------------------------------------------//
+       //---------------  p -> 1/a  evolution ---------------- (from Nuria) ------------------//
+       //-------------------------------------------------------------------------------------//
+
+       double ainv=2.3;
+       int Nf=2;
+
+       vd_t jSigma1_RIp_ainv(0.0,njacks);
+       vvd_t  jZO_RIp_ainv(vd_t(0.0,5),njacks);
+       
+       double cq;
+       v_d cO(0.0,5);
+
+       // Note that ZV  ZA are RGI because they're protected by the WIs
+       cq=q_evolution_to_RIp_ainv(Nf,ainv,p2);
+       cO[0]=S_evolution_to_RIp_ainv(Nf,ainv,p2); //S
+       cO[1]=1.; //V
+       cO[2]=P_evolution_to_RIp_ainv(Nf,ainv,p2); //P
+       cO[3]=1.; //A
+       cO[4]=T_evolution_to_RIp_ainv(Nf,ainv,p2); //T
+
+       jSigma1_RIp_ainv=jSigma1_chiral/cq;
+      
+       for(int ijack=0;ijack<njacks;ijack++)
+	 for (int ibil=0; ibil<5; ibil++)
+	  {
+	    jZO_RIp_ainv[ijack][ibil]=jZ_chiral[ijack][ibil]/cO[ibil];
+	  }
+      
+       
+
+
+
+
+       
+       //-------------------------------------------------------------------------------------//
+       //-------------------------------------------------------------------------------------//
+       //-------------------------------------------------------------------------------------//
+
+       
+
+       
+
+
        
 
        //Tag assignment
