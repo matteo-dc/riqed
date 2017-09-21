@@ -1177,6 +1177,11 @@ int main(int narg,char **arg)
    vector<vvd_t> jZ_chiral_allmoms(moms,vvd_t(vd_t(5),njacks)),jZ1_chiral_allmoms(moms,vvd_t(vd_t(5),njacks));
    vector<vvd_t> jZ_em_chiral_allmoms(moms,vvd_t(vd_t(5),njacks)),jZ1_em_chiral_allmoms(moms,vvd_t(vd_t(5),njacks));
 
+
+   vector<vd_t> jSigma1_RIp_ainv_allmoms(moms,vd_t(0.0,njacks)),jSigma1_em_RIp_ainv_allmoms(moms,vd_t(0.0,njacks));
+   vector<vvd_t> jZO_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks)),jZO_em_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks));
+   
+
    vector< vXd_t > jGp_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), jGs_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), \
      jGp_em_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), jGs_em_pars_allmoms(moms,vXd_t(VectorXd(3),njacks));
    vector< vXd_t > jGv_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGa_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)),\
@@ -1184,6 +1189,8 @@ int main(int narg,char **arg)
      jGa_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGt_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks));
    vector< vXd_t > jZq_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jSigma1_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)),\
      jZq_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jSigma1_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks));
+
+   
 
    vd_t m_eff_equivalent(0.0,neq);
    vd_t m_eff_equivalent_Zq(0.0,neq2);
@@ -1953,8 +1960,8 @@ int main(int narg,char **arg)
        double ainv=2.3;
        int Nf=2;
 
-       vd_t jSigma1_RIp_ainv(0.0,njacks);
-       vvd_t  jZO_RIp_ainv(vd_t(0.0,5),njacks);
+       vd_t jSigma1_RIp_ainv(0.0,njacks),jSigma1_em_RIp_ainv(0.0,njacks);
+       vvd_t jZO_RIp_ainv(vd_t(0.0,5),njacks),jZO_em_RIp_ainv(vd_t(0.0,5),njacks);
        
        double cq;
        vd_t cO(0.0,5);
@@ -1967,19 +1974,19 @@ int main(int narg,char **arg)
        cO[3]=1.; //A
        cO[4]=T_evolution_to_RIp_ainv(Nf,ainv,p2); //T
 
-       jSigma1_RIp_ainv=jSigma1_chiral/cq;
+
+       jSigma1_RIp_ainv = jSigma1_chiral/cq;
+       jSigma1_em_RIp_ainv = jSigma1_em_chiral/cq;
       
        for(int ijack=0;ijack<njacks;ijack++)
 	 for (int ibil=0; ibil<5; ibil++)
 	  {
-	    jZO_RIp_ainv[ijack][ibil]=jZ_chiral[ijack][ibil]/cO[ibil];
+	    jZO_RIp_ainv[ijack][ibil]=jZ1_chiral[ijack][ibil]/cO[ibil];
+	    jZO_em_RIp_ainv[ijack][ibil]=jZ1_em_chiral[ijack][ibil]/cO[ibil];
 	  }
       
+
        
-
-
-
-
        
        //-------------------------------------------------------------------------------------//
        //-------------------------------------------------------------------------------------//
@@ -2044,6 +2051,7 @@ int main(int narg,char **arg)
 		 jZ1_sub_allmoms[imom][ijack][mr_fw][mr_bw][k]=jZ1_sub[ijack][mr_fw][mr_bw][k];
 		 jZ_em_sub_allmoms[imom][ijack][mr_fw][mr_bw][k]=jZ_em_sub[ijack][mr_fw][mr_bw][k];
 		 jZ1_em_sub_allmoms[imom][ijack][mr_fw][mr_bw][k]=jZ1_em_sub[ijack][mr_fw][mr_bw][k];
+		 
 	       } 
 #pragma omp parallel for collapse(2)
        for(int ijack=0;ijack<njacks;ijack++)
@@ -2100,6 +2108,13 @@ int main(int narg,char **arg)
 	   jSigma1_em_chiral_allmoms[imom][ijack]=jSigma1_em_chiral[ijack];
 	   jZ_em_chiral_allmoms[imom][ijack]=jZ_em_chiral[ijack];
 	   jZ1_em_chiral_allmoms[imom][ijack]=jZ1_em_chiral[ijack];
+
+	   jSigma1_RIp_ainv_allmoms[imom][ijack]=jSigma1_RIp_ainv[ijack];
+	   jSigma1_em_RIp_ainv_allmoms[imom][ijack]=jSigma1_em_RIp_ainv[ijack];
+
+	   jZO_RIp_ainv_allmoms[imom][ijack]=jZO_RIp_ainv[ijack];
+	   jZO_em_RIp_ainv_allmoms[imom][ijack]=jZO_em_RIp_ainv[ijack];	   
+	   
 	 }
 #pragma omp parallel for collapse(2)
 	 for(int ijack=0;ijack<njacks;ijack++)
@@ -2200,6 +2215,10 @@ int main(int narg,char **arg)
      jGa_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jGt_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks));
    vector< vXd_t > jZq_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jSigma1_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)),\
      jZq_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks)), jSigma1_em_pars_eqmoms(neq_moms,vXd_t(VectorXd(2),njacks));
+
+   vector<vd_t> jSigma1_RIp_ainv_eqmoms(neq_moms,vd_t(0.0,njacks)),jSigma1_em_RIp_ainv_eqmoms(neq_moms,vd_t(0.0,njacks));
+   vector<vvd_t> jZO_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)),jZO_em_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
+   
    
 
    for(int tag=0;tag<neq_moms;tag++)
@@ -2247,6 +2266,9 @@ int main(int narg,char **arg)
 		 jGt_0_chiral_eqmoms[tag][ijack] += jGt_0_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
 		 jZq_chiral_eqmoms[tag][ijack] += jZq_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
 		 jSigma1_chiral_eqmoms[tag][ijack] += jSigma1_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
+
+		 jSigma1_RIp_ainv_eqmoms[tag][ijack] += jSigma1_RIp_ainv_allmoms[imom][ijack]/ count_tag_vector[tag];
+		 jSigma1_em_RIp_ainv_eqmoms[tag][ijack] += jSigma1_RIp_ainv_allmoms[imom][ijack]/ count_tag_vector[tag];
 
 		 jGp_em_a_b_chiral_eqmoms[tag][ijack] += jGp_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
 		 jGa_em_a_b_chiral_eqmoms[tag][ijack] += jGa_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
@@ -2296,6 +2318,10 @@ int main(int narg,char **arg)
 		   jZ1_chiral_eqmoms[tag][ijack][i] += jZ1_chiral_allmoms[imom][ijack][i] / count_tag_vector[tag];
 		   jZ_em_chiral_eqmoms[tag][ijack][i] += jZ_em_chiral_allmoms[imom][ijack][i] / count_tag_vector[tag];
 		   jZ1_em_chiral_eqmoms[tag][ijack][i] += jZ1_em_chiral_allmoms[imom][ijack][i] / count_tag_vector[tag];
+
+		   jZO_RIp_ainv_eqmoms[tag][ijack][i] += jZO_RIp_ainv_allmoms[imom][ijack][i] / count_tag_vector[tag];
+		   jZO_em_RIp_ainv_eqmoms[tag][ijack][i] += jZO_em_RIp_ainv_allmoms[imom][ijack][i] / count_tag_vector[tag];
+		   
 		 }
 
 	     for(int ijack=0;ijack<njacks;ijack++)
@@ -2398,6 +2424,10 @@ int main(int narg,char **arg)
    PRINT(jZq_em_pars);
    PRINT(jSigma1_pars);
    PRINT(jSigma1_em_pars);
+   PRINT(jSigma1_RIp_ainv);
+   PRINT(jSigma1_em_RIp_ainv);
+   PRINT(jZO_RIp_ainv);
+   PRINT(jZO_em_RIp_ainv);
    
    #undef PRINT
 
