@@ -942,8 +942,8 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
       A[ibil]=Z_par_ave_err[0][ibil][0];
       A_err[ibil]=Z_par_ave_err[1][ibil][0];
       B[ibil]=Z_par_ave_err[0][ibil][1];
-      B_err[ibil]=Z_par_ave_err[1][ibil][1]; */
-    }
+      B_err[ibil]=Z_par_ave_err[1][ibil][1]; 
+      }*/
     
   ///*****************************///
 
