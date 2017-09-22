@@ -635,7 +635,8 @@ void plot_Zq_RIp_ainv(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const
     scriptfile<<"set xrange [-0.05:2.5]"<<endl;
     scriptfile<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
     scriptfile<<"set ylabel '$Z_q$'"<<endl;
-    // scriptfile<<"set yrange [0.7:0.9]"<<endl;
+    if(name=="Sigma1_RIp_ainv") scriptfile<<"set yrange [0.75:0.81]"<<endl;
+    if(name=="Sigma1_em_RIp_ainv") scriptfile<<"set yrange [-0.06:0]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$ chiral'"<<endl;
     scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'red' ps 1 notitle"<<endl;
     scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
@@ -781,9 +782,9 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
     scriptfile<<"set ylabel '$\\Gamma_"<<bil<<"$'"<<endl;
     scriptfile<<"set xrange [-0.003:0.05]"<<endl;
     if(name=="Gp_chiral_extrapolation") scriptfile<<"set yrange [1:4]"<<endl;
-    if(name=="Gs_chiral_extrapolation") scriptfile<<"set yrange [0.95:1.15]"<<endl;
-    if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
-    if(name=="Gs_em_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
+    if(name=="Gs_chiral_extrapolation") scriptfile<<"set yrange [0.95:1.12]"<<endl;
+    if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set yrange [-5:0.1]"<<endl;
+    if(name=="Gs_em_chiral_extrapolation") scriptfile<<"set yrange [-0.1:0]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
     scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_subpole.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'blue' title '$\\Gamma_"<<bil<<"^{sub}$'"<<endl;
     scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 5 lt 1 lc rgb 'black' title '$\\Gamma_"<<bil<<"$ chiral extr.'"<<endl;
@@ -791,7 +792,7 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
       scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
     if(Z_pars[0][4].size()==3)
       scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<"+"<<C<<"/x"<<endl;
-    scriptfile<<"replot f(x) lt 1 lc rgb 'blue' title 'fit curve'"<<endl;
+    scriptfile<<"replot [0.001:*] f(x) lt 1 lc rgb 'blue' title 'fit curve'"<<endl;
     scriptfile<<"g(x)="<<A<<"+"<<B<<"*x"<<endl;
     scriptfile<<"replot g(x) lt 2 lc rgb 'red' title 'linear fit'"<<endl;
     scriptfile<<"set terminal epslatex color"<<endl;
@@ -855,9 +856,9 @@ void plot_ZVAT_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equival
     if(name=="Gv_chiral_extrapolation") scriptfile<<"set yrange [0.98:1]"<<endl;
     if(name=="Ga_chiral_extrapolation") scriptfile<<"set yrange [1.15:1.20]"<<endl;
     if(name=="Gt_chiral_extrapolation") scriptfile<<"set yrange [1.02:1.06]"<<endl;
-    if(name=="Gv_em_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
-    if(name=="Ga_em_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
-    if(name=="Gt_em_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
+    if(name=="Gv_em_chiral_extrapolation") scriptfile<<"set yrange [-0.1:0.1]"<<endl;
+    if(name=="Ga_em_chiral_extrapolation") scriptfile<<"set yrange [-0.09:-0.07]"<<endl;
+    if(name=="Gt_em_chiral_extrapolation") scriptfile<<"set yrange [-0.028:-0.020]"<<endl;
     
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
     scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 5 lt 1 lc rgb 'black' title '$\\Gamma_"<<bil<<"$ chiral extr.'"<<endl;
@@ -1148,7 +1149,16 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
       scriptfile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_script.txt");
       scriptfile[i]<<"set autoscale xy"<<endl;
       scriptfile[i]<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
-      // scriptfile[i]<<"set yrange [0.7:0.9]"<<endl;
+      if(i==0 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.6:0.78]"<<endl; //S
+      if(i==1 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.74:0.85]"<<endl; //A
+      if(i==2 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.2:1]"<<endl; //P
+      if(i==3 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.6:0.7]"<<endl; //V
+      if(i==4 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.70:0.85]"<<endl; //T
+      if(i==0 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-0.3:0.3]"<<endl; //S
+      if(i==1 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-0.09:0]"<<endl; //A
+      if(i==2 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-1:0.3]"<<endl; //P
+      if(i==3 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-0.16:-0.05]"<<endl; //V
+      if(i==4 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-0.15:0.05]"<<endl; //T
       scriptfile[i]<<"set xrange [-0.05:2.3]"<<endl;
       scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
       scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_"<<bil[i]<<"$'"<<endl;
