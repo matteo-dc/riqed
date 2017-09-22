@@ -886,7 +886,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
     
   ///**************************///
   //linear fit
-  /* int p2_min=4;  //a2p2~1
+  int p2_min=4;  //a2p2~1
   int p2_max=(int)p2_vector.size();
     
   vvd_t coord_linear(vd_t(0.0,p2_vector.size()),2);
@@ -895,17 +895,17 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
     {
       coord_linear[0][i] = 1.0;  //costante
       coord_linear[1][i] = p2_vector[i];   //p^2
-      }*/
+      }
 
   ///************************///
 
   // cout<<"DEBUG---(C)"<<endl;
     
-  // valarray<vXd_t> jZ_chiral_par=fit_chiral_Z_jackknife(coord_linear,Z_chiral[1],jZ_chiral,p2_min,p2_max);  //jZ_chiral_par[ibil][ijack][ipar]
+   valarray<vXd_t> jZ_chiral_par=fit_chiral_Z_jackknife(coord_linear,Z_chiral[1],jZ_chiral,p2_min,p2_max);  //jZ_chiral_par[ibil][ijack][ipar]
 
   // cout<<"DEBUG---(D)"<<endl;
 
-  /* int nbil=jZ_chiral_par.size();
+   int nbil=jZ_chiral_par.size();
   int njacks=jZ_chiral_par[0].size();
   int pars=jZ_chiral_par[0][0].size();
     
@@ -943,7 +943,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
       A_err[ibil]=Z_par_ave_err[1][ibil][0];
       B[ibil]=Z_par_ave_err[0][ibil][1];
       B_err[ibil]=Z_par_ave_err[1][ibil][1]; 
-      }*/
+      }
     
   ///*****************************///
 
