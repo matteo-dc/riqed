@@ -490,6 +490,91 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     
     ///**************************///
     //linear fit
+    /* int p2_min=4;  //a2p2~1
+    int p2_max=(int)p2_vector.size();
+    
+    vvd_t coord_linear(vd_t(0.0,p2_vector.size()),2);
+    
+    for(int i=0; i<p2_vector.size(); i++)
+    {
+        coord_linear[0][i] = 1.0;  //costante
+        coord_linear[1][i] = p2_vector[i];   //p^2
+    }
+    
+    vXd_t jZq_chiral_par=fit_chiral_jackknife(coord_linear,Zq_chiral[1],jZq_chiral,p2_min,p2_max);  //jZq_chiral_par[ijack][par]
+
+    int njacks=jZq_chiral_par.size();
+    int pars=jZq_chiral_par[0].size();
+    
+    vd_t Zq_par_ave(0.0,pars), sqr_Zq_par_ave(0.0,pars), Zq_par_err(0.0,pars);
+    vvd_t Zq_par_ave_err(vd_t(0.0,pars),2);
+    
+    for(int ipar=0;ipar<pars;ipar++)
+      for(int ijack=0;ijack<njacks;ijack++)
+	{
+	  Zq_par_ave[ipar]+=jZq_chiral_par[ijack](ipar)/njacks;
+	  sqr_Zq_par_ave[ipar]+=jZq_chiral_par[ijack](ipar)*jZq_chiral_par[ijack](ipar)/njacks;
+	}
+  
+    for(int ipar=0;ipar<pars;ipar++)
+      Zq_par_err[ipar]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_par_ave[ipar]-Zq_par_ave[ipar]*Zq_par_ave[ipar]);
+    
+    Zq_par_ave_err[0]=Zq_par_ave; //Zq_par_ave_err[ave/err][par]
+    Zq_par_ave_err[1]=Zq_par_err;  
+    
+    double A=Zq_par_ave_err[0][0];
+    double A_err=Zq_par_ave_err[1][0];
+    double B=Zq_par_ave_err[0][1];
+    double B_err=Zq_par_ave_err[1][1];
+
+    cout<<A<<" +/- "<<A_err<<endl<<endl; */
+    
+    ///*****************************///
+                    
+    
+    ofstream datafile1("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data.txt");
+    
+    for(size_t imom=0;imom<p2_vector.size();imom++)
+    {
+        datafile1<<p2_vector[imom]<<"\t"<<Zq_chiral[0][imom]<<"\t"<<Zq_chiral[1][imom]<<endl;  //print only for M0R0
+    }
+    datafile1.close();
+
+    /*  ofstream datafile2("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data_fit.txt");
+    datafile2<<"0"<<"\t"<<A<<"\t"<<A_err<<endl;
+    datafile2.close();    */
+    
+    ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
+    
+    scriptfile<<"set autoscale xy"<<endl;
+    scriptfile<<"set xrange [-0.05:2.5]"<<endl;
+    scriptfile<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
+    scriptfile<<"set ylabel '$Z_q$'"<<endl;
+    // scriptfile<<"set yrange [0.7:0.9]"<<endl;
+    scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$ chiral'"<<endl;
+    // scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'red' ps 1 notitle"<<endl;
+    // scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
+    // scriptfile<<"replot f(x) lw 3 notitle"<<endl;
+    scriptfile<<"set terminal epslatex color"<<endl;
+    if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
+    else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
+    scriptfile<<"replot"<<endl;
+    
+    scriptfile.close();
+    
+    string command="gnuplot plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt";
+    
+    system(command.c_str());
+    
+}
+
+
+void plot_Zq_RIp_ainv(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const string &name, const string &all_or_eq_moms)
+{    
+    vvd_t Zq_chiral = average_Zq_chiral(jZq_chiral);  //Zq[ave/err][imom]
+    
+    ///**************************///
+    //linear fit
     int p2_min=4;  //a2p2~1
     int p2_max=(int)p2_vector.size();
     
@@ -567,6 +652,7 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     system(command.c_str());
     
 }
+
 
 void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2_vector, const string &name, const string &all_or_eq_moms)
 {
@@ -1509,10 +1595,10 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z RIp_ainv  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     cout<<"Z1(1/a)"<<endl;
-    plot_Z_chiral(jZO_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_RIp_ainv","eqmoms");
+    plot_ZO_RIp_ainv(jZO_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_RIp_ainv","eqmoms");
 
     cout<<"Z1(1/a) em correction"<<endl;
-    plot_Z_chiral(jZO_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_RIp_ainv","eqmoms");
+    plot_ZO_RIp_ainv(jZO_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_RIp_ainv","eqmoms");
 
     cout<<"Sigma1(1/a)"<<endl;
     plot_Zq_chiral(jSigma1_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_RIp_ainv","eqmoms");
