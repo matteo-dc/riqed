@@ -420,9 +420,9 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     int moms=jZq_equivalent.size();
     int njacks=jZq_equivalent[0].size();
     int neq=jZq_equivalent[0][0].size();
-    vector<vvd_t> jZq_equivalent_and_chiral_extr(moms,vvd_t(vd_t(neq+1),njacks));
+    //  vector<vvd_t> jZq_equivalent_and_chiral_extr(moms,vvd_t(vd_t(neq+1),njacks));
     
-#pragma omp parallel for collapse(2)
+    /*#pragma omp parallel for collapse(2)
     for(int imom=0;imom<moms;imom++)
         for(int ijack=0;ijack<njacks;ijack++)
         {
@@ -435,21 +435,22 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
             {
                 jZq_equivalent_and_chiral_extr[imom][ijack][ieq+1]=jZq_equivalent[imom][ijack][ieq];
             }
-    
-    vvvd_t Zq_equivalent = average_Zq(jZq_equivalent_and_chiral_extr);  //Zq[ave/err][imom][ieq]
+    */
+    vvvd_t Zq_equivalent = average_Zq(jZq_equivalent/*_and_chiral_extr*/);  //Zq[ave/err][imom][ieq]
     vvvd_t Zq_pars=average_pars(jZq_pars);
     
     ofstream datafile1("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data.txt");
+    ofstream datafile2("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data_fit.txt");
     
     //datafile1<<0<<"\t"<<Zq_pars[0][0]<<"\t"<<Zq_pars[1][0]<<endl;
-    for(size_t ieq=0;ieq<m_eff_equivalent_Zq.size()+1;ieq++)
-    {
-        if(ieq==0)
-            datafile1<<0<<"\t"<<Zq_equivalent[0][4][ieq]<<"\t"<<Zq_equivalent[1][4][ieq]<<endl;  //print only for p2~1
-        else
-            datafile1<<m_eff_equivalent_Zq[ieq-1]*m_eff_equivalent_Zq[ieq-1]<<"\t"<<Zq_equivalent[0][4][ieq]<<"\t"<<Zq_equivalent[1][4][ieq]<<endl;  //print only for p2~1
-    }
+    for(size_t ieq=0;ieq<m_eff_equivalent_Zq.size();ieq++)
+      {
+	datafile1<<m_eff_equivalent_Zq[ieq]*m_eff_equivalent_Zq[ieq]<<"\t"<<Zq_equivalent[0][4][ieq]<<"\t"<<Zq_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+      }
+    datafile2<<0<<"\t"<<Zq_pars[0][4][0]<<"\t"<<Zq_pars[1][4][0]<<endl;  //print only for p2~1
+    
     datafile1.close();
+    datafile2.close();
     
     double A=Zq_pars[0][4][0];
     double B=Zq_pars[0][4][1];
@@ -460,17 +461,18 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
     
     scriptfile<<"set autoscale xy"<<endl;
-    scriptfile<<"set xlabel '$M_{eff}^2$'"<<endl;
-    scriptfile<<"set ylabel '$Z_Q$'"<<endl;
+    scriptfile<<"set xlabel '$M_{PS}^2$'"<<endl;
+    scriptfile<<"set ylabel '$Z_q$'"<<endl;
     scriptfile<<"set xrange [-0.003:0.05]"<<endl;
-    scriptfile<<"set yrange [0:5]"<<endl;
+    if(name=="Sigma1_chiral_extrapolation")scriptfile<<"set yrange [0:2]"<<endl;
+    if(name=="Sigma1_em_chiral_extrapolation")scriptfile<<"set yrange [-1:0]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$'"<<endl;
-    scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'black' title '$Z_q$ chiral extr.'"<<endl;
+    scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'black' title '$Z_q$ chiral extr.'"<<endl;
     if(Zq_pars[0][4].size()==2)
       scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
     if(Zq_pars[0][4].size()==3)
       scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<"+"<<C<<"/x"<<endl;
-    scriptfile<<"replot f(x) notitle"<<endl;
+    scriptfile<<"replot f(x) lt 2 lc rgb 'red' title 'linear fit'"<<endl;
     scriptfile<<"set terminal epslatex color"<<endl;
     if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
     else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
@@ -1483,7 +1485,9 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq chiral extrapolation  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     
     plot_Zq_chiral_extrapolation(jZq_equivalent_eqmoms,jZq_pars_eqmoms,m_eff_equivalent_Zq,"Zq_chiral_extrapolation","eqmoms");
+
     plot_Zq_chiral_extrapolation(jSigma1_equivalent_eqmoms,jSigma1_pars_eqmoms,m_eff_equivalent_Zq,"Sigma1_chiral_extrapolation","eqmoms");
+    plot_Zq_chiral_extrapolation(jSigma1_em_equivalent_eqmoms,jSigma1_em_pars_eqmoms,m_eff_equivalent_Zq,"Sigma1_em_chiral_extrapolation","eqmoms");
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
