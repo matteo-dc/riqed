@@ -728,9 +728,9 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
   int moms=jZ_equivalent.size();
   int njacks=jZ_equivalent[0].size();
   int neq=jZ_equivalent[0][0].size();
-  vector<vvd_t> jZ_equivalent_and_chiral_extr(moms,vvd_t(vd_t(neq+1),njacks));
+  // vector<vvd_t> jZ_equivalent_and_chiral_extr(moms,vvd_t(vd_t(neq+1),njacks));
     
-#pragma omp parallel for collapse(2)
+  /*#pragma omp parallel for collapse(2)
   for(int imom=0;imom<moms;imom++)
     for(int ijack=0;ijack<njacks;ijack++)
       {
@@ -742,9 +742,9 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
       for(int ieq=0;ieq<neq;ieq++)
 	{
 	  jZ_equivalent_and_chiral_extr[imom][ijack][ieq+1]=jZ_equivalent[imom][ijack][ieq];
-	}
+	  }*/
     
-  vvvd_t Z_equivalent = average_Zq(jZ_equivalent_and_chiral_extr);  //Z[ave/err][imom][ieq]
+  vvvd_t Z_equivalent = average_Zq(jZ_equivalent);  //Z[ave/err][imom][ieq]
   vvvd_t Z_pars=average_pars(jZ_pars);
   vvvd_t G_subpole = average_Zq(jG_subpole);
     
@@ -752,20 +752,20 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
   ofstream datafile3("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data_fit.txt");
     
   //datafile1<<0<<"\t"<<Z_pars[0][0]<<"\t"<<Z_pars[1][0]<<endl;
-  for(size_t ieq=0;ieq<m_eff_equivalent_Z.size()+1;ieq++)
+
+  datafile3<<0<<"\t"<<Z_equivalent[0][4][0]<<"\t"<<Z_equivalent[1][4][0]<<endl;  //print only for p2~1
+  
+  for(size_t ieq=0;ieq<m_eff_equivalent_Z.size();ieq++)
     {
-      if(ieq==0)
-	datafile3<<0<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
-      else if(ieq>0)
-	datafile1<<m_eff_equivalent_Z[ieq-1]*m_eff_equivalent_Z[ieq-1]<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+      datafile1<<m_eff_equivalent_Z[ieq]*m_eff_equivalent_Z[ieq]<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
     }
   datafile1.close();
-  datafile3.close();  
+  datafile3.close();
 
   ofstream datafile2("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data_subpole.txt");
     
   //datafile1<<0<<"\t"<<Z_pars[0][0]<<"\t"<<Z_pars[1][0]<<endl;
-  for(size_t ieq=0;ieq<m_eff_equivalent_Z.size()+1;ieq++)
+  for(size_t ieq=0;ieq<m_eff_equivalent_Z.size()/*+1*/;ieq++)
     {
       datafile2<<m_eff_equivalent_Z[ieq]*m_eff_equivalent_Z[ieq]<<"\t"<<G_subpole[0][4][ieq]<<"\t"<<G_subpole[1][4][ieq]<<endl;  //print only for p2~1
     }
