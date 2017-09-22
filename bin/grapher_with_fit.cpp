@@ -785,7 +785,7 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
   scriptfile<<"set xrange [-0.003:0.05]"<<endl;
   if(name=="Gp_chiral_extrapolation") scriptfile<<"set yrange [1:2.5]"<<endl;
   if(name=="Gs_chiral_extrapolation") scriptfile<<"set yrange [0.98:1.12]"<<endl;
-  if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set yrange [-1:1]"<<endl;
+  if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set yrange [-1:0.7]"<<endl;
   if(name=="Gs_em_chiral_extrapolation") scriptfile<<"set yrange [-0.08:0.04]"<<endl;
   scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
   scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_subpole.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'blue' title '$\\Gamma_"<<bil<<"^{sub}$'"<<endl;
@@ -859,9 +859,9 @@ void plot_ZVAT_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equival
     if(name=="Gv_chiral_extrapolation") scriptfile<<"set yrange [0.98:1.02]"<<endl;
     if(name=="Ga_chiral_extrapolation") scriptfile<<"set yrange [1.145:1.20]"<<endl;
     if(name=="Gt_chiral_extrapolation") scriptfile<<"set yrange [1.02:1.06]"<<endl;
-    if(name=="Gv_em_chiral_extrapolation") scriptfile<<"set yrange [-0.05:0.05]"<<endl;
+    if(name=="Gv_em_chiral_extrapolation") scriptfile<<"set yrange [-0.04:0.04]"<<endl;
     if(name=="Ga_em_chiral_extrapolation") scriptfile<<"set yrange [-0.1:-0.065]"<<endl;
-    if(name=="Gt_em_chiral_extrapolation") scriptfile<<"set yrange [-0.030:-0.018]"<<endl;
+    if(name=="Gt_em_chiral_extrapolation") scriptfile<<"set yrange [-0.032:-0.016]"<<endl;
     
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
     scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 5 lt 1 lc rgb 'black' title '$\\Gamma_"<<bil<<"$ chiral extr.'"<<endl;
