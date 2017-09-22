@@ -753,7 +753,7 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
     
   //datafile1<<0<<"\t"<<Z_pars[0][0]<<"\t"<<Z_pars[1][0]<<endl;
 
-  datafile3<<0<<"\t"<<Z_equivalent[0][4][0]<<"\t"<<Z_equivalent[1][4][0]<<endl;  //print only for p2~1
+  datafile3<<0<<"\t"<<Z_pars[0][4][0]<<"\t"<<Z_pars[1][4][0]<<endl;  //print only for p2~1
   
   for(size_t ieq=0;ieq<m_eff_equivalent_Z.size();ieq++)
     {
