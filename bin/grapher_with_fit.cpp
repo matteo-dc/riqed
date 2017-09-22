@@ -749,16 +749,18 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
   vvvd_t G_subpole = average_Zq(jG_subpole);
     
   ofstream datafile1("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data.txt");
+  ofstream datafile3("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data_fit.txt");
     
   //datafile1<<0<<"\t"<<Z_pars[0][0]<<"\t"<<Z_pars[1][0]<<endl;
   for(size_t ieq=0;ieq<m_eff_equivalent_Z.size()+1;ieq++)
     {
       if(ieq==0)
-	datafile1<<0<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+	datafile3<<0<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
       else
 	datafile1<<m_eff_equivalent_Z[ieq-1]*m_eff_equivalent_Z[ieq-1]<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
     }
   datafile1.close();
+  datafile3.close();  
 
   ofstream datafile2("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data_subpole.txt");
     
@@ -785,9 +787,10 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
   if(name=="Gs_chiral_extrapolation") scriptfile<<"set yrange [0.95:1.12]"<<endl;
   if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set yrange [-2:1]"<<endl;
   if(name=="Gs_em_chiral_extrapolation") scriptfile<<"set yrange [-0.08:0.04]"<<endl;
-  scriptfile<<"plot [0.01:*] 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
+  scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
   scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_subpole.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'blue' title '$\\Gamma_"<<bil<<"^{sub}$'"<<endl;
-  scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 5 lt 1 lc rgb 'black' title '$\\Gamma_"<<bil<<"$ chiral extr.'"<<endl;
+  // scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 5 lt 1 lc rgb 'black' title '$\\Gamma_"<<bil<<"$ chiral extr.'"<<endl;
+   scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 5 lt 1 lc rgb 'black' title '$\\Gamma_"<<bil<<"$ chiral extr.'"<<endl;
   if(Z_pars[0][4].size()==2)
     scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
   if(Z_pars[0][4].size()==3)
