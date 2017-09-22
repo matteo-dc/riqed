@@ -725,86 +725,86 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
 
 void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equivalent, vector<vvd_t> &jG_subpole, vector<vXd_t> &jZ_pars, vd_t &m_eff_equivalent_Z, const string &name, const string &all_or_eq_moms)
 {
-    int moms=jZ_equivalent.size();
-    int njacks=jZ_equivalent[0].size();
-    int neq=jZ_equivalent[0][0].size();
-    vector<vvd_t> jZ_equivalent_and_chiral_extr(moms,vvd_t(vd_t(neq+1),njacks));
+  int moms=jZ_equivalent.size();
+  int njacks=jZ_equivalent[0].size();
+  int neq=jZ_equivalent[0][0].size();
+  vector<vvd_t> jZ_equivalent_and_chiral_extr(moms,vvd_t(vd_t(neq+1),njacks));
     
 #pragma omp parallel for collapse(2)
-    for(int imom=0;imom<moms;imom++)
-        for(int ijack=0;ijack<njacks;ijack++)
-        {
-            jZ_equivalent_and_chiral_extr[imom][ijack][0]=jZ_pars[imom][ijack](0);
-        }
+  for(int imom=0;imom<moms;imom++)
+    for(int ijack=0;ijack<njacks;ijack++)
+      {
+	jZ_equivalent_and_chiral_extr[imom][ijack][0]=jZ_pars[imom][ijack](0);
+      }
 #pragma omp parallel for collapse(3)
-    for(int imom=0;imom<moms;imom++)
-        for(int ijack=0;ijack<njacks;ijack++)
-            for(int ieq=0;ieq<neq;ieq++)
-            {
-                jZ_equivalent_and_chiral_extr[imom][ijack][ieq+1]=jZ_equivalent[imom][ijack][ieq];
-            }
+  for(int imom=0;imom<moms;imom++)
+    for(int ijack=0;ijack<njacks;ijack++)
+      for(int ieq=0;ieq<neq;ieq++)
+	{
+	  jZ_equivalent_and_chiral_extr[imom][ijack][ieq+1]=jZ_equivalent[imom][ijack][ieq];
+	}
     
-    vvvd_t Z_equivalent = average_Zq(jZ_equivalent_and_chiral_extr);  //Z[ave/err][imom][ieq]
-    vvvd_t Z_pars=average_pars(jZ_pars);
-    vvvd_t G_subpole = average_Zq(jG_subpole);
+  vvvd_t Z_equivalent = average_Zq(jZ_equivalent_and_chiral_extr);  //Z[ave/err][imom][ieq]
+  vvvd_t Z_pars=average_pars(jZ_pars);
+  vvvd_t G_subpole = average_Zq(jG_subpole);
     
-    ofstream datafile1("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data.txt");
+  ofstream datafile1("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data.txt");
     
-    //datafile1<<0<<"\t"<<Z_pars[0][0]<<"\t"<<Z_pars[1][0]<<endl;
-    for(size_t ieq=0;ieq<m_eff_equivalent_Z.size()+1;ieq++)
+  //datafile1<<0<<"\t"<<Z_pars[0][0]<<"\t"<<Z_pars[1][0]<<endl;
+  for(size_t ieq=0;ieq<m_eff_equivalent_Z.size()+1;ieq++)
     {
-        if(ieq==0)
-            datafile1<<0<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
-        else
-            datafile1<<m_eff_equivalent_Z[ieq-1]*m_eff_equivalent_Z[ieq-1]<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+      if(ieq==0)
+	datafile1<<0<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+      else
+	datafile1<<m_eff_equivalent_Z[ieq-1]*m_eff_equivalent_Z[ieq-1]<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
     }
-    datafile1.close();
+  datafile1.close();
 
-    ofstream datafile2("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data_subpole.txt");
+  ofstream datafile2("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_data_subpole.txt");
     
-    //datafile1<<0<<"\t"<<Z_pars[0][0]<<"\t"<<Z_pars[1][0]<<endl;
-    for(size_t ieq=0;ieq<m_eff_equivalent_Z.size()+1;ieq++)
+  //datafile1<<0<<"\t"<<Z_pars[0][0]<<"\t"<<Z_pars[1][0]<<endl;
+  for(size_t ieq=0;ieq<m_eff_equivalent_Z.size()+1;ieq++)
     {
       datafile2<<m_eff_equivalent_Z[ieq]*m_eff_equivalent_Z[ieq]<<"\t"<<G_subpole[0][4][ieq]<<"\t"<<G_subpole[1][4][ieq]<<endl;  //print only for p2~1
     }
-    datafile2.close();
+  datafile2.close();
     
-    double A=Z_pars[0][4][0];
-    double B=Z_pars[0][4][1];
-    double C=0;
-    if(Z_pars[0][4].size()==3)
-      C=Z_pars[0][4][2];
+  double A=Z_pars[0][4][0];
+  double B=Z_pars[0][4][1];
+  double C=0;
+  if(Z_pars[0][4].size()==3)
+    C=Z_pars[0][4][2];
     
-    ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
+  ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
     
-    scriptfile<<"set autoscale xy"<<endl;
-    scriptfile<<"set xlabel '$M_{PS}^2$'"<<endl;
-    scriptfile<<"set ylabel '$\\Gamma_"<<bil<<"$'"<<endl;
-    scriptfile<<"set xrange [-0.003:0.05]"<<endl;
-    if(name=="Gp_chiral_extrapolation") scriptfile<<"set yrange [1:4]"<<endl;
-    if(name=="Gs_chiral_extrapolation") scriptfile<<"set yrange [0.95:1.12]"<<endl;
-    if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set yrange [-2:1]"<<endl;
-    if(name=="Gs_em_chiral_extrapolation") scriptfile<<"set yrange [-0.08:0.04]"<<endl;
-    scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
-    scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_subpole.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'blue' title '$\\Gamma_"<<bil<<"^{sub}$'"<<endl;
-    scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 5 lt 1 lc rgb 'black' title '$\\Gamma_"<<bil<<"$ chiral extr.'"<<endl;
-    if(Z_pars[0][4].size()==2)
-      scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
-    if(Z_pars[0][4].size()==3)
-      scriptfile<<"f(x)=(x > 0) ? "<<A<<"+"<<B<<"*x"<<"+"<<C<<"/x : 1/0"<<endl;
-    scriptfile<<"replot f(x) lt 1 lc rgb 'blue' title 'fit curve'"<<endl;
-    scriptfile<<"g(x)="<<A<<"+"<<B<<"*x"<<endl;
-    scriptfile<<"replot g(x) lt 2 lc rgb 'red' title 'linear fit'"<<endl;
-    scriptfile<<"set terminal epslatex color"<<endl;
-    if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
-    else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
-    scriptfile<<"replot"<<endl;
+  scriptfile<<"set autoscale xy"<<endl;
+  scriptfile<<"set xlabel '$M_{PS}^2$'"<<endl;
+  scriptfile<<"set ylabel '$\\Gamma_"<<bil<<"$'"<<endl;
+  scriptfile<<"set xrange [-0.003:0.05]"<<endl;
+  if(name=="Gp_chiral_extrapolation") scriptfile<<"set yrange [1:4]"<<endl;
+  if(name=="Gs_chiral_extrapolation") scriptfile<<"set yrange [0.95:1.12]"<<endl;
+  if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set yrange [-2:1]"<<endl;
+  if(name=="Gs_em_chiral_extrapolation") scriptfile<<"set yrange [-0.08:0.04]"<<endl;
+  scriptfile<<"plot [0.01:*] 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
+  scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_subpole.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'blue' title '$\\Gamma_"<<bil<<"^{sub}$'"<<endl;
+  scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 5 lt 1 lc rgb 'black' title '$\\Gamma_"<<bil<<"$ chiral extr.'"<<endl;
+  if(Z_pars[0][4].size()==2)
+    scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
+  if(Z_pars[0][4].size()==3)
+    scriptfile<<"f(x)=(x > 0) ? "<<A<<"+"<<B<<"*x"<<"+"<<C<<"/x : 1/0"<<endl;
+  scriptfile<<"replot f(x) lt 1 lc rgb 'blue' title 'fit curve'"<<endl;
+  scriptfile<<"g(x)="<<A<<"+"<<B<<"*x"<<endl;
+  scriptfile<<"replot g(x) lt 2 lc rgb 'red' title 'linear fit'"<<endl;
+  scriptfile<<"set terminal epslatex color"<<endl;
+  if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
+  else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
+  scriptfile<<"replot"<<endl;
     
-    scriptfile.close();
+  scriptfile.close();
     
-    string command="gnuplot plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt";
+  string command="gnuplot plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt";
     
-    system(command.c_str());
+  system(command.c_str());
     
 }
 
