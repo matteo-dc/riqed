@@ -756,7 +756,7 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
     {
       if(ieq==0)
 	datafile3<<0<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
-      else
+      else if(ieq>0)
 	datafile1<<m_eff_equivalent_Z[ieq-1]*m_eff_equivalent_Z[ieq-1]<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
     }
   datafile1.close();
