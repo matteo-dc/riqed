@@ -1149,7 +1149,7 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
       scriptfile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_script.txt");
       scriptfile[i]<<"set autoscale xy"<<endl;
       scriptfile[i]<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
-      if(i==0 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.6:0.78]"<<endl; //S
+      if(i==0 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.55:0.78]"<<endl; //S
       if(i==1 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.74:0.85]"<<endl; //A
       if(i==2 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.2:1]"<<endl; //P
       if(i==3 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.6:0.7]"<<endl; //V
