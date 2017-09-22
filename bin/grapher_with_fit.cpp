@@ -859,7 +859,7 @@ void plot_ZVAT_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equival
     if(name=="Gv_chiral_extrapolation") scriptfile<<"set yrange [0.98:1.02]"<<endl;
     if(name=="Ga_chiral_extrapolation") scriptfile<<"set yrange [1.145:1.20]"<<endl;
     if(name=="Gt_chiral_extrapolation") scriptfile<<"set yrange [1.02:1.06]"<<endl;
-    if(name=="Gv_em_chiral_extrapolation") scriptfile<<"set yrange [-0.04:0.04]"<<endl;
+    if(name=="Gv_em_chiral_extrapolation") scriptfile<<"set yrange [-0.03:0.03]"<<endl;
     if(name=="Ga_em_chiral_extrapolation") scriptfile<<"set yrange [-0.1:-0.065]"<<endl;
     if(name=="Gt_em_chiral_extrapolation") scriptfile<<"set yrange [-0.032:-0.016]"<<endl;
     
