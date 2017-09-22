@@ -791,7 +791,7 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
     if(Z_pars[0][4].size()==2)
       scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
     if(Z_pars[0][4].size()==3)
-      scriptfile<<"f(x)=(x > 0)"<<A<<"+"<<B<<"*x"<<"+"<<C<<"/x : 1/0"<<endl;
+      scriptfile<<"f(x)=(x > 0) ? "<<A<<"+"<<B<<"*x"<<"+"<<C<<"/x : 1/0"<<endl;
     scriptfile<<"replot f(x) lt 1 lc rgb 'blue' title 'fit curve'"<<endl;
     scriptfile<<"g(x)="<<A<<"+"<<B<<"*x"<<endl;
     scriptfile<<"replot g(x) lt 2 lc rgb 'red' title 'linear fit'"<<endl;
