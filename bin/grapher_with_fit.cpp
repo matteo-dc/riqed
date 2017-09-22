@@ -783,8 +783,8 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
     scriptfile<<"set xrange [-0.003:0.05]"<<endl;
     if(name=="Gp_chiral_extrapolation") scriptfile<<"set yrange [1:4]"<<endl;
     if(name=="Gs_chiral_extrapolation") scriptfile<<"set yrange [0.95:1.12]"<<endl;
-    if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set yrange [-5:0.1]"<<endl;
-    if(name=="Gs_em_chiral_extrapolation") scriptfile<<"set yrange [-0.1:0]"<<endl;
+    if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set yrange [-2:1]"<<endl;
+    if(name=="Gs_em_chiral_extrapolation") scriptfile<<"set yrange [-0.08:0.04]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
     scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_subpole.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'blue' title '$\\Gamma_"<<bil<<"^{sub}$'"<<endl;
     scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 5 lt 1 lc rgb 'black' title '$\\Gamma_"<<bil<<"$ chiral extr.'"<<endl;
