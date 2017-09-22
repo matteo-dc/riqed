@@ -15,7 +15,6 @@
 #define lambdaQCD 0.250
 #define Z3 1.20206
 #define Nc 3.0
-#define PI M_PI
 
 using namespace std;
 using namespace Eigen;
@@ -704,16 +703,16 @@ double alphas(int Nf,double ainv,double mu2)
             (32./27. - 104./9.*Z3)*Nc*(pow(Nc,2)+6)*Nf +
             (-22./27. + 16./9.*Z3)*(pow(Nc,4) - 6.*pow(Nc,2) + 18.)/pow(Nc,2)*pow(Nf,2);
 
-      b1=beta_1/beta_0/4./PI;
-      b2=beta_2/beta_0/16./pow(PI,2);
-      b3=beta_3/beta_0/64./pow(PI,3);
+      b1=beta_1/beta_0/4./M_PI;
+      b2=beta_2/beta_0/16./pow(M_PI,2);
+      b3=beta_3/beta_0/64./pow(M_PI,3);
 
       lam0=lambdaQCD/ainv;
 
       L2   = log( mu2/(pow(lam0,2) ) );
       LL2  = log( L2 );
 
-      als0 = 4.*PI/beta_0/L2;
+      als0 = 4.*M_PI/beta_0/L2;
       als1 = als0 - pow(als0,2)*b1*LL2;
       als2 = als1 + pow(als0,3)*(pow(b1,2)*(pow(LL2,2) - LL2 -1.) + b2);
       als3 = als2 + pow(als0,4)*(pow(b1,3)*(-pow(LL2,3)+5./2.*pow(LL2,2)+2*LL2-1./2.)-
@@ -740,8 +739,8 @@ double q_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
 		
 	// alphas @ NNLO
 	double alm, al0;
-	alm=alphas(Nf,ainv,mu_2)/(4*PI);
-	al0=alphas(Nf,ainv,mu0_2)/(4*PI);
+	alm=alphas(Nf,ainv,mu_2)/(4*M_PI);
+	al0=alphas(Nf,ainv,mu0_2)/(4*M_PI);
 
 	////////////////////////////////
         // N3LO FORMULA
@@ -771,8 +770,8 @@ double S_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
         
         // alphas @ NNLO
         double alm, al0;
-        alm=alphas(Nf,ainv,mu_2)/(4*PI);
-        al0=alphas(Nf,ainv,mu0_2)/(4*PI);
+        alm=alphas(Nf,ainv,mu_2)/(4*M_PI);
+        al0=alphas(Nf,ainv,mu0_2)/(4*M_PI);
 
         ////////////////////////////////
         // N3LO FORMULA
@@ -813,8 +812,8 @@ double P_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
         
         // alphas @ NNLO
         double alm, al0;
-        alm=alphas(Nf,ainv,mu_2)/(4*PI);
-        al0=alphas(Nf,ainv,mu0_2)/(4*PI);
+        alm=alphas(Nf,ainv,mu_2)/(4*M_PI);
+        al0=alphas(Nf,ainv,mu0_2)/(4*M_PI);
 
         ////////////////////////////////
         // N3LO FORMULA
@@ -854,8 +853,8 @@ double T_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
         
         // alphas @ NNLO
         double alm, al0;
-        alm=alphas(Nf,ainv,mu_2)/(4*PI);
-        al0=alphas(Nf,ainv,mu0_2)/(4*PI);
+        alm=alphas(Nf,ainv,mu_2)/(4*M_PI);
+        al0=alphas(Nf,ainv,mu0_2)/(4*M_PI);
 
         ////////////////////////////////
         // N2LO FORMULA
@@ -2268,7 +2267,7 @@ int main(int narg,char **arg)
 		 jSigma1_chiral_eqmoms[tag][ijack] += jSigma1_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
 
 		 jSigma1_RIp_ainv_eqmoms[tag][ijack] += jSigma1_RIp_ainv_allmoms[imom][ijack]/ count_tag_vector[tag];
-		 jSigma1_em_RIp_ainv_eqmoms[tag][ijack] += jSigma1_RIp_ainv_allmoms[imom][ijack]/ count_tag_vector[tag];
+		 jSigma1_em_RIp_ainv_eqmoms[tag][ijack] += jSigma1_em_RIp_ainv_allmoms[imom][ijack]/ count_tag_vector[tag];
 
 		 jGp_em_a_b_chiral_eqmoms[tag][ijack] += jGp_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
 		 jGa_em_a_b_chiral_eqmoms[tag][ijack] += jGa_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
