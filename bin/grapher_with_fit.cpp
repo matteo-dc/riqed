@@ -635,14 +635,16 @@ void plot_Zq_RIp_ainv(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const
     
     scriptfile<<"set autoscale xy"<<endl;
     scriptfile<<"set xrange [-0.05:2.5]"<<endl;
+    if(name=="Sigma1_RIp_ainv") scriptfile<<"set yrange [0.75:0.81]"<<endl;
+    if(name=="Sigma1_em_RIp_ainv") scriptfile<<"set yrange [-0.07:0.01]"<<endl;
     scriptfile<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
     scriptfile<<"set ylabel '$Z_q$'"<<endl;
     if(name=="Sigma1_RIp_ainv") scriptfile<<"set yrange [0.75:0.81]"<<endl;
     if(name=="Sigma1_em_RIp_ainv") scriptfile<<"set yrange [-0.06:0]"<<endl;
-    scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$ chiral'"<<endl;
-    scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'red' ps 1 notitle"<<endl;
+    scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$ '"<<endl;
+    scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'red' ps 1 title 'continuum extr.'"<<endl;
     scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
-    scriptfile<<"replot f(x) lw 3 notitle"<<endl;
+    scriptfile<<"replot f(x) lw 3 title 'linear fit'"<<endl;
     scriptfile<<"set terminal epslatex color"<<endl;
     if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
     else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
