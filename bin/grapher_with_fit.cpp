@@ -445,18 +445,18 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     //datafile1<<0<<"\t"<<Zq_pars[0][0]<<"\t"<<Zq_pars[1][0]<<endl;
     for(size_t ieq=0;ieq<m_eff_equivalent_Zq.size();ieq++)
       {
-	datafile1<<m_eff_equivalent_Zq[ieq]*m_eff_equivalent_Zq[ieq]<<"\t"<<Zq_equivalent[0][4][ieq]<<"\t"<<Zq_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+	datafile1<<m_eff_equivalent_Zq[ieq]*m_eff_equivalent_Zq[ieq]<<"\t"<<Zq_equivalent[0][5][ieq]<<"\t"<<Zq_equivalent[1][5][ieq]<<endl;  //print only for p2~1
       }
-    datafile2<<0<<"\t"<<Zq_pars[0][4][0]<<"\t"<<Zq_pars[1][4][0]<<endl;  //print only for p2~1
+    datafile2<<0<<"\t"<<Zq_pars[0][5][0]<<"\t"<<Zq_pars[1][5][0]<<endl;  //print only for p2~1
     
     datafile1.close();
     datafile2.close();
     
-    double A=Zq_pars[0][4][0];
-    double B=Zq_pars[0][4][1];
+    double A=Zq_pars[0][5][0];
+    double B=Zq_pars[0][5][1];
     double C=0;
-    if(Zq_pars[0][4].size()==3)
-      C=Zq_pars[0][4][2];
+    if(Zq_pars[0][5].size()==3)
+      C=Zq_pars[0][5][2];
     
     ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
     
@@ -757,11 +757,11 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
     
   //datafile1<<0<<"\t"<<Z_pars[0][0]<<"\t"<<Z_pars[1][0]<<endl;
 
-  datafile3<<0<<"\t"<<Z_pars[0][4][0]<<"\t"<<Z_pars[1][4][0]<<endl;  //print only for p2~1
+  datafile3<<0<<"\t"<<Z_pars[0][5][0]<<"\t"<<Z_pars[1][5][0]<<endl;  //print only for p2~1
   
   for(size_t ieq=0;ieq<m_eff_equivalent_Z.size();ieq++)
     {
-      datafile1<<m_eff_equivalent_Z[ieq]*m_eff_equivalent_Z[ieq]<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+      datafile1<<m_eff_equivalent_Z[ieq]*m_eff_equivalent_Z[ieq]<<"\t"<<Z_equivalent[0][5][ieq]<<"\t"<<Z_equivalent[1][5][ieq]<<endl;  //print only for p2~1
     }
   datafile1.close();
   datafile3.close();
@@ -771,15 +771,15 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
   //datafile1<<0<<"\t"<<Z_pars[0][0]<<"\t"<<Z_pars[1][0]<<endl;
   for(size_t ieq=0;ieq<m_eff_equivalent_Z.size()/*+1*/;ieq++)
     {
-      datafile2<<m_eff_equivalent_Z[ieq]*m_eff_equivalent_Z[ieq]<<"\t"<<G_subpole[0][4][ieq]<<"\t"<<G_subpole[1][4][ieq]<<endl;  //print only for p2~1
+      datafile2<<m_eff_equivalent_Z[ieq]*m_eff_equivalent_Z[ieq]<<"\t"<<G_subpole[0][5][ieq]<<"\t"<<G_subpole[1][5][ieq]<<endl;  //print only for p2~1
     }
   datafile2.close();
     
-  double A=Z_pars[0][4][0];
-  double B=Z_pars[0][4][1];
+  double A=Z_pars[0][5][0];
+  double B=Z_pars[0][5][1];
   double C=0;
-  if(Z_pars[0][4].size()==3)
-    C=Z_pars[0][4][2];
+  if(Z_pars[0][5].size()==3)
+    C=Z_pars[0][5][2];
     
   ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
     
@@ -845,14 +845,14 @@ void plot_ZVAT_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equival
     for(size_t ieq=0;ieq<m_eff_equivalent_Z.size()+1;ieq++)
     {
         if(ieq==0)
-            datafile1<<0<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+            datafile1<<0<<"\t"<<Z_equivalent[0][5][ieq]<<"\t"<<Z_equivalent[1][5][ieq]<<endl;  //print only for p2~1
         else
-            datafile1<<m_eff_equivalent_Z[ieq-1]*m_eff_equivalent_Z[ieq-1]<<"\t"<<Z_equivalent[0][4][ieq]<<"\t"<<Z_equivalent[1][4][ieq]<<endl;  //print only for p2~1
+            datafile1<<m_eff_equivalent_Z[ieq-1]*m_eff_equivalent_Z[ieq-1]<<"\t"<<Z_equivalent[0][5][ieq]<<"\t"<<Z_equivalent[1][5][ieq]<<endl;  //print only for p2~1
     }
     datafile1.close();
     
-    double A=Z_pars[0][4][0];
-    double B=Z_pars[0][4][1];
+    double A=Z_pars[0][5][0];
+    double B=Z_pars[0][5][1];
   
     ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
     
@@ -894,7 +894,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
     
   ///**************************///
   //linear fit
-  int p2_min=4;  //a2p2~1
+  int p2_min=5;  //a2p2~1
   int p2_max=(int)p2_vector.size();
     
   vvd_t coord_linear(vd_t(0.0,p2_vector.size()),2);
@@ -1062,7 +1062,7 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
     
   ///**************************///
   //linear fit
-  int p2_min=4;  //a2p2~1
+  int p2_min=5;  //a2p2~1
   int p2_max=(int)p2_vector.size();
     
   vvd_t coord_linear(vd_t(0.0,p2_vector.size()),2);
