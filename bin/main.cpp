@@ -1480,7 +1480,7 @@ int main(int narg,char **arg)
 	 {
 	   c_q={1.14716212+2.07733285/(double)Np[imom],-73./360.-157./180./(double)Np[imom],7./240.};   //Symanzik action
 
-	   c_q_em={-0.0112397+2.26296238/(double)Np[imom],31./240.-101./120./(double)Np[imom],17./120.};	   
+	   c_q_em={-0.0112397+2.26296238/(double)Np[imom],31./240.-101./120./(double)Np[imom],17./120.};	   //Wilson action (QED)
 	 }
        if(strcmp(arg[10],"iwa")==0) c_q={0.6202244+1.8490436/(double)Np[imom],-0.0748167-0.963033/(double)Np[imom],0.0044};      //Iwasaki action
 
@@ -1689,15 +1689,17 @@ int main(int narg,char **arg)
       	   jGs_em_a_b_chiral[ijack]=jGs_em_pars[ijack](0);	
       	 }
     
-
-       // cout<<"---- M^2  ---- jG_p ---- jG_p_SUB --- (for each jackknife)"<<endl;
-       // for(int ijack=0; ijack<njacks; ijack++)
-       // 	 {
-       // 	   for(int i=0; i<neq; i++)
-       // 	     cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< jGp_equivalent[ijack][i]<<"\t"<< jGp_subpole[ijack][i]<<endl;
-       // 	   cout<<endl;
-       // 	 }
-       // cout<<endl;
+       ////////DEBUG/////////////
+       cout<<"////////DEBUG/////////////"<<endl;
+       cout<<"---- M^2  ---- jG_p ---- jG_p_SUB --- (for each jackknife)"<<endl;
+       for(int ijack=0; ijack<njacks; ijack++)
+     	 {
+     	   for(int i=0; i<neq; i++)
+  	     cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< jGp_equivalent[ijack][i]<<"\t"<< jGp_subpole[ijack][i]<<endl;
+	   cout<<endl;
+	 }
+       cout<<endl;
+       /////////////////////////
        
 
        // vd_t Gp_subpole(neq), sqr_Gp_subpole(neq), Gp_err_subpole(neq);
