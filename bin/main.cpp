@@ -1562,6 +1562,11 @@ int main(int narg,char **arg)
 
 
        jproj_t jG_em_a_b_sub = -jG_em_sub + jG_a_sub + jG_b_sub;
+
+
+       ///DEBUG///
+       jproj_t jG_em_a_b = -jG_em + jG_a + jG_b;
+       ///////////
    
               
      
