@@ -441,9 +441,9 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     ///////////DEBUG////////////
     for(int ijack=0;ijack<njacks;ijack++)
       {
+	cout<<"JACK: "<<ijack<<"      <<DEBUG>>"<<endl;
 	for(int ieq=0;ieq<neq+1;ieq++)
 	  {
-	    cout<<"JACK: "<<ijack<<"      <<DEBUG>>"<<endl;
 	    cout<<m_eff_equivalent_Zq[ieq]*m_eff_equivalent_Zq[ieq]<<"\t"<<jZq_equivalent_and_chiral_extr[3][ijack][ieq]<<endl;
 	  }
 	cout<<endl;
