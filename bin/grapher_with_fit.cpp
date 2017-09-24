@@ -423,7 +423,7 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     int neq=jZq_equivalent[0][0].size();
      vector<vvd_t> jZq_equivalent_and_chiral_extr(moms,vvd_t(vd_t(neq+1),njacks));
     
- *#pragma omp parallel for collapse(2)
+#pragma omp parallel for collapse(2)
     for(int imom=0;imom<moms;imom++)
         for(int ijack=0;ijack<njacks;ijack++)
         {
