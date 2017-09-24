@@ -447,16 +447,16 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
       {
 	datafile1<<m_eff_equivalent_Zq[ieq]*m_eff_equivalent_Zq[ieq]<<"\t"<<Zq_equivalent[0][5][ieq]<<"\t"<<Zq_equivalent[1][5][ieq]<<endl;  //print only for p2~1
       }
-    datafile2<<0<<"\t"<<Zq_pars[0][5][0]<<"\t"<<Zq_pars[1][5][0]<<endl;  //print only for p2~1
+    datafile2<<0<<"\t"<<Zq_pars[0][3][0]<<"\t"<<Zq_pars[1][3][0]<<endl;  //print only for p2~1
     
     datafile1.close();
     datafile2.close();
     
-    double A=Zq_pars[0][5][0];
-    double B=Zq_pars[0][5][1];
+    double A=Zq_pars[0][3][0];
+    double B=Zq_pars[0][3][1];
     double C=0;
-    if(Zq_pars[0][5].size()==3)
-      C=Zq_pars[0][5][2];
+    if(Zq_pars[0][3].size()==3)
+      C=Zq_pars[0][3][2];
     
     ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
     
@@ -468,10 +468,10 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     if(name=="Sigma1_em_chiral_extrapolation")scriptfile<<"set yrange [-0.2:0.1]"<<endl;
     scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$'"<<endl;
     scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'black' title '$Z_q$ chiral extr.'"<<endl;
-    if(Zq_pars[0][4].size()==2)
+    if(Zq_pars[0][3].size()==2)
       scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
-    if(Zq_pars[0][4].size()==3)
-      scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<"+"<<C<<"/x"<<endl;
+    //if(Zq_pars[0][3].size()==3)
+    //  scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<"+"<<C<<"/x"<<endl;
     scriptfile<<"replot f(x) lt 2 lc rgb 'red' title 'linear fit'"<<endl;
     scriptfile<<"set terminal epslatex color"<<endl;
     if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
