@@ -797,12 +797,15 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
     
   scriptfile<<"set autoscale xy"<<endl;
   scriptfile<<"set xlabel '$M_{PS}^2$'"<<endl;
-  scriptfile<<"set ylabel '$\\Gamma_"<<bil<<"$'"<<endl;
+  if(name=="Gp_chiral_extrapolation") scriptfile<<"set ylabel '$\\Gamma_"<<bil<<"$'"<<endl;
+  if(name=="Gs_chiral_extrapolation") scriptfile<<"set ylabel '$\\Gamma_"<<bil<<"$'"<<endl;
+  if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set ylabel '$\\delta\\Gamma_"<<bil<<"$'"<<endl;
+  if(name=="Gs_em_chiral_extrapolation") scriptfile<<"set ylabel '$\\delta\\Gamma_"<<bil<<"$'"<<endl;
   scriptfile<<"set xrange [-0.003:0.05]"<<endl;
   if(name=="Gp_chiral_extrapolation") scriptfile<<"set yrange [0:5]"<<endl;
-  if(name=="Gs_chiral_extrapolation") scriptfile<<"set yrange [0.9:1.7]"<<endl;
-  if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set yrange [-1.2:0.2]"<<endl;
-  if(name=="Gs_em_chiral_extrapolation") scriptfile<<"set yrange [-0.2:0.3]"<<endl;
+  if(name=="Gs_chiral_extrapolation") scriptfile<<"set yrange [0.9:1.6]"<<endl;
+  if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set yrange [-1.2:0.4]"<<endl;
+  if(name=="Gs_em_chiral_extrapolation") scriptfile<<"set yrange [-0.2:0.2]"<<endl;
   scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
   scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_subpole.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'blue' title '$\\Gamma_"<<bil<<"^{sub}$'"<<endl;
   // scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 5 lt 1 lc rgb 'black' title '$\\Gamma_"<<bil<<"$ chiral extr.'"<<endl;
@@ -870,7 +873,12 @@ void plot_ZVAT_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equival
     
     scriptfile<<"set autoscale xy"<<endl;
     scriptfile<<"set xlabel '$M_{PS}^2$'"<<endl;
-    scriptfile<<"set ylabel '$\\Gamma_"<<bil<<"$'"<<endl;
+    if(name=="Gv_chiral_extrapolation") scriptfile<<"set ylabel '$\\Gamma_"<<bil<<"$'"<<endl;
+    if(name=="Ga_chiral_extrapolation") scriptfile<<"set ylabel '$\\Gamma_"<<bil<<"$'"<<endl;
+    if(name=="Gt_chiral_extrapolation") scriptfile<<"set ylabel '$\\Gamma_"<<bil<<"$'"<<endl;
+    if(name=="Gv_em_chiral_extrapolation") scriptfile<<"set ylabel '$\\delta\\Gamma_"<<bil<<"$'"<<endl;
+    if(name=="Ga_em_chiral_extrapolation") scriptfile<<"set ylabel '$\\delta\\Gamma_"<<bil<<"$'"<<endl;
+    if(name=="Gt_em_chiral_extrapolation") scriptfile<<"set ylabel '$\\delta\\Gamma_"<<bil<<"$'"<<endl;
     scriptfile<<"set xrange [-0.003:0.05]"<<endl;
     if(name=="Gv_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
     if(name=="Ga_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
