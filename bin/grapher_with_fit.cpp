@@ -445,7 +445,7 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     //datafile1<<0<<"\t"<<Zq_pars[0][0]<<"\t"<<Zq_pars[1][0]<<endl;
     for(size_t ieq=0;ieq<m_eff_equivalent_Zq.size();ieq++)
       {
-	datafile1<<m_eff_equivalent_Zq[ieq]*m_eff_equivalent_Zq[ieq]<<"\t"<<Zq_equivalent[0][5][ieq]<<"\t"<<Zq_equivalent[1][5][ieq]<<endl;  //print only for p2~1
+	datafile1<<m_eff_equivalent_Zq[ieq]*m_eff_equivalent_Zq[ieq]<<"\t"<<Zq_equivalent[0][3][ieq]<<"\t"<<Zq_equivalent[1][3][ieq]<<endl;  //print only for p2~1
       }
     datafile2<<0<<"\t"<<Zq_pars[0][3][0]<<"\t"<<Zq_pars[1][3][0]<<endl;  //print only for p2~1
     
@@ -845,14 +845,14 @@ void plot_ZVAT_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equival
     for(size_t ieq=0;ieq<m_eff_equivalent_Z.size()+1;ieq++)
     {
         if(ieq==0)
-            datafile1<<0<<"\t"<<Z_equivalent[0][5][ieq]<<"\t"<<Z_equivalent[1][5][ieq]<<endl;  //print only for p2~1
+            datafile1<<0<<"\t"<<Z_equivalent[0][3][ieq]<<"\t"<<Z_equivalent[1][3][ieq]<<endl;  //print only for p2~1
         else
-            datafile1<<m_eff_equivalent_Z[ieq-1]*m_eff_equivalent_Z[ieq-1]<<"\t"<<Z_equivalent[0][5][ieq]<<"\t"<<Z_equivalent[1][5][ieq]<<endl;  //print only for p2~1
+            datafile1<<m_eff_equivalent_Z[ieq-1]*m_eff_equivalent_Z[ieq-1]<<"\t"<<Z_equivalent[0][3][ieq]<<"\t"<<Z_equivalent[1][3][ieq]<<endl;  //print only for p2~1
     }
     datafile1.close();
     
-    double A=Z_pars[0][5][0];
-    double B=Z_pars[0][5][1];
+    double A=Z_pars[0][3][0];
+    double B=Z_pars[0][3][1];
   
     ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
     
