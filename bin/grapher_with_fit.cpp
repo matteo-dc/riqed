@@ -454,9 +454,10 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     
     double A=Zq_pars[0][3][0];
     double B=Zq_pars[0][3][1];
-    double C=0;
-    if(Zq_pars[0][3].size()==3)
-      C=Zq_pars[0][3][2];
+
+    //double C=0;
+    // if(Zq_pars[0][3].size()==3)
+    //  C=Zq_pars[0][3][2];
     
     ofstream scriptfile("plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt");
     
