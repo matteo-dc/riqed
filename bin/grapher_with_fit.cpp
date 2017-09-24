@@ -1636,6 +1636,51 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
 
     cout<<"Sigma1(1/a) em correction"<<endl;
     plot_Zq_RIp_ainv(jSigma1_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_em_RIp_ainv","eqmoms");
+
+
+
+    vvvd_t eff_mass_array(vvd_t(vd_t(0.0,2),nmr),nmr);
+
+    ifstream input_effmass;
+    input_effmass.open("eff_mass_array",ios::binary);
+  
+    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+      for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+	for(int i=0;i<2;i++)
+	  {
+	    double temp;
+	    input_effmass.read((char*)&temp,sizeof(double));
+	    if(not input_effmass.good())
+	      {
+		cerr<<"Unable to read from eff_mass_array mr_fw: "<<mr_fw<<", mr_bw: "<<mr_bw<<", i: "<<i<<endl;
+		exit(1);
+	      }
+	    eff_mass_array[mr_fw][mr_bw][i]=temp; //store
+	  }
+
+    
+    // cout<<"***DEBUG***"<<endl;
+    // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+    //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+    // 	for(int i=0;i<2;i++)
+    // 	  cout<<eff_mass_array[mr_fw][mr_bw][i]<<endl;
+    // cout<<"***DEBUG***"<<endl;
+  
+    vvd_t eff_mass(vd_t(0.0,nmr),nmr);
+    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+      for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+	eff_mass[mr_fw][mr_bw] = eff_mass_array[mr_fw][mr_bw][0];
+
+      
+    cout<<endl;
+    cout<<"mr_fw \t mr_bw \t eff_mass"<<endl;
+    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+      for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+	cout<<mr_fw<<"\t"<<mr_bw<<"\t"<<eff_mass[mr_fw][mr_bw]<<endl;
+ 
+  
+    // cout<<"eff_mass: "<<eff_mass_array[0]<<" +- "<<eff_mass_array[1]<<endl;
+    
     
     
     return 0;
