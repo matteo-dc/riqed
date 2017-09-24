@@ -1673,12 +1673,11 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
 
       
     cout<<endl;
-    cout<<"mr_fw \t mr_bw \t eff_mass"<<endl;
+    cout<<"r_fw \t m_fw \t r_bw \t m_bw \t  eff_mass"<<endl;
     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
       for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-	cout<<mr_fw<<"\t"<<mr_bw<<"\t"<<eff_mass[mr_fw][mr_bw]<<endl;
+	cout<<mr_fw%nr<<"\t"<<(mr_fw - mr_fw%nr)/nr<<"\t"<<mr_bw%nr<<"\t"<<(mr_bw - mr_bw%nr)/nr<<"\t"<<eff_mass[mr_fw][mr_bw]<<endl;
  
-  
     // cout<<"eff_mass: "<<eff_mass_array[0]<<" +- "<<eff_mass_array[1]<<endl;
     
     
