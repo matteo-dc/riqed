@@ -436,7 +436,22 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
             {
                 jZq_equivalent_and_chiral_extr[imom][ijack][ieq+1]=jZq_equivalent[imom][ijack][ieq];
             }
-   
+
+
+    ///////////DEBUG////////////
+    for(int ijack=0;ijack<njacks;ijack++)
+      {
+	for(int ieq=0;ieq<neq+1;ieq++)
+	  {
+	    cout<<"JACK: "<<ijack<<"      <<DEBUG>>"<<endl;
+	    cout<<m_eff_equivalent_Zq[ieq]*m_eff_equivalent_Zq[ieq]<<"\t"<<jZq_equivalent_and_chiral_extr[3][ijack][ieq]<<endl;
+	  }
+	cout<<endl;
+      }
+
+
+
+    
 
     vvvd_t Zq_equivalent = average_Zq(jZq_equivalent_and_chiral_extr);  //Zq[ave/err][imom][ieq]
     vvvd_t Zq_pars=average_pars(jZq_pars);
@@ -479,7 +494,6 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     string command="gnuplot plot_data_and_script/plot_"+name+"_"+all_or_eq_moms+"_script.txt";
     
     system(command.c_str());
-
     
 }
 
