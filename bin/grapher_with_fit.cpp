@@ -479,7 +479,7 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     if(name=="Sigma1_chiral_extrapolation") scriptfile<<"set ylabel '$Z_q$'"<<endl;
     if(name=="Sigma1_em_chiral_extrapolation") scriptfile<<"set ylabel '$Z_q^{\\rm \\, em}$'"<<endl;
     scriptfile<<"set xrange [-0.003:0.05]"<<endl;
-    if(name=="Sigma1_chiral_extrapolation")scriptfile<<"set yrange [0.7:0.85]"<<endl;
+    if(name=="Sigma1_chiral_extrapolation")scriptfile<<"set yrange [0.72:0.82]"<<endl;
     if(name=="Sigma1_em_chiral_extrapolation")scriptfile<<"set yrange [-0.06:0]"<<endl;
 
     if(name=="Sigma1_chiral_extrapolation")  scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$'"<<endl;
