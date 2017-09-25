@@ -565,13 +565,14 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     
     scriptfile<<"set autoscale xy"<<endl;
     scriptfile<<"set xrange [-0.05:2.5]"<<endl;
+    if(name=="Sigma1_chiral") scriptfile<<"set yrange [0.73:0.85]"<<endl;
+    if(name=="Sigma1_chiral_em_correction") scriptfile<<"set yrange [-0.06:0]"<<endl;
     scriptfile<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
-    scriptfile<<"set ylabel '$Z_q$'"<<endl;
-    // scriptfile<<"set yrange [0.7:0.9]"<<endl;
-    scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$ chiral'"<<endl;
-    // scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'red' ps 1 notitle"<<endl;
-    // scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
-    // scriptfile<<"replot f(x) lw 3 notitle"<<endl;
+    if(name=="Sigma1_chiral") scriptfile<<"set ylabel '$Z_q$'"<<endl;
+    if(name=="Sigma1_chiral_em_correction") scriptfile<<"set ylabel '$Z_q^{\\rm \\, em}$'"<<endl;
+    if(name=="Sigma1_chiral") scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$ chiral'"<<endl;
+    if(name=="Sigma1_chiral_em_correction") scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q^{\\rm \\, em}$ chiral'"<<endl;
+
     scriptfile<<"set terminal epslatex color"<<endl;
     if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<".tex'"<<endl;
     else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile<<"set output 'eqmoms/"<<name<<".tex'"<<endl;
@@ -1028,13 +1029,27 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
       scriptfile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_script.txt");
       scriptfile[i]<<"set autoscale xy"<<endl;
       scriptfile[i]<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
-      // scriptfile[i]<<"set yrange [0.7:0.9]"<<endl;
+
+      //bil={S,A,P,V,T}
+      
       scriptfile[i]<<"set xrange [-0.05:2.3]"<<endl;
-      scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
-      scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_"<<bil[i]<<"$ chiral'"<<endl;
-      // scriptfile[i]<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'red' ps 1 notitle"<<endl;
-      // scriptfile[i]<<"f(x)="<<A[i]<<"+"<<B[i]<<"*x"<<endl;
-      // scriptfile[i]<<"replot f(x) lw 3 notitle"<<endl;
+      if(name=="Z1_chiral"&&i==0)  scriptfile[i]<<"set yrange [0.45:0.85]"<<endl;
+      if(name=="Z1_chiral"&&i==1)  scriptfile[i]<<"set yrange [0.74:0.82]"<<endl;
+      if(name=="Z1_chiral"&&i==2)  scriptfile[i]<<"set yrange [0.4:0.7]"<<endl;
+      if(name=="Z1_chiral"&&i==3)  scriptfile[i]<<"set yrange [0.62:0.69]"<<endl;
+      if(name=="Z1_chiral"&&i==4)  scriptfile[i]<<"set yrange [0.65:0.95]"<<endl;
+      if(name=="Z1_chiral_em_correction"&&i==0)  scriptfile[i]<<"set yrange [-0.15:0.10]"<<endl;
+      if(name=="Z1_chiral_em_correction"&&i==1)  scriptfile[i]<<"set yrange [-0.09:-0.02]"<<endl;
+      if(name=="Z1_chiral_em_correction"&&i==2)  scriptfile[i]<<"set yrange [-0.7:0.1]"<<endl;
+      if(name=="Z1_chiral_em_correction"&&i==3)  scriptfile[i]<<"set yrange [-0.16:-0.07]"<<endl;
+      if(name=="Z1_chiral_em_correction"&&i==4)  scriptfile[i]<<"set yrange [-0.15:0]"<<endl;
+      
+     if(name=="Z1_chiral") scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
+     if(name=="Z1_chiral_em_correction") scriptfile[i]<<"set ylabel '$\\delta Z_"<<bil[i]<<"$'"<<endl;
+     
+     if(name=="Z1_chiral") scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_"<<bil[i]<<"$ chiral'"<<endl;
+     if(name=="Z1_chiral_em_correction")  scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\delta Z_"<<bil[i]<<"$ chiral'"<<endl;
+     
       scriptfile[i]<<"set terminal epslatex color"<<endl;
       if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile[i]<<"set output 'allmoms/"<<name<<"_"<<bil[i]<<".tex'"<<endl;
       else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile[i]<<"set output 'eqmoms/"<<name<<"_"<<bil[i]<<".tex'"<<endl;
@@ -1533,8 +1548,8 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-    cout<<"Zq chiral"<<endl;
-    plot_Zq_chiral(jZq_chiral_eqmoms,p2_vector_eqmoms,"Zq_chiral","eqmoms");
+    // cout<<"Zq chiral"<<endl;
+    //plot_Zq_chiral(jZq_chiral_eqmoms,p2_vector_eqmoms,"Zq_chiral","eqmoms");
     cout<<"Sigma1 chiral"<<endl;
     plot_Zq_chiral(jSigma1_chiral_eqmoms,p2_vector_eqmoms,"Sigma1_chiral","eqmoms");
     
@@ -1548,13 +1563,13 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
             jSigma1_chiral_with_em_eqmoms[imom][ijack]=jSigma1_chiral_eqmoms[imom][ijack]+jSigma1_em_chiral_eqmoms[imom][ijack];
         }
     
-    cout<<"Zq chiral with em"<<endl;
-    plot_Zq_chiral(jZq_chiral_with_em_eqmoms,p2_vector_eqmoms,"Zq_chiral_with_em","eqmoms");
-    cout<<"Sigma1 chiral with em"<<endl;
-    plot_Zq_chiral(jSigma1_chiral_with_em_eqmoms,p2_vector_eqmoms,"Sigma1_chiral_with_em","eqmoms");
+    //cout<<"Zq chiral with em"<<endl;
+    // plot_Zq_chiral(jZq_chiral_with_em_eqmoms,p2_vector_eqmoms,"Zq_chiral_with_em","eqmoms");
+    //cout<<"Sigma1 chiral with em"<<endl;
+    //plot_Zq_chiral(jSigma1_chiral_with_em_eqmoms,p2_vector_eqmoms,"Sigma1_chiral_with_em","eqmoms");
 
-    cout<<"Zq chiral em correction"<<endl;
-    plot_Zq_chiral(jZq_em_chiral_eqmoms,p2_vector_eqmoms,"Zq_chiral_em_correction","eqmoms");
+    // cout<<"Zq chiral em correction"<<endl;
+    // plot_Zq_chiral(jZq_em_chiral_eqmoms,p2_vector_eqmoms,"Zq_chiral_em_correction","eqmoms");
     cout<<"Sigma1 chiral em correction"<<endl;
     plot_Zq_chiral(jSigma1_em_chiral_eqmoms,p2_vector_eqmoms,"Sigma1_chiral_em_correction","eqmoms");
     
@@ -1623,8 +1638,8 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-    cout<<"Z chiral"<<endl;
-    plot_Z_chiral(jZ_chiral_eqmoms,p2_vector_eqmoms,"Z_chiral","eqmoms");
+    // cout<<"Z chiral"<<endl;
+    // plot_Z_chiral(jZ_chiral_eqmoms,p2_vector_eqmoms,"Z_chiral","eqmoms");
     cout<<"Z1 chiral"<<endl;
     plot_Z_chiral(jZ1_chiral_eqmoms,p2_vector_eqmoms,"Z1_chiral","eqmoms");
     
@@ -1639,13 +1654,13 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
                 jZ1_chiral_with_em_eqmoms[imom][ijack][k]=jZ1_chiral_eqmoms[imom][ijack][k]+jZ1_em_chiral_eqmoms[imom][ijack][k];
             }
 
-    cout<<"Z chiral with em"<<endl;
-    plot_Z_chiral(jZ_chiral_with_em_eqmoms,p2_vector_eqmoms,"Z_chiral_with_em","eqmoms");
-    cout<<"Z1 chiral with em"<<endl;
-    plot_Z_chiral(jZ1_chiral_with_em_eqmoms,p2_vector_eqmoms,"Z1_chiral_with_em","eqmoms");
+    // cout<<"Z chiral with em"<<endl;
+    // plot_Z_chiral(jZ_chiral_with_em_eqmoms,p2_vector_eqmoms,"Z_chiral_with_em","eqmoms");
+    //cout<<"Z1 chiral with em"<<endl;
+    //plot_Z_chiral(jZ1_chiral_with_em_eqmoms,p2_vector_eqmoms,"Z1_chiral_with_em","eqmoms");
 
-    cout<<"Z chiral em correction"<<endl;
-    plot_Z_chiral(jZ_em_chiral_eqmoms,p2_vector_eqmoms,"Z_chiral_em_correction","eqmoms");
+    //cout<<"Z chiral em correction"<<endl;
+    //plot_Z_chiral(jZ_em_chiral_eqmoms,p2_vector_eqmoms,"Z_chiral_em_correction","eqmoms");
     cout<<"Z1 chiral em correction"<<endl;
     plot_Z_chiral(jZ1_em_chiral_eqmoms,p2_vector_eqmoms,"Z1_chiral_em_correction","eqmoms");
     
