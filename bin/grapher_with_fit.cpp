@@ -654,10 +654,12 @@ void plot_Zq_RIp_ainv(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const
     if(name=="Sigma1_RIp_ainv") scriptfile<<"set yrange [0.75:0.81]"<<endl;
     if(name=="Sigma1_em_RIp_ainv") scriptfile<<"set yrange [-0.07:0.01]"<<endl;
     scriptfile<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
-    scriptfile<<"set ylabel '$Z_q$'"<<endl;
+    if(name=="Sigma1_RIp_ainv") scriptfile<<"set ylabel '$Z_q$'"<<endl;
+    if(name=="Sigma1_em_RIp_ainv")  scriptfile<<"set ylabel '$Z_q^{\\rm \\, em}$'"<<endl;
     if(name=="Sigma1_RIp_ainv") scriptfile<<"set yrange [0.75:0.81]"<<endl;
     if(name=="Sigma1_em_RIp_ainv") scriptfile<<"set yrange [-0.06:0]"<<endl;
-    scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$ '"<<endl;
+    if(name=="Sigma1_RIp_ainv") scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$ '"<<endl;
+    if(name=="Sigma1_em_RIp_ainv") scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q^{\\rm \\, em}$ '"<<endl;
     scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'red' ps 1 title 'continuum extr.'"<<endl;
     scriptfile<<"f(x)="<<A<<"+"<<B<<"*x"<<endl;
     scriptfile<<"replot f(x) lw 3 title 'linear fit'"<<endl;
@@ -1218,12 +1220,14 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
       if(i==4 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.70:0.85]"<<endl; //T
       if(i==0 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-0.3:0.3]"<<endl; //S
       if(i==1 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-0.09:0]"<<endl; //A
-      if(i==2 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-1:0.3]"<<endl; //P
+      if(i==2 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-1:0.6]"<<endl; //P
       if(i==3 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-0.16:-0.05]"<<endl; //V
       if(i==4 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-0.15:0.05]"<<endl; //T
       scriptfile[i]<<"set xrange [-0.05:2.3]"<<endl;
-      scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
-      scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_"<<bil[i]<<"$'"<<endl;
+      if(name=="ZO_RIp_ainv") scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
+      if(name=="ZO_em_RIp_ainv") scriptfile[i]<<"set ylabel '$\\delta Z_"<<bil[i]<<"$'"<<endl;
+      if(name=="ZO_RIp_ainv") scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_"<<bil[i]<<"$'"<<endl;
+      if(name=="ZO_em_RIp_ainv") scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\delta Z_"<<bil[i]<<"$'"<<endl;
       scriptfile[i]<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'red' ps 1 title 'continuum extr.'"<<endl;
       scriptfile[i]<<"f(x)="<<A[i]<<"+"<<B[i]<<"*x"<<endl;
       scriptfile[i]<<"replot f(x) lw 3 title 'linear fit'"<<endl;
