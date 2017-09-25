@@ -656,8 +656,8 @@ void plot_Zq_RIp_ainv(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const
     scriptfile<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
     if(name=="Sigma1_RIp_ainv") scriptfile<<"set ylabel '$Z_q$'"<<endl;
     if(name=="Sigma1_em_RIp_ainv")  scriptfile<<"set ylabel '$Z_q^{\\rm \\, em}$'"<<endl;
-    if(name=="Sigma1_RIp_ainv") scriptfile<<"set yrange [0.75:0.81]"<<endl;
-    if(name=="Sigma1_em_RIp_ainv") scriptfile<<"set yrange [-0.06:0]"<<endl;
+    // if(name=="Sigma1_RIp_ainv") scriptfile<<"set yrange [0.75:0.81]"<<endl;
+    // if(name=="Sigma1_em_RIp_ainv") scriptfile<<"set yrange [-0.06:0]"<<endl;
     if(name=="Sigma1_RIp_ainv") scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$ '"<<endl;
     if(name=="Sigma1_em_RIp_ainv") scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q^{\\rm \\, em}$ '"<<endl;
     scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data_fit.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'red' ps 1 title 'extrapolation'"<<endl;
