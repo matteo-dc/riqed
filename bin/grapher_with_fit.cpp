@@ -1039,7 +1039,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
       if(name=="Z1_chiral"&&i==3)  scriptfile[i]<<"set yrange [0.62:0.69]"<<endl;
       if(name=="Z1_chiral"&&i==4)  scriptfile[i]<<"set yrange [0.65:0.95]"<<endl;
       if(name=="Z1_chiral_em_correction"&&i==0)  scriptfile[i]<<"set yrange [-0.15:0.10]"<<endl;
-      if(name=="Z1_chiral_em_correction"&&i==1)  scriptfile[i]<<"set yrange [-0.09:-0.02]"<<endl;
+      if(name=="Z1_chiral_em_correction"&&i==1)  scriptfile[i]<<"set yrange [-0.1:-0.01]"<<endl;
       if(name=="Z1_chiral_em_correction"&&i==2)  scriptfile[i]<<"set yrange [-0.7:0.2]"<<endl;
       if(name=="Z1_chiral_em_correction"&&i==3)  scriptfile[i]<<"set yrange [-0.16:-0.07]"<<endl;
       if(name=="Z1_chiral_em_correction"&&i==4)  scriptfile[i]<<"set yrange [-0.13:0.01]"<<endl;
