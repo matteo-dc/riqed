@@ -230,6 +230,70 @@ valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, const 
 }
 
 
+valarray< valarray<VectorXd> > fit_chiral_Z_RIp_jackknife(const vvd_t &coord, const vvd_t &error, const vector<vvd_t> &y, const int range_min, const int range_max, const double &p_min_value)
+{
+  // cout<<"DEBUG---(a)"<<endl;
+  
+  int n_par = coord.size();
+  int njacks = y[0].size();
+  int nbil = y[0][0].size();
+
+  // cout<<"DEBUG---(b)"<<endl;
+    
+  valarray<MatrixXd> S(MatrixXd(n_par,n_par),nbil);
+  valarray< valarray<VectorXd> > Sy(valarray<VectorXd>(VectorXd(n_par),njacks),nbil);
+  valarray< valarray<VectorXd> > jpars(valarray<VectorXd>(VectorXd(n_par),njacks),nbil);
+
+  // cout<<"DEBUG---(c)"<<endl;
+    
+  //initialization
+  for(int ibil=0; ibil<nbil;ibil++)
+    S[ibil]=MatrixXd::Zero(n_par,n_par);
+
+  // cout<<"DEBUG---(d)"<<endl;
+
+  for(int ibil=0; ibil<nbil;ibil++)
+    for(int ijack=0; ijack<njacks; ijack++)
+      {
+	//cout<<"a"<<endl;
+	Sy[ibil][ijack]=VectorXd::Zero(n_par);
+	//cout<<"b"<<endl;
+	jpars[ibil][ijack]=VectorXd::Zero(n_par);
+      }
+
+  // cout<<"DEBUG---(d')"<<endl;
+    
+  //definition
+  for(int i=range_min; i<range_max; i++)
+    {
+      if(coord[1][i]>p2_min_value)
+	{
+      
+	  for(int ibil=0; ibil<nbil;ibil++)
+	    for(int j=0; j<n_par; j++)
+	      for(int k=0; k<n_par; k++)
+		if(isnan(error[i][ibil])==0) S[ibil](j,k) += coord[j][i]*coord[k][i]/(error[i][ibil]*error[i][ibil]);
+
+	  for(int ibil=0; ibil<nbil;ibil++)
+	    for(int ijack=0; ijack<njacks; ijack++)
+	      for(int k=0; k<n_par; k++)
+		if(isnan(error[i][ibil])==0) Sy[ibil][ijack](k) += y[i][ijack][ibil]*coord[k][i]/(error[i][ibil]*error[i][ibil]);
+	}
+    }
+
+  // cout<<"DEBUG---(e)"<<endl;
+
+  for(int ibil=0; ibil<nbil;ibil++)
+    for(int ijack=0; ijack<njacks; ijack++)
+      jpars[ibil][ijack] = S[ibil].colPivHouseholderQr().solve(Sy[ibil][ijack]);
+
+  // cout<<"DEBUG---(f)"<<endl;
+    
+  return jpars; //jpars[ibil][ijack][ipar]
+    
+}
+
+
 vvvd_t average_Zq(vector<jZ_t> &jZq)
 {
     int moms=jZq.size();
@@ -1110,7 +1174,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
 }
 
 
-void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const string &name, const string &all_or_eq_moms)
+void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const string &name, const string &all_or_eq_moms, const double &p_min_value)
 {
   //  cout<<"DEBUG---(A)"<<endl;
   vvvd_t Z_chiral = average_Z_chiral(jZ_chiral);  //Z_chiral[ave/err][imom][k]
@@ -1119,7 +1183,8 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
     
   ///**************************///
   //linear fit
-  int p2_min=5;  //a2p2~1
+  // int p2_min=5;  //a2p2~1
+  int p2_min=0;
   int p2_max=(int)p2_vector.size();
     
   vvd_t coord_linear(vd_t(0.0,p2_vector.size()),2);
@@ -1134,7 +1199,7 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
 
   // cout<<"DEBUG---(C)"<<endl;
     
-  valarray<vXd_t> jZ_chiral_par=fit_chiral_Z_jackknife(coord_linear,Z_chiral[1],jZ_chiral,p2_min,p2_max);  //jZ_chiral_par[ibil][ijack][ipar]
+  valarray<vXd_t> jZ_chiral_par=fit_chiral_Z_RIp_jackknife(coord_linear,Z_chiral[1],jZ_chiral,p2_min,p2_max,p_min_value);  //jZ_chiral_par[ibil][ijack][ipar]
 
   // cout<<"DEBUG---(D)"<<endl;
 
@@ -1672,11 +1737,25 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
       
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z RIp_ainv  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-    cout<<"Z1(1/a)"<<endl;
-    plot_ZO_RIp_ainv(jZO_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_RIp_ainv","eqmoms");
+    cout<<"Z1(1/a) -- p_min>1"<<endl;
+    plot_ZO_RIp_ainv(jZO_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_RIp_ainv","eqmoms",1.0);
 
-    cout<<"Z1(1/a) em correction"<<endl;
-    plot_ZO_RIp_ainv(jZO_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_RIp_ainv","eqmoms");
+    cout<<"Z1(1/a) em correction -- p_min>1"<<endl;
+    plot_ZO_RIp_ainv(jZO_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_RIp_ainv","eqmoms",1.0);
+
+    cout<<"Z1(1/a) -- p_min>0.9"<<endl;
+    plot_ZO_RIp_ainv(jZO_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_RIp_ainv","eqmoms",0.9);
+
+    cout<<"Z1(1/a) em correction -- p_min>0.9"<<endl;
+    plot_ZO_RIp_ainv(jZO_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_RIp_ainv","eqmoms",0.9);
+
+    cout<<"Z1(1/a) -- p_min>1.1"<<endl;
+    plot_ZO_RIp_ainv(jZO_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_RIp_ainv","eqmoms",1.1);
+
+    cout<<"Z1(1/a) em correction -- p_min>1.1"<<endl;
+    plot_ZO_RIp_ainv(jZO_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_RIp_ainv","eqmoms",1.1);
+
+    
 
     cout<<"Sigma1(1/a)"<<endl;
     plot_Zq_RIp_ainv(jSigma1_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_RIp_ainv","eqmoms");
