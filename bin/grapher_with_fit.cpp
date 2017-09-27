@@ -266,7 +266,7 @@ valarray< valarray<VectorXd> > fit_chiral_Z_RIp_jackknife(const vvd_t &coord, co
   //definition
   for(int i=range_min; i<range_max; i++)
     {
-      if(coord[1][i]>p2_min_value)
+      if(coord[1][i]>p_min_value)
 	{
       
 	  for(int ibil=0; ibil<nbil;ibil++)
