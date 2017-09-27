@@ -970,8 +970,10 @@ int main(int narg,char **arg)
       c_p={0.70640549,-1./4.,0.5};
       c_t={0.9724758,-13./36.,-161./216.};
 
-      c_a_em={0.3997992,1./16.,-13./48.};
-      c_v_em={0.2394370,-3./16.,-1./4.};
+      // c_a_em={0.3997992,1./16.,-13./48.};
+      c_a_em={0.3997992,1./16.,-1./4.};
+      // c_v_em={0.2394370,-3./16.,-1./4.};
+      c_v_em={0.2394365,-3./16.,-1./4.};
       c_s_em={0.32682365,1./2.,5./12.};        
       c_p_em={0.00609817,0.,5./12.};
       c_t_em={0.3706701,-1./6.,-17./36.};
@@ -1514,11 +1516,11 @@ int main(int narg,char **arg)
 	   for(int mr2=0; mr2<nmr; mr2++)
 	     {
 	       //subtraction of O(g^2a^2) effects
-	       jG_0_sub[ijack][mr][mr2][0]=subtract(c_s,jG_0[ijack][mr][mr2][0],p2,p4,g2_tilde);
-	       jG_0_sub[ijack][mr][mr2][1]=subtract(c_a,jG_0[ijack][mr][mr2][1],p2,p4,g2_tilde);
-	       jG_0_sub[ijack][mr][mr2][2]=subtract(c_p,jG_0[ijack][mr][mr2][2],p2,p4,g2_tilde);
-	       jG_0_sub[ijack][mr][mr2][3]=subtract(c_v,jG_0[ijack][mr][mr2][3],p2,p4,g2_tilde);
-	       jG_0_sub[ijack][mr][mr2][4]=subtract(c_t,jG_0[ijack][mr][mr2][4],p2,p4,g2_tilde);
+	       jG_0_sub[ijack][mr][mr2][0]=subtract(c_s,jG_0[ijack][mr][mr2][0],p2,p4,g2_tilde); //S
+	       jG_0_sub[ijack][mr][mr2][1]=subtract(c_a,jG_0[ijack][mr][mr2][1],p2,p4,g2_tilde); //V
+	       jG_0_sub[ijack][mr][mr2][2]=subtract(c_p,jG_0[ijack][mr][mr2][2],p2,p4,g2_tilde); //P
+	       jG_0_sub[ijack][mr][mr2][3]=subtract(c_v,jG_0[ijack][mr][mr2][3],p2,p4,g2_tilde); //A
+	       jG_0_sub[ijack][mr][mr2][4]=subtract(c_t,jG_0[ijack][mr][mr2][4],p2,p4,g2_tilde); //T
 	      
 	       //subtraction of O(e^2a^2) effects
 	       jG_em_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_em[ijack][mr][mr2][0],p2,p4,3./4.);   ///!!!!!  with Wilson Action
@@ -1549,9 +1551,9 @@ int main(int narg,char **arg)
 		   jZ_sub[ijack][mr][mr2][i] = sqrt(jZq_sub[ijack][mr])*sqrt(jZq_sub[ijack][mr2])/jG_0_sub[ijack][mr][mr2][i];
 		   jZ1_sub[ijack][mr][mr2][i] = sqrt(jSigma1_sub[ijack][mr])*sqrt(jSigma1_sub[ijack][mr2])/jG_0_sub[ijack][mr][mr2][i];
 		   //subtraction of O(e^2a^2) effects
-		   jZ_em_sub[ijack][mr][mr2][i] = (-jG_em_sub[ijack][mr][mr2][i]+jG_a_sub[ijack][mr][mr2][i]+jG_b_sub[ijack][mr][mr2][i])/jG_0[ijack][mr][mr2][i] + \
+		   jZ_em_sub[ijack][mr][mr2][i] = (-jG_em_sub[ijack][mr][mr2][i]+jG_a_sub[ijack][mr][mr2][i]+jG_b_sub[ijack][mr][mr2][i])/jG_0_sub[ijack][mr][mr2][i] + \
 		     0.5*(jZq_em_sub[ijack][mr]/jZq_sub[ijack][mr] + jZq_em_sub[ijack][mr2]/jZq_sub[ijack][mr2]);
-		   jZ1_em_sub[ijack][mr][mr2][i] = (-jG_em_sub[ijack][mr][mr2][i]+jG_a_sub[ijack][mr][mr2][i]+jG_b_sub[ijack][mr][mr2][i])/jG_0[ijack][mr][mr2][i] + \
+		   jZ1_em_sub[ijack][mr][mr2][i] = (-jG_em_sub[ijack][mr][mr2][i]+jG_a_sub[ijack][mr][mr2][i]+jG_b_sub[ijack][mr][mr2][i])/jG_0_sub[ijack][mr][mr2][i] + \
 		     0.5*(jSigma1_em_sub[ijack][mr]/jSigma1_sub[ijack][mr] + jSigma1_em_sub[ijack][mr2]/jSigma1_sub[ijack][mr2]);
 		 } 
      
@@ -1565,7 +1567,7 @@ int main(int narg,char **arg)
 
 
        ///DEBUG///
-       jproj_t jG_em_a_b = -jG_em + jG_a + jG_b;
+       // jproj_t jG_em_a_b = -jG_em + jG_a + jG_b;
        ///////////
    
               
@@ -1830,6 +1832,7 @@ int main(int narg,char **arg)
        t_span = duration_cast<duration<double>>(t1-t0);
        cout<<"***** Chiral extrapolation of Gv,Ga&Gt in "<<t_span.count()<<" s ******"<<endl<<endl;
 
+       
        //chiral extrapolation of Zq
        t0=high_resolution_clock::now();
        
