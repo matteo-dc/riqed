@@ -131,11 +131,11 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
     {
       for(int j=0; j<n_par; j++)
 	for(int k=0; k<n_par; k++)
-	  if(isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
+	  if(std::isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
 
       for(int ijack=0; ijack<njacks; ijack++)
 	for(int k=0; k<n_par; k++)
-	  if(isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]); 
+	  if(std::isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]); 
     }
 
   for(int ijack=0; ijack<njacks; ijack++)
@@ -441,8 +441,13 @@ vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const i
 int main(int narg,char **arg)
 {
 
-  int nconfs=240;
-  int njacks=15;
+ if (narg!=3){
+    cerr<<"Number of arguments not valid:  <nconfs> <njacks>"<<endl;
+    exit(0);
+  }
+  
+  int nconfs=stoi(arg[1]);
+  int njacks=stoi(arg[2]);
   int clust_size=nconfs/njacks;
   int conf_id[nconfs];
   double L=24,T=48;

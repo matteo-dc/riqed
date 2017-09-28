@@ -156,11 +156,11 @@ valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, const vd_t &error, c
     {
         for(int j=0; j<n_par; j++)
             for(int k=0; k<n_par; k++)
-                if(isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
+                if(std::isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
         
         for(int ijack=0; ijack<njacks; ijack++)
             for(int k=0; k<n_par; k++)
-                if(isnan(error[i])==0) Sy[ijack](k) += y[i][ijack]*coord[k][i]/(error[i]*error[i]);
+                if(std::isnan(error[i])==0) Sy[ijack](k) += y[i][ijack]*coord[k][i]/(error[i]*error[i]);
     }
     
     for(int ijack=0; ijack<njacks; ijack++)
@@ -209,12 +209,12 @@ valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, const 
       for(int ibil=0; ibil<nbil;ibil++)
         for(int j=0; j<n_par; j++)
 	  for(int k=0; k<n_par; k++)
-	    if(isnan(error[i][ibil])==0) S[ibil](j,k) += coord[j][i]*coord[k][i]/(error[i][ibil]*error[i][ibil]);
+	    if(std::isnan(error[i][ibil])==0) S[ibil](j,k) += coord[j][i]*coord[k][i]/(error[i][ibil]*error[i][ibil]);
 
       for(int ibil=0; ibil<nbil;ibil++)
         for(int ijack=0; ijack<njacks; ijack++)
 	  for(int k=0; k<n_par; k++)
-	    if(isnan(error[i][ibil])==0) Sy[ibil][ijack](k) += y[i][ijack][ibil]*coord[k][i]/(error[i][ibil]*error[i][ibil]);
+	    if(std::isnan(error[i][ibil])==0) Sy[ibil][ijack](k) += y[i][ijack][ibil]*coord[k][i]/(error[i][ibil]*error[i][ibil]);
     }
 
   // cout<<"DEBUG---(e)"<<endl;
@@ -266,18 +266,18 @@ valarray< valarray<VectorXd> > fit_chiral_Z_RIp_jackknife(const vvd_t &coord, co
   //definition
   for(int i=range_min; i<range_max; i++)
     {
-      if(coord[1][i]>p2_min_value)
+      if(coord[1][i]>p_min_value)
 	{
       
 	  for(int ibil=0; ibil<nbil;ibil++)
 	    for(int j=0; j<n_par; j++)
 	      for(int k=0; k<n_par; k++)
-		if(isnan(error[i][ibil])==0) S[ibil](j,k) += coord[j][i]*coord[k][i]/(error[i][ibil]*error[i][ibil]);
+		if(std::isnan(error[i][ibil])==0) S[ibil](j,k) += coord[j][i]*coord[k][i]/(error[i][ibil]*error[i][ibil]);
 
 	  for(int ibil=0; ibil<nbil;ibil++)
 	    for(int ijack=0; ijack<njacks; ijack++)
 	      for(int k=0; k<n_par; k++)
-		if(isnan(error[i][ibil])==0) Sy[ibil][ijack](k) += y[i][ijack][ibil]*coord[k][i]/(error[i][ibil]*error[i][ibil]);
+		if(std::isnan(error[i][ibil])==0) Sy[ibil][ijack](k) += y[i][ijack][ibil]*coord[k][i]/(error[i][ibil]*error[i][ibil]);
 	}
     }
 
@@ -1224,7 +1224,7 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
 
   for(int ibil=0; ibil<nbil;ibil++)
     for(int ipar=0;ipar<pars;ipar++)
-      Z_par_err[ibil][ipar]=sqrt((double)(njacks-1))*sqrt(sqr_Z_par_ave[ibil][ipar]-Z_par_ave[ibil][ipar]*Z_par_ave[ibil][ipar]);
+      Z_par_err[ibil][ipar]=sqrt((double)(njacks-1))*sqrt(sqr_Z_par_ave[ibil][ipar]-Z_par_ave[ibil][ipar]*Z_par_ave[ibil][ipar]);  //ibil={S,A,P,V,T}
 
   // cout<<"DEBUG---(G)"<<endl;
     

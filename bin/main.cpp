@@ -114,7 +114,7 @@ void read_mom_list(const string &path)
 string path_to_conf(int i_conf,const string &name)
 {
   char path[1024];
-  sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/fft_%s",i_conf,name.c_str());
+  sprintf(path,/*/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/*/ "out/%04d/fft_%s",i_conf,name.c_str());
   // sprintf(path,"out/%04d/fft_%s",i_conf,name.c_str());
   return path;
 }
@@ -228,7 +228,7 @@ string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, 
   int m2 = (mr2-r2)/nr;
   
   char path[1024];
-  sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
+  sprintf(path,/*"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/*/"out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
   //sprintf(path,"out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
 
   // cout<<path<<endl;
@@ -489,11 +489,11 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
     {
       for(int j=0; j<n_par; j++)
 	for(int k=0; k<n_par; k++)
-	  if(isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
+	  if(std::isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
 
       for(int ijack=0; ijack<njacks; ijack++)
 	for(int k=0; k<n_par; k++)
-	  if(isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]); 
+	  if(std::isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]); 
     }
 
   for(int ijack=0; ijack<njacks; ijack++)
@@ -542,11 +542,11 @@ valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, const vd_t &error, cons
     {
       for(int j=0; j<n_par; j++)
 	for(int k=0; k<n_par; k++)
-	  if(isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
+	  if(std::isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
       
       for(int ijack=0; ijack<njacks; ijack++)
 	for(int k=0; k<n_par; k++)
-	  if(isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]); 
+	  if(std::isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]); 
     }
   
   for(int ijack=0; ijack<njacks; ijack++)
@@ -964,19 +964,19 @@ int main(int narg,char **arg)
       beta=3.90;
       plaquette=0.582591;
 
-      c_a={1.5240798,-1./3.,-125./288.};
-      c_v={0.6999177,-1./3.,-125./288.};
+      c_a={1.5240798/4.,-1./3./4.,-125./288./4.};  //we divide by 4 (or 6 for T) to account for the sum on Lorentz indices
+      c_v={0.6999177/4.,-1./3./4.,-125./288./4.};
       c_s={2.3547298,-1./4.,0.5};        
       c_p={0.70640549,-1./4.,0.5};
-      c_t={0.9724758,-13./36.,-161./216.};
+      c_t={0.9724758/6.,-13./36./6.,-161./216./6.};
 
       // c_a_em={0.3997992,1./16.,-13./48.};
-      c_a_em={0.3997992,1./16.,-1./4.};
+      c_a_em={0.3997992/4.,1./16./4.,-1./4./4.};
       // c_v_em={0.2394370,-3./16.,-1./4.};
-      c_v_em={0.2394365,-3./16.,-1./4.};
+      c_v_em={0.2394365/4.,-3./16./4.,-1./4./4.};
       c_s_em={0.32682365,1./2.,5./12.};        
       c_p_em={0.00609817,0.,5./12.};
-      c_t_em={0.3706701,-1./6.,-17./36.};
+      c_t_em={0.3706701/6.,-1./6./6.,-17./36./6.};
 
       /*   c_a_em={1000.,1000.,1000.};
       c_v_em={1000.,1000.,1000.};
@@ -1516,11 +1516,11 @@ int main(int narg,char **arg)
 	   for(int mr2=0; mr2<nmr; mr2++)
 	     {
 	       //subtraction of O(g^2a^2) effects
-	       jG_0_sub[ijack][mr][mr2][0]=subtract(c_s,jG_0[ijack][mr][mr2][0],p2,p4,g2_tilde); //S
-	       jG_0_sub[ijack][mr][mr2][1]=subtract(c_a,jG_0[ijack][mr][mr2][1],p2,p4,g2_tilde); //V
-	       jG_0_sub[ijack][mr][mr2][2]=subtract(c_p,jG_0[ijack][mr][mr2][2],p2,p4,g2_tilde); //P
-	       jG_0_sub[ijack][mr][mr2][3]=subtract(c_v,jG_0[ijack][mr][mr2][3],p2,p4,g2_tilde); //A
-	       jG_0_sub[ijack][mr][mr2][4]=subtract(c_t,jG_0[ijack][mr][mr2][4],p2,p4,g2_tilde); //T
+	       jG_0_sub[ijack][mr][mr2][0]=subtract(c_s,jG_0[ijack][mr][mr2][0],p2,p4,g2_tilde); //ZS
+	       jG_0_sub[ijack][mr][mr2][1]=subtract(c_a,jG_0[ijack][mr][mr2][1],p2,p4,g2_tilde); //ZA
+	       jG_0_sub[ijack][mr][mr2][2]=subtract(c_p,jG_0[ijack][mr][mr2][2],p2,p4,g2_tilde); //ZP
+	       jG_0_sub[ijack][mr][mr2][3]=subtract(c_v,jG_0[ijack][mr][mr2][3],p2,p4,g2_tilde); //ZV
+	       jG_0_sub[ijack][mr][mr2][4]=subtract(c_t,jG_0[ijack][mr][mr2][4],p2,p4,g2_tilde); //ZT
 	      
 	       //subtraction of O(e^2a^2) effects
 	       jG_em_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_em[ijack][mr][mr2][0],p2,p4,3./4.);   ///!!!!!  with Wilson Action
@@ -1563,7 +1563,7 @@ int main(int narg,char **arg)
        cout<<"***** Subtraction O(g2a2) and O(e2a2) in "<<t_span.count()<<" s ******"<<endl<<endl;
 
 
-       jproj_t jG_em_a_b_sub = -jG_em_sub + jG_a_sub + jG_b_sub;
+       jproj_t jG_em_a_b_sub = -jG_em_sub + jG_a_sub + jG_b_sub;  //minus sign w.r.t. eq. (3.42) thesis.
 
 
        ///DEBUG///
@@ -1790,7 +1790,7 @@ int main(int narg,char **arg)
 	   Gt_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_ave[i]-Gt_ave[i]*Gt_ave[i]);
 	   
 	   Gv_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_em_ave[i]-Gv_em_ave[i]*Gv_em_ave[i]);
-	   Ga_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_em_ave[i]-Ga_em_ave[i]*Ga_em_ave[i]);      
+	   Ga_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_em_ave[i]-Ga_em_ave[i]*Ga_em_ave[i]);      //Green function with gamma_mu*gamma_5 --> Renorm. with ZV
 	   Gt_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_em_ave[i]-Gt_em_ave[i]*Gt_em_ave[i]);      
 	 }
 
@@ -1928,29 +1928,29 @@ int main(int narg,char **arg)
 
        for(int ijack=0;ijack<njacks;ijack++)
        	 {
-       	   jZ_chiral[ijack][0] = jZq_chiral[ijack]/jGs_0_chiral[ijack];
-       	   jZ_chiral[ijack][1] = jZq_chiral[ijack]/jGv_0_chiral[ijack];
-       	   jZ_chiral[ijack][2] = jZq_chiral[ijack]/jGp_0_chiral[ijack];
-       	   jZ_chiral[ijack][3] = jZq_chiral[ijack]/jGa_0_chiral[ijack];
-       	   jZ_chiral[ijack][4] = jZq_chiral[ijack]/jGt_0_chiral[ijack];
+       	   jZ_chiral[ijack][0] = jZq_chiral[ijack]/jGs_0_chiral[ijack];  //ZS     Z_QCD
+       	   jZ_chiral[ijack][1] = jZq_chiral[ijack]/jGv_0_chiral[ijack];  //ZA
+       	   jZ_chiral[ijack][2] = jZq_chiral[ijack]/jGp_0_chiral[ijack];  //ZP
+       	   jZ_chiral[ijack][3] = jZq_chiral[ijack]/jGa_0_chiral[ijack];  //ZV
+       	   jZ_chiral[ijack][4] = jZq_chiral[ijack]/jGt_0_chiral[ijack];  //ZT
 
-       	   jZ1_chiral[ijack][0] = jSigma1_chiral[ijack]/jGs_0_chiral[ijack];
-       	   jZ1_chiral[ijack][1] = jSigma1_chiral[ijack]/jGv_0_chiral[ijack];
-       	   jZ1_chiral[ijack][2] = jSigma1_chiral[ijack]/jGp_0_chiral[ijack];
-       	   jZ1_chiral[ijack][3] = jSigma1_chiral[ijack]/jGa_0_chiral[ijack];
-       	   jZ1_chiral[ijack][4] = jSigma1_chiral[ijack]/jGt_0_chiral[ijack];
+       	   jZ1_chiral[ijack][0] = jSigma1_chiral[ijack]/jGs_0_chiral[ijack]; //ZS
+       	   jZ1_chiral[ijack][1] = jSigma1_chiral[ijack]/jGv_0_chiral[ijack]; //ZA
+       	   jZ1_chiral[ijack][2] = jSigma1_chiral[ijack]/jGp_0_chiral[ijack];  //ZP
+       	   jZ1_chiral[ijack][3] = jSigma1_chiral[ijack]/jGa_0_chiral[ijack];  //ZV
+       	   jZ1_chiral[ijack][4] = jSigma1_chiral[ijack]/jGt_0_chiral[ijack];  //ZT
 
-       	   jZ_em_chiral[ijack][0] = jGs_em_a_b_chiral[ijack]/jGs_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
-       	   jZ_em_chiral[ijack][1] = jGv_em_a_b_chiral[ijack]/jGv_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
-       	   jZ_em_chiral[ijack][2] = jGp_em_a_b_chiral[ijack]/jGp_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
-       	   jZ_em_chiral[ijack][3] = jGa_em_a_b_chiral[ijack]/jGa_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
-       	   jZ_em_chiral[ijack][4] = jGt_em_a_b_chiral[ijack]/jGt_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];
+       	   jZ_em_chiral[ijack][0] = jGs_em_a_b_chiral[ijack]/jGs_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];  //ZS       deltaZ
+       	   jZ_em_chiral[ijack][1] = jGv_em_a_b_chiral[ijack]/jGv_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];  //ZA
+       	   jZ_em_chiral[ijack][2] = jGp_em_a_b_chiral[ijack]/jGp_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];  //ZP
+       	   jZ_em_chiral[ijack][3] = jGa_em_a_b_chiral[ijack]/jGa_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];  //ZV
+       	   jZ_em_chiral[ijack][4] = jGt_em_a_b_chiral[ijack]/jGt_0_chiral[ijack] + jZq_em_chiral[ijack]/jZq_chiral[ijack];  //ZT
 
-       	   jZ1_em_chiral[ijack][0] = jGs_em_a_b_chiral[ijack]/jGs_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];
-       	   jZ1_em_chiral[ijack][1] = jGv_em_a_b_chiral[ijack]/jGv_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];
-       	   jZ1_em_chiral[ijack][2] = jGp_em_a_b_chiral[ijack]/jGp_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];
-       	   jZ1_em_chiral[ijack][3] = jGa_em_a_b_chiral[ijack]/jGa_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];
-       	   jZ1_em_chiral[ijack][4] = jGt_em_a_b_chiral[ijack]/jGt_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];	   
+       	   jZ1_em_chiral[ijack][0] = jGs_em_a_b_chiral[ijack]/jGs_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];  //ZS
+       	   jZ1_em_chiral[ijack][1] = jGv_em_a_b_chiral[ijack]/jGv_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];  //ZA
+       	   jZ1_em_chiral[ijack][2] = jGp_em_a_b_chiral[ijack]/jGp_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];  //ZP
+       	   jZ1_em_chiral[ijack][3] = jGa_em_a_b_chiral[ijack]/jGa_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];  //ZV
+       	   jZ1_em_chiral[ijack][4] = jGt_em_a_b_chiral[ijack]/jGt_0_chiral[ijack] + jSigma1_em_chiral[ijack]/jSigma1_chiral[ijack];  //ZT  
        	 }
 
        t1=high_resolution_clock::now();
@@ -1978,9 +1978,9 @@ int main(int narg,char **arg)
        // Note that ZV  ZA are RGI because they're protected by the WIs
        cq=q_evolution_to_RIp_ainv(Nf,ainv,p2);
        cO[0]=S_evolution_to_RIp_ainv(Nf,ainv,p2); //S
-       cO[1]=1.; //V
+       cO[1]=1.; //A
        cO[2]=P_evolution_to_RIp_ainv(Nf,ainv,p2); //P
-       cO[3]=1.; //A
+       cO[3]=1.; //V
        cO[4]=T_evolution_to_RIp_ainv(Nf,ainv,p2); //T
 
 
@@ -1990,7 +1990,7 @@ int main(int narg,char **arg)
        for(int ijack=0;ijack<njacks;ijack++)
 	 for (int ibil=0; ibil<5; ibil++)
 	  {
-	    jZO_RIp_ainv[ijack][ibil]=jZ1_chiral[ijack][ibil]/cO[ibil];
+	    jZO_RIp_ainv[ijack][ibil]=jZ1_chiral[ijack][ibil]/cO[ibil];           //jZO_RIp_ainv = {S, A, P, V, T}
 	    jZO_em_RIp_ainv[ijack][ibil]=jZ1_em_chiral[ijack][ibil]/cO[ibil];
 	  }
       
