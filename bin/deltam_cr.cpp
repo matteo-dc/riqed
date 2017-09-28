@@ -349,8 +349,13 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
 int main(int narg,char **arg)
 {
 
-  int nconfs=240;
-  int njacks=15;
+ if (narg!=3){
+    cerr<<"Number of arguments not valid:  <nconfs> <njacks>"<<endl;
+    exit(0);
+  }
+  
+  int nconfs=stoi(arg[1]);
+  int njacks=stoi(arg[2]);
   int clust_size=nconfs/njacks;
   int conf_id[nconfs];
   double L=24,T=48;
