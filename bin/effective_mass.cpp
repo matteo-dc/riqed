@@ -131,11 +131,11 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
     {
       for(int j=0; j<n_par; j++)
 	for(int k=0; k<n_par; k++)
-	  if(isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
+	  if(std::isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
 
       for(int ijack=0; ijack<njacks; ijack++)
 	for(int k=0; k<n_par; k++)
-	  if(isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]); 
+	  if(std::isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]); 
     }
 
   for(int ijack=0; ijack<njacks; ijack++)
