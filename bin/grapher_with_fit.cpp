@@ -74,7 +74,7 @@ int nr,nm,nmr;
 
 
 
-void read_mom_list(const string &path)
+void read_mom_list(const string &path) 
 {
     //file
     ifstream input(path);
