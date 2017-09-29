@@ -1789,7 +1789,7 @@ int main(int narg,char **arg)
 	   Ga_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_ave[i]-Ga_ave[i]*Ga_ave[i]);      
 	   Gt_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_ave[i]-Gt_ave[i]*Gt_ave[i]);
 	   
-	   Gv_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_em_ave[i]-Gv_em_ave[i]*Gv_em_ave[i]);
+	   Gv_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_em_ave[i]-Gv_em_ave[i]*Gv_em_ave[i]);      //Green function with gamma_mu         --> Renorm. with ZA
 	   Ga_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_em_ave[i]-Ga_em_ave[i]*Ga_em_ave[i]);      //Green function with gamma_mu*gamma_5 --> Renorm. with ZV
 	   Gt_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_em_ave[i]-Gt_em_ave[i]*Gt_em_ave[i]);      
 	 }
