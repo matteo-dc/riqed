@@ -1287,7 +1287,8 @@ int main(int narg,char **arg)
 
        t0=high_resolution_clock::now();
 
-       vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),nt),njacks);  // S[iconf][type][mr]	     
+       vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),nt),njacks);  // S[iconf][type][mr]
+       vvprop_t S_em(vprop_t(prop_t::Zero(),nmr),njacks); 
        
        for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
 	 for(size_t ihit=0;ihit<nhits;ihit++)
@@ -1319,8 +1320,21 @@ int main(int narg,char **arg)
 		       
 		       //     if(t==4) S[ijack][t][mr]*=dcompl(0.0,-1.0);
 		       if(t==4) S[ijack][t][mr]*=dcompl(0.0,1.0);
-		       if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);
+		       if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);	       
 		     }
+	     
+
+#pragma omp parallel for collapse(3)
+	     for(int m=0;m<nm;m++)
+	       for(int r=0;r<nr;r++)
+		 for(int ijack=0;ijack<njacks;ijack++)
+		   {
+		     int mr = r + nr*m;
+		     
+		     if(r==0) S_em[ijack][mr] = S[ijack][2][mr] + S[ijack][3][mr] - deltam_cr[mr][mr]*S[ijack][4][mr]; //r=0
+		     if(r==1) S_em[ijack][mr] = S[ijack][2][mr] + S[ijack][3][mr] + deltam_cr[mr][mr]*S[ijack][4][mr]; //r=1
+		   }
+
 	     
 #pragma omp parallel for collapse (2)
 	     for(int ijack=0;ijack<njacks;ijack++)
@@ -1329,11 +1343,28 @@ int main(int narg,char **arg)
 		   //int iconf=clust_size*ijack+i_in_clust;
 		   
 		   jS_0[ijack][mr] += S[ijack][0][mr];
-		   jS_self_tad[ijack][mr] += S[ijack][2][mr] + S[ijack][3][mr];
-		   jS_p[ijack][mr] += S[ijack][4][mr];
+		   // jS_self_tad[ijack][mr] += S[ijack][2][mr] + S[ijack][3][mr];
+		   //jS_p[ijack][mr] += S[ijack][4][mr];
 		   // jS_s[ijack][mr] += S[ijack][5][mr];
+		   jS_em[ijack][mr] += S_em[ijack][mr];
 		 }
 
+	     //jackknife of propagators
+	     jS_0 = jackknife_prop(jS_0,nconfs,clust_size,nhits);
+	     //  jS_self_tad = jackknife_prop(jS_self_tad,nconfs,clust_size,nhits);
+	     //  jS_p = jackknife_prop(jS_p,nconfs,clust_size,nhits);
+	     jS_em = jackknife_prop(jS_em,nconfs,clust_size,nhits);
+
+
+// #pragma omp parallel for collapse(2) // shared(njacks,nmr,jS_em,jS_self_tad,deltam_cr,jS_p)    // neglecting scalar correction
+// 	     for(int ijack=0;ijack<njacks;ijack++)
+// 	       for(int mr=0;mr<nmr;mr++)
+// 		 {
+// 		   if(mr%2==0) jS_em[ijack][mr] = jS_self_tad[ijack][mr] - deltam_cr[mr][mr]*jS_p[ijack][mr]; //r=0
+// 		   if(mr%2==1) jS_em[ijack][mr] = jS_self_tad[ijack][mr] + deltam_cr[mr][mr]*jS_p[ijack][mr]
+// 		 }
+	     
+	     
 #pragma omp parallel for collapse (4)
 	     for(int ijack=0;ijack<njacks;ijack++)
 	       for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -1343,11 +1374,15 @@ int main(int narg,char **arg)
 		       //int iconf=clust_size*ijack+i_in_clust;
 		       
 		       jVert_0[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw], S[ijack][0][mr_bw],igam,GAMMA);
-		       jVert_11_self_tad[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][1][mr_fw],S[ijack][1][mr_bw],igam,GAMMA)\
-			 +make_vertex(S[ijack][0][mr_fw],S[ijack][2][mr_bw],igam,GAMMA)+make_vertex(S[ijack][2][mr_fw],S[ijack][0][mr_bw],igam,GAMMA)\
-			 +make_vertex(S[ijack][0][mr_fw],S[ijack][3][mr_bw],igam,GAMMA)+make_vertex(S[ijack][3][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
-		       jVert_p[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw],S[ijack][4][mr_bw],igam,GAMMA)+make_vertex(S[ijack][4][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
+
+		       // jVert_11_self_tad[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][1][mr_fw],S[ijack][1][mr_bw],igam,GAMMA) \
+		       // 	 +make_vertex(S[ijack][0][mr_fw],S[ijack][2][mr_bw],igam,GAMMA)+make_vertex(S[ijack][2][mr_fw],S[ijack][0][mr_bw],igam,GAMMA)\
+		       // 	 +make_vertex(S[ijack][0][mr_fw],S[ijack][3][mr_bw],igam,GAMMA)+make_vertex(S[ijack][3][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
+		       // jVert_p[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw],S[ijack][4][mr_bw],igam,GAMMA)+make_vertex(S[ijack][4][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
 		       // jVert_s[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw],S[ijack][5][mr_bw],igam,GAMMA) + make_vertex(S[ijack][5][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
+
+		       jVert_em[ijack][mr_fw][mr_bw][igam] += make_vertex(S_em[ijack][mr_fw],S_em[ijack][mr_bw],igam,GAMMA);
+
 		     }
 
 	   } //close hits&in_i_clust loop
@@ -1359,15 +1394,13 @@ int main(int narg,char **arg)
        
        // t0=high_resolution_clock::now();
        
-       //jackknife of propagators
-       jS_0 = jackknife_prop(jS_0,nconfs,clust_size,nhits);
-       jS_self_tad = jackknife_prop(jS_self_tad,nconfs,clust_size,nhits);
-       jS_p = jackknife_prop(jS_p,nconfs,clust_size,nhits);
+      
        
        // //jackknife of vertices
        jVert_0 = jackknife_vertex(jVert_0,nconfs,clust_size,nhits);
-       jVert_11_self_tad = jackknife_vertex(jVert_11_self_tad,nconfs,clust_size,nhits);
-       jVert_p = jackknife_vertex(jVert_p,nconfs,clust_size,nhits);
+       // jVert_11_self_tad = jackknife_vertex(jVert_11_self_tad,nconfs,clust_size,nhits);
+       //  jVert_p = jackknife_vertex(jVert_p,nconfs,clust_size,nhits);
+       jVert_em = jackknife_vertex(jVert_em,nconfs,clust_size,nhits);
 
        t1=high_resolution_clock::now();
        t_span = duration_cast<duration<double>>(t1-t0);
@@ -1377,19 +1410,14 @@ int main(int narg,char **arg)
        t0=high_resolution_clock::now();
 
 
-#pragma omp parallel for collapse(2) // shared(njacks,nmr,jS_em,jS_self_tad,deltam_cr,jS_p)
-       for(int ijack=0;ijack<njacks;ijack++)
-	 for(int mr=0;mr<nmr;mr++)
-	   {
-	     jS_em[ijack][mr] = jS_self_tad[ijack][mr] - deltam_cr[mr][mr]*jS_p[ijack][mr]; // + scalar correction
-	   }
 
-#pragma omp parallel for collapse(4) shared(njacks,nmr,jVert_em,jVert_11_self_tad,deltam_cr,jVert_p)
-       for(int ijack=0;ijack<njacks;ijack++)
-	 for(int mr=0;mr<nmr;mr++)
-	   for(int mr2=0;mr2<nmr;mr2++)
-	     for(int igam=0;igam<16;igam++)
-	       jVert_em[ijack][mr][mr2][igam] = jVert_11_self_tad[ijack][mr][mr2][igam] - deltam_cr[mr][mr2]*jVert_p[ijack][mr][mr2][igam]; // + scalar correction
+
+// #pragma omp parallel for collapse(4) shared(njacks,nmr,jVert_em,jVert_11_self_tad,deltam_cr,jVert_p)
+//        for(int ijack=0;ijack<njacks;ijack++)
+// 	 for(int mr=0;mr<nmr;mr++)
+// 	   for(int mr2=0;mr2<nmr;mr2++)
+// 	     for(int igam=0;igam<16;igam++)
+// 	       jVert_em[ijack][mr][mr2][igam] = jVert_11_self_tad[ijack][mr][mr2][igam] - deltam_cr[mr][mr2]*jVert_p[ijack][mr][mr2][igam]; // + scalar correction
      
 
        t1=high_resolution_clock::now();
