@@ -1083,6 +1083,10 @@ int main(int narg,char **arg)
   t1=high_resolution_clock::now();
   t_span = duration_cast<duration<double>>(t1-t0);
   cout<<"***** Read Deltam_cr in  "<<t_span.count()<<" s ******"<<endl<<endl;
+
+  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+      cout<<"m1 "<<mr_fw<<" m2 "<<mr_bw<<"  "<<deltam_cr[mr_fw][mr_bw];
   
   //double deltam_cr = 0.230697;
   
@@ -1124,6 +1128,10 @@ int main(int narg,char **arg)
   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
       eff_mass[mr_fw][mr_bw] = eff_mass_array[mr_fw][mr_bw][0];
+
+   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+      cout<<"m1 "<<mr_fw<<" m2 "<<mr_bw<<"  "<<eff_mass[mr_fw][mr_bw];
   
   t1=high_resolution_clock::now();
   t_span = duration_cast<duration<double>>(t1-t0);
