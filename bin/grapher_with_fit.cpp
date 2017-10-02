@@ -133,7 +133,7 @@ int fact(int n)
         return 1;
 }
 
-valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, const vd_t &error, const vector<vd_t> &y, const int range_min, const int range_max)
+valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, vd_t &error, const vector<vd_t> &y, const int range_min, const int range_max)
 {
     
     int n_par = coord.size();
@@ -172,7 +172,7 @@ valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, const vd_t &error, c
     
 }
 
-valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, const vvd_t &error, const vector<vvd_t> &y, const int range_min, const int range_max)
+valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, vvd_t &error, const vector<vvd_t> &y, const int range_min, const int range_max)
 {
   // cout<<"DEBUG---(a)"<<endl;
   
@@ -208,7 +208,8 @@ valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, const 
   //definition
   for(int i=range_min; i<range_max; i++)
     {
-      error[i]+=1e-300;
+      for(int ibil=0; ibil<nbil;ibil++)
+	error[i][ibil]+=1e-300;
       
       for(int ibil=0; ibil<nbil;ibil++)
         for(int j=0; j<n_par; j++)
