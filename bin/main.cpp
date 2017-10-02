@@ -1504,8 +1504,8 @@ int main(int narg,char **arg)
       	 for(int mr=0; mr<nmr; mr++)
       	   {
       	     //subtraction of O(g^2a^2) effects
-      	     jZq_sub[ijack][mr]=subtract(c_q,jZq[ijack][mr],p2,p4,0.0*g2_tilde);
-      	     jSigma1_sub[ijack][mr]=subtract(c_q,jSigma1[ijack][mr],p2,p4,0.0*g2_tilde);
+      	     jZq_sub[ijack][mr]=subtract(c_q,jZq[ijack][mr],p2,p4,g2_tilde);
+      	     jSigma1_sub[ijack][mr]=subtract(c_q,jSigma1[ijack][mr],p2,p4,g2_tilde);
 	     //subtraction of O(e^2a^2) effects
       	     jZq_em_sub[ijack][mr]=subtract(c_q_em,jZq_em[ijack][mr],p2,p4,0.0*3./4.);          //Wilson Action
       	     jSigma1_em_sub[ijack][mr]=subtract(c_q_em,jSigma1_em[ijack][mr],p2,p4,0.0*3./4.);
@@ -1516,11 +1516,11 @@ int main(int narg,char **arg)
 	   for(int mr2=0; mr2<nmr; mr2++)
 	     {
 	       //subtraction of O(g^2a^2) effects
-	       jG_0_sub[ijack][mr][mr2][0]=subtract(c_s,jG_0[ijack][mr][mr2][0],p2,p4,0.0*g2_tilde); //ZS
-	       jG_0_sub[ijack][mr][mr2][1]=subtract(c_a,jG_0[ijack][mr][mr2][1],p2,p4,0.0*g2_tilde); //ZA
-	       jG_0_sub[ijack][mr][mr2][2]=subtract(c_p,jG_0[ijack][mr][mr2][2],p2,p4,0.0*g2_tilde); //ZP
-	       jG_0_sub[ijack][mr][mr2][3]=subtract(c_v,jG_0[ijack][mr][mr2][3],p2,p4,0.0*g2_tilde); //ZV
-	       jG_0_sub[ijack][mr][mr2][4]=subtract(c_t,jG_0[ijack][mr][mr2][4],p2,p4,0.0*g2_tilde); //ZT
+	       jG_0_sub[ijack][mr][mr2][0]=subtract(c_s,jG_0[ijack][mr][mr2][0],p2,p4,g2_tilde); //ZS
+	       jG_0_sub[ijack][mr][mr2][1]=subtract(c_a,jG_0[ijack][mr][mr2][1],p2,p4,g2_tilde); //ZA
+	       jG_0_sub[ijack][mr][mr2][2]=subtract(c_p,jG_0[ijack][mr][mr2][2],p2,p4,g2_tilde); //ZP
+	       jG_0_sub[ijack][mr][mr2][3]=subtract(c_v,jG_0[ijack][mr][mr2][3],p2,p4,g2_tilde); //ZV
+	       jG_0_sub[ijack][mr][mr2][4]=subtract(c_t,jG_0[ijack][mr][mr2][4],p2,p4,g2_tilde); //ZT
 	      
 	       //subtraction of O(e^2a^2) effects
 	       jG_em_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_em[ijack][mr][mr2][0],p2,p4,0.0*3./4.);   ///!!!!!  with Wilson Action
