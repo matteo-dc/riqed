@@ -152,7 +152,7 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
 	  par_ave[k]+=jpars[ijack](k)/njacks;
 	  par2_ave[k]+=jpars[ijack](k)*jpars[ijack](k)/njacks;
 	}
-      par_err[k]=sqrt((double)(njacks-1))*sqrt(par2_ave[k]-par_ave[k]*par_ave[k]);
+      par_err[k]=sqrt((double)(njacks-1))*sqrt(fabs(par2_ave[k]-par_ave[k]*par_ave[k]));
       
       par_array[k][0] = par_ave[k];
       par_array[k][1] = par_err[k];
@@ -392,11 +392,11 @@ vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const i
 	      mass_ave[mr_fw][mr_bw][t]+=M_eff[mr_fw][mr_bw][ijack][t]/njacks;
 	      sqr_mass_ave[mr_fw][mr_bw][t]+=M_eff[mr_fw][mr_bw][ijack][t]*M_eff[mr_fw][mr_bw][ijack][t]/njacks;
 	    }
-	  mass_err[mr_fw][mr_bw][t]=sqrt((double)(njacks-1))*sqrt(sqr_mass_ave[mr_fw][mr_bw][t]-mass_ave[mr_fw][mr_bw][t]*mass_ave[mr_fw][mr_bw][t]);      
+	  mass_err[mr_fw][mr_bw][t]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_mass_ave[mr_fw][mr_bw][t]-mass_ave[mr_fw][mr_bw][t]*mass_ave[mr_fw][mr_bw][t]));      
 
 	  cout<<"**********DEBUG*************"<<endl;
-	  cout<< mass_err[mr_fw][mr_bw][t] <<endl;
-	  cout<<"**********DEBUG*************"<<endl;
+	  cout<<mr_fw<<" "<<mr_bw<<" "<<" t  "<<t<< mass_err[mr_fw][mr_bw][t] <<endl;
+
 	  	  
 	}
 
