@@ -1720,15 +1720,15 @@ int main(int narg,char **arg)
       	 }
     
        ////////DEBUG/////////////
-       cout<<"////////DEBUG/////////////"<<endl;
-       cout<<"---- M^2  ---- jG_p ---- jG_p_SUB --- (for each jackknife)"<<endl;
-       for(int ijack=0; ijack<njacks; ijack++)
-     	 {
-     	   for(int i=0; i<neq; i++)
-  	     cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< jGp_equivalent[ijack][i]<<"\t"<< jGp_subpole[ijack][i]<<endl;
-	   cout<<endl;
-	 }
-       cout<<endl;
+       // cout<<"////////DEBUG/////////////"<<endl;
+       // cout<<"---- M^2  ---- jG_p ---- jG_p_SUB --- (for each jackknife)"<<endl;
+       // for(int ijack=0; ijack<njacks; ijack++)
+       // 	 {
+       // 	   for(int i=0; i<neq; i++)
+       // 	     cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< jGp_equivalent[ijack][i]<<"\t"<< jGp_subpole[ijack][i]<<endl;
+       // 	   cout<<endl;
+       // 	 }
+       // cout<<endl;
        /////////////////////////
        
 
