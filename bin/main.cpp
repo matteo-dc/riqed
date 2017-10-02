@@ -1331,8 +1331,8 @@ int main(int narg,char **arg)
 		   {
 		     int mr = r + nr*m;
 		     
-		     if(r==0) S_em[ijack][mr] = S[ijack][1][mr] + S[ijack][2][mr] + S[ijack][3][mr] - deltam_cr[mr][mr]*S[ijack][4][mr]; //r=0
-		     if(r==1) S_em[ijack][mr] = S[ijack][1][mr] + S[ijack][2][mr] + S[ijack][3][mr] + deltam_cr[mr][mr]*S[ijack][4][mr]; //r=1
+		     if(r==0) S_em[ijack][mr] = S[ijack][2][mr] + S[ijack][3][mr] - deltam_cr[mr][mr]*S[ijack][4][mr]; //r=0
+		     if(r==1) S_em[ijack][mr] = S[ijack][2][mr] + S[ijack][3][mr] + deltam_cr[mr][mr]*S[ijack][4][mr]; //r=1
 		   }
 
 	     
@@ -1381,7 +1381,8 @@ int main(int narg,char **arg)
 		       // jVert_p[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw],S[ijack][4][mr_bw],igam,GAMMA)+make_vertex(S[ijack][4][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
 		       // jVert_s[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw],S[ijack][5][mr_bw],igam,GAMMA) + make_vertex(S[ijack][5][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
 
-		       jVert_em[ijack][mr_fw][mr_bw][igam] += make_vertex(S_em[ijack][mr_fw],S_em[ijack][mr_bw],igam,GAMMA);
+		       jVert_em[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw],S_em[ijack][mr_bw],igam,GAMMA) +  make_vertex(S_em[ijack][mr_fw],S[ijack][0][mr_bw],igam,GAMMA) \
+			 +  make_vertex(S[ijack][1][mr_fw],S[ijack][1][mr_bw],igam,GAMMA) ;
 
 		     }
 
