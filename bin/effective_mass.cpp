@@ -331,7 +331,7 @@ double solve_Newton (vvd_t C, int ijack, int t, const int T)
 }
 
 //compute effective mass
-vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const int *conf_id, const string &string_path)
+vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const int *conf_id, const string &string_path, const int t_min, const int t_max)
 {
 
   vvvvd_t jP5P5_00(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
@@ -393,12 +393,18 @@ vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const i
 	      sqr_mass_ave[mr_fw][mr_bw][t]+=M_eff[mr_fw][mr_bw][ijack][t]*M_eff[mr_fw][mr_bw][ijack][t]/njacks;
 	    }
 	  mass_err[mr_fw][mr_bw][t]=sqrt((double)(njacks-1))*sqrt(sqr_mass_ave[mr_fw][mr_bw][t]-mass_ave[mr_fw][mr_bw][t]*mass_ave[mr_fw][mr_bw][t]);      
+
+	  cout<<"**********DEBUG*************"<<endl;
+	  cout<< mass_err[mr_fw][mr_bw][t] <<endl;
+	  cout<<"**********DEBUG*************"<<endl;
+	  	  
 	}
+
 
   
   //t-range for the fit
-  int t_min=12;
-  int t_max=23;
+  // int t_min=12;
+  // int t_max=23;
   
   vvd_t coord(vd_t(0.0,T/2),1);
   for(int j=0; j<T/2; j++)
@@ -453,7 +459,12 @@ int main(int narg,char **arg)
   double L=24,T=48;
   size_t nhits=1; //!
 
-  string string_path = arg[3];
+  int tmin = stoi(arg[3]);
+  int tmax = stoi(arg[4]);
+
+  string string_path = arg[5];
+
+ 
 
   nm = 4;  //! to be passed from command line
   nr = 2;
@@ -463,7 +474,7 @@ int main(int narg,char **arg)
   for(int iconf=0;iconf<nconfs;iconf++)
     conf_id[iconf]=100+iconf*1;
 
-  vvvd_t eff_mass_array = compute_eff_mass(T,nconfs,njacks,conf_id,string_path);
+  vvvd_t eff_mass_array = compute_eff_mass(T,nconfs,njacks,conf_id,string_path,tmin,tmax);
  
   
   ofstream outfile;
