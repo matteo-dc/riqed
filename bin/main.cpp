@@ -520,7 +520,7 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
   
 }
 
-valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int range_min, const int range_max)
+valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, vd_t &error, const vvd_t &y, const int range_min, const int range_max)
 {
   int n_par = coord.size();
   int njacks = y.size(); 
