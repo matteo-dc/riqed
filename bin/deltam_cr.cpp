@@ -73,7 +73,7 @@ int nr,nm,nmr;
 
 
 //create the path-string to the contraction
-string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, const string &T2)
+string path_to_contr(const string &string_path, int i_conf,const int mr1, const string &T1, const int mr2, const string &T2)
 {
 
   int r1 = mr1%nr;
@@ -82,7 +82,7 @@ string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, 
   int m2 = (mr2-r2)/nr;
   
   char path[1024];
-  sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
+  sprintf(path,"%sout/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",string_path.c_str(),i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
 
   // cout<<path<<endl;
   
@@ -162,7 +162,7 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
   
 }
 
-vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const string &T2, const string &ID, const string &reim, const string &parity, const int T, const int nconfs, const int njacks , const int* conf_id)
+vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const string &T2, const string &ID, const string &reim, const string &parity, const int T, const int nconfs, const int njacks , const int* conf_id, const string &string_path)
 {
    
   vd_t data_V0P5_real(0.0,T);
@@ -185,10 +185,10 @@ vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const stri
        
       ifstream infile;
       
-      infile.open(path_to_contr(conf_id[iconf],mr1,T1,mr2,T2));
+      infile.open(path_to_contr(string_path,conf_id[iconf],mr1,T1,mr2,T2));
 
       if(!infile.good())
-	{cerr<<"Unable to open file "<<path_to_contr(conf_id[iconf],mr1,T1,mr2,T2)<<endl;
+	{cerr<<"Unable to open file "<<path_to_contr(string_path,conf_id[iconf],mr1,T1,mr2,T2)<<endl;
 	  exit(1);}
 
       //DEBUG
@@ -260,7 +260,7 @@ vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const stri
 }
 
 //compute delta m_cr
-vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const int* conf_id)
+vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const int* conf_id, const string &string_path)
 {
   int nmr=8;
   
@@ -281,14 +281,14 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
       {
 	//load corrections
-	jV0P5_LL[mr_fw][mr_bw]=get_contraction(mr_fw,"F",mr_bw,"F","V0P5","IM","ODD",T,nconfs,njacks,conf_id);
-	jV0P5_0M[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"FF","V0P5","IM","ODD",T,nconfs,njacks,conf_id);
-	jV0P5_M0[mr_fw][mr_bw]=get_contraction(mr_fw,"FF",mr_bw,"0","V0P5","IM","ODD",T,nconfs,njacks,conf_id);
-	jV0P5_0T[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"T","V0P5","IM","ODD",T,nconfs,njacks,conf_id);
-	jV0P5_T0[mr_fw][mr_bw]=get_contraction(mr_fw,"T",mr_bw,"0","V0P5","IM","ODD",T,nconfs,njacks,conf_id);
+	jV0P5_LL[mr_fw][mr_bw]=get_contraction(mr_fw,"F",mr_bw,"F","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
+	jV0P5_0M[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"FF","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
+	jV0P5_M0[mr_fw][mr_bw]=get_contraction(mr_fw,"FF",mr_bw,"0","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
+	jV0P5_0T[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"T","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
+	jV0P5_T0[mr_fw][mr_bw]=get_contraction(mr_fw,"T",mr_bw,"0","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
 	//load the derivative wrt counterterm
-	jV0P5_0P[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"P","V0P5","RE","ODD",T,nconfs,njacks,conf_id);
-	jV0P5_P0[mr_fw][mr_bw]=get_contraction(mr_fw,"P",mr_bw,"0","V0P5","RE","ODD",T,nconfs,njacks,conf_id);
+	jV0P5_0P[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"P","V0P5","RE","ODD",T,nconfs,njacks,conf_id,string_path);
+	jV0P5_P0[mr_fw][mr_bw]=get_contraction(mr_fw,"P",mr_bw,"0","V0P5","RE","ODD",T,nconfs,njacks,conf_id,string_path);
       }
 
  
@@ -349,8 +349,8 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
 int main(int narg,char **arg)
 {
 
- if (narg!=3){
-    cerr<<"Number of arguments not valid:  <nconfs> <njacks>"<<endl;
+ if (narg!=4){
+    cerr<<"Number of arguments not valid:  <nconfs> <njacks> <path before 'out' directory: /marconi_work/.../ >"<<endl;
     exit(0);
   }
   
@@ -361,6 +361,8 @@ int main(int narg,char **arg)
   double L=24,T=48;
   size_t nhits=1; //!
 
+  string string_path = arg[3];
+
   nm = 4;  //! to be passed from command line
   nr = 2;
 
@@ -369,7 +371,7 @@ int main(int narg,char **arg)
   for(int iconf=0;iconf<nconfs;iconf++)
     conf_id[iconf]=100+iconf*1;
 
-  vvvd_t deltam_cr_array= compute_deltam_cr(T,nconfs,njacks,conf_id); //deltam_cr_array[mr_fw][mr_bw][i] with i=0 AVERAGE and i=1 ERROR
+  vvvd_t deltam_cr_array= compute_deltam_cr(T,nconfs,njacks,conf_id, string_path); //deltam_cr_array[mr_fw][mr_bw][i] with i=0 AVERAGE and i=1 ERROR
   
   ofstream outfile;
   outfile.open("deltam_cr_array", ios::out | ios::binary);

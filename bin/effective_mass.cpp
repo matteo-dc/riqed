@@ -73,7 +73,7 @@ int nr,nm,nmr;
 
 
 //create the path-string to the contraction
-string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, const string &T2)
+string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, const string &T2, const string &string_path)
 {
 
   int r1 = mr1%nr;
@@ -82,7 +82,7 @@ string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, 
   int m2 = (mr2-r2)/nr;
   
   char path[1024];
-  sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
+  sprintf(path,"%sout/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",string_path.c_str(),i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
 
   // cout<<path<<endl;
   
@@ -162,7 +162,7 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
   
 }
 
-vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const string &T2, const string &ID, const string &reim, const string &parity, const int T, const int nconfs, const int njacks , const int* conf_id)
+vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const string &T2, const string &ID, const string &reim, const string &parity, const int T, const int nconfs, const int njacks , const int* conf_id, const string &string_path)
 {
    
   vd_t data_V0P5_real(0.0,T);
@@ -185,10 +185,10 @@ vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const stri
        
       ifstream infile;
       
-      infile.open(path_to_contr(conf_id[iconf],mr1,T1,mr2,T2));
+      infile.open(path_to_contr(conf_id[iconf],mr1,T1,mr2,T2,string_path));
 
       if(!infile.good())
-	{cerr<<"Unable to open file "<<path_to_contr(conf_id[iconf],mr1,T1,mr2,T2)<<endl;
+	{cerr<<"Unable to open file "<<path_to_contr(conf_id[iconf],mr1,T1,mr2,T2,string_path)<<endl;
 	  exit(1);}
 
       //DEBUG
@@ -331,13 +331,13 @@ double solve_Newton (vvd_t C, int ijack, int t, const int T)
 }
 
 //compute effective mass
-vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const int *conf_id)
+vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const int *conf_id, const string &string_path)
 {
 
   vvvvd_t jP5P5_00(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      jP5P5_00[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"0","P5P5","RE","EVEN",T,nconfs,njacks,conf_id);
+      jP5P5_00[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"0","P5P5","RE","EVEN",T,nconfs,njacks,conf_id,string_path);
   
   // cout<<"**********DEBUG*************"<<endl;
   // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -367,13 +367,13 @@ vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const i
 	
       }
   
-  // cout<<"**********DEBUG*************"<<endl;
-  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-  //     for(int ijack=0;ijack<njacks;ijack++)
-  // 	for(int t=0;t<T/2;t++)
-  // 	  cout<<mr_fw<<" "<<mr_bw<<" ijack "<<ijack<<" t "<<t<<"\t"<<M_eff[mr_fw][mr_bw][ijack][t]<<endl;
-  // cout<<"**********DEBUG*************"<<endl;
+  cout<<"**********DEBUG*************"<<endl;
+  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+      for(int ijack=0;ijack<njacks;ijack++)
+  	for(int t=0;t<T/2;t++)
+  	  cout<<mr_fw<<" "<<mr_bw<<" ijack "<<ijack<<" t "<<t<<"\t"<<M_eff[mr_fw][mr_bw][ijack][t]<<endl;
+  cout<<"**********DEBUG*************"<<endl;
 
     // cout<<"**********DEBUG*************"<<endl;
   // for(double i=0;i<10;i+=0.1){ cout<<i+1<<"\t"<<f_mass(22,T,i,jP5P5_00[0][0][0][22]/jP5P5_00[0][0][0][23])<<endl;}
@@ -441,8 +441,8 @@ vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const i
 int main(int narg,char **arg)
 {
 
- if (narg!=3){
-    cerr<<"Number of arguments not valid:  <nconfs> <njacks>"<<endl;
+ if (narg!=4){
+    cerr<<"Number of arguments not valid:  <nconfs> <njacks> <path before 'out' directory: /marconi_work/.../ >"<<endl;
     exit(0);
   }
   
@@ -453,6 +453,8 @@ int main(int narg,char **arg)
   double L=24,T=48;
   size_t nhits=1; //!
 
+  string string_path = arg[3];
+
   nm = 4;  //! to be passed from command line
   nr = 2;
 
@@ -461,7 +463,7 @@ int main(int narg,char **arg)
   for(int iconf=0;iconf<nconfs;iconf++)
     conf_id[iconf]=100+iconf*1;
 
-  vvvd_t eff_mass_array = compute_eff_mass(T,nconfs,njacks,conf_id);
+  vvvd_t eff_mass_array = compute_eff_mass(T,nconfs,njacks,conf_id,string_path);
  
   
   ofstream outfile;
