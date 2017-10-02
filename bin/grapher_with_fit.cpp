@@ -154,6 +154,8 @@ valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, const vd_t &error, c
     //definition
     for(int i=range_min; i<range_max; i++)
     {
+      error[i]+=1e-300;
+      
         for(int j=0; j<n_par; j++)
             for(int k=0; k<n_par; k++)
                 if(std::isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
@@ -206,6 +208,8 @@ valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, const 
   //definition
   for(int i=range_min; i<range_max; i++)
     {
+      error[i]+=1e-300;
+      
       for(int ibil=0; ibil<nbil;ibil++)
         for(int j=0; j<n_par; j++)
 	  for(int k=0; k<n_par; k++)
@@ -266,6 +270,9 @@ valarray< valarray<VectorXd> > fit_chiral_Z_RIp_jackknife(const vvd_t &coord, co
   //definition
   for(int i=range_min; i<range_max; i++)
     {
+      for(int ibil=0; ibil<nbil;ibil++)
+	error[i][ibil]+=1e-300;
+      
       if(coord[1][i]>p_min_value)
 	{
       
@@ -314,7 +321,7 @@ vvvd_t average_Zq(vector<jZ_t> &jZq)
 #pragma omp parallel for collapse(2)
     for(int imom=0;imom<moms;imom++)
         for(int mr=0;mr<nmr;mr++)
-            Zq_err[imom][mr]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[imom][mr]-Zq_ave[imom][mr]*Zq_ave[imom][mr]);
+	  Zq_err[imom][mr]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Zq_ave[imom][mr]-Zq_ave[imom][mr]*Zq_ave[imom][mr]));
     
     Zq_ave_err[0]=Zq_ave;
     Zq_ave_err[1]=Zq_err;
@@ -339,7 +346,7 @@ vvd_t average_Zq_chiral(vector<vd_t> &jZq)
         }
 #pragma omp parallel for
     for(int imom=0;imom<moms;imom++)
-        Zq_err[imom]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[imom]-Zq_ave[imom]*Zq_ave[imom]);
+      Zq_err[imom]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Zq_ave[imom]-Zq_ave[imom]*Zq_ave[imom]));
     
     Zq_ave_err[0]=Zq_ave;
     Zq_ave_err[1]=Zq_err;
@@ -367,7 +374,7 @@ vvvd_t average_pars(vector<vXd_t> &jZq_pars)
 #pragma omp parallel for collapse(2)
     for(int imom=0;imom<moms;imom++)
         for(int ipar=0;ipar<pars;ipar++)
-            Zq_par_err[imom][ipar]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_par_ave[imom][ipar]-Zq_par_ave[imom][ipar]*Zq_par_ave[imom][ipar]);
+	  Zq_par_err[imom][ipar]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Zq_par_ave[imom][ipar]-Zq_par_ave[imom][ipar]*Zq_par_ave[imom][ipar]));
     
     Zq_par_ave_err[0]=Zq_par_ave;
     Zq_par_ave_err[1]=Zq_par_err;
@@ -401,7 +408,7 @@ vvvvvd_t average_Z(vector<jZbil_t> &jZ)
         for(int mr_fw=0;mr_fw<nmr;mr_fw++)
             for(int mr_bw=0;mr_bw<nmr;mr_bw++)
                 for(int k=0;k<nbil;k++)
-                    Z_err[imom][mr_fw][mr_bw][k]=sqrt((double)(njacks-1))*sqrt(sqr_Z_ave[imom][mr_fw][mr_bw][k]-Z_ave[imom][mr_fw][mr_bw][k]*Z_ave[imom][mr_fw][mr_bw][k]);
+		  Z_err[imom][mr_fw][mr_bw][k]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Z_ave[imom][mr_fw][mr_bw][k]-Z_ave[imom][mr_fw][mr_bw][k]*Z_ave[imom][mr_fw][mr_bw][k]));
     
     Z_ave_err[0]=Z_ave;
     Z_ave_err[1]=Z_err;
@@ -429,7 +436,7 @@ vvvd_t average_Z_chiral(vector<vvd_t> &jZ_chiral)
 #pragma omp parallel for collapse(2)
     for(int imom=0;imom<moms;imom++)
         for(int k=0;k<nbil;k++)
-            Z_chiral_err[imom][k]=sqrt((double)(njacks-1))*sqrt(sqr_Z_chiral_ave[imom][k]-Z_chiral_ave[imom][k]*Z_chiral_ave[imom][k]);
+	  Z_chiral_err[imom][k]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Z_chiral_ave[imom][k]-Z_chiral_ave[imom][k]*Z_chiral_ave[imom][k]));
     
     Z_chiral_ave_err[0]=Z_chiral_ave;
     Z_chiral_ave_err[1]=Z_chiral_err;
@@ -684,7 +691,7 @@ void plot_Zq_RIp_ainv(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const
 	}
   
     for(int ipar=0;ipar<pars;ipar++)
-      Zq_par_err[ipar]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_par_ave[ipar]-Zq_par_ave[ipar]*Zq_par_ave[ipar]);
+      Zq_par_err[ipar]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Zq_par_ave[ipar]-Zq_par_ave[ipar]*Zq_par_ave[ipar]));
     
     Zq_par_ave_err[0]=Zq_par_ave; //Zq_par_ave_err[ave/err][par]
     Zq_par_ave_err[1]=Zq_par_err;  
@@ -1041,7 +1048,7 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
 
   for(int ibil=0; ibil<nbil;ibil++)
     for(int ipar=0;ipar<pars;ipar++)
-      Z_par_err[ibil][ipar]=sqrt((double)(njacks-1))*sqrt(sqr_Z_par_ave[ibil][ipar]-Z_par_ave[ibil][ipar]*Z_par_ave[ibil][ipar]);
+      Z_par_err[ibil][ipar]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Z_par_ave[ibil][ipar]-Z_par_ave[ibil][ipar]*Z_par_ave[ibil][ipar]));
 
   // cout<<"DEBUG---(G)"<<endl;
     
@@ -1224,7 +1231,7 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
 
   for(int ibil=0; ibil<nbil;ibil++)
     for(int ipar=0;ipar<pars;ipar++)
-      Z_par_err[ibil][ipar]=sqrt((double)(njacks-1))*sqrt(sqr_Z_par_ave[ibil][ipar]-Z_par_ave[ibil][ipar]*Z_par_ave[ibil][ipar]);  //ibil={S,A,P,V,T}
+      Z_par_err[ibil][ipar]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Z_par_ave[ibil][ipar]-Z_par_ave[ibil][ipar]*Z_par_ave[ibil][ipar]));  //ibil={S,A,P,V,T}
 
   // cout<<"DEBUG---(G)"<<endl;
     
