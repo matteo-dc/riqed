@@ -467,58 +467,58 @@ double subtract(vector<double> c, double f, double p2, double p4, double g2_tild
 }
 
 //compute fit parameters for a generic function f(x)=A+B*x+C*y(x)+D*z(x)+... 
-vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int range_min, const int range_max)
-{
-  int n_par = coord.size();
-  int njacks = y.size(); 
+// vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int range_min, const int range_max)
+// {
+//   int n_par = coord.size();
+//   int njacks = y.size(); 
 
-  MatrixXd S(n_par,n_par);
-  valarray<VectorXd> Sy(VectorXd(n_par),njacks);
-  valarray<VectorXd> jpars(VectorXd(n_par),njacks);
+//   MatrixXd S(n_par,n_par);
+//   valarray<VectorXd> Sy(VectorXd(n_par),njacks);
+//   valarray<VectorXd> jpars(VectorXd(n_par),njacks);
 
-  //initialization
-  S=MatrixXd::Zero(n_par,n_par);
-  for(int ijack=0; ijack<njacks; ijack++)
-    {
-       Sy[ijack]=VectorXd::Zero(n_par);
-      jpars[ijack]=VectorXd::Zero(n_par);
-    }
+//   //initialization
+//   S=MatrixXd::Zero(n_par,n_par);
+//   for(int ijack=0; ijack<njacks; ijack++)
+//     {
+//        Sy[ijack]=VectorXd::Zero(n_par);
+//       jpars[ijack]=VectorXd::Zero(n_par);
+//     }
 
-  //definition
-  for(int i=range_min; i<=range_max; i++)
-    {
-      for(int j=0; j<n_par; j++)
-	for(int k=0; k<n_par; k++)
-	  if(std::isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
+//   //definition
+//   for(int i=range_min; i<=range_max; i++)
+//     {
+//       for(int j=0; j<n_par; j++)
+// 	for(int k=0; k<n_par; k++)
+// 	  if(std::isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
 
-      for(int ijack=0; ijack<njacks; ijack++)
-	for(int k=0; k<n_par; k++)
-	  if(std::isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]); 
-    }
+//       for(int ijack=0; ijack<njacks; ijack++)
+// 	for(int k=0; k<n_par; k++)
+// 	  if(std::isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]); 
+//     }
 
-  for(int ijack=0; ijack<njacks; ijack++)
-    jpars[ijack] = S.colPivHouseholderQr().solve(Sy[ijack]);
+//   for(int ijack=0; ijack<njacks; ijack++)
+//     jpars[ijack] = S.colPivHouseholderQr().solve(Sy[ijack]);
 
-  vvd_t par_array(vd_t(0.0,2),n_par);
+//   vvd_t par_array(vd_t(0.0,2),n_par);
 
-  vd_t par_ave(0.0,n_par), par2_ave(0.0,n_par), par_err(0.0,n_par);
+//   vd_t par_ave(0.0,n_par), par2_ave(0.0,n_par), par_err(0.0,n_par);
 
-  for(int k=0; k<n_par; k++)
-    {
-      for(int ijack=0;ijack<njacks;ijack++)
-	{
-	  par_ave[k]+=jpars[ijack](k)/njacks;
-	  par2_ave[k]+=jpars[ijack](k)*jpars[ijack](k)/njacks;
-	}
-      par_err[k]=sqrt((double)(njacks-1))*sqrt(fabs(par2_ave[k]-par_ave[k]*par_ave[k]));
+//   for(int k=0; k<n_par; k++)
+//     {
+//       for(int ijack=0;ijack<njacks;ijack++)
+// 	{
+// 	  par_ave[k]+=jpars[ijack](k)/njacks;
+// 	  par2_ave[k]+=jpars[ijack](k)*jpars[ijack](k)/njacks;
+// 	}
+//       par_err[k]=sqrt((double)(njacks-1))*sqrt(fabs(par2_ave[k]-par_ave[k]*par_ave[k]));
       
-      par_array[k][0] = par_ave[k];
-      par_array[k][1] = par_err[k];
-    }
+//       par_array[k][0] = par_ave[k];
+//       par_array[k][1] = par_err[k];
+//     }
 
-  return par_array;
+//   return par_array;
   
-}
+// }
 
 valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, vd_t &error, const vvd_t &y, const int range_min, const int range_max)
 {
@@ -540,7 +540,7 @@ valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, vd_t &error, const vvd_
   //definition
   for(int i=range_min; i<=range_max; i++)
     {
-      error[i]+=10.0e-20;
+      error[i]+=1.0e-8;
       
       for(int j=0; j<n_par; j++)
 	for(int k=0; k<n_par; k++)
