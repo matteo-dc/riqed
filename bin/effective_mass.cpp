@@ -339,13 +339,13 @@ vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const i
     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
       jP5P5_00[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"0","P5P5","RE","EVEN",T,nconfs,njacks,conf_id,string_path);
   
-  // cout<<"**********DEBUG*************"<<endl;
-  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-  //     for(int ijack=0;ijack<njacks;ijack++)
-  // 	for(int t=0;t<T/2-1;t++)
-  // 	  cout<<mr_fw<<" "<<mr_bw<<" ijack "<<ijack<<" t "<<t<<"\t"<< jP5P5_00[mr_fw][mr_bw][ijack][t]/jP5P5_00[mr_fw][mr_bw][ijack][t+1]<<endl;
-  // cout<<"**********DEBUG*************"<<endl;
+   cout<<"**********DEBUG: P5P5 correlator  *************"<<endl;
+   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+       for(int ijack=0;ijack<njacks;ijack++)
+   	for(int t=0;t<T/2-1;t++)
+   	  cout<<mr_fw<<" "<<mr_bw<<" ijack "<<ijack<<" t "<<t<<"\t"<< jP5P5_00[mr_fw][mr_bw][ijack][t]/jP5P5_00[mr_fw][mr_bw][ijack][t+1]<<endl;
+   cout<<"**********DEBUG********************************"<<endl;
 
   vvvvd_t M_eff(vvvd_t(vvd_t(vd_t(T/2),njacks),nmr),nmr);
 
