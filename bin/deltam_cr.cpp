@@ -152,7 +152,7 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
 	  par_ave[k]+=jpars[ijack](k)/njacks;
 	  par2_ave[k]+=jpars[ijack](k)*jpars[ijack](k)/njacks;
 	}
-      par_err[k]=sqrt((double)(njacks-1))*sqrt(par2_ave[k]-par_ave[k]*par_ave[k]);
+      par_err[k]=sqrt((double)(njacks-1))*sqrt(fabs(par2_ave[k]-par_ave[k]*par_ave[k]));
       
       par_array[k][0] = par_ave[k];
       par_array[k][1] = par_err[k];
@@ -260,7 +260,7 @@ vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const stri
 }
 
 //compute delta m_cr
-vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const int* conf_id, const string &string_path)
+vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const int* conf_id, const string &string_path, const int t_min, const int t_max)
 {
   int nmr=8;
   
@@ -314,12 +314,12 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
 	      mean_value[mr_fw][mr_bw][t]+=deltam_cr_corr[mr_fw][mr_bw][ijack][t]/njacks;
 	      sqr_mean_value[mr_fw][mr_bw][t]+=deltam_cr_corr[mr_fw][mr_bw][ijack][t]*deltam_cr_corr[mr_fw][mr_bw][ijack][t]/njacks;
 	    }
-	  error[mr_fw][mr_bw][t]=sqrt((double)(njacks-1))*sqrt(sqr_mean_value[mr_fw][mr_bw][t]-mean_value[mr_fw][mr_bw][t]*mean_value[mr_fw][mr_bw][t]);
+	  error[mr_fw][mr_bw][t]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_mean_value[mr_fw][mr_bw][t]-mean_value[mr_fw][mr_bw][t]*mean_value[mr_fw][mr_bw][t]));
 	}
 
   //t-range for the fit
-  int t_min=12;
-  int t_max=23;
+  // int t_min=12;
+  // int t_max=23;
   
   vvd_t coord(vd_t(0.0,T/2+1),1);
   for(int j=0; j<T/2+1; j++)
@@ -349,8 +349,8 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
 int main(int narg,char **arg)
 {
 
- if (narg!=4){
-    cerr<<"Number of arguments not valid:  <nconfs> <njacks> <path before 'out' directory: /marconi_work/.../ >"<<endl;
+ if (narg!=6){
+    cerr<<"Number of arguments not valid:  <nconfs> <njacks> <tmin> <tmax> <path before 'out' directory: /marconi_work/.../ >"<<endl;
     exit(0);
   }
   
@@ -361,7 +361,10 @@ int main(int narg,char **arg)
   double L=24,T=48;
   size_t nhits=1; //!
 
-  string string_path = arg[3];
+  int tmin = stoi(arg[3]);
+  int tmax = stoi(arg[4]);
+
+  string string_path = arg[5];
 
   nm = 4;  //! to be passed from command line
   nr = 2;
@@ -371,7 +374,7 @@ int main(int narg,char **arg)
   for(int iconf=0;iconf<nconfs;iconf++)
     conf_id[iconf]=100+iconf*1;
 
-  vvvd_t deltam_cr_array= compute_deltam_cr(T,nconfs,njacks,conf_id, string_path); //deltam_cr_array[mr_fw][mr_bw][i] with i=0 AVERAGE and i=1 ERROR
+  vvvd_t deltam_cr_array= compute_deltam_cr(T,nconfs,njacks,conf_id, string_path,tmin,tmax); //deltam_cr_array[mr_fw][mr_bw][i] with i=0 AVERAGE and i=1 ERROR
   
   ofstream outfile;
   outfile.open("deltam_cr_array", ios::out | ios::binary);
