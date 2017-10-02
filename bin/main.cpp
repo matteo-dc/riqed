@@ -111,7 +111,7 @@ void read_mom_list(const string &path)
 }
 
 //create the path-string to the configuration
-string path_to_conf(int i_conf,const string &name, const string &string_path)
+string path_to_conf( const string &string_path, int i_conf,const string &name)
 {
   char path[1024];
   sprintf(path,"%sout/%04d/fft_%s",string_path.c_str(),i_conf,name.c_str());
