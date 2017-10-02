@@ -447,8 +447,8 @@ vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const i
 int main(int narg,char **arg)
 {
 
- if (narg!=4){
-    cerr<<"Number of arguments not valid:  <nconfs> <njacks> <path before 'out' directory: /marconi_work/.../ >"<<endl;
+ if (narg!=6){
+    cerr<<"Number of arguments not valid:  <nconfs> <njacks> <tmin> <tmax> <path before 'out' directory: /marconi_work/.../ >"<<endl;
     exit(0);
   }
   
