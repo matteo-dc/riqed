@@ -484,8 +484,12 @@ int main(int narg,char **arg)
     {	  
       for(int mr_fw=0;mr_fw<nmr;mr_fw++)
 	for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-	  for(int i=0;i<2;i++)
-	    outfile.write((char*) &eff_mass_array[mr_fw][mr_bw][i],sizeof(double));
+	  {
+	    for(int i=0;i<2;i++)
+	      outfile.write((char*) &eff_mass_array[mr_fw][mr_bw][i],sizeof(double));
+
+	    cout<<"mr1: "<<mr_fw<<" mr2: "<<mr_bw<<"  "<<eff_mass_array[mr_fw][mr_bw][0]<<" +/- "<<eff_mass_array[mr_fw][mr_bw][1]<<endl;
+	  }
       
       outfile.close();
     }
