@@ -510,7 +510,7 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
 	  par_ave[k]+=jpars[ijack](k)/njacks;
 	  par2_ave[k]+=jpars[ijack](k)*jpars[ijack](k)/njacks;
 	}
-      par_err[k]=sqrt((double)(njacks-1))*sqrt(par2_ave[k]-par_ave[k]*par_ave[k]);
+      par_err[k]=sqrt((double)(njacks-1))*sqrt(fabs(par2_ave[k]-par_ave[k]*par_ave[k]));
       
       par_array[k][0] = par_ave[k];
       par_array[k][1] = par_err[k];
@@ -540,6 +540,8 @@ valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, const vd_t &error, cons
   //definition
   for(int i=range_min; i<=range_max; i++)
     {
+      error[i]+=1e-300;
+      
       for(int j=0; j<n_par; j++)
 	for(int k=0; k<n_par; k++)
 	  if(std::isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
@@ -609,7 +611,7 @@ vvvd_t average_Zq(vector<jZ_t> &jZq)
     for(int mr=0;mr<nmr;mr++)
       {
 	Zq_ave_err[0][imom][mr]=Zq_ave[imom][mr];
-	Zq_ave_err[1][imom][mr]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[imom][mr]-Zq_ave[imom][mr]*Zq_ave[imom][mr]);
+	Zq_ave_err[1][imom][mr]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Zq_ave[imom][mr]-Zq_ave[imom][mr]*Zq_ave[imom][mr]));
       }
 
   return Zq_ave_err;
@@ -632,7 +634,7 @@ vvd_t average_Zq_chiral(vector<vd_t> &jZq)
   for(int imom=0;imom<moms;imom++)
       {
 	Zq_ave_err[0][imom]=Zq_ave[imom];
-	Zq_ave_err[1][imom]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[imom]-Zq_ave[imom]*Zq_ave[imom]);
+	Zq_ave_err[1][imom]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Zq_ave[imom]-Zq_ave[imom]*Zq_ave[imom]));
       }
 
   return Zq_ave_err;
@@ -664,7 +666,7 @@ vvvvvd_t average_Z(vector<jZbil_t> &jZ)
 	for(int k=0;k<5;k++)
 	  {
 	    Z_ave_err[0][imom][mr_fw][mr_bw][k]=Z_ave[imom][mr_fw][mr_bw][k];
-	    Z_ave_err[1][imom][mr_fw][mr_bw][k]=sqrt((double)(njacks-1))*sqrt(sqr_Z_ave[imom][mr_fw][mr_bw][k]-Z_ave[imom][mr_fw][mr_bw][k]*Z_ave[imom][mr_fw][mr_bw][k]);
+	    Z_ave_err[1][imom][mr_fw][mr_bw][k]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Z_ave[imom][mr_fw][mr_bw][k]-Z_ave[imom][mr_fw][mr_bw][k]*Z_ave[imom][mr_fw][mr_bw][k]));
 	  }
 
   return Z_ave_err;
@@ -1654,11 +1656,11 @@ int main(int narg,char **arg)
        
        for(int i=0;i<neq;i++)
 	 { 
-	   Gp_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_ave[i]-Gp_ave[i]*Gp_ave[i]);
-	   Gs_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gs_ave[i]-Gs_ave[i]*Gs_ave[i]);
+	   Gp_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gp_ave[i]-Gp_ave[i]*Gp_ave[i]));
+	   Gs_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gs_ave[i]-Gs_ave[i]*Gs_ave[i]));
 
-	   Gp_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_em_ave[i]-Gp_em_ave[i]*Gp_em_ave[i]);
-	   Gs_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gs_em_ave[i]-Gs_em_ave[i]*Gs_em_ave[i]);  
+	   Gp_em_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gp_em_ave[i]-Gp_em_ave[i]*Gp_em_ave[i]));
+	   Gs_em_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gs_em_ave[i]-Gs_em_ave[i]*Gs_em_ave[i]));  
 	 }
 
       //  cout<<"----- G_p average + error vs M^2 (for each jackknife) : error used for the fit ------"<<endl;
@@ -1813,13 +1815,13 @@ int main(int narg,char **arg)
 #pragma omp parallel for
        for(int i=0;i<neq;i++)
 	 {  
-	   Gv_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_ave[i]-Gv_ave[i]*Gv_ave[i]);
-	   Ga_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_ave[i]-Ga_ave[i]*Ga_ave[i]);      
-	   Gt_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_ave[i]-Gt_ave[i]*Gt_ave[i]);
+	   Gv_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gv_ave[i]-Gv_ave[i]*Gv_ave[i]));
+	   Ga_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Ga_ave[i]-Ga_ave[i]*Ga_ave[i]));      
+	   Gt_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gt_ave[i]-Gt_ave[i]*Gt_ave[i]));
 	   
-	   Gv_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_em_ave[i]-Gv_em_ave[i]*Gv_em_ave[i]);      //Green function with gamma_mu         --> Renorm. with ZA
-	   Ga_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_em_ave[i]-Ga_em_ave[i]*Ga_em_ave[i]);      //Green function with gamma_mu*gamma_5 --> Renorm. with ZV
-	   Gt_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_em_ave[i]-Gt_em_ave[i]*Gt_em_ave[i]);      
+	   Gv_em_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gv_em_ave[i]-Gv_em_ave[i]*Gv_em_ave[i]));      //Green function with gamma_mu         --> Renorm. with ZA
+	   Ga_em_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Ga_em_ave[i]-Ga_em_ave[i]*Ga_em_ave[i]));      //Green function with gamma_mu*gamma_5 --> Renorm. with ZV
+	   Gt_em_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gt_em_ave[i]-Gt_em_ave[i]*Gt_em_ave[i]));      
 	 }
 
        //range for the fit
@@ -1910,11 +1912,11 @@ int main(int narg,char **arg)
 
        for(int i=0;i<neq2;i++)
 	 {
-	   Zq_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[i]-Zq_ave[i]*Zq_ave[i]);
-	   Sigma1_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Sigma1_ave[i]-Sigma1_ave[i]*Sigma1_ave[i]);
+	   Zq_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Zq_ave[i]-Zq_ave[i]*Zq_ave[i]));
+	   Sigma1_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Sigma1_ave[i]-Sigma1_ave[i]*Sigma1_ave[i]));
 
-	   Zq_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_em_ave[i]-Zq_em_ave[i]*Zq_em_ave[i]);
-	   Sigma1_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Sigma1_em_ave[i]-Sigma1_em_ave[i]*Sigma1_em_ave[i]);
+	   Zq_em_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Zq_em_ave[i]-Zq_em_ave[i]*Zq_em_ave[i]));
+	   Sigma1_em_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Sigma1_em_ave[i]-Sigma1_em_ave[i]*Sigma1_em_ave[i]));
 	 }
        
        //linear fit
