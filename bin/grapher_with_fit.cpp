@@ -154,7 +154,7 @@ valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, vd_t &error, const v
     //definition
     for(int i=range_min; i<range_max; i++)
     {
-      error[i]+=1e-300;
+      error[i]+=1e-20;
       
         for(int j=0; j<n_par; j++)
             for(int k=0; k<n_par; k++)
@@ -209,7 +209,7 @@ valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, vvd_t 
   for(int i=range_min; i<range_max; i++)
     {
       for(int ibil=0; ibil<nbil;ibil++)
-	error[i][ibil]+=1e-300;
+	error[i][ibil]+=1e-20;
       
       for(int ibil=0; ibil<nbil;ibil++)
         for(int j=0; j<n_par; j++)
@@ -272,7 +272,7 @@ valarray< valarray<VectorXd> > fit_chiral_Z_RIp_jackknife(const vvd_t &coord, vv
   for(int i=range_min; i<range_max; i++)
     {
       for(int ibil=0; ibil<nbil;ibil++)
-	error[i][ibil]+=1e-300;
+	error[i][ibil]+=1e-20;
       
       if(coord[1][i]>p_min_value)
 	{
@@ -1491,40 +1491,49 @@ read_vec(NAME##_##allmoms,"allmoms/"#NAME);	\
 read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     
     READ(p2_vector);
+    
     READ(jZq);
     READ(jSigma1);
     READ(jZq_em);
     READ(jSigma1_em);
+
     READ(jZ);
     READ(jZ1);
     READ(jZ_em);
     READ(jZ1_em);
+
     READ(jZq_sub);
     READ(jSigma1_sub);
     READ(jZq_em_sub);
     READ(jSigma1_em_sub);
+
     READ(jZ_sub);
     READ(jZ1_sub);
     READ(jZ_em_sub);
     READ(jZ1_em_sub);
+
     READ(jGp_equivalent);
     READ(jGs_equivalent);
     READ(jGp_subpole);
     READ(jGs_subpole);
+
     READ(jGv_equivalent);
     READ(jGa_equivalent);
     READ(jGt_equivalent);
     READ(jGp_em_equivalent);
     READ(jGs_em_equivalent);
+
     READ(jGp_em_subpole);
     READ(jGs_em_subpole);
     READ(jGv_em_equivalent);
     READ(jGa_em_equivalent);
     READ(jGt_em_equivalent);
+
     READ(jZq_equivalent);
     READ(jSigma1_equivalent);
     READ(jZq_em_equivalent);
     READ(jSigma1_em_equivalent);
+
     READ(jGp_0_chiral);
     READ(jGa_0_chiral);
     READ(jGv_0_chiral);
@@ -1535,14 +1544,17 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     READ(jGv_em_a_b_chiral);
     READ(jGs_em_a_b_chiral);
     READ(jGt_em_a_b_chiral);
+
     READ(jZq_chiral);
     READ(jSigma1_chiral);
     READ(jZq_em_chiral);
     READ(jSigma1_em_chiral);
+
     READ(jZ_chiral);
     READ(jZ1_chiral);
     READ(jZ_em_chiral);
     READ(jZ1_em_chiral);
+
     READ(jGp_pars);
     READ(jGp_em_pars);
     READ(jGs_pars);
@@ -1553,10 +1565,12 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     READ(jGa_em_pars);
     READ(jGt_pars);
     READ(jGt_em_pars);
+
     READ(jZq_pars);
     READ(jZq_em_pars);
     READ(jSigma1_pars);
     READ(jSigma1_em_pars);
+
     READ(jSigma1_RIp_ainv);
     READ(jSigma1_em_RIp_ainv);
     READ(jZO_RIp_ainv);
@@ -1574,23 +1588,23 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     plot_Zq_sub(jZq_eqmoms,jZq_sub_eqmoms,p2_vector_eqmoms,"Zq","eqmoms");
     plot_Zq_sub(jSigma1_eqmoms,jSigma1_sub_eqmoms,p2_vector_eqmoms,"Sigma1","eqmoms");
     
-    vector<jZ_t> jZq_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
-    vector<jZ_t> jZq_sub_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_sub_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
+//     vector<jZ_t> jZq_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
+//     vector<jZ_t> jZq_sub_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_sub_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
     
-#pragma omp parallel for collapse(3)
-    for(int imom=0;imom<neq_moms;imom++)
-        for(int mr=0;mr<nmr;mr++)
-            for(int ijack=0;ijack<njacks;ijack++)
-            {
-                jZq_with_em_eqmoms[imom][ijack][mr]=jZq_eqmoms[imom][ijack][mr]+jZq_em_eqmoms[imom][ijack][mr];
-                jSigma1_with_em_eqmoms[imom][ijack][mr]=jSigma1_eqmoms[imom][ijack][mr]+jSigma1_em_eqmoms[imom][ijack][mr];
-                jZq_sub_with_em_eqmoms[imom][ijack][mr]=jZq_sub_eqmoms[imom][ijack][mr]+jZq_em_sub_eqmoms[imom][ijack][mr];
-                jSigma1_sub_with_em_eqmoms[imom][ijack][mr]=jSigma1_sub_eqmoms[imom][ijack][mr]+jSigma1_em_sub_eqmoms[imom][ijack][mr];
-            }
+// #pragma omp parallel for collapse(3)
+//     for(int imom=0;imom<neq_moms;imom++)
+//         for(int mr=0;mr<nmr;mr++)
+//             for(int ijack=0;ijack<njacks;ijack++)
+//             {
+//                 jZq_with_em_eqmoms[imom][ijack][mr]=jZq_eqmoms[imom][ijack][mr]+jZq_em_eqmoms[imom][ijack][mr];
+//                 jSigma1_with_em_eqmoms[imom][ijack][mr]=jSigma1_eqmoms[imom][ijack][mr]+jSigma1_em_eqmoms[imom][ijack][mr];
+//                 jZq_sub_with_em_eqmoms[imom][ijack][mr]=jZq_sub_eqmoms[imom][ijack][mr]+jZq_em_sub_eqmoms[imom][ijack][mr];
+//                 jSigma1_sub_with_em_eqmoms[imom][ijack][mr]=jSigma1_sub_eqmoms[imom][ijack][mr]+jSigma1_em_sub_eqmoms[imom][ijack][mr];
+//             }
     
     
-    plot_Zq_sub(jZq_with_em_eqmoms,jZq_sub_with_em_eqmoms,p2_vector_eqmoms,"Zq_with_em","eqmoms");
-    plot_Zq_sub(jSigma1_with_em_eqmoms,jSigma1_sub_with_em_eqmoms,p2_vector_eqmoms,"Sigma1_with_em","eqmoms");
+//     plot_Zq_sub(jZq_with_em_eqmoms,jZq_sub_with_em_eqmoms,p2_vector_eqmoms,"Zq_with_em","eqmoms");
+//     plot_Zq_sub(jSigma1_with_em_eqmoms,jSigma1_sub_with_em_eqmoms,p2_vector_eqmoms,"Sigma1_with_em","eqmoms");
     
     plot_Zq_sub(jZq_em_eqmoms,jZq_em_sub_eqmoms,p2_vector_eqmoms,"Zq_em_correction","eqmoms");
     plot_Zq_sub(jSigma1_em_eqmoms,jSigma1_em_sub_eqmoms,p2_vector_eqmoms,"Sigma1_em_correction","eqmoms");
@@ -1599,16 +1613,16 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     vvvd_t Sigma1 = average_Zq(jSigma1_em_eqmoms);  //Zq[ave/err][imom][nm]
     vvvd_t Sigma1_sub = average_Zq(jSigma1_em_sub_eqmoms);  //Zq[ave/err][imom][nm]
 
-    cout<<"Zq"<<endl<<"------------------------------"<<endl<<endl;
-    for(size_t imom=0;imom<p2_vector_eqmoms.size();imom++)
-    {
-        cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1[0][imom][0]<<"\t"<<Sigma1[1][imom][0]<<endl;  //print only for M0R0
-    }
-    cout<<endl<<"Zq_SUB"<<endl<<"------------------------------"<<endl;
-    for(size_t imom=0;imom<p2_vector_eqmoms.size();imom++)
-    {
-       cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub[0][imom][0]<<"\t"<<Sigma1_sub[1][imom][0]<<endl;  //print only for M0R0
-    }
+    // cout<<"Zq"<<endl<<"------------------------------"<<endl<<endl;
+    // for(size_t imom=0;imom<p2_vector_eqmoms.size();imom++)
+    // {
+    //     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1[0][imom][0]<<"\t"<<Sigma1[1][imom][0]<<endl;  //print only for M0R0
+    // }
+    // cout<<endl<<"Zq_SUB"<<endl<<"------------------------------"<<endl;
+    // for(size_t imom=0;imom<p2_vector_eqmoms.size();imom++)
+    // {
+    //    cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub[0][imom][0]<<"\t"<<Sigma1_sub[1][imom][0]<<endl;  //print only for M0R0
+    // }
 
 
 
@@ -1630,15 +1644,15 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     cout<<"Sigma1 chiral"<<endl;
     plot_Zq_chiral(jSigma1_chiral_eqmoms,p2_vector_eqmoms,"Sigma1_chiral","eqmoms");
     
-    vector<vd_t> jZq_chiral_with_em_eqmoms(neq_moms,vd_t(njacks)), jSigma1_chiral_with_em_eqmoms(neq_moms,vd_t(njacks));
+  //   vector<vd_t> jZq_chiral_with_em_eqmoms(neq_moms,vd_t(njacks)), jSigma1_chiral_with_em_eqmoms(neq_moms,vd_t(njacks));
     
-#pragma omp parallel for collapse(2)
-    for(int imom=0;imom<neq_moms;imom++)
-        for(int ijack=0;ijack<njacks;ijack++)
-        {
-            jZq_chiral_with_em_eqmoms[imom][ijack]=jZq_chiral_eqmoms[imom][ijack]+jZq_em_chiral_eqmoms[imom][ijack];
-            jSigma1_chiral_with_em_eqmoms[imom][ijack]=jSigma1_chiral_eqmoms[imom][ijack]+jSigma1_em_chiral_eqmoms[imom][ijack];
-        }
+// #pragma omp parallel for collapse(2)
+//     for(int imom=0;imom<neq_moms;imom++)
+//         for(int ijack=0;ijack<njacks;ijack++)
+//         {
+//             jZq_chiral_with_em_eqmoms[imom][ijack]=jZq_chiral_eqmoms[imom][ijack]+jZq_em_chiral_eqmoms[imom][ijack];
+//             jSigma1_chiral_with_em_eqmoms[imom][ijack]=jSigma1_chiral_eqmoms[imom][ijack]+jSigma1_em_chiral_eqmoms[imom][ijack];
+//         }
     
     //cout<<"Zq chiral with em"<<endl;
     // plot_Zq_chiral(jZq_chiral_with_em_eqmoms,p2_vector_eqmoms,"Zq_chiral_with_em","eqmoms");
@@ -1654,20 +1668,20 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq over Sigma1 chiral ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     
-    vector<vd_t> jZq_over_Sigma1_eqmoms(neq_moms,vd_t(njacks)), jZq_over_Sigma1_with_em_eqmoms(neq_moms,vd_t(njacks));
+//     vector<vd_t> jZq_over_Sigma1_eqmoms(neq_moms,vd_t(njacks)), jZq_over_Sigma1_with_em_eqmoms(neq_moms,vd_t(njacks));
     
-#pragma omp parallel for collapse(2)
-    for(int imom=0;imom<neq_moms;imom++)
-        for(int ijack=0;ijack<njacks;ijack++)
-        {
-            jZq_over_Sigma1_eqmoms[imom][ijack]=jZq_chiral_eqmoms[imom][ijack]/jSigma1_chiral_eqmoms[imom][ijack];
-            jZq_over_Sigma1_with_em_eqmoms[imom][ijack]=jZq_chiral_with_em_eqmoms[imom][ijack]/jSigma1_chiral_with_em_eqmoms[imom][ijack];
-        }
+// #pragma omp parallel for collapse(2)
+//     for(int imom=0;imom<neq_moms;imom++)
+//         for(int ijack=0;ijack<njacks;ijack++)
+//         {
+//             jZq_over_Sigma1_eqmoms[imom][ijack]=jZq_chiral_eqmoms[imom][ijack]/jSigma1_chiral_eqmoms[imom][ijack];
+//             jZq_over_Sigma1_with_em_eqmoms[imom][ijack]=jZq_chiral_with_em_eqmoms[imom][ijack]/jSigma1_chiral_with_em_eqmoms[imom][ijack];
+//         }
 
-    cout<<"Zq over Sigma1 chiral"<<endl;
-    plot_Zq_chiral(jZq_over_Sigma1_eqmoms,p2_vector_eqmoms,"Zq_over_Sigma1_chiral","eqmoms");
-    cout<<"Zq over Sigma1 chiral with em"<<endl;
-    plot_Zq_chiral(jZq_over_Sigma1_with_em_eqmoms,p2_vector_eqmoms,"Zq_over_Sigma1_chiral_with_em","eqmoms");
+//     cout<<"Zq over Sigma1 chiral"<<endl;
+//     plot_Zq_chiral(jZq_over_Sigma1_eqmoms,p2_vector_eqmoms,"Zq_over_Sigma1_chiral","eqmoms");
+//     cout<<"Zq over Sigma1 chiral with em"<<endl;
+//     plot_Zq_chiral(jZq_over_Sigma1_with_em_eqmoms,p2_vector_eqmoms,"Zq_over_Sigma1_chiral_with_em","eqmoms");
     
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z with subtraction ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -1675,24 +1689,24 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     plot_Z_sub(jZ_eqmoms,jZ_sub_eqmoms,p2_vector_eqmoms,"Z","eqmoms");
     plot_Z_sub(jZ1_eqmoms,jZ1_sub_eqmoms,p2_vector_eqmoms,"Z1","eqmoms");
     
-    vector<jZbil_t> jZ_with_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_with_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks));
-    vector<jZbil_t> jZ_sub_with_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_sub_with_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks));
+//     vector<jZbil_t> jZ_with_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_with_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks));
+//     vector<jZbil_t> jZ_sub_with_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks)), jZ1_sub_with_em_eqmoms(neq_moms,jZbil_t(vvvd_t(vvd_t(vd_t(5),nmr),nmr),njacks));
     
-#pragma omp parallel for collapse(5)
-    for(int imom=0;imom<neq_moms;imom++)
-        for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-            for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-                for(int ijack=0;ijack<njacks;ijack++)
-                    for(int k=0;k<5;k++)
-                    {
-                        jZ_with_em_eqmoms[imom][ijack][mr_fw][mr_bw][k]=jZ_eqmoms[imom][ijack][mr_fw][mr_bw][k]+jZ_em_eqmoms[imom][ijack][mr_fw][mr_bw][k];
-                        jZ1_with_em_eqmoms[imom][ijack][mr_fw][mr_bw][k]=jZ1_eqmoms[imom][ijack][mr_fw][mr_bw][k]+jZ1_em_eqmoms[imom][ijack][mr_fw][mr_bw][k];
-                        jZ_sub_with_em_eqmoms[imom][ijack][mr_fw][mr_bw][k]=jZ_sub_eqmoms[imom][ijack][mr_fw][mr_bw][k]+jZ_em_sub_eqmoms[imom][ijack][mr_fw][mr_bw][k];
-                        jZ1_sub_with_em_eqmoms[imom][ijack][mr_fw][mr_bw][k]=jZ1_sub_eqmoms[imom][ijack][mr_fw][mr_bw][k]+jZ1_em_sub_eqmoms[imom][ijack][mr_fw][mr_bw][k];
-                    }
+// #pragma omp parallel for collapse(5)
+//     for(int imom=0;imom<neq_moms;imom++)
+//         for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+//             for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+//                 for(int ijack=0;ijack<njacks;ijack++)
+//                     for(int k=0;k<5;k++)
+//                     {
+//                         jZ_with_em_eqmoms[imom][ijack][mr_fw][mr_bw][k]=jZ_eqmoms[imom][ijack][mr_fw][mr_bw][k]+jZ_em_eqmoms[imom][ijack][mr_fw][mr_bw][k];
+//                         jZ1_with_em_eqmoms[imom][ijack][mr_fw][mr_bw][k]=jZ1_eqmoms[imom][ijack][mr_fw][mr_bw][k]+jZ1_em_eqmoms[imom][ijack][mr_fw][mr_bw][k];
+//                         jZ_sub_with_em_eqmoms[imom][ijack][mr_fw][mr_bw][k]=jZ_sub_eqmoms[imom][ijack][mr_fw][mr_bw][k]+jZ_em_sub_eqmoms[imom][ijack][mr_fw][mr_bw][k];
+//                         jZ1_sub_with_em_eqmoms[imom][ijack][mr_fw][mr_bw][k]=jZ1_sub_eqmoms[imom][ijack][mr_fw][mr_bw][k]+jZ1_em_sub_eqmoms[imom][ijack][mr_fw][mr_bw][k];
+//                     }
     
-    plot_Z_sub(jZ_with_em_eqmoms,jZ_sub_with_em_eqmoms,p2_vector_eqmoms,"Z_with_em","eqmoms");
-    plot_Z_sub(jZ1_with_em_eqmoms,jZ1_sub_with_em_eqmoms,p2_vector_eqmoms,"Z1_with_em","eqmoms");
+//     plot_Z_sub(jZ_with_em_eqmoms,jZ_sub_with_em_eqmoms,p2_vector_eqmoms,"Z_with_em","eqmoms");
+//     plot_Z_sub(jZ1_with_em_eqmoms,jZ1_sub_with_em_eqmoms,p2_vector_eqmoms,"Z1_with_em","eqmoms");
     
     plot_Z_sub(jZ_em_eqmoms,jZ_em_sub_eqmoms,p2_vector_eqmoms,"Z_em_correction","eqmoms");
     plot_Z_sub(jZ1_em_eqmoms,jZ1_em_sub_eqmoms,p2_vector_eqmoms,"Z1_em_correction","eqmoms");
@@ -1720,16 +1734,16 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     cout<<"Z1 chiral"<<endl;
     plot_Z_chiral(jZ1_chiral_eqmoms,p2_vector_eqmoms,"Z1_chiral","eqmoms");
     
-    vector<vvd_t> jZ_chiral_with_em_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)), jZ1_chiral_with_em_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
+  //   vector<vvd_t> jZ_chiral_with_em_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)), jZ1_chiral_with_em_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
     
-#pragma omp parallel for collapse(3)
-    for(int imom=0;imom<neq_moms;imom++)
-        for(int ijack=0;ijack<njacks;ijack++)
-            for(int k=0;k<5;k++)
-            {
-                jZ_chiral_with_em_eqmoms[imom][ijack][k]=jZ_chiral_eqmoms[imom][ijack][k]+jZ_em_chiral_eqmoms[imom][ijack][k];
-                jZ1_chiral_with_em_eqmoms[imom][ijack][k]=jZ1_chiral_eqmoms[imom][ijack][k]+jZ1_em_chiral_eqmoms[imom][ijack][k];
-            }
+// #pragma omp parallel for collapse(3)
+//     for(int imom=0;imom<neq_moms;imom++)
+//         for(int ijack=0;ijack<njacks;ijack++)
+//             for(int k=0;k<5;k++)
+//             {
+//                 jZ_chiral_with_em_eqmoms[imom][ijack][k]=jZ_chiral_eqmoms[imom][ijack][k]+jZ_em_chiral_eqmoms[imom][ijack][k];
+//                 jZ1_chiral_with_em_eqmoms[imom][ijack][k]=jZ1_chiral_eqmoms[imom][ijack][k]+jZ1_em_chiral_eqmoms[imom][ijack][k];
+//             }
 
     // cout<<"Z chiral with em"<<endl;
     // plot_Z_chiral(jZ_chiral_with_em_eqmoms,p2_vector_eqmoms,"Z_chiral_with_em","eqmoms");
