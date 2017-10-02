@@ -235,7 +235,7 @@ valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, vvd_t 
 }
 
 
-valarray< valarray<VectorXd> > fit_chiral_Z_RIp_jackknife(const vvd_t &coord, const vvd_t &error, const vector<vvd_t> &y, const int range_min, const int range_max, const double &p_min_value)
+valarray< valarray<VectorXd> > fit_chiral_Z_RIp_jackknife(const vvd_t &coord, vvd_t &error, const vector<vvd_t> &y, const int range_min, const int range_max, const double &p_min_value)
 {
   // cout<<"DEBUG---(a)"<<endl;
   
