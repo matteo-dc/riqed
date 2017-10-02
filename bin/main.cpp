@@ -907,7 +907,7 @@ int main(int narg,char **arg)
   high_resolution_clock::time_point t0=high_resolution_clock::now();
   
   if (narg!=11){
-    cerr<<"Number of arguments not valid: <mom file> <nconfs> <njacks> <L> <T> <initial conf_id> <step conf_id> <p2fit min> <p2fit max> <action=sym/iwa>"<<endl;
+    cerr<<"Number of arguments not valid: <mom file> <nconfs> <njacks> <L> <T> <initial conf_id> <step conf_id> <p2fit min> <p2fit max> <action=sym/iwa/free>"<<endl;
     exit(0);
   }
 
@@ -985,6 +985,14 @@ int main(int narg,char **arg)
       c_t_em={1000.,1000.,1000.};*/
 
       cout<<"Action:  Symanzik"<<endl;
+    }
+   else if(strcmp(arg[10],"free")==0)  //Nf=2 (Symanzik)
+    {
+      // beta=99999999999999.9;
+      beta = 1.0e300;
+      plaquette=1.0;
+
+      cout<<"Action:  Free"<<endl;
     }
   else
     {
