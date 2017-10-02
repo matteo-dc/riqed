@@ -579,7 +579,7 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     
     ///**************************///
     //linear fit
-    /* int p2_min=4;  //a2p2~1
+    int p2_min=4;  //a2p2~1
     int p2_max=(int)p2_vector.size();
     
     vvd_t coord_linear(vd_t(0.0,p2_vector.size()),2);
@@ -616,7 +616,7 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     double B=Zq_par_ave_err[0][1];
     double B_err=Zq_par_ave_err[1][1];
 
-    cout<<A<<" +/- "<<A_err<<endl<<endl; */
+    cout<<A<<" +/- "<<A_err<<endl<<endl;
     
     ///*****************************///
                     
