@@ -111,10 +111,10 @@ void read_mom_list(const string &path)
 }
 
 //create the path-string to the configuration
-string path_to_conf(int i_conf,const string &name)
+string path_to_conf(int i_conf,const string &name, const string &string_path)
 {
   char path[1024];
-  sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/fft_%s",i_conf,name.c_str());
+  sprintf(path,"%sout/%04d/fft_%s",string_path,i_conf,name.c_str());
   // sprintf(path,"out/%04d/fft_%s",i_conf,name.c_str());
   return path;
 }
@@ -219,7 +219,7 @@ prop_t make_vertex(const prop_t &prop1, const prop_t &prop2, const int mu, const
 
 
 //create the path-string to the contraction
-string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, const string &T2)
+string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, const string &T2, const string &string_path)
 {
 
   int r1 = mr1%nr;
@@ -228,7 +228,7 @@ string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, 
   int m2 = (mr2-r2)/nr;
   
   char path[1024];
-  sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
+  sprintf(path,"%sout/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",string_path,i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
   //sprintf(path,"out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
 
   // cout<<path<<endl;
@@ -906,8 +906,8 @@ int main(int narg,char **arg)
   
   high_resolution_clock::time_point t0=high_resolution_clock::now();
   
-  if (narg!=11){
-    cerr<<"Number of arguments not valid: <mom file> <nconfs> <njacks> <L> <T> <initial conf_id> <step conf_id> <p2fit min> <p2fit max> <action=sym/iwa/free>"<<endl;
+  if (narg!=12){
+    cerr<<"Number of arguments not valid: <mom file> <nconfs> <njacks> <L> <T> <initial conf_id> <step conf_id> <p2fit min> <p2fit max> <action=sym/iwa/free> <path before 'out' directory: /marconi_work/.../ >"<<endl;
     exit(0);
   }
 
@@ -992,6 +992,18 @@ int main(int narg,char **arg)
       beta = 1.0e300;
       plaquette=1.0;
 
+      c_v={0.0,0.0,0.0};
+      c_a={0.0,0.0,0.0};
+      c_s={0.0,0.0,0.0};
+      c_p={0.0,0.0,0.0};
+      c_t={0.0,0.0,0.0};
+      
+      c_v_em={0.0,0.0,0.0};
+      c_a_em={0.0,0.0,0.0};
+      c_s_em={0.0,0.0,0.0};
+      c_p_em={0.0,0.0,0.0};
+      c_t_em={0.0,0.0,0.0};
+
       cout<<"Action:  Free"<<endl;
     }
   else
@@ -999,6 +1011,8 @@ int main(int narg,char **arg)
       cerr<<"WARNING: wrong action argument. Please write 'sym' for Symanzik action or 'iwa' for Iwasaki action.";
       exit(0);
     }
+
+  string string_path = arg[11];
   
   //g2_tilde
   double g2=6.0/beta;
@@ -1217,7 +1231,7 @@ int main(int narg,char **arg)
 	       if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
 	       
 	       int icombo=r + nr*m + nr*nm*t + nr*nm*nt*ihit + nr*nm*nt*nhits*iconf;		 
-	       string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
+	       string path = path_to_conf(string_path,conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
 	       
 	       input[icombo].open(path,ios::binary);
 	       
@@ -1277,7 +1291,7 @@ int main(int narg,char **arg)
 		       int iconf=clust_size*ijack+i_in_clust;
 		       
 		       int icombo=r + nr*m + nr*nm*t + nr*nm*nt*ihit + nr*nm*nt*nhits*iconf;
-		       string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
+		       string path = path_to_conf(string_path,conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
 		       
 		       int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
 
@@ -1494,6 +1508,12 @@ int main(int narg,char **arg)
 	 }
        if(strcmp(arg[10],"iwa")==0) c_q={0.6202244+1.8490436/(double)Np[imom],-0.0748167-0.963033/(double)Np[imom],0.0044};      //Iwasaki action
 
+       if(strcmp(arg[10],"free")==0)
+	 {
+	   c_q={0.0,0.0,0.0};  //Free action
+
+	   c_q_em={0.0,0.0,0.0};
+	 }
        
        //Subtraction of O(a^2) effects through perturbation theory
        
@@ -1515,8 +1535,8 @@ int main(int narg,char **arg)
       	     jZq_sub[ijack][mr]=subtract(c_q,jZq[ijack][mr],p2,p4,g2_tilde);
       	     jSigma1_sub[ijack][mr]=subtract(c_q,jSigma1[ijack][mr],p2,p4,g2_tilde);
 	     //subtraction of O(e^2a^2) effects
-      	     jZq_em_sub[ijack][mr]=subtract(c_q_em,jZq_em[ijack][mr],p2,p4,0.0*3./4.);          //Wilson Action
-      	     jSigma1_em_sub[ijack][mr]=subtract(c_q_em,jSigma1_em[ijack][mr],p2,p4,0.0*3./4.);
+      	     jZq_em_sub[ijack][mr]=subtract(c_q_em,jZq_em[ijack][mr],p2,p4,3./4.);          //Wilson Action
+      	     jSigma1_em_sub[ijack][mr]=subtract(c_q_em,jSigma1_em[ijack][mr],p2,p4,3./4.);
 	   }
 #pragma omp parallel for collapse(3)
        for(int ijack=0;ijack<njacks;ijack++)
@@ -1531,23 +1551,23 @@ int main(int narg,char **arg)
 	       jG_0_sub[ijack][mr][mr2][4]=subtract(c_t,jG_0[ijack][mr][mr2][4],p2,p4,g2_tilde); //ZT
 	      
 	       //subtraction of O(e^2a^2) effects
-	       jG_em_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_em[ijack][mr][mr2][0],p2,p4,0.0*3./4.);   ///!!!!!  with Wilson Action
-	       jG_em_sub[ijack][mr][mr2][1]=subtract(c_a_em,jG_em[ijack][mr][mr2][1],p2,p4,0.0*3./4.);
-	       jG_em_sub[ijack][mr][mr2][2]=subtract(c_p_em,jG_em[ijack][mr][mr2][2],p2,p4,0.0*3./4.);
-	       jG_em_sub[ijack][mr][mr2][3]=subtract(c_v_em,jG_em[ijack][mr][mr2][3],p2,p4,0.0*3./4.);
-	       jG_em_sub[ijack][mr][mr2][4]=subtract(c_t_em,jG_em[ijack][mr][mr2][4],p2,p4,0.0*3./4.);
+	       jG_em_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_em[ijack][mr][mr2][0],p2,p4,3./4.);   ///!!!!!  with Wilson Action
+	       jG_em_sub[ijack][mr][mr2][1]=subtract(c_a_em,jG_em[ijack][mr][mr2][1],p2,p4,3./4.);
+	       jG_em_sub[ijack][mr][mr2][2]=subtract(c_p_em,jG_em[ijack][mr][mr2][2],p2,p4,3./4.);
+	       jG_em_sub[ijack][mr][mr2][3]=subtract(c_v_em,jG_em[ijack][mr][mr2][3],p2,p4,3./4.);
+	       jG_em_sub[ijack][mr][mr2][4]=subtract(c_t_em,jG_em[ijack][mr][mr2][4],p2,p4,3./4.);
 
-	       jG_a_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_a[ijack][mr][mr2][0],p2,p4,0.0*3./4.); 
-	       jG_a_sub[ijack][mr][mr2][1]=subtract(c_a_em,jG_a[ijack][mr][mr2][1],p2,p4,0.0*3./4.);
-	       jG_a_sub[ijack][mr][mr2][2]=subtract(c_p_em,jG_a[ijack][mr][mr2][2],p2,p4,0.0*3./4.);
-	       jG_a_sub[ijack][mr][mr2][3]=subtract(c_v_em,jG_a[ijack][mr][mr2][3],p2,p4,0.0*3./4.);
-	       jG_a_sub[ijack][mr][mr2][4]=subtract(c_t_em,jG_a[ijack][mr][mr2][4],p2,p4,0.0*3./4.);
+	       jG_a_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_a[ijack][mr][mr2][0],p2,p4,3./4.); 
+	       jG_a_sub[ijack][mr][mr2][1]=subtract(c_a_em,jG_a[ijack][mr][mr2][1],p2,p4,3./4.);
+	       jG_a_sub[ijack][mr][mr2][2]=subtract(c_p_em,jG_a[ijack][mr][mr2][2],p2,p4,3./4.);
+	       jG_a_sub[ijack][mr][mr2][3]=subtract(c_v_em,jG_a[ijack][mr][mr2][3],p2,p4,3./4.);
+	       jG_a_sub[ijack][mr][mr2][4]=subtract(c_t_em,jG_a[ijack][mr][mr2][4],p2,p4,3./4.);
 
-	       jG_b_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_b[ijack][mr][mr2][0],p2,p4,0.0*3./4.);
-	       jG_b_sub[ijack][mr][mr2][1]=subtract(c_a_em,jG_b[ijack][mr][mr2][1],p2,p4,0.0*3./4.);
-	       jG_b_sub[ijack][mr][mr2][2]=subtract(c_p_em,jG_b[ijack][mr][mr2][2],p2,p4,0.0*3./4.);
-	       jG_b_sub[ijack][mr][mr2][3]=subtract(c_v_em,jG_b[ijack][mr][mr2][3],p2,p4,0.0*3./4.);
-	       jG_b_sub[ijack][mr][mr2][4]=subtract(c_t_em,jG_b[ijack][mr][mr2][4],p2,p4,0.0*3./4.);
+	       jG_b_sub[ijack][mr][mr2][0]=subtract(c_s_em,jG_b[ijack][mr][mr2][0],p2,p4,3./4.);
+	       jG_b_sub[ijack][mr][mr2][1]=subtract(c_a_em,jG_b[ijack][mr][mr2][1],p2,p4,3./4.);
+	       jG_b_sub[ijack][mr][mr2][2]=subtract(c_p_em,jG_b[ijack][mr][mr2][2],p2,p4,3./4.);
+	       jG_b_sub[ijack][mr][mr2][3]=subtract(c_v_em,jG_b[ijack][mr][mr2][3],p2,p4,3./4.);
+	       jG_b_sub[ijack][mr][mr2][4]=subtract(c_t_em,jG_b[ijack][mr][mr2][4],p2,p4,3./4.);
 	     }
 #pragma omp parallel for collapse(4)
        for(int ijack=0;ijack<njacks;ijack++)
