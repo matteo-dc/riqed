@@ -154,7 +154,7 @@ valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, vd_t &error, const v
     //definition
     for(int i=range_min; i<range_max; i++)
     {
-      error[i]+=1e-20;
+      error[i]+=1e-8;
       
         for(int j=0; j<n_par; j++)
             for(int k=0; k<n_par; k++)
@@ -209,7 +209,7 @@ valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, vvd_t 
   for(int i=range_min; i<range_max; i++)
     {
       for(int ibil=0; ibil<nbil;ibil++)
-	error[i][ibil]+=1e-20;
+	error[i][ibil]+=1e-8;
       
       for(int ibil=0; ibil<nbil;ibil++)
         for(int j=0; j<n_par; j++)
@@ -272,7 +272,7 @@ valarray< valarray<VectorXd> > fit_chiral_Z_RIp_jackknife(const vvd_t &coord, vv
   for(int i=range_min; i<range_max; i++)
     {
       for(int ibil=0; ibil<nbil;ibil++)
-	error[i][ibil]+=1e-20;
+	error[i][ibil]+=1e-8;
       
       if(coord[1][i]>p_min_value)
 	{
