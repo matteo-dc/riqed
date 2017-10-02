@@ -1079,8 +1079,8 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
     
   for(int i=0;i<5;i++)
     {
-      //   cout<<endl;
-      //   cout<<"Z"<<bil[i]<<" = "<<A[i]<<" +/- "<<A_err[i]<<endl; 
+        cout<<endl;
+        cout<<"Z"<<bil[i]<<" = "<<A[i]<<" +/- "<<A_err[i]<<endl; 
       
       datafile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_data.txt");
       
@@ -1178,6 +1178,11 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
   string command2="gnuplot plot_data_and_script/plot_"+name+"_P_over_S_"+all_or_eq_moms+"_script.txt";
     
   system(command2.c_str());
+
+
+
+
+  
     
 }
 
