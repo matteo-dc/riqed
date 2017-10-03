@@ -162,7 +162,7 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
     {
       ofstream out(path);
       out<<"@type xydy"<<endl;
-      for(int i=0; i<range_max; i++)
+      for(int i=1; i<range_max; i++)
 	out<<i<<" "<<y[0][i]<<" "<<error[i]<<endl;
       out<<"&"<<endl;
       out<<"@type xy"<<endl;
@@ -170,7 +170,7 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
       out<<range_min<<" "<<par_ave[0]+par_err[0]<<endl;
       out<<range_max<<" "<<par_ave[0]+par_err[0]<<endl;
       out<<range_min<<" "<<par_ave[0]-par_err[0]<<endl;
-      out<<range_min<<" "<<par_ave[0]-par_err[0]<<endl;
+      out<<range_max<<" "<<par_ave[0]-par_err[0]<<endl;
     }
   return par_array;
   
@@ -198,8 +198,10 @@ vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const stri
       int ijack=iconf/clust_size;
        
       ifstream infile;
-      
-      infile.open(path_to_contr(string_path,conf_id[iconf],mr1,T1,mr2,T2));
+
+      string path=path_to_contr(string_path,conf_id[iconf],mr1,T1,mr2,T2);
+      cout<<"opening: "<<path<<endl;
+      infile.open(path);
 
       if(!infile.good())
 	{cerr<<"Unable to open file "<<path_to_contr(string_path,conf_id[iconf],mr1,T1,mr2,T2)<<endl;
