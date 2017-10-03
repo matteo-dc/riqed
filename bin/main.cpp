@@ -1338,7 +1338,7 @@ int main(int narg,char **arg)
 		   }
 
 	     cout<<endl;
-	     cout<<"imom :  "<<imom<<"  S_em:  "<<S_em[0][0](0,0)<<"  S_self:  "<<S[0][2][0](0,0)<<"  deltam_cr:  "<<deltam_cr[0][0](0,0)<<"  S_P:  "<<S[0][4][0](0,0)<<endl;
+	     cout<<"imom :  "<<imom<<"  S_em:  "<<S_em[0][0](0,0)<<"  S_self:  "<<S[0][2][0](0,0)<<"  deltam_cr:  "<<deltam_cr[0][0]<<"  S_P:  "<<S[0][4][0](0,0)<<endl;
 	     cout<<endl;
 	     
 #pragma omp parallel for collapse (2)
