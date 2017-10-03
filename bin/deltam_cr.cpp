@@ -109,7 +109,7 @@ vvd_t jackknife_double(vvd_t &jd, int size, int nconf, int clust_size )
 
 
 //compute fit parameters for a generic function f(x)=A+B*x+C*y(x)+D*z(x)+... 
-vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int range_min, const int range_max)
+vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int range_min, const int range_max,const char *path=NULL)
 {
   int n_par = coord.size();
   int njacks = y.size(); 
@@ -156,6 +156,12 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
       
       par_array[k][0] = par_ave[k];
       par_array[k][1] = par_err[k];
+    }
+    
+    if(path)
+    {
+        ofstream out(path);
+        
     }
 
   return par_array;
@@ -271,7 +277,7 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
   vvvvd_t jV0P5_0T(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
   vvvvd_t jV0P5_T0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
   vvvvd_t jV0P5_0P(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-  vvvvd_t jV0P5_P0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+  //vvvvd_t jV0P5_P0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
   //define deltam_cr
   vvvvd_t num_deltam_cr_corr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nmr),nmr);
   vvvvd_t den_deltam_cr_corr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nmr),nmr);
@@ -281,14 +287,14 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
       {
 	//load corrections
-	jV0P5_LL[mr_fw][mr_bw]=get_contraction(mr_fw,"F",mr_bw,"F","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
-	jV0P5_0M[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"FF","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
-	jV0P5_M0[mr_fw][mr_bw]=get_contraction(mr_fw,"FF",mr_bw,"0","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
-	jV0P5_0T[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"T","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
-	jV0P5_T0[mr_fw][mr_bw]=get_contraction(mr_fw,"T",mr_bw,"0","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
+	jV0P5_LL[mr_fw][mr_bw]=get_contraction(mr_bw,"F",mr_fw,"F","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
+	jV0P5_0M[mr_fw][mr_bw]=get_contraction(mr_bw,"0",mr_fw,"FF","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
+	jV0P5_M0[mr_fw][mr_bw]=get_contraction(mr_bw,"FF",mr_fw,"0","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
+	jV0P5_0T[mr_fw][mr_bw]=get_contraction(mr_bw,"0",mr_fw,"T","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
+	jV0P5_T0[mr_fw][mr_bw]=get_contraction(mr_bw,"T",mr_fw,"0","V0P5","IM","ODD",T,nconfs,njacks,conf_id,string_path);
 	//load the derivative wrt counterterm
-	jV0P5_0P[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"P","V0P5","RE","ODD",T,nconfs,njacks,conf_id,string_path);
-	jV0P5_P0[mr_fw][mr_bw]=get_contraction(mr_fw,"P",mr_bw,"0","V0P5","RE","ODD",T,nconfs,njacks,conf_id,string_path);
+	jV0P5_0P[mr_fw][mr_bw]=get_contraction(mr_bw,"0",mr_fw,"P","V0P5","RE","ODD",T,nconfs,njacks,conf_id,string_path);
+	jV0P5_P0[mr_fw][mr_bw]=get_contraction(mr_bw,"P",mr_fw,"0","V0P5","RE","ODD",T,nconfs,njacks,conf_id,string_path);
       }
 
  
