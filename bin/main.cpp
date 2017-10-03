@@ -1309,7 +1309,7 @@ int main(int narg,char **arg)
 		       
 		       int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
 
-		       printf(" i_in_clust %d  iconf %d   ijack %d \n",i_in_clust,iconf,ijack);
+		       //   printf(" i_in_clust %d  iconf %d   ijack %d \n",i_in_clust,iconf,ijack);
 		       
 		       //DEBUG
 		       //printf("  Reading propagator from %s\n",path.c_str());
@@ -1338,7 +1338,7 @@ int main(int narg,char **arg)
 		   }
 
 	     cout<<endl;
-	     cout<<"imom :  "<<imom<<"  S_em:  "<<S_em[0][0]<<"  S_self:  "<<S[0][2][0]<<"  deltam_cr:  "<<deltam_cr[0][0]<<"  S_P:  "<<S[0][4][0]<<endl;
+	     cout<<"imom :  "<<imom<<"  S_em:  "<<S_em[0][0](0,0)<<"  S_self:  "<<S[0][2][0](0,0)<<"  deltam_cr:  "<<deltam_cr[0][0](0,0)<<"  S_P:  "<<S[0][4][0](0,0)<<endl;
 	     cout<<endl;
 	     
 #pragma omp parallel for collapse (2)
