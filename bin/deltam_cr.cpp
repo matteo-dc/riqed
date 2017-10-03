@@ -109,7 +109,7 @@ vvd_t jackknife_double(vvd_t &jd, int size, int nconf, int clust_size )
 
 
 //compute fit parameters for a generic function f(x)=A+B*x+C*y(x)+D*z(x)+... 
-vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int range_min, const int range_max,const char *path=NULL)
+vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int range_min, const int range_max,const string &path=NULL)
 {
   int n_par = coord.size();
   int njacks = y.size(); 
@@ -157,13 +157,21 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
       par_array[k][0] = par_ave[k];
       par_array[k][1] = par_err[k];
     }
-    
-    if(path)
+  
+  if(path!="")
     {
-        ofstream out(path);
-        
+      ofstream out(path);
+      out<<"@type xydy"<<endl;
+      for(size_t i=0; i<coord.size(); i++)
+	out<<i<<" "<<y[0][i]<<" "<<error[i]<<endl;
+      out<<"&"<<endl;
+      out<<"@type xy"<<endl;
+      out<<range_min<<" "<<par_ave[0]-par_err[0]<<endl;
+      out<<range_min<<" "<<par_ave[0]+par_err[0]<<endl;
+      out<<range_max<<" "<<par_ave[0]+par_err[0]<<endl;
+      out<<range_min<<" "<<par_ave[0]-par_err[0]<<endl;
+      out<<range_min<<" "<<par_ave[0]-par_err[0]<<endl;
     }
-
   return par_array;
   
 }
@@ -277,7 +285,7 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
   vvvvd_t jV0P5_0T(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
   vvvvd_t jV0P5_T0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
   vvvvd_t jV0P5_0P(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-  //vvvvd_t jV0P5_P0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+  vvvvd_t jV0P5_P0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
   //define deltam_cr
   vvvvd_t num_deltam_cr_corr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nmr),nmr);
   vvvvd_t den_deltam_cr_corr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nmr),nmr);
@@ -337,7 +345,7 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
   
   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      deltam_cr_fit_parameters[mr_fw][mr_bw]=fit_par(coord,error[mr_fw][mr_bw],deltam_cr_corr[mr_fw][mr_bw],t_min,t_max); 
+      deltam_cr_fit_parameters[mr_fw][mr_bw]=fit_par(coord,error[mr_fw][mr_bw],deltam_cr_corr[mr_fw][mr_bw],t_min,t_max,"plot_deltam_cr_mrfw_"+to_string(mr_fw)+"_mrbw_"+to_string(mr_bw)); 
   
   vvvd_t deltam_cr(vvd_t(vd_t(0.0,2),nmr),nmr);
   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -362,10 +370,10 @@ int main(int narg,char **arg)
   
   int nconfs=stoi(arg[1]);
   int njacks=stoi(arg[2]);
-  int clust_size=nconfs/njacks;
+  //int clust_size=nconfs/njacks;
   int conf_id[nconfs];
-  double L=24,T=48;
-  size_t nhits=1; //!
+  double T=48;//,L=24
+  //size_t nhits=1; //!
 
   int tmin = stoi(arg[3]);
   int tmax = stoi(arg[4]);
