@@ -266,7 +266,7 @@ vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const stri
   
   string path=ID+"_"+reim+"_mrbw_"+to_string(mr1)+"_mrfw_"+to_string(mr2)+"_"+T1+T2+".xmg";
   ofstream out(path);
-  out<<"@type xydy"<<endl;
+  out<<"@type xy"<<endl;
   for(int t=0;t<T;t++)
     out<<t<<" "<<jvec_sym[0][t]<<endl;
   
