@@ -1318,8 +1318,8 @@ int main(int narg,char **arg)
 		       //create all the propagators in a given conf and a given mom
 		       S[ijack][t][mr] = read_prop(input[icombo],path);
 		       
-		       if(t==4) S[ijack][t][mr]*=dcompl(0.0,-1.0);
-		       //if(t==4) S[ijack][t][mr]*=dcompl(0.0,1.0);
+		       //if(t==4) S[ijack][t][mr]*=dcompl(0.0,-1.0);
+		       if(t==4) S[ijack][t][mr]*=dcompl(0.0,1.0);
 		       if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);	       
 		     }
 	     
