@@ -1664,11 +1664,11 @@ int main(int narg,char **arg)
 		   
        	       if(imom==0) m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
 	       
-       	       for(int ijack=0;ijack<njacks;ijack++) jGp_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][r+nr*mB][2]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
-       	       for(int ijack=0;ijack<njacks;ijack++) jGs_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][r+nr*mB][0]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
+       	       for(int ijack=0;ijack<njacks;ijack++) jGp_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][(r+1)%2+nr*mB][2]+jG_0_sub[ijack][(r+1)%2+nr*mB][r+nr*mA][2])/(2.0*nr);
+       	       for(int ijack=0;ijack<njacks;ijack++) jGs_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][(r+1)%2+nr*mB][0]+jG_0_sub[ijack][(r+1)%2+nr*mB][r+nr*mA][0])/(2.0*nr);
 	       
-       	       for(int ijack=0;ijack<njacks;ijack++) jGp_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][2]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
-       	       for(int ijack=0;ijack<njacks;ijack++) jGs_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][0]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
+       	       for(int ijack=0;ijack<njacks;ijack++) jGp_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][(r+1)%2+nr*mA][r+nr*mB][2]+jG_em_a_b_sub[ijack][(r+1)%2+nr*mB][r+nr*mA][2])/(2.0*nr);
+       	       for(int ijack=0;ijack<njacks;ijack++) jGs_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][(r+1)%2+nr*mA][r+nr*mB][0]+jG_em_a_b_sub[ijack][(r+1)%2+nr*mB][r+nr*mA][0])/(2.0*nr);
        	     }   //ieq={00,01,02,03,11,12,13,22,23,33}
        
 
@@ -1817,13 +1817,13 @@ int main(int narg,char **arg)
 	       ieq=-(mA*mA/2)+mB+mA*(nm-0.5);
 		 
 	       //  m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
-	       for(int ijack=0;ijack<njacks;ijack++) jGv_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][r+nr*mB][1]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
-	       for(int ijack=0;ijack<njacks;ijack++) jGa_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][r+nr*mB][3]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
-	       for(int ijack=0;ijack<njacks;ijack++) jGt_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][r+nr*mB][4]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
+	       for(int ijack=0;ijack<njacks;ijack++) jGv_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][(r+1)%2+nr*mB][1]+jG_0_sub[ijack][(r+1)%2+nr*mB][r+nr*mA][1])/(2.0*nr);
+	       for(int ijack=0;ijack<njacks;ijack++) jGa_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][(r+1)%2+nr*mB][3]+jG_0_sub[ijack][(r+1)%2+nr*mB][r+nr*mA][3])/(2.0*nr);
+	       for(int ijack=0;ijack<njacks;ijack++) jGt_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][(r+1)%2+nr*mB][4]+jG_0_sub[ijack][(r+1)%2+nr*mB][r+nr*mA][4])/(2.0*nr);
 
-	       for(int ijack=0;ijack<njacks;ijack++) jGv_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][1]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
-	       for(int ijack=0;ijack<njacks;ijack++) jGa_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][3]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
-	       for(int ijack=0;ijack<njacks;ijack++) jGt_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][4]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
+	       for(int ijack=0;ijack<njacks;ijack++) jGv_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][r+nr*mA][(r+1)%2+nr*mB][1]+jG_em_a_b_sub[ijack][(r+1)%2+nr*mB][r+nr*mA][1])/(2.0*nr);
+	       for(int ijack=0;ijack<njacks;ijack++) jGa_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][r+nr*mA][(r+1)%2+nr*mB][3]+jG_em_a_b_sub[ijack][(r+1)%2+nr*mB][r+nr*mA][3])/(2.0*nr);
+	       for(int ijack=0;ijack<njacks;ijack++) jGt_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][r+nr*mA][(r+1)%2+nr*mB][4]+jG_em_a_b_sub[ijack][(r+1)%2+nr*mB][r+nr*mA][4])/(2.0*nr);
 
 	     } //ieq={00,01,02,03,11,12,13,22,23,33}
 	   
