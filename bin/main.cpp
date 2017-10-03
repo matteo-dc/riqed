@@ -1087,9 +1087,9 @@ int main(int narg,char **arg)
   t_span = duration_cast<duration<double>>(t1-t0);
   cout<<"***** Read Deltam_cr in  "<<t_span.count()<<" s ******"<<endl<<endl;
 
-  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      cout<<"m1 "<<mr_fw<<" m2 "<<mr_bw<<"  "<<deltam_cr[mr_fw][mr_bw];
+  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+  //     cout<<"m1 "<<mr_fw<<" m2 "<<mr_bw<<"  "<<deltam_cr[mr_fw][mr_bw];
   
   //double deltam_cr = 0.230697;
   
@@ -1132,9 +1132,9 @@ int main(int narg,char **arg)
     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
       eff_mass[mr_fw][mr_bw] = eff_mass_array[mr_fw][mr_bw][0];
 
-   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-      cout<<"m1 "<<mr_fw<<" m2 "<<mr_bw<<"  "<<eff_mass[mr_fw][mr_bw];
+   // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+   //  for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+   //    cout<<"m1 "<<mr_fw<<" m2 "<<mr_bw<<"  "<<eff_mass[mr_fw][mr_bw];
   
   t1=high_resolution_clock::now();
   t_span = duration_cast<duration<double>>(t1-t0);
@@ -1333,10 +1333,13 @@ int main(int narg,char **arg)
 
 		     // S_em = S_self + S_tad -+ deltam_cr*S_P 
 		     
-		     if(r==0) S_em[ijack][mr] = S[ijack][2][mr] + S[ijack][3][mr] - 0.0*deltam_cr[mr][mr]*S[ijack][4][mr]; //r=0
-		     if(r==1) S_em[ijack][mr] = S[ijack][2][mr] + S[ijack][3][mr] - 0.0*deltam_cr[mr][mr]*S[ijack][4][mr]; //r=1
+		     if(r==0) S_em[ijack][mr] = S[ijack][2][mr] + S[ijack][3][mr] - deltam_cr[mr][mr]*S[ijack][4][mr]; //r=0
+		     if(r==1) S_em[ijack][mr] = S[ijack][2][mr] + S[ijack][3][mr] - deltam_cr[mr][mr]*S[ijack][4][mr]; //r=1
 		   }
 
+	     cout<<endl;
+	     cout<<"imom :  "<<imom<<"  S_em:  "<<S_em[0][0]<<"  S_self:  "<<S[0][2][0]<<"  deltam_cr:  "<<deltam_cr[0][0]<<"  S_P:  "<<S[0][4][0]<<endl;
+	     cout<<endl;
 	     
 #pragma omp parallel for collapse (2)
 	     for(int ijack=0;ijack<njacks;ijack++)
