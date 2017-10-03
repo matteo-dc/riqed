@@ -1327,8 +1327,8 @@ int main(int narg,char **arg)
 
 		     // S_em = S_self + S_tad -+ deltam_cr*S_P 
 		     
-		     if(r==0) S_em[ijack][mr] = /*S[ijack][2][mr] + S[ijack][3][mr]*/ - deltam_cr[mr][mr]*S[ijack][4][mr]; //r=0
-		     if(r==1) S_em[ijack][mr] = /*S[ijack][2][mr] + S[ijack][3][mr]*/ - deltam_cr[mr][mr]*S[ijack][4][mr]; //r=1
+		     if(r==0) S_em[ijack][mr] = /*S[ijack][2][mr] + S[ijack][3][mr]*/ - 0.0*deltam_cr[mr][mr]*S[ijack][4][mr]; //r=0
+		     if(r==1) S_em[ijack][mr] = /*S[ijack][2][mr] + S[ijack][3][mr]*/ - 0.0*deltam_cr[mr][mr]*S[ijack][4][mr]; //r=1
 		   }
 
 	     cout<<endl;
