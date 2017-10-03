@@ -162,7 +162,7 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
     {
       ofstream out(path);
       out<<"@type xydy"<<endl;
-      for(size_t i=0; i<coord.size(); i++)
+      for(int i=0; i<range_max; i++)
 	out<<i<<" "<<y[0][i]<<" "<<error[i]<<endl;
       out<<"&"<<endl;
       out<<"@type xy"<<endl;
