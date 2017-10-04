@@ -1380,8 +1380,7 @@ int main(int narg,char **arg)
        cout<<"***** Read propagators and created vertices (and jackknives) in "<<t_span.count()<<" s ******"<<endl<<endl;
        
        // t0=high_resolution_clock::now();
-       
-
+      
        
        //jackknife of propagators
        jS_0 = jackknife_prop(jS_0,nconfs,clust_size,nhits);
