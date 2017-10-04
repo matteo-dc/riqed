@@ -1341,12 +1341,6 @@ int main(int narg,char **arg)
 		   jS_em[ijack][mr] += S_em[ijack][mr];
 		 }
 
-	     //jackknife of propagators
-	     jS_0 = jackknife_prop(jS_0,nconfs,clust_size,nhits);
-	     //  jS_self_tad = jackknife_prop(jS_self_tad,nconfs,clust_size,nhits);
-	     //  jS_p = jackknife_prop(jS_p,nconfs,clust_size,nhits);
-	     jS_em = jackknife_prop(jS_em,nconfs,clust_size,nhits);
-
 
 // #pragma omp parallel for collapse(2) // shared(njacks,nmr,jS_em,jS_self_tad,deltam_cr,jS_p)    // neglecting scalar correction
 // 	     for(int ijack=0;ijack<njacks;ijack++)
@@ -1387,7 +1381,14 @@ int main(int narg,char **arg)
        
        // t0=high_resolution_clock::now();
        
-      
+
+       
+       //jackknife of propagators
+       jS_0 = jackknife_prop(jS_0,nconfs,clust_size,nhits);
+       //  jS_self_tad = jackknife_prop(jS_self_tad,nconfs,clust_size,nhits);
+       //  jS_p = jackknife_prop(jS_p,nconfs,clust_size,nhits);
+       jS_em = jackknife_prop(jS_em,nconfs,clust_size,nhits);
+       
        
        // //jackknife of vertices
        jVert_0 = jackknife_vertex(jVert_0,nconfs,clust_size,nhits);
