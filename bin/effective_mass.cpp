@@ -109,7 +109,7 @@ vvd_t jackknife_double(vvd_t &jd, int size, int nconf, int clust_size )
 
 
 //compute fit parameters for a generic function f(x)=A+B*x+C*y(x)+D*z(x)+... 
-vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int range_min, const int range_max)
+vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int range_min, const int range_max,const string &path=NULL)
 {
   int n_par = coord.size();
   int njacks = y.size(); 
@@ -156,6 +156,21 @@ vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int r
       
       par_array[k][0] = par_ave[k];
       par_array[k][1] = par_err[k];
+    }
+
+    if(path!="")
+    {
+      ofstream out(path);
+      out<<"@type xydy"<<endl;
+      for(int i=1; i<range_max; i++)
+	out<<i<<" "<<y[0][i]<<" "<<error[i]<<endl;
+      out<<"&"<<endl;
+      out<<"@type xy"<<endl;
+      out<<range_min<<" "<<par_ave[0]-par_err[0]<<endl;
+      out<<range_min<<" "<<par_ave[0]+par_err[0]<<endl;
+      out<<range_max<<" "<<par_ave[0]+par_err[0]<<endl;
+      out<<range_min<<" "<<par_ave[0]-par_err[0]<<endl;
+      out<<range_max<<" "<<par_ave[0]-par_err[0]<<endl;
     }
 
   return par_array;
@@ -417,7 +432,7 @@ vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const i
   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
       {
-	eff_mass_fit_parameters[mr_fw][mr_bw]=fit_par(coord,mass_err[mr_fw][mr_bw],M_eff[mr_fw][mr_bw],t_min,t_max);
+	eff_mass_fit_parameters[mr_fw][mr_bw]=fit_par(coord,mass_err[mr_fw][mr_bw],M_eff[mr_fw][mr_bw],t_min,t_max,"plot_eff_mass_mrfw_"+to_string(mr_fw)+"_mrbw_"+to_string(mr_bw));
       }
   
   vvvd_t eff_mass(vvd_t(vd_t(0.0,2),nmr),nmr);
