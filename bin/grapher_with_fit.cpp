@@ -1628,7 +1628,7 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Zq with subtraction ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     
-    plot_Zq_sub(jZq_eqmoms,jZq_sub_eqmoms,p2_vector_eqmoms,"Zq","eqmoms");
+    // plot_Zq_sub(jZq_eqmoms,jZq_sub_eqmoms,p2_vector_eqmoms,"Zq","eqmoms");
     plot_Zq_sub(jSigma1_eqmoms,jSigma1_sub_eqmoms,p2_vector_eqmoms,"Sigma1","eqmoms");
     
 //     vector<jZ_t> jZq_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks)), jSigma1_with_em_eqmoms(neq_moms,vvd_t(vd_t(nmr),njacks));
@@ -1649,7 +1649,7 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
 //     plot_Zq_sub(jZq_with_em_eqmoms,jZq_sub_with_em_eqmoms,p2_vector_eqmoms,"Zq_with_em","eqmoms");
 //     plot_Zq_sub(jSigma1_with_em_eqmoms,jSigma1_sub_with_em_eqmoms,p2_vector_eqmoms,"Sigma1_with_em","eqmoms");
     
-    plot_Zq_sub(jZq_em_eqmoms,jZq_em_sub_eqmoms,p2_vector_eqmoms,"Zq_em_correction","eqmoms");
+    //  plot_Zq_sub(jZq_em_eqmoms,jZq_em_sub_eqmoms,p2_vector_eqmoms,"Zq_em_correction","eqmoms");
     plot_Zq_sub(jSigma1_em_eqmoms,jSigma1_em_sub_eqmoms,p2_vector_eqmoms,"Sigma1_em_correction","eqmoms");
 
 
