@@ -540,7 +540,7 @@ valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, vd_t &error, const vvd_
   //definition
   for(int i=range_min; i<=range_max; i++)
     {
-      // error[i]+=1.0e-8;
+      if(error[i]<1.0e-50) error[i]+=1.0e-50;
       
       for(int j=0; j<n_par; j++)
 	for(int k=0; k<n_par; k++)
