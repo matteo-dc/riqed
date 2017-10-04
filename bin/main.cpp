@@ -1052,18 +1052,18 @@ int main(int narg,char **arg)
 	    deltam_cr_array[mr_fw][mr_bw][i]=temp; //store
 	  }
 
-   // cout<<"********DEBUG*****************************"<<endl; 
-  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-  //     {
-  // 	int r1 = mr_fw%nr;
-  // 	int m1 = (mr_fw-r1)/nr;
-  // 	int r2 = mr_bw%nr;
-  // 	int m2 = (mr_bw-r2)/nr;
+   cout<<"********DEBUG*****************************"<<endl; 
+   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+       {
+   	int r1 = mr_fw%nr;
+   	int m1 = (mr_fw-r1)/nr;
+   	int r2 = mr_bw%nr;
+   	int m2 = (mr_bw-r2)/nr;
 	
-  // 	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  deltam_cr "<<deltam_cr_array[mr_fw][mr_bw][0]<<"+-"<<deltam_cr_array[mr_fw][mr_bw][1]<<endl;
-  //     }
-  // cout<<"********DEBUG*****************************"<<endl<<endl;
+   	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  deltam_cr "<<deltam_cr_array[mr_fw][mr_bw][0]<<"+-"<<deltam_cr_array[mr_fw][mr_bw][1]<<endl;
+       }
+   cout<<"********DEBUG*****************************"<<endl<<endl;
 
   // cout<<"***DEBUG***"<<endl;
   // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
