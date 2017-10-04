@@ -1291,13 +1291,16 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
     }
   cout<<endl;
 
-for(int i=0;i<5;i++)
+  if(name=="ZO_em_RIp_ainv")
     {
-      cout<<"Z"<<bil[i]<<"(fact) = "<<A[i]/pert[i]<<" +/- "<<A_err[i]/pert[i]<<endl;
+      for(int i=0;i<5;i++)
+	{
+	  cout<<"Z"<<bil[i]<<"(fact) = "<<A[i]/pert[i]<<" +/- "<<A_err[i]/pert[i]<<endl;
+	}
     }
-
+  cout<<endl;
   
-    
+  
   vector<ofstream> scriptfile(5);
     
     
