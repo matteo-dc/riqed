@@ -1271,7 +1271,7 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
   vector<ofstream> datafile_fit(5);
 
   //Perturbative estimate from Martinelli-Zhang in RI-MOM at mu=1/a
-  vector<double> pert={-0.0695545,-0.100031,-0.118281,-0.130564,-0.108664}
+  vector<double> pert={-0.0695545,-0.100031,-0.118281,-0.130564,-0.108664};
     
   for(int i=0;i<5;i++)
     {
