@@ -321,7 +321,7 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
 	for(int t=0;t<T/2+1;t++)
 	  {
 	    num_deltam_cr_corr[mr_fw][mr_bw][ijack][t]=jV0P5_LL[mr_fw][mr_bw][ijack][t]+jV0P5_0M[mr_fw][mr_bw][ijack][t]+jV0P5_M0[mr_fw][mr_bw][ijack][t]+jV0P5_0T[mr_fw][mr_bw][ijack][t]+jV0P5_T0[mr_fw][mr_bw][ijack][t];
-	    den_deltam_cr_corr[mr_fw][mr_bw][ijack][t]=-jV0P5_P0[mr_fw][mr_bw][ijack][t]+jV0P5_0P[mr_fw][mr_bw][ijack][t];
+	    den_deltam_cr_corr[mr_fw][mr_bw][ijack][t]=+jV0P5_P0[mr_fw][mr_bw][ijack][t]+jV0P5_0P[mr_fw][mr_bw][ijack][t];
 	    deltam_cr_corr[mr_fw][mr_bw][ijack][t]=-num_deltam_cr_corr[mr_fw][mr_bw][ijack][t]/den_deltam_cr_corr[mr_fw][mr_bw][ijack][t];
 	  }
 
