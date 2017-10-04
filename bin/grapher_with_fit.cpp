@@ -551,8 +551,8 @@ void plot_Zq_chiral_extrapolation(vector<vvd_t> &jZq_equivalent, vector<vXd_t> &
     if(name=="Sigma1_chiral_extrapolation") scriptfile<<"set ylabel '$Z_q$'"<<endl;
     if(name=="Sigma1_em_chiral_extrapolation") scriptfile<<"set ylabel '$Z_q^{\\rm \\, em}$'"<<endl;
     scriptfile<<"set xrange [-0.003:0.05]"<<endl;
-    if(name=="Sigma1_chiral_extrapolation")scriptfile<<"set yrange [0.74:0.80]"<<endl;
-    if(name=="Sigma1_em_chiral_extrapolation")scriptfile<<"set yrange [-0.055:-0.01]"<<endl;
+    if(name=="Sigma1_chiral_extrapolation")scriptfile<<"set yrange [*:*]"<<endl;
+    if(name=="Sigma1_em_chiral_extrapolation")scriptfile<<"set yrange [*:*]"<<endl;
 
     if(name=="Sigma1_chiral_extrapolation")  scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$'"<<endl;
     if(name=="Sigma1_chiral_extrapolation")  scriptfile<<"replot '< head -1 plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 7 lt 1 lc rgb 'black' title '$Z_q$ chiral extr.'"<<endl;
@@ -637,8 +637,8 @@ void plot_Zq_chiral(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const s
     
     scriptfile<<"set autoscale xy"<<endl;
     scriptfile<<"set xrange [-0.05:2.5]"<<endl;
-    if(name=="Sigma1_chiral") scriptfile<<"set yrange [0.73:0.85]"<<endl;
-    if(name=="Sigma1_chiral_em_correction") scriptfile<<"set yrange [-0.06:0]"<<endl;
+    if(name=="Sigma1_chiral") scriptfile<<"set yrange [*:*]"<<endl;
+    if(name=="Sigma1_chiral_em_correction") scriptfile<<"set yrange [*:*]"<<endl;
     scriptfile<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
     if(name=="Sigma1_chiral") scriptfile<<"set ylabel '$Z_q$'"<<endl;
     if(name=="Sigma1_chiral_em_correction") scriptfile<<"set ylabel '$Z_q^{\\rm \\, em}$'"<<endl;
@@ -723,8 +723,8 @@ void plot_Zq_RIp_ainv(vector<vd_t> &jZq_chiral, vector<double> &p2_vector, const
     
     scriptfile<<"set autoscale xy"<<endl;
     scriptfile<<"set xrange [-0.05:2.5]"<<endl;
-    if(name=="Sigma1_RIp_ainv") scriptfile<<"set yrange [0.74:0.80]"<<endl;
-    if(name=="Sigma1_em_RIp_ainv") scriptfile<<"set yrange [-0.07:0.01]"<<endl;
+    if(name=="Sigma1_RIp_ainv") scriptfile<<"set yrange [*:*]"<<endl;
+    if(name=="Sigma1_em_RIp_ainv") scriptfile<<"set yrange [*:*]"<<endl;
     scriptfile<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
     if(name=="Sigma1_RIp_ainv") scriptfile<<"set ylabel '$Z_q$'"<<endl;
     if(name=="Sigma1_em_RIp_ainv")  scriptfile<<"set ylabel '$Z_q^{\\rm \\, em}$'"<<endl;
@@ -791,12 +791,12 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
         scriptfile[i]<<"set autoscale xy"<<endl;
         scriptfile[i]<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
 	scriptfile[i]<<"set xrange [0:2.5]"<<endl;
-	if(i==0 && name=="Z1")scriptfile[i]<<"set yrange [*:0.82]"<<endl;
-	if(i==2 && name=="Z1")scriptfile[i]<<"set yrange [*:0.55]"<<endl;
+	if(i==0 && name=="Z1")scriptfile[i]<<"set yrange [*:*]"<<endl;
+	if(i==2 && name=="Z1")scriptfile[i]<<"set yrange [*:*]"<<endl;
 	
-	if(i==0 && name=="Z1_em_correction")scriptfile[i]<<"set yrange [-0.28:-0.04]"<<endl;
-	if(i==1 && name=="Z1_em_correction")scriptfile[i]<<"set yrange [-0.12:-0.07]"<<endl;
-	if(i==3 && name=="Z1_em_correction")scriptfile[i]<<"set yrange [-0.17:-0.11]"<<endl;
+	if(i==0 && name=="Z1_em_correction")scriptfile[i]<<"set yrange [*:*]"<<endl;
+	if(i==1 && name=="Z1_em_correction")scriptfile[i]<<"set yrange [*:*]"<<endl;
+	if(i==3 && name=="Z1_em_correction")scriptfile[i]<<"set yrange [*:*]"<<endl;
 	
 	// scriptfile[i]<<"set yrange [0.7:0.9]"<<endl;
         scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
@@ -880,10 +880,10 @@ void plot_ZPandS_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equiv
   if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set ylabel '$\\delta \\Gamma_"<<bil<<"$'"<<endl;
   if(name=="Gs_em_chiral_extrapolation") scriptfile<<"set ylabel '$\\delta \\Gamma_"<<bil<<"$'"<<endl;
   scriptfile<<"set xrange [-0.003:0.05]"<<endl;
-  if(name=="Gp_chiral_extrapolation") scriptfile<<"set yrange [0:5]"<<endl;
-  if(name=="Gs_chiral_extrapolation") scriptfile<<"set yrange [0.9:1.6]"<<endl;
-  if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set yrange [-1.2:0.6]"<<endl;
-  if(name=="Gs_em_chiral_extrapolation") scriptfile<<"set yrange [-0.2:0.2]"<<endl;
+  if(name=="Gp_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
+  if(name=="Gs_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
+  if(name=="Gp_em_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
+  if(name=="Gs_em_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
   if(name=="Gp_chiral_extrapolation"||name=="Gs_chiral_extrapolation")
     {
       scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
@@ -968,12 +968,12 @@ void plot_ZVAT_chiral_extrapolation(const string &bil, vector<vvd_t> &jZ_equival
     if(name=="Ga_em_chiral_extrapolation") scriptfile<<"set ylabel '$\\delta\\Gamma_"<<bil<<"$'"<<endl;
     if(name=="Gt_em_chiral_extrapolation") scriptfile<<"set ylabel '$\\delta\\Gamma_"<<bil<<"$'"<<endl;
     scriptfile<<"set xrange [-0.003:0.05]"<<endl;
-    if(name=="Gv_chiral_extrapolation") scriptfile<<"set yrange [0.98:1.03]"<<endl;
-    if(name=="Ga_chiral_extrapolation") scriptfile<<"set yrange [1.15:1.23]"<<endl;
-    if(name=="Gt_chiral_extrapolation") scriptfile<<"set yrange [0.99:1.03]"<<endl;
-    if(name=="Gv_em_chiral_extrapolation") scriptfile<<"set yrange [-0.044:0.026]"<<endl;
-    if(name=="Ga_em_chiral_extrapolation") scriptfile<<"set yrange [-0.12:-0.06]"<<endl;
-    if(name=="Gt_em_chiral_extrapolation") scriptfile<<"set yrange [-0.046:-0.006]"<<endl;
+    if(name=="Gv_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
+    if(name=="Ga_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
+    if(name=="Gt_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
+    if(name=="Gv_em_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
+    if(name=="Ga_em_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
+    if(name=="Gt_em_chiral_extrapolation") scriptfile<<"set yrange [*:*]"<<endl;
     if(name=="Gv_chiral_extrapolation"||name=="Ga_chiral_extrapolation"||name=="Gt_chiral_extrapolation")
       {
 	scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\Gamma_"<<bil<<"$'"<<endl;
@@ -1107,16 +1107,16 @@ void plot_Z_chiral(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const st
       //bil={S,A,P,V,T}
       
       scriptfile[i]<<"set xrange [-0.05:2.3]"<<endl;
-      if(name=="Z1_chiral"&&i==0)  scriptfile[i]<<"set yrange [0.45:0.85]"<<endl;
-      if(name=="Z1_chiral"&&i==1)  scriptfile[i]<<"set yrange [0.74:0.82]"<<endl;
-      if(name=="Z1_chiral"&&i==2)  scriptfile[i]<<"set yrange [0.35:0.7]"<<endl;
-      if(name=="Z1_chiral"&&i==3)  scriptfile[i]<<"set yrange [0.62:0.69]"<<endl;
-      if(name=="Z1_chiral"&&i==4)  scriptfile[i]<<"set yrange [0.65:0.95]"<<endl;
-      if(name=="Z1_chiral_em_correction"&&i==0)  scriptfile[i]<<"set yrange [-0.15:0.10]"<<endl;
-      if(name=="Z1_chiral_em_correction"&&i==1)  scriptfile[i]<<"set yrange [-0.1:-0.01]"<<endl;
-      if(name=="Z1_chiral_em_correction"&&i==2)  scriptfile[i]<<"set yrange [-0.7:0.2]"<<endl;
-      if(name=="Z1_chiral_em_correction"&&i==3)  scriptfile[i]<<"set yrange [-0.16:-0.07]"<<endl;
-      if(name=="Z1_chiral_em_correction"&&i==4)  scriptfile[i]<<"set yrange [-0.13:0.01]"<<endl;
+      if(name=="Z1_chiral"&&i==0)  scriptfile[i]<<"set yrange [*:*]"<<endl;
+      if(name=="Z1_chiral"&&i==1)  scriptfile[i]<<"set yrange [*:*]"<<endl;
+      if(name=="Z1_chiral"&&i==2)  scriptfile[i]<<"set yrange [*:*]"<<endl;
+      if(name=="Z1_chiral"&&i==3)  scriptfile[i]<<"set yrange [*:*]"<<endl;
+      if(name=="Z1_chiral"&&i==4)  scriptfile[i]<<"set yrange [*:*]"<<endl;
+      if(name=="Z1_chiral_em_correction"&&i==0)  scriptfile[i]<<"set yrange [*:*]"<<endl;
+      if(name=="Z1_chiral_em_correction"&&i==1)  scriptfile[i]<<"set yrange [*:*]"<<endl;
+      if(name=="Z1_chiral_em_correction"&&i==2)  scriptfile[i]<<"set yrange [*:*]"<<endl;
+      if(name=="Z1_chiral_em_correction"&&i==3)  scriptfile[i]<<"set yrange [*:*]"<<endl;
+      if(name=="Z1_chiral_em_correction"&&i==4)  scriptfile[i]<<"set yrange [*:*]"<<endl;
       
      if(name=="Z1_chiral") scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
      if(name=="Z1_chiral_em_correction") scriptfile[i]<<"set ylabel '$\\delta Z_"<<bil[i]<<"$'"<<endl;
@@ -1291,16 +1291,16 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
       scriptfile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_script.txt");
       scriptfile[i]<<"set autoscale xy"<<endl;
       scriptfile[i]<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
-      if(i==0 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.55:0.78]"<<endl; //S
-      if(i==1 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.73:0.83]"<<endl; //A
-      if(i==2 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.2:1]"<<endl; //P
-      if(i==3 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.6:0.7]"<<endl; //V
-      if(i==4 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [0.70:0.85]"<<endl; //T
-      if(i==0 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-0.3:0.3]"<<endl; //S
-      if(i==1 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-0.09:0]"<<endl; //A
-      if(i==2 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-1:0.6]"<<endl; //P
-      if(i==3 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-0.16:-0.05]"<<endl; //V
-      if(i==4 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-0.125:0.025]"<<endl; //T
+      if(i==0 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [*:*]"<<endl; //S
+      if(i==1 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [*:*]"<<endl; //A
+      if(i==2 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [*:*]"<<endl; //P
+      if(i==3 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [*:*]"<<endl; //V
+      if(i==4 && name=="ZO_RIp_ainv") scriptfile[i]<<"set yrange [*:*]"<<endl; //T
+      if(i==0 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [*:*]"<<endl; //S
+      if(i==1 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [*:*]"<<endl; //A
+      if(i==2 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [*:*]"<<endl; //P
+      if(i==3 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [*:*]"<<endl; //V
+      if(i==4 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [*:*]"<<endl; //T
       scriptfile[i]<<"set xrange [-0.05:2.3]"<<endl;
       if(name=="ZO_RIp_ainv") scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
       if(name=="ZO_em_RIp_ainv") scriptfile[i]<<"set ylabel '$\\delta Z_"<<bil[i]<<"$'"<<endl;
@@ -1618,17 +1618,18 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     vvvd_t Sigma1 = average_Zq(jSigma1_em_eqmoms);  //Zq[ave/err][imom][nm]
     vvvd_t Sigma1_sub = average_Zq(jSigma1_em_sub_eqmoms);  //Zq[ave/err][imom][nm]
 
-   cout<<"Zq"<<endl<<"-------------DEBUG (m0 r0) -----------------"<<endl<<endl;
-   for(size_t imom=0;imom<p2_vector_eqmoms.size();imom++)
-   {
-       cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1[0][imom][0]<<"\t"<<Sigma1[1][imom][0]<<endl;  //print only for M0R0
-   }
-   cout<<endl<<"Zq_SUB"<<endl<<"----------DEBUG (m0 r0) --------------------"<<endl;
-   for(size_t imom=0;imom<p2_vector_eqmoms.size();imom++)
-   {
-      cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub[0][imom][0]<<"\t"<<Sigma1_sub[1][imom][0]<<endl;  //print only for M0R0
-   }
-
+    cout<<endl;
+    cout<<"Zq"<<endl<<"-------------DEBUG (m0 r0) -----------------"<<endl<<endl;
+    for(size_t imom=0;imom<p2_vector_eqmoms.size();imom++)
+      {
+	cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1[0][imom][0]<<"\t"<<Sigma1[1][imom][0]<<endl;  //print only for M0R0
+      }
+    cout<<endl<<"Zq_SUB"<<endl<<"----------DEBUG (m0 r0) --------------------"<<endl;
+    for(size_t imom=0;imom<p2_vector_eqmoms.size();imom++)
+      {
+	cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub[0][imom][0]<<"\t"<<Sigma1_sub[1][imom][0]<<endl;  //print only for M0R0
+      }
+    
 
 
 
