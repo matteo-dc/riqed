@@ -473,15 +473,17 @@ void plot_Zq_sub(vector<jZ_t> &jZq, vector<jZ_t> &jZq_sub, vector<double> &p2_ve
     
     scriptfile<<"set autoscale xy"<<endl;
     scriptfile<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
-    scriptfile<<"set ylabel '$Z_q$'"<<endl;
+    if(name=="Sigma1") scriptfile<<"set ylabel '$Z_q$'"<<endl;
+    if(name=="Sigma1_em_correction") scriptfile<<"set ylabel '$Z_q^{\\mathrm{em}}$'"<<endl;
+    
     scriptfile<<"set xrange [0:2.5]"<<endl;
     if(name=="Sigma1") scriptfile<<"set yrange [0.73:0.86]"<<endl;
     if(name=="Sigma1_em_correction")  scriptfile<<"set yrange [-0.08:-0.03]"<<endl;
    
-    if(name=="Sigma1") scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q$'"<<endl;
-    if(name=="Sigma1") scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lt 1 lc rgb 'red' title '$Z_q^{\\mathrm{corr.}}$'"<<endl;
-    if(name=="Sigma1_em_correction") scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_q^{\\mathrm{em}}$'"<<endl;
-    if(name=="Sigma1_em_correction") scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lt 1 lc rgb 'red' title '$Z_q^{\\mathrm{em corr.}}$'"<<endl;
+    if(name=="Sigma1") scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '${\\small Z_q}$'"<<endl;
+    if(name=="Sigma1") scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lt 1 lc rgb 'red' title '${\\small Z_q^{\\mathrm{corr.}}}$'"<<endl;
+    if(name=="Sigma1_em_correction") scriptfile<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '${\\small Z_q^{\\mathrm{em}}}$'"<<endl;
+    if(name=="Sigma1_em_correction") scriptfile<<"replot 'plot_data_and_script/plot_"<<name<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lt 1 lc rgb 'red' title '${\\small Z_q^{\\mathrm{em\\, corr.}}}$'"<<endl;
     
     scriptfile<<"set terminal epslatex color"<<endl;
     if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile<<"set output 'allmoms/"<<name<<"_sub.tex'"<<endl;
@@ -819,13 +821,13 @@ void plot_Z_sub(vector<jZbil_t> &jZ, vector<jZbil_t> &jZ_sub, vector<double> &p2
 	
 	if(name=="Z1")
 	  {
-	    scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_"<<bil[i]<<"$'"<<endl;
-	    scriptfile[i]<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lt 1 lc rgb 'red' title '$Z_"<<bil[i]<<"^{\\mathrm{corr.}}$'"<<endl;
+	    scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '${\\small Z_"<<bil[i]<<"}$'"<<endl;
+	    scriptfile[i]<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lt 1 lc rgb 'red' title '${\\small Z_"<<bil[i]<<"^{\\mathrm{corr.}}}$'"<<endl;
 	  }
 	if(name=="Z1_em_correction")
 	  {
-	    scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$\\delta Z_"<<bil[i]<<"$'"<<endl;
-	    scriptfile[i]<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lt 1 lc rgb 'red' title '$\\delta Z_"<<bil[i]<<"^{\\mathrm{corr.}}$'"<<endl;
+	    scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '${\\small \\delta Z_"<<bil[i]<<"}$'"<<endl;
+	    scriptfile[i]<<"replot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lt 1 lc rgb 'red' title '${\\small \\delta Z_"<<bil[i]<<"^{\\mathrm{corr.}}}$'"<<endl;
 	  }
         scriptfile[i]<<"set terminal epslatex color"<<endl;
         if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile[i]<<"set output 'allmoms/"<<name<<"_"<<bil[i]<<"_sub.tex'"<<endl;
