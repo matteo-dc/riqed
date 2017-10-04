@@ -982,7 +982,7 @@ int main(int narg,char **arg)
 
       cout<<"Action:  Symanzik"<<endl;
     }
-   else if(strcmp(arg[10],"free")==0)  //Nf=2 (Symanzik)
+   else if(strcmp(arg[10],"free")==0)  //Free action
     {
       // beta=99999999999999.9;
       beta = 1.0e300;
@@ -1004,7 +1004,7 @@ int main(int narg,char **arg)
     }
   else
     {
-      cerr<<"WARNING: wrong action argument. Please write 'sym' for Symanzik action or 'iwa' for Iwasaki action.";
+      cerr<<"WARNING: wrong action argument. Please write 'sym' for Symanzik action, 'iwa' for Iwasaki action or 'free' for free action.";
       exit(0);
     }
 
