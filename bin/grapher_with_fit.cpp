@@ -154,7 +154,7 @@ valarray<VectorXd> fit_chiral_jackknife(const vvd_t &coord, vd_t &error, const v
     //definition
     for(int i=range_min; i<range_max; i++)
     {
-      error[i]+=1e-8;
+      if(error[i]<1e-50) error[i]+=1e-50;
       
         for(int j=0; j<n_par; j++)
             for(int k=0; k<n_par; k++)
@@ -209,8 +209,10 @@ valarray< valarray<VectorXd> > fit_chiral_Z_jackknife(const vvd_t &coord, vvd_t 
   for(int i=range_min; i<range_max; i++)
     {
       for(int ibil=0; ibil<nbil;ibil++)
-	error[i][ibil]+=1e-8;
-      
+	{
+	  if(error[i][ibil]<1e-50) error[i][ibil]+=1e-50;
+	}
+	  
       for(int ibil=0; ibil<nbil;ibil++)
         for(int j=0; j<n_par; j++)
 	  for(int k=0; k<n_par; k++)
@@ -272,7 +274,10 @@ valarray< valarray<VectorXd> > fit_chiral_Z_RIp_jackknife(const vvd_t &coord, vv
   for(int i=range_min; i<range_max; i++)
     {
       for(int ibil=0; ibil<nbil;ibil++)
-	error[i][ibil]+=1e-8;
+	{
+	  if(error[i][ibil]<1e-50)
+	    error[i][ibil]+=1e-50;
+	}
       
       if(coord[1][i]>p_min_value)
 	{
@@ -1264,11 +1269,14 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
     
   vector<ofstream> datafile(5);
   vector<ofstream> datafile_fit(5);
+
+  //Perturbative estimate from Martinelli-Zhang in RI-MOM at mu=1/a
+  vector<double> pert={-0.0695545,-0.100031,-0.118281,-0.130564,-0.108664}
     
   for(int i=0;i<5;i++)
     {
       //   cout<<endl;
-      cout<<"Z"<<bil[i]<<" = "<<A[i]<<" +/- "<<A_err[i]<<endl; 
+      cout<<"Z"<<bil[i]<<" = "<<A[i]<<" +/- "<<A_err[i]<<endl;
       
       datafile[i].open("plot_data_and_script/plot_"+name+"_"+bil[i]+"_"+all_or_eq_moms+"_data.txt");
       
@@ -1282,6 +1290,13 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
       datafile_fit[i].close();
     }
   cout<<endl;
+
+for(int i=0;i<5;i++)
+    {
+      cout<<"Z"<<bil[i]<<"(fact) = "<<A[i]/pert[i]<<" +/- "<<A_err[i]/pert[i]<<endl;
+    }
+
+  
     
   vector<ofstream> scriptfile(5);
     
