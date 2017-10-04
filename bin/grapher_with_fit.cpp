@@ -1618,16 +1618,16 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     vvvd_t Sigma1 = average_Zq(jSigma1_em_eqmoms);  //Zq[ave/err][imom][nm]
     vvvd_t Sigma1_sub = average_Zq(jSigma1_em_sub_eqmoms);  //Zq[ave/err][imom][nm]
 
-    // cout<<"Zq"<<endl<<"------------------------------"<<endl<<endl;
-    // for(size_t imom=0;imom<p2_vector_eqmoms.size();imom++)
-    // {
-    //     cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1[0][imom][0]<<"\t"<<Sigma1[1][imom][0]<<endl;  //print only for M0R0
-    // }
-    // cout<<endl<<"Zq_SUB"<<endl<<"------------------------------"<<endl;
-    // for(size_t imom=0;imom<p2_vector_eqmoms.size();imom++)
-    // {
-    //    cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub[0][imom][0]<<"\t"<<Sigma1_sub[1][imom][0]<<endl;  //print only for M0R0
-    // }
+   cout<<"Zq"<<endl<<"-------------DEBUG (m0 r0) -----------------"<<endl<<endl;
+   for(size_t imom=0;imom<p2_vector_eqmoms.size();imom++)
+   {
+       cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1[0][imom][0]<<"\t"<<Sigma1[1][imom][0]<<endl;  //print only for M0R0
+   }
+   cout<<endl<<"Zq_SUB"<<endl<<"----------DEBUG (m0 r0) --------------------"<<endl;
+   for(size_t imom=0;imom<p2_vector_eqmoms.size();imom++)
+   {
+      cout<<p2_vector_eqmoms[imom]<<"\t"<<Sigma1_sub[0][imom][0]<<"\t"<<Sigma1_sub[1][imom][0]<<endl;  //print only for M0R0
+   }
 
 
 

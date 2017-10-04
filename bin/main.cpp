@@ -1052,7 +1052,7 @@ int main(int narg,char **arg)
 	    deltam_cr_array[mr_fw][mr_bw][i]=temp; //store
 	  }
 
-   cout<<"********DEBUG*****************************"<<endl; 
+   cout<<"********DEBUG************** DELTAM_CR ***************"<<endl; 
    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
      for(int mr_bw=0;mr_bw<nmr;mr_bw++)
        {
@@ -1065,12 +1065,6 @@ int main(int narg,char **arg)
        }
    cout<<"********DEBUG*****************************"<<endl<<endl;
 
-  // cout<<"***DEBUG***"<<endl;
-  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-  //     for(int i=0;i<2;i++)
-  // 	cout<<deltam_cr_array[mr_fw][mr_bw][i]<<endl;
-  // cout<<"***DEBUG***"<<endl;
   
   vvd_t deltam_cr(vd_t(0.0,nmr),nmr);
   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -1080,12 +1074,9 @@ int main(int narg,char **arg)
   t1=high_resolution_clock::now();
   t_span = duration_cast<duration<double>>(t1-t0);
   cout<<"***** Read Deltam_cr in  "<<t_span.count()<<" s ******"<<endl<<endl;
-
-  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-  //     cout<<"m1 "<<mr_fw<<" m2 "<<mr_bw<<"  "<<deltam_cr[mr_fw][mr_bw];
   
   //double deltam_cr = 0.230697;
+  
   
   //Effective Mass
 
@@ -1113,29 +1104,32 @@ int main(int narg,char **arg)
 	    }
 	  eff_mass_array[mr_fw][mr_bw][i]=temp; //store
 	}
-  
-  // cout<<"***DEBUG***"<<endl;
-  // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-  //   for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-  //     for(int i=0;i<2;i++)
-  // 	cout<<eff_mass_array[mr_fw][mr_bw][i]<<endl;
-  // cout<<"***DEBUG***"<<endl;
+
+
+   cout<<"********DEBUG************** EFFECTIVE MASS  ***************"<<endl; 
+   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+       {
+   	int r1 = mr_fw%nr;
+   	int m1 = (mr_fw-r1)/nr;
+   	int r2 = mr_bw%nr;
+   	int m2 = (mr_bw-r2)/nr;
+	
+   	cout<<"r1 "<<r1<<" m1 "<<m1<<" r2 "<<r2<<" m2 "<<m2<<"  eff_mass: "<<eff_mass_array[mr_fw][mr_bw][0]<<" +- "<<eff_mass_array[mr_fw][mr_bw][1]<<endl;
+       }
+   cout<<"********DEBUG*****************************"<<endl<<endl;
+   
   
   vvd_t eff_mass(vd_t(0.0,nmr),nmr);
   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
       eff_mass[mr_fw][mr_bw] = eff_mass_array[mr_fw][mr_bw][0];
 
-   // for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-   //  for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-   //    cout<<"m1 "<<mr_fw<<" m2 "<<mr_bw<<"  "<<eff_mass[mr_fw][mr_bw];
   
   t1=high_resolution_clock::now();
   t_span = duration_cast<duration<double>>(t1-t0);
   cout<<endl;
   cout<<"***** Read Effective Mass in "<<t_span.count()<<" s ******"<<endl<<endl;
-  
-  // cout<<"eff_mass: "<<eff_mass_array[0]<<" +- "<<eff_mass_array[1]<<endl;
 
   
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1481,7 +1475,8 @@ int main(int narg,char **arg)
        t1=high_resolution_clock::now();
        t_span = duration_cast<duration<double>>(t1-t0);
        cout<<"***** Projected Green Functions in "<<t_span.count()<<" s ******"<<endl<<endl;
-       
+
+      
        //compute Z's according to RI-MOM and to Sigma1-way, one for each momentum
        t0=high_resolution_clock::now();
        
@@ -1760,17 +1755,18 @@ int main(int narg,char **arg)
       	   jGs_em_a_b_chiral[ijack]=jGs_em_pars[ijack](0);	
       	 }
     
-       ////////DEBUG/////////////
-       // cout<<"////////DEBUG/////////////"<<endl;
-       // cout<<"---- M^2  ---- jG_p ---- jG_p_SUB --- (for each jackknife)"<<endl;
-       // for(int ijack=0; ijack<njacks; ijack++)
-       // 	 {
-       // 	   for(int i=0; i<neq; i++)
-       // 	     cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< jGp_equivalent[ijack][i]<<"\t"<< jGp_subpole[ijack][i]<<endl;
-       // 	   cout<<endl;
-       // 	 }
-       // cout<<endl;
-       /////////////////////////
+       //////DEBUG/////////////
+       cout<<endl;
+       cout<<"////////DEBUG/////////////"<<endl;
+       cout<<"---- M^2  ---- jG_p ---- jG_p_SUB --- (for each jackknife)"<<endl;
+       for(int ijack=0; ijack<njacks; ijack++)
+	 {
+	   for(int i=0; i<neq; i++)
+	     cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<< jGp_equivalent[ijack][i]<<"\t"<< jGp_subpole[ijack][i]<<endl;
+	   cout<<endl;
+	 }
+       cout<<endl;
+       ///////////////////////
        
 
        // vd_t Gp_subpole(neq), sqr_Gp_subpole(neq), Gp_err_subpole(neq);
@@ -1924,7 +1920,12 @@ int main(int narg,char **arg)
 	     for(int ijack=0;ijack<njacks;ijack++) jZq_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*jZq_em_sub[ijack][r+nr*m]/nr;
 	     for(int ijack=0;ijack<njacks;ijack++) jSigma1_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*jSigma1_em_sub[ijack][r+nr*m]/nr;
 	   }
-	    
+
+       
+       cout<<endl;
+       for(int ieq=0; ieq<neq2; ieq++) cout<<"M_eff (Zq)  : "<<m_eff_equivalent_Zq[ieq]<<endl;
+
+       
 
        vd_t Zq_ave(0.0,neq2), sqr_Zq_ave(0.0,neq2), Zq_err(0.0,neq2);
        vd_t Sigma1_ave(0.0,neq2), sqr_Sigma1_ave(0.0,neq2), Sigma1_err(0.0,neq2);
