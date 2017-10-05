@@ -543,7 +543,7 @@ valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, vd_t &error, const vvd_
     {
       if(error[i]<1.0e-20) error[i]+=1.0e-20;
 
-      cout<<y[0][i]<<"\t"<<error[i]<<endl
+      cout<<y[0][i]<<"\t"<<error[i]<<endl;
       
       for(int j=0; j<n_par; j++)
 	for(int k=0; k<n_par; k++)
