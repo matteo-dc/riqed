@@ -528,13 +528,6 @@ valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, vd_t &error, const vvd_
   MatrixXd S(n_par,n_par);
   valarray<VectorXd> Sy(VectorXd(n_par),njacks);
   valarray<VectorXd> jpars(VectorXd(n_par),njacks);
-
-  ////////////////  DEBUG /////////////////
-  for(size_t i=0;i<error.size();i++)
-    {
-      cout<<y[0][i]<<endl;
-    }
-  ////////////////  DEBUG /////////////////
   
 
   //initialization
@@ -549,6 +542,8 @@ valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, vd_t &error, const vvd_
   for(int i=range_min; i<=range_max; i++)
     {
       if(error[i]<1.0e-20) error[i]+=1.0e-20;
+
+      cout<<y[0][i]<<"\t"<<error[i]<<endl
       
       for(int j=0; j<n_par; j++)
 	for(int k=0; k<n_par; k++)
@@ -558,6 +553,8 @@ valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, vd_t &error, const vvd_
 	for(int k=0; k<n_par; k++)
 	  if(std::isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]); 
     }
+
+  cout<<endl;
   
   for(int ijack=0; ijack<njacks; ijack++)
     jpars[ijack] = S.colPivHouseholderQr().solve(Sy[ijack]);
