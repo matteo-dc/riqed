@@ -530,7 +530,7 @@ valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, vd_t &error, const vvd_
   valarray<VectorXd> jpars(VectorXd(n_par),njacks);
 
   ////////////////  DEBUG /////////////////
-  for(i=0;i<error.size();i++)
+  for(size_t i=0;i<error.size();i++)
     {
       cout<<y[0][i]<<endl;
     }
