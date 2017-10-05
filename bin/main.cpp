@@ -529,6 +529,14 @@ valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, vd_t &error, const vvd_
   valarray<VectorXd> Sy(VectorXd(n_par),njacks);
   valarray<VectorXd> jpars(VectorXd(n_par),njacks);
 
+  ////////////////  DEBUG /////////////////
+  for(i=0;i<error.size();i++)
+    {
+      cout<<y[0][i]<<endl;
+    }
+  ////////////////  DEBUG /////////////////
+  
+
   //initialization
   S=MatrixXd::Zero(n_par,n_par);
   for(int ijack=0; ijack<njacks; ijack++)
@@ -1713,6 +1721,7 @@ int main(int narg,char **arg)
       	   coord[2][i] = 1.0/(m_eff_equivalent[i]*m_eff_equivalent[i]);  //1/M^2	   
       	 }
 
+       ////////////////  DEBUG /////////////////
        cout<<endl;
        cout<<"M_PS^2 ---- (P) ijack=0"<<endl;
        for(int i=0; i<neq; i++)
@@ -1726,6 +1735,7 @@ int main(int narg,char **arg)
 	 {
 	   cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<<jGs_equivalent[0][i]<<"\t"<<Gs_err[i]<<endl;
 	 }
+       ////////////////  DEBUG /////////////////
        
        vXd_t jGp_pars=fit_par_jackknife(coord,Gp_err,jGp_equivalent,t_min,t_max);  //jGp_pars[ijack](par)
        vXd_t jGs_pars=fit_par_jackknife(coord,Gs_err,jGs_equivalent,t_min,t_max);
