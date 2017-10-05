@@ -1713,6 +1713,20 @@ int main(int narg,char **arg)
       	   coord[2][i] = 1.0/(m_eff_equivalent[i]*m_eff_equivalent[i]);  //1/M^2	   
       	 }
 
+       cout<<endl;
+       cout<<"M_PS^2 ---- (P) ijack=0"<<endl;
+       for(int i=0; i<neq; i++)
+	 {
+	   cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<<jGp_equivalent[0][i]<<"\t"<<Gp_err[i]<<endl;
+	 }
+
+       cout<<endl;
+       cout<<"M_PS^2 ---- (S) ijack=0"<<endl;
+       for(int i=0; i<neq; i++)
+	 {
+	   cout<<m_eff_equivalent[i]*m_eff_equivalent[i]<<"\t"<<jGs_equivalent[0][i]<<"\t"<<Gs_err[i]<<endl;
+	 }
+       
        vXd_t jGp_pars=fit_par_jackknife(coord,Gp_err,jGp_equivalent,t_min,t_max);  //jGp_pars[ijack](par)
        vXd_t jGs_pars=fit_par_jackknife(coord,Gs_err,jGs_equivalent,t_min,t_max);
        vXd_t jGp_em_pars=fit_par_jackknife(coord,Gp_em_err,jGp_em_equivalent,t_min,t_max); 
