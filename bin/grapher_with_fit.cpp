@@ -1260,6 +1260,35 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
 	  sqr_Z_par_ave[ibil][ipar]+=jZ_chiral_par[ibil][ijack](ipar)*jZ_chiral_par[ibil][ijack](ipar)/njacks;
 	}
 
+  vd_t jdeltaZS(njacks),jdeltaZP(njacks), jdeltaZS_ZP;
+  double deltaZS_ZP, sqr_deltaZS_ZP, deltaZS_ZP_err;
+  
+  if(name=="ZO_em_RIp_ainv")
+    {
+      for(int ijack=0;ijack<njacks;ijack++)
+	{
+	  jdeltaZS[ijack] = jZ_chiral_par[0][ijack](0);
+	  jdeltaZP[ijack] = jZ_chiral_par[2][ijack](0);
+	}
+
+      jdeltaZS_ZP = jdeltaZS - jdeltaZP;
+
+       for(int ijack=0;ijack<njacks;ijack++)
+	{
+	  deltaZS_SP += jdeltaZS_ZP/njacks;
+	  sqr_deltaZS_ZP += jdeltaZS_ZP*jdeltaZS_ZP/njacks;
+	}
+
+       deltaZS_ZP_err = sqrt((double)(njacks-1))*sqrt(fabs( sqr_deltaZS_ZP - deltaZS_SP*deltaZS_SP));
+
+       cout<<endl;
+       cout<<"deltaZS-deltaZP (1/a)"<<endl;
+       cout<<deltaZS_ZP<<"\t"<<deltaZS_ZP_err<<endl;    
+       
+    }
+
+  
+  
   //  cout<<"DEBUG---(F)"<<endl;
 
   for(int ibil=0; ibil<nbil;ibil++)
