@@ -1278,11 +1278,11 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
 
        for(int ijack=0;ijack<njacks;ijack++)
 	{
-	  deltaZS_SP += jdeltaZS_ZP[ijack]/njacks;
+	  deltaZS_ZP += jdeltaZS_ZP[ijack]/njacks;
 	  sqr_deltaZS_ZP += jdeltaZS_ZP[ijack]*jdeltaZS_ZP[ijack]/njacks;
 	}
 
-       deltaZS_ZP_err = sqrt((double)(njacks-1))*sqrt(fabs( sqr_deltaZS_ZP - deltaZS_SP*deltaZS_SP));
+       deltaZS_ZP_err = sqrt((double)(njacks-1))*sqrt(fabs( sqr_deltaZS_ZP - deltaZS_ZP*deltaZS_ZP));
 
        cout<<endl;
        cout<<"deltaZS-deltaZP (1/a)"<<endl;
