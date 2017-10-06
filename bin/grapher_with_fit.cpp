@@ -1341,7 +1341,7 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
       if(i==2 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-1.2:0.4]"<<endl; //P
       if(i==3 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-0.17:-0.11]"<<endl; //V
       if(i==4 && name=="ZO_em_RIp_ainv") scriptfile[i]<<"set yrange [-0.14:-0.07]"<<endl; //T
-      scriptfile[i]<<"set xrange [-0.05:2.3]"<<endl;
+      scriptfile[i]<<"set xrange [-0.05:2.5]"<<endl;
       if(name=="ZO_RIp_ainv") scriptfile[i]<<"set ylabel '$Z_"<<bil[i]<<"$'"<<endl;
       if(name=="ZO_em_RIp_ainv") scriptfile[i]<<"set ylabel '$\\delta Z_"<<bil[i]<<"$'"<<endl;
       if(name=="ZO_RIp_ainv") scriptfile[i]<<"plot 'plot_data_and_script/plot_"<<name<<"_"<<bil[i]<<"_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_"<<bil[i]<<"$'"<<endl;
