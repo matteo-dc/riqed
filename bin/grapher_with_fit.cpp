@@ -1265,7 +1265,7 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
     {
 
       vd_t jdeltaZS(njacks),jdeltaZP(njacks), jdeltaZS_ZP(njacks);
-      double deltaZS_ZP, sqr_deltaZS_ZP, deltaZS_ZP_err;
+      double deltaZS_ZP(0.0), sqr_deltaZS_ZP(0.0), deltaZS_ZP_err(0.0);
   
       
       for(int ijack=0;ijack<njacks;ijack++)
