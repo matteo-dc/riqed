@@ -111,10 +111,11 @@ void read_mom_list(const string &path)
 }
 
 //create the path-string to the configuration
-string path_to_conf(int i_conf,const string &name)
+string path_to_conf(const string &string_path, int i_conf,const string &name)
 {
     char path[1024];
-    sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/fft_%s",i_conf,name.c_str());
+    sprintf(path,"%sout/%04d/fft_%s",string_path.c_str(),i_conf,name.c_str());
+    //sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/fft_%s",i_conf,name.c_str());
     // sprintf(path,"out/%04d/fft_%s",i_conf,name.c_str());
     return path;
 }
@@ -219,7 +220,7 @@ prop_t make_vertex(const prop_t &prop1, const prop_t &prop2, const int mu, const
 
 
 //create the path-string to the contraction
-string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, const string &T2)
+string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, const string &T2, const string &string_path)
 {
     
     int r1 = mr1%nr;
@@ -228,7 +229,8 @@ string path_to_contr(int i_conf,const int mr1, const string &T1, const int mr2, 
     int m2 = (mr2-r2)/nr;
     
     char path[1024];
-    sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
+    sprintf(path,"%sout/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",string_path.c_str(),i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
+    //sprintf(path,"/marconi_work/INF17_lqcd123_0/sanfo/RIQED/3.90_24_0.0100/out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
     //sprintf(path,"out/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
     
     // cout<<path<<endl;
@@ -906,8 +908,13 @@ int main(int narg,char **arg)
     
     high_resolution_clock::time_point t0=high_resolution_clock::now();
     
-    if (narg!=11){
-        cerr<<"Number of arguments not valid: <mom file> <nconfs> <njacks> <L> <T> <initial conf_id> <step conf_id> <p2fit min> <p2fit max> <action=sym/iwa>"<<endl;
+   // if (narg!=11){
+   //     cerr<<"Number of arguments not valid: <mom file> <nconfs> <njacks> <L> <T> <initial conf_id> <step conf_id> <p2fit min> <p2fit max> <action=sym/iwa>"<<endl;
+   //     exit(0);
+   // }
+    
+    if (narg!=14){
+        cerr<<"Number of arguments not valid: <mom file> <nconfs> <njacks> <L> <T> <initial conf_id> <step conf_id> <p2fit min> <p2fit max> <action=sym/iwa/free> <path before 'out' directory: /marconi_work/.../ > <c1> <c2>"<<endl;
         exit(0);
     }
     
@@ -991,6 +998,11 @@ int main(int narg,char **arg)
         cerr<<"WARNING: wrong action argument. Please write 'sym' for Symanzik action or 'iwa' for Iwasaki action.";
         exit(0);
     }
+    
+    string string_path = arg[11];
+    
+    int c1 = stoi(arg[12]);
+    int c2 = stoi(arg[13]);
     
     //g2_tilde
     double g2=6.0/beta;
@@ -1218,7 +1230,7 @@ int main(int narg,char **arg)
                         if(nhits>1) hit_suffix = "_hit_" + to_string(ihit);
                         
                         int icombo=r + nr*m + nr*nm*t + nr*nm*nt*ihit + nr*nm*nt*nhits*iconf;
-                        string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
+                        string path = path_to_conf(string_path,conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
                         
                         input[icombo].open(path,ios::binary);
                         
@@ -1278,7 +1290,8 @@ int main(int narg,char **arg)
                                 int iconf=clust_size*ijack+i_in_clust;
                                 
                                 int icombo=r + nr*m + nr*nm*t + nr*nm*nt*ihit + nr*nm*nt*nhits*iconf;
-                                string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
+                                string path = path_to_conf(string_path,conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
+                                //string path = path_to_conf(conf_id[iconf],"S_"+Mass[m]+R[r]+Type[t]+hit_suffix);
                                 
                                 int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
                                 
@@ -1521,6 +1534,21 @@ int main(int narg,char **arg)
         
         //  m_eff_equivalent=0.0;
         
+//        for(int mA=0; mA<nm; mA++)
+//            for(int mB=mA; mB<nm; mB++)
+//                for(int r=0; r<nr; r++)
+//                {
+//                    ieq=-(mA*mA/2)+mB+mA*(nm-0.5);
+//                    
+//                    if(imom==0) m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
+//                    
+//                    for(int ijack=0;ijack<njacks;ijack++) jGp_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][2]+jG_0[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
+//                    for(int ijack=0;ijack<njacks;ijack++) jGs_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][0]+jG_0[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
+//                    
+//                    for(int ijack=0;ijack<njacks;ijack++) jGp_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][2]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
+//                    for(int ijack=0;ijack<njacks;ijack++) jGs_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][0]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
+//                }   //ieq={00,01,02,03,11,12,13,22,23,33}
+        
         for(int mA=0; mA<nm; mA++)
             for(int mB=mA; mB<nm; mB++)
                 for(int r=0; r<nr; r++)
@@ -1529,11 +1557,11 @@ int main(int narg,char **arg)
                     
                     if(imom==0) m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
                     
-                    for(int ijack=0;ijack<njacks;ijack++) jGp_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][2]+jG_0[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
-                    for(int ijack=0;ijack<njacks;ijack++) jGs_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][0]+jG_0[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
+                    for(int ijack=0;ijack<njacks;ijack++) jGp_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][r+nr*mB][2]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
+                    for(int ijack=0;ijack<njacks;ijack++) jGs_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][r+nr*mB][0]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
                     
-                    for(int ijack=0;ijack<njacks;ijack++) jGp_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][2]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
-                    for(int ijack=0;ijack<njacks;ijack++) jGs_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][0]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
+                    for(int ijack=0;ijack<njacks;ijack++) jGp_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][2]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
+                    for(int ijack=0;ijack<njacks;ijack++) jGs_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][0]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
                 }   //ieq={00,01,02,03,11,12,13,22,23,33}
         
         
@@ -1674,6 +1702,24 @@ int main(int narg,char **arg)
         vvd_t jGv_em_equivalent(vd_t(0.0,neq),njacks);
         vvd_t jGa_em_equivalent(vd_t(0.0,neq),njacks);
         vvd_t jGt_em_equivalent(vd_t(0.0,neq),njacks);
+       
+//        for(int mA=0; mA<nm; mA++)
+//            for(int mB=mA; mB<nm; mB++)
+//                for(int r=0; r<nr; r++)
+//                {
+//                    ieq=-(mA*mA/2)+mB+mA*(nm-0.5);
+//                    
+//                    //  m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
+//                    for(int ijack=0;ijack<njacks;ijack++) jGv_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][1]+jG_0[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
+//                    for(int ijack=0;ijack<njacks;ijack++) jGa_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][3]+jG_0[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
+//                    for(int ijack=0;ijack<njacks;ijack++) jGt_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][4]+jG_0[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
+//                    
+//                    for(int ijack=0;ijack<njacks;ijack++) jGv_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][1]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
+//                    for(int ijack=0;ijack<njacks;ijack++) jGa_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][3]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
+//                    for(int ijack=0;ijack<njacks;ijack++) jGt_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][4]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
+//                    
+//                } //ieq={00,01,02,03,11,12,13,22,23,33}
+        
         
         for(int mA=0; mA<nm; mA++)
             for(int mB=mA; mB<nm; mB++)
@@ -1682,13 +1728,13 @@ int main(int narg,char **arg)
                     ieq=-(mA*mA/2)+mB+mA*(nm-0.5);
                     
                     //  m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
-                    for(int ijack=0;ijack<njacks;ijack++) jGv_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][1]+jG_0[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
-                    for(int ijack=0;ijack<njacks;ijack++) jGa_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][3]+jG_0[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
-                    for(int ijack=0;ijack<njacks;ijack++) jGt_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][4]+jG_0[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
+                    for(int ijack=0;ijack<njacks;ijack++) jGv_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][r+nr*mB][1]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
+                    for(int ijack=0;ijack<njacks;ijack++) jGa_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][r+nr*mB][3]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
+                    for(int ijack=0;ijack<njacks;ijack++) jGt_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_0_sub[ijack][r+nr*mA][r+nr*mB][4]+jG_0_sub[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
                     
-                    for(int ijack=0;ijack<njacks;ijack++) jGv_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][1]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
-                    for(int ijack=0;ijack<njacks;ijack++) jGa_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][3]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
-                    for(int ijack=0;ijack<njacks;ijack++) jGt_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][4]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
+                    for(int ijack=0;ijack<njacks;ijack++) jGv_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][1]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
+                    for(int ijack=0;ijack<njacks;ijack++) jGa_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][3]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
+                    for(int ijack=0;ijack<njacks;ijack++) jGt_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*(jG_em_a_b_sub[ijack][r+nr*mA][r+nr*mB][4]+jG_em_a_b_sub[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
                     
                 } //ieq={00,01,02,03,11,12,13,22,23,33}
         
@@ -1778,18 +1824,31 @@ int main(int narg,char **arg)
         // m_eff_equivalent_Zq=0.0;
         ieq=0;
         
-        //#pragma omp parallel for collapse(2)
+//        //#pragma omp parallel for collapse(2)
+//        for(int m=0; m<nm; m++)
+//            for(int r=0; r<nr; r++)
+//            {
+//                ieq=m;
+//                if(imom==0)  m_eff_equivalent_Zq[ieq] += eff_mass[r+nr*m][r+nr*m]/nr; //charged channel
+//                //LO
+//                for(int ijack=0;ijack<njacks;ijack++) jZq_equivalent[ijack][ieq] += jZq[ijack][r+nr*m]/nr;
+//                for(int ijack=0;ijack<njacks;ijack++) jSigma1_equivalent[ijack][ieq] += jSigma1[ijack][r+nr*m]/nr;
+//                //EM
+//                for(int ijack=0;ijack<njacks;ijack++) jZq_em_equivalent[ijack][ieq] += jZq_em[ijack][r+nr*m]/nr;
+//                for(int ijack=0;ijack<njacks;ijack++) jSigma1_em_equivalent[ijack][ieq] += jSigma1_em[ijack][r+nr*m]/nr;
+//            }
+        
         for(int m=0; m<nm; m++)
             for(int r=0; r<nr; r++)
             {
                 ieq=m;
                 if(imom==0)  m_eff_equivalent_Zq[ieq] += eff_mass[r+nr*m][r+nr*m]/nr; //charged channel
                 //LO
-                for(int ijack=0;ijack<njacks;ijack++) jZq_equivalent[ijack][ieq] += jZq[ijack][r+nr*m]/nr;
-                for(int ijack=0;ijack<njacks;ijack++) jSigma1_equivalent[ijack][ieq] += jSigma1[ijack][r+nr*m]/nr;
+                for(int ijack=0;ijack<njacks;ijack++) jZq_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*jZq_sub[ijack][r+nr*m]/nr;
+                for(int ijack=0;ijack<njacks;ijack++) jSigma1_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*jSigma1_sub[ijack][r+nr*m]/nr;
                 //EM
-                for(int ijack=0;ijack<njacks;ijack++) jZq_em_equivalent[ijack][ieq] += jZq_em[ijack][r+nr*m]/nr;
-                for(int ijack=0;ijack<njacks;ijack++) jSigma1_em_equivalent[ijack][ieq] += jSigma1_em[ijack][r+nr*m]/nr;
+                for(int ijack=0;ijack<njacks;ijack++) jZq_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*jZq_em_sub[ijack][r+nr*m]/nr;
+                for(int ijack=0;ijack<njacks;ijack++) jSigma1_em_equivalent[ijack][ieq] += (c1*((r+1)%2)+c2*(r%2))*jSigma1_em_sub[ijack][r+nr*m]/nr;
             }
         
         
