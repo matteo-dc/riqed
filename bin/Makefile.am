@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS=-I m4
 
-bin_PROGRAMS=main list_moms deltam_cr effective_mass grapher grapher_fit main_swap
+bin_PROGRAMS=main list_moms deltam_cr effective_mass grapher grapher_fit main_swap grapher_fit_swap
 
 main_SOURCES=main.cpp
 
@@ -15,3 +15,5 @@ grapher_SOURCES=grapher.cpp
 grapher_fit_SOURCES=grapher_with_fit.cpp
 
 main_swap_SOURCES=main_swap.cpp
+
+grapher_fit_swap_SOURCES=grapher_with_fit_swap.cpp
