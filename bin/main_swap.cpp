@@ -469,60 +469,60 @@ double subtract(vector<double> c, double f, double p2, double p4, double g2_tild
 }
 
 //compute fit parameters for a generic function f(x)=A+B*x+C*y(x)+D*z(x)+...
-vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int range_min, const int range_max)
-{
-    int n_par = coord.size();
-    int njacks = y.size();
-    
-    MatrixXd S(n_par,n_par);
-    valarray<VectorXd> Sy(VectorXd(n_par),njacks);
-    valarray<VectorXd> jpars(VectorXd(n_par),njacks);
-    
-    //initialization
-    S=MatrixXd::Zero(n_par,n_par);
-    for(int ijack=0; ijack<njacks; ijack++)
-    {
-        Sy[ijack]=VectorXd::Zero(n_par);
-        jpars[ijack]=VectorXd::Zero(n_par);
-    }
-    
-    //definition
-    for(int i=range_min; i<=range_max; i++)
-    {
-        for(int j=0; j<n_par; j++)
-            for(int k=0; k<n_par; k++)
-                if(std::isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
-        
-        for(int ijack=0; ijack<njacks; ijack++)
-            for(int k=0; k<n_par; k++)
-                if(std::isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]);
-    }
-    
-    for(int ijack=0; ijack<njacks; ijack++)
-        jpars[ijack] = S.colPivHouseholderQr().solve(Sy[ijack]);
-    
-    vvd_t par_array(vd_t(0.0,2),n_par);
-    
-    vd_t par_ave(0.0,n_par), par2_ave(0.0,n_par), par_err(0.0,n_par);
-    
-    for(int k=0; k<n_par; k++)
-    {
-        for(int ijack=0;ijack<njacks;ijack++)
-        {
-            par_ave[k]+=jpars[ijack](k)/njacks;
-            par2_ave[k]+=jpars[ijack](k)*jpars[ijack](k)/njacks;
-        }
-        par_err[k]=sqrt((double)(njacks-1))*sqrt(par2_ave[k]-par_ave[k]*par_ave[k]);
-        
-        par_array[k][0] = par_ave[k];
-        par_array[k][1] = par_err[k];
-    }
-    
-    return par_array;
-    
-}
+//vvd_t fit_par(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int range_min, const int range_max)
+//{
+//    int n_par = coord.size();
+//    int njacks = y.size();
+//    
+//    MatrixXd S(n_par,n_par);
+//    valarray<VectorXd> Sy(VectorXd(n_par),njacks);
+//    valarray<VectorXd> jpars(VectorXd(n_par),njacks);
+//    
+//    //initialization
+//    S=MatrixXd::Zero(n_par,n_par);
+//    for(int ijack=0; ijack<njacks; ijack++)
+//    {
+//        Sy[ijack]=VectorXd::Zero(n_par);
+//        jpars[ijack]=VectorXd::Zero(n_par);
+//    }
+//    
+//    //definition
+//    for(int i=range_min; i<=range_max; i++)
+//    {
+//        for(int j=0; j<n_par; j++)
+//            for(int k=0; k<n_par; k++)
+//                if(std::isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
+//        
+//        for(int ijack=0; ijack<njacks; ijack++)
+//            for(int k=0; k<n_par; k++)
+//                if(std::isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]);
+//    }
+//    
+//    for(int ijack=0; ijack<njacks; ijack++)
+//        jpars[ijack] = S.colPivHouseholderQr().solve(Sy[ijack]);
+//    
+//    vvd_t par_array(vd_t(0.0,2),n_par);
+//    
+//    vd_t par_ave(0.0,n_par), par2_ave(0.0,n_par), par_err(0.0,n_par);
+//    
+//    for(int k=0; k<n_par; k++)
+//    {
+//        for(int ijack=0;ijack<njacks;ijack++)
+//        {
+//            par_ave[k]+=jpars[ijack](k)/njacks;
+//            par2_ave[k]+=jpars[ijack](k)*jpars[ijack](k)/njacks;
+//        }
+//        par_err[k]=sqrt((double)(njacks-1))*sqrt(par2_ave[k]-par_ave[k]*par_ave[k]);
+//        
+//        par_array[k][0] = par_ave[k];
+//        par_array[k][1] = par_err[k];
+//    }
+//    
+//    return par_array;
+//    
+//}
 
-valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, const vd_t &error, const vvd_t &y, const int range_min, const int range_max)
+valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, vd_t &error, const vvd_t &y, const int range_min, const int range_max)
 {
     int n_par = coord.size();
     int njacks = y.size();
@@ -542,6 +542,10 @@ valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, const vd_t &error, cons
     //definition
     for(int i=range_min; i<=range_max; i++)
     {
+        if(error[i]<1.0e-20) error[i]+=1.0e-20;
+        
+        //cout<<y[0][i]<<"\t"<<error[i]<<endl;
+        
         for(int j=0; j<n_par; j++)
             for(int k=0; k<n_par; k++)
                 if(std::isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
@@ -550,6 +554,8 @@ valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, const vd_t &error, cons
             for(int k=0; k<n_par; k++)
                 if(std::isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]);
     }
+    
+    // cout<<endl;
     
     for(int ijack=0; ijack<njacks; ijack++)
         jpars[ijack] = S.colPivHouseholderQr().solve(Sy[ijack]);
@@ -611,7 +617,7 @@ vvvd_t average_Zq(vector<jZ_t> &jZq)
         for(int mr=0;mr<nmr;mr++)
         {
             Zq_ave_err[0][imom][mr]=Zq_ave[imom][mr];
-            Zq_ave_err[1][imom][mr]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[imom][mr]-Zq_ave[imom][mr]*Zq_ave[imom][mr]);
+            Zq_ave_err[1][imom][mr]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Zq_ave[imom][mr]-Zq_ave[imom][mr]*Zq_ave[imom][mr]));
         }
     
     return Zq_ave_err;
@@ -634,7 +640,7 @@ vvd_t average_Zq_chiral(vector<vd_t> &jZq)
     for(int imom=0;imom<moms;imom++)
     {
         Zq_ave_err[0][imom]=Zq_ave[imom];
-        Zq_ave_err[1][imom]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[imom]-Zq_ave[imom]*Zq_ave[imom]);
+        Zq_ave_err[1][imom]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Zq_ave[imom]-Zq_ave[imom]*Zq_ave[imom]));
     }
     
     return Zq_ave_err;
@@ -666,7 +672,7 @@ vvvvvd_t average_Z(vector<jZbil_t> &jZ)
                 for(int k=0;k<5;k++)
                 {
                     Z_ave_err[0][imom][mr_fw][mr_bw][k]=Z_ave[imom][mr_fw][mr_bw][k];
-                    Z_ave_err[1][imom][mr_fw][mr_bw][k]=sqrt((double)(njacks-1))*sqrt(sqr_Z_ave[imom][mr_fw][mr_bw][k]-Z_ave[imom][mr_fw][mr_bw][k]*Z_ave[imom][mr_fw][mr_bw][k]);
+                    Z_ave_err[1][imom][mr_fw][mr_bw][k]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Z_ave[imom][mr_fw][mr_bw][k]-Z_ave[imom][mr_fw][mr_bw][k]*Z_ave[imom][mr_fw][mr_bw][k]));
                 }
     
     return Z_ave_err;
@@ -908,10 +914,10 @@ int main(int narg,char **arg)
     
     high_resolution_clock::time_point t0=high_resolution_clock::now();
     
-   // if (narg!=11){
-   //     cerr<<"Number of arguments not valid: <mom file> <nconfs> <njacks> <L> <T> <initial conf_id> <step conf_id> <p2fit min> <p2fit max> <action=sym/iwa>"<<endl;
-   //     exit(0);
-   // }
+    // if (narg!=11){
+    //     cerr<<"Number of arguments not valid: <mom file> <nconfs> <njacks> <L> <T> <initial conf_id> <step conf_id> <p2fit min> <p2fit max> <action=sym/iwa>"<<endl;
+    //     exit(0);
+    // }
     
     if (narg!=14){
         cerr<<"Number of arguments not valid: <mom file> <nconfs> <njacks> <L> <T> <initial conf_id> <step conf_id> <p2fit min> <p2fit max> <action=sym/iwa/free> <path before 'out' directory: /marconi_work/.../ > <c1> <c2>"<<endl;
@@ -1157,41 +1163,29 @@ int main(int narg,char **arg)
     ifstream input[combo];
     
     //Vector of interesting quantities (ALL MOMS)
-    vector<jZ_t> jZq_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), \
-    jZq_em_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_em_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks));
+    vector<jZ_t> jZq_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jZq_em_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_em_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks));
     
-    vector<vd_t> jZq_sub_allmoms(moms,vd_t(0.0,njacks)), jSigma1_sub_allmoms(moms,vd_t(0.0,njacks)), \
-    jZq_em_sub_allmoms(moms,vd_t(0.0,njacks)), jSigma1_em_sub_allmoms(moms,vd_t(0.0,njacks));
+    vector<vd_t> jZq_sub_allmoms(moms,vd_t(0.0,njacks)), jSigma1_sub_allmoms(moms,vd_t(0.0,njacks)), jZq_em_sub_allmoms(moms,vd_t(0.0,njacks)), jSigma1_em_sub_allmoms(moms,vd_t(0.0,njacks));
     
     //vector<jZ_t> jZq_sub_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_sub_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)),\
     jZq_em_sub_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks)), jSigma1_em_sub_allmoms(moms,vvd_t(vd_t(0.0,nmr),njacks));
     
-    vector<vvd_t> jZq_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq2),njacks)), jSigma1_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq2),njacks)), \
-    jZq_em_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq2),njacks)), jSigma1_em_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq2),njacks));
+    vector<vvd_t> jZq_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq2),njacks)), jSigma1_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq2),njacks)), jZq_em_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq2),njacks)), jSigma1_em_equivalent_allmoms(moms,vvd_t(vd_t(0.0,neq2),njacks));
     
-    vector<jZbil_t> jZ_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)),\
-    jZ_em_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_em_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks));
+    vector<jZbil_t> jZ_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ_em_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_em_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks));
     
-    vector<vvd_t> jZ_sub_allmoms(moms,vvd_t(vd_t(0.0,5),njacks)), jZ1_sub_allmoms(moms,vvd_t(vd_t(0.0,5),njacks)), \
-    jZ_em_sub_allmoms(moms,vvd_t(vd_t(0.0,5),njacks)), jZ1_em_sub_allmoms(moms,vvd_t(vd_t(0.0,5),njacks));
+    vector<vvd_t> jZ_sub_allmoms(moms,vvd_t(vd_t(0.0,5),njacks)), jZ1_sub_allmoms(moms,vvd_t(vd_t(0.0,5),njacks)), jZ_em_sub_allmoms(moms,vvd_t(vd_t(0.0,5),njacks)), jZ1_em_sub_allmoms(moms,vvd_t(vd_t(0.0,5),njacks));
     
-   // vector<jZbil_t> jZ_sub_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_sub_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)),\
-    jZ_em_sub_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_em_sub_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks));
+    // vector<jZbil_t> jZ_sub_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_sub_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)),  jZ_em_sub_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks)), jZ1_em_sub_allmoms(moms,jZbil_t(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks));
     
-    vector<vvd_t> jGv_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGa_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), \
-    jGt_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks));
-    vector<vvd_t> jGp_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGs_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)),\
-    jGp_subpole_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGs_subpole_allmoms(moms,vvd_t(vd_t(neq),njacks));
+    vector<vvd_t> jGv_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGa_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGt_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks));
+    vector<vvd_t> jGp_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGs_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGp_subpole_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGs_subpole_allmoms(moms,vvd_t(vd_t(neq),njacks));
     
-    vector<vvd_t> jGp_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGs_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), \
-    jGp_em_subpole_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGs_em_subpole_allmoms(moms,vvd_t(vd_t(neq),njacks));
-    vector<vvd_t> jGv_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGa_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)),\
-    jGt_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks));
+    vector<vvd_t> jGp_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGs_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGp_em_subpole_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGs_em_subpole_allmoms(moms,vvd_t(vd_t(neq),njacks));
+    vector<vvd_t> jGv_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGa_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)),jGt_em_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks));
     
-    vector<vd_t> jGp_0_chiral_allmoms(moms,vd_t(njacks)),jGa_0_chiral_allmoms(moms,vd_t(njacks)),jGv_0_chiral_allmoms(moms,vd_t(njacks)),\
-    jGs_0_chiral_allmoms(moms,vd_t(njacks)),jGt_0_chiral_allmoms(moms,vd_t(njacks));
-    vector<vd_t> jGp_em_a_b_chiral_allmoms(moms,vd_t(njacks)),jGa_em_a_b_chiral_allmoms(moms,vd_t(njacks)),jGv_em_a_b_chiral_allmoms(moms,vd_t(njacks)), \
-    jGs_em_a_b_chiral_allmoms(moms,vd_t(njacks)),jGt_em_a_b_chiral_allmoms(moms,vd_t(njacks));
+    vector<vd_t> jGp_0_chiral_allmoms(moms,vd_t(njacks)),jGa_0_chiral_allmoms(moms,vd_t(njacks)),jGv_0_chiral_allmoms(moms,vd_t(njacks)), jGs_0_chiral_allmoms(moms,vd_t(njacks)),jGt_0_chiral_allmoms(moms,vd_t(njacks));
+    vector<vd_t> jGp_em_a_b_chiral_allmoms(moms,vd_t(njacks)),jGa_em_a_b_chiral_allmoms(moms,vd_t(njacks)),jGv_em_a_b_chiral_allmoms(moms,vd_t(njacks)), jGs_em_a_b_chiral_allmoms(moms,vd_t(njacks)),jGt_em_a_b_chiral_allmoms(moms,vd_t(njacks));
     
     vector<vd_t> jZq_chiral_allmoms(moms,vd_t(0.0,njacks)),jSigma1_chiral_allmoms(moms,vd_t(0.0,njacks));
     vector<vd_t> jZq_em_chiral_allmoms(moms,vd_t(0.0,njacks)),jSigma1_em_chiral_allmoms(moms,vd_t(0.0,njacks));
@@ -1204,13 +1198,9 @@ int main(int narg,char **arg)
     vector<vvd_t> jZO_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks)),jZO_em_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks));
     
     
-    vector< vXd_t > jGp_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), jGs_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), \
-    jGp_em_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), jGs_em_pars_allmoms(moms,vXd_t(VectorXd(3),njacks));
-    vector< vXd_t > jGv_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGa_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)),\
-    jGt_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGv_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)),\
-    jGa_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGt_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks));
-    vector< vXd_t > jZq_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jSigma1_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)),\
-    jZq_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jSigma1_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks));
+    vector< vXd_t > jGp_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), jGs_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), jGp_em_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), jGs_em_pars_allmoms(moms,vXd_t(VectorXd(3),njacks));
+    vector< vXd_t > jGv_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGa_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGt_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGv_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGa_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGt_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks));
+    vector< vXd_t > jZq_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jSigma1_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jZq_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jSigma1_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks));
     
     
     
@@ -1274,6 +1264,7 @@ int main(int narg,char **arg)
         t0=high_resolution_clock::now();
         
         vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),nt),njacks);  // S[iconf][type][mr]
+        vvprop_t S_em(vprop_t(prop_t::Zero(),nmr),njacks);
         
         for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
             for(size_t ihit=0;ihit<nhits;ihit++)
@@ -1295,7 +1286,7 @@ int main(int narg,char **arg)
                                 
                                 int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
                                 
-                                printf(" i_in_clust %d  iconf %d   ijack %d \n",i_in_clust,iconf,ijack);
+                                // printf(" i_in_clust %d  iconf %d   ijack %d \n",i_in_clust,iconf,ijack);
                                 
                                 //DEBUG
                                 //printf("  Reading propagator from %s\n",path.c_str());
@@ -1303,10 +1294,27 @@ int main(int narg,char **arg)
                                 
                                 //create all the propagators in a given conf and a given mom
                                 S[ijack][t][mr] = read_prop(input[icombo],path);
-                                
-                                if(t==4) S[ijack][t][mr]*=dcompl(0.0,-1.0);
-                                if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);
+                               
+                                //if(t==4) S[ijack][t][mr]*=dcompl(0.0,-1.0);
+                                if(t==4) S[ijack][t][mr]*=dcompl(0.0,1.0);
+                                //if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);
                             }
+                
+#pragma omp parallel for collapse(3)
+                for(int m=0;m<nm;m++)
+                    for(int r=0;r<nr;r++)
+                        for(int ijack=0;ijack<njacks;ijack++)
+                        {
+                            int mr = r + nr*m;
+                            
+                            // Electromagnetic correction:  S_em = S_self + S_tad -+ deltam_cr*S_P
+                            if(r==0) S_em[ijack][mr] = S[ijack][2][mr] + S[ijack][3][mr] + deltam_cr[mr][mr]*S[ijack][4][mr]; //r=0
+                            if(r==1) S_em[ijack][mr] = S[ijack][2][mr] + S[ijack][3][mr] + deltam_cr[mr][mr]*S[ijack][4][mr]; //r=1
+                        }
+                
+                cout<<endl;
+                cout<<"imom :  "<<imom<<"  S_em:  "<<S_em[0][0](0,0)<<"  S_self:  "<<S[0][2][0](0,0)<<"  S_tad: "<<S[0][3][0](0,0)<<"  deltam_cr:  "<<deltam_cr[0][0]<<"  S_P:  "<<S[0][4][0](0,0)<<endl;
+                cout<<endl;
                 
 #pragma omp parallel for collapse (2)
                 for(int ijack=0;ijack<njacks;ijack++)
@@ -1315,25 +1323,37 @@ int main(int narg,char **arg)
                         //int iconf=clust_size*ijack+i_in_clust;
                         
                         jS_0[ijack][mr] += S[ijack][0][mr];
-                        jS_self_tad[ijack][mr] += S[ijack][2][mr] + S[ijack][3][mr];
-                        jS_p[ijack][mr] += S[ijack][4][mr];
+                        // jS_self_tad[ijack][mr] += S[ijack][2][mr] + S[ijack][3][mr];
+                        //jS_p[ijack][mr] += S[ijack][4][mr];
                         // jS_s[ijack][mr] += S[ijack][5][mr];
+                        jS_em[ijack][mr] += S_em[ijack][mr];
                     }
+                
+                // #pragma omp parallel for collapse(2) // shared(njacks,nmr,jS_em,jS_self_tad,deltam_cr,jS_p)    // neglecting scalar correction
+                // 	     for(int ijack=0;ijack<njacks;ijack++)
+                // 	       for(int mr=0;mr<nmr;mr++)
+                // 		 {
+                // 		   if(mr%2==0) jS_em[ijack][mr] = jS_self_tad[ijack][mr] - deltam_cr[mr][mr]*jS_p[ijack][mr]; //r=0
+                // 		   if(mr%2==1) jS_em[ijack][mr] = jS_self_tad[ijack][mr] + deltam_cr[mr][mr]*jS_p[ijack][mr]
+                // 		 }
+                
                 
 #pragma omp parallel for collapse (4)
                 for(int ijack=0;ijack<njacks;ijack++)
                     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
                         for(int mr_bw=0;mr_bw<nmr;mr_bw++)
                             for(int igam=0;igam<16;igam++)
-                            {
-                                //int iconf=clust_size*ijack+i_in_clust;
+                            { //int iconf=clust_size*ijack+i_in_clust;
                                 
                                 jVert_0[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw], S[ijack][0][mr_bw],igam,GAMMA);
-                                jVert_11_self_tad[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][1][mr_fw],S[ijack][1][mr_bw],igam,GAMMA)\
-                                +make_vertex(S[ijack][0][mr_fw],S[ijack][2][mr_bw],igam,GAMMA)+make_vertex(S[ijack][2][mr_fw],S[ijack][0][mr_bw],igam,GAMMA)\
-                                +make_vertex(S[ijack][0][mr_fw],S[ijack][3][mr_bw],igam,GAMMA)+make_vertex(S[ijack][3][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
-                                jVert_p[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw],S[ijack][4][mr_bw],igam,GAMMA)+make_vertex(S[ijack][4][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
+                                
+                                // jVert_11_self_tad[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][1][mr_fw],S[ijack][1][mr_bw],igam,GAMMA) \
+                                // 	 +make_vertex(S[ijack][0][mr_fw],S[ijack][2][mr_bw],igam,GAMMA)+make_vertex(S[ijack][2][mr_fw],S[ijack][0][mr_bw],igam,GAMMA)\
+                                // 	 +make_vertex(S[ijack][0][mr_fw],S[ijack][3][mr_bw],igam,GAMMA)+make_vertex(S[ijack][3][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
+                                // jVert_p[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw],S[ijack][4][mr_bw],igam,GAMMA)+make_vertex(S[ijack][4][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
                                 // jVert_s[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw],S[ijack][5][mr_bw],igam,GAMMA) + make_vertex(S[ijack][5][mr_fw],S[ijack][0][mr_bw],igam,GAMMA);
+                                
+                                jVert_em[ijack][mr_fw][mr_bw][igam] += make_vertex(S[ijack][0][mr_fw],S_em[ijack][mr_bw],igam,GAMMA) +  make_vertex(S_em[ijack][mr_fw],S[ijack][0][mr_bw],igam,GAMMA) +  make_vertex(S[ijack][1][mr_fw],S[ijack][1][mr_bw],igam,GAMMA) ;
                             }
                 
             } //close hits&in_i_clust loop
@@ -1347,13 +1367,15 @@ int main(int narg,char **arg)
         
         //jackknife of propagators
         jS_0 = jackknife_prop(jS_0,nconfs,clust_size,nhits);
-        jS_self_tad = jackknife_prop(jS_self_tad,nconfs,clust_size,nhits);
-        jS_p = jackknife_prop(jS_p,nconfs,clust_size,nhits);
+        //  jS_self_tad = jackknife_prop(jS_self_tad,nconfs,clust_size,nhits);
+        //  jS_p = jackknife_prop(jS_p,nconfs,clust_size,nhits);
+        jS_em = jackknife_prop(jS_em,nconfs,clust_size,nhits);
         
         // //jackknife of vertices
         jVert_0 = jackknife_vertex(jVert_0,nconfs,clust_size,nhits);
-        jVert_11_self_tad = jackknife_vertex(jVert_11_self_tad,nconfs,clust_size,nhits);
-        jVert_p = jackknife_vertex(jVert_p,nconfs,clust_size,nhits);
+        // jVert_11_self_tad = jackknife_vertex(jVert_11_self_tad,nconfs,clust_size,nhits);
+        //  jVert_p = jackknife_vertex(jVert_p,nconfs,clust_size,nhits);
+        jVert_em = jackknife_vertex(jVert_em,nconfs,clust_size,nhits);
         
         t1=high_resolution_clock::now();
         t_span = duration_cast<duration<double>>(t1-t0);
@@ -1363,19 +1385,19 @@ int main(int narg,char **arg)
         t0=high_resolution_clock::now();
         
         
-#pragma omp parallel for collapse(2) // shared(njacks,nmr,jS_em,jS_self_tad,deltam_cr,jS_p)
-        for(int ijack=0;ijack<njacks;ijack++)
-            for(int mr=0;mr<nmr;mr++)
-            {
-                jS_em[ijack][mr] = jS_self_tad[ijack][mr] - deltam_cr[mr][mr]*jS_p[ijack][mr]; // + scalar correction
-            }
-        
-#pragma omp parallel for collapse(4) shared(njacks,nmr,jVert_em,jVert_11_self_tad,deltam_cr,jVert_p)
-        for(int ijack=0;ijack<njacks;ijack++)
-            for(int mr=0;mr<nmr;mr++)
-                for(int mr2=0;mr2<nmr;mr2++)
-                    for(int igam=0;igam<16;igam++)
-                        jVert_em[ijack][mr][mr2][igam] = jVert_11_self_tad[ijack][mr][mr2][igam] - deltam_cr[mr][mr2]*jVert_p[ijack][mr][mr2][igam]; // + scalar correction
+//#pragma omp parallel for collapse(2) // shared(njacks,nmr,jS_em,jS_self_tad,deltam_cr,jS_p)
+//        for(int ijack=0;ijack<njacks;ijack++)
+//            for(int mr=0;mr<nmr;mr++)
+//            {
+//                jS_em[ijack][mr] = jS_self_tad[ijack][mr] - deltam_cr[mr][mr]*jS_p[ijack][mr]; // + scalar correction
+//            }
+//        
+//#pragma omp parallel for collapse(4) shared(njacks,nmr,jVert_em,jVert_11_self_tad,deltam_cr,jVert_p)
+//        for(int ijack=0;ijack<njacks;ijack++)
+//            for(int mr=0;mr<nmr;mr++)
+//                for(int mr2=0;mr2<nmr;mr2++)
+//                    for(int igam=0;igam<16;igam++)
+//                        jVert_em[ijack][mr][mr2][igam] = jVert_11_self_tad[ijack][mr][mr2][igam] - deltam_cr[mr][mr2]*jVert_p[ijack][mr][mr2][igam]; // + scalar correction
         
         
         t1=high_resolution_clock::now();
@@ -1508,18 +1530,19 @@ int main(int narg,char **arg)
         }
         if(strcmp(arg[10],"iwa")==0) c_q={0.6202244+1.8490436/(double)Np[imom],-0.0748167-0.963033/(double)Np[imom],0.0044};      //Iwasaki action
         
-        
-        
+        if(strcmp(arg[10],"free")==0)
+        {
+            c_q={0.0,0.0,0.0};  //Free action
+            
+            c_q_em={0.0,0.0,0.0};
+        }
         
         
         jproj_t jG_em_a_b = -jG_em + jG_a + jG_b;  //minus sign w.r.t. eq. (3.42) thesis.
         
-        
         ///DEBUG///
         // jproj_t jG_em_a_b = -jG_em + jG_a + jG_b;
         ///////////
-        
-        
         
         //Goldstone pole subtraction from jG_p and jG_s & chiral extrapolation of jG_p and jG_s
         t0=high_resolution_clock::now();
@@ -1534,20 +1557,20 @@ int main(int narg,char **arg)
         
         //  m_eff_equivalent=0.0;
         
-//        for(int mA=0; mA<nm; mA++)
-//            for(int mB=mA; mB<nm; mB++)
-//                for(int r=0; r<nr; r++)
-//                {
-//                    ieq=-(mA*mA/2)+mB+mA*(nm-0.5);
-//                    
-//                    if(imom==0) m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
-//                    
-//                    for(int ijack=0;ijack<njacks;ijack++) jGp_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][2]+jG_0[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
-//                    for(int ijack=0;ijack<njacks;ijack++) jGs_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][0]+jG_0[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
-//                    
-//                    for(int ijack=0;ijack<njacks;ijack++) jGp_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][2]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
-//                    for(int ijack=0;ijack<njacks;ijack++) jGs_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][0]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
-//                }   //ieq={00,01,02,03,11,12,13,22,23,33}
+        //        for(int mA=0; mA<nm; mA++)
+        //            for(int mB=mA; mB<nm; mB++)
+        //                for(int r=0; r<nr; r++)
+        //                {
+        //                    ieq=-(mA*mA/2)+mB+mA*(nm-0.5);
+        //
+        //                    if(imom==0) m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
+        //
+        //                    for(int ijack=0;ijack<njacks;ijack++) jGp_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][2]+jG_0[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
+        //                    for(int ijack=0;ijack<njacks;ijack++) jGs_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][0]+jG_0[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
+        //
+        //                    for(int ijack=0;ijack<njacks;ijack++) jGp_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][2]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][2])/(2.0*nr);
+        //                    for(int ijack=0;ijack<njacks;ijack++) jGs_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][0]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][0])/(2.0*nr);
+        //                }   //ieq={00,01,02,03,11,12,13,22,23,33}
         
         for(int mA=0; mA<nm; mA++)
             for(int mB=mA; mB<nm; mB++)
@@ -1590,11 +1613,11 @@ int main(int narg,char **arg)
         
         for(int i=0;i<neq;i++)
         {
-            Gp_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_ave[i]-Gp_ave[i]*Gp_ave[i]);
-            Gs_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gs_ave[i]-Gs_ave[i]*Gs_ave[i]);
+            Gp_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gp_ave[i]-Gp_ave[i]*Gp_ave[i]));
+            Gs_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gs_ave[i]-Gs_ave[i]*Gs_ave[i]));
             
-            Gp_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gp_em_ave[i]-Gp_em_ave[i]*Gp_em_ave[i]);
-            Gs_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gs_em_ave[i]-Gs_em_ave[i]*Gs_em_ave[i]);
+            Gp_em_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gp_em_ave[i]-Gp_em_ave[i]*Gp_em_ave[i]));
+            Gs_em_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gs_em_ave[i]-Gs_em_ave[i]*Gs_em_ave[i]));
         }
         
         //  cout<<"----- G_p average + error vs M^2 (for each jackknife) : error used for the fit ------"<<endl;
@@ -1702,23 +1725,23 @@ int main(int narg,char **arg)
         vvd_t jGv_em_equivalent(vd_t(0.0,neq),njacks);
         vvd_t jGa_em_equivalent(vd_t(0.0,neq),njacks);
         vvd_t jGt_em_equivalent(vd_t(0.0,neq),njacks);
-       
-//        for(int mA=0; mA<nm; mA++)
-//            for(int mB=mA; mB<nm; mB++)
-//                for(int r=0; r<nr; r++)
-//                {
-//                    ieq=-(mA*mA/2)+mB+mA*(nm-0.5);
-//                    
-//                    //  m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
-//                    for(int ijack=0;ijack<njacks;ijack++) jGv_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][1]+jG_0[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
-//                    for(int ijack=0;ijack<njacks;ijack++) jGa_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][3]+jG_0[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
-//                    for(int ijack=0;ijack<njacks;ijack++) jGt_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][4]+jG_0[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
-//                    
-//                    for(int ijack=0;ijack<njacks;ijack++) jGv_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][1]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
-//                    for(int ijack=0;ijack<njacks;ijack++) jGa_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][3]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
-//                    for(int ijack=0;ijack<njacks;ijack++) jGt_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][4]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
-//                    
-//                } //ieq={00,01,02,03,11,12,13,22,23,33}
+        
+        //        for(int mA=0; mA<nm; mA++)
+        //            for(int mB=mA; mB<nm; mB++)
+        //                for(int r=0; r<nr; r++)
+        //                {
+        //                    ieq=-(mA*mA/2)+mB+mA*(nm-0.5);
+        //
+        //                    //  m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr); //charged channel
+        //                    for(int ijack=0;ijack<njacks;ijack++) jGv_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][1]+jG_0[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
+        //                    for(int ijack=0;ijack<njacks;ijack++) jGa_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][3]+jG_0[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
+        //                    for(int ijack=0;ijack<njacks;ijack++) jGt_equivalent[ijack][ieq] += (jG_0[ijack][r+nr*mA][r+nr*mB][4]+jG_0[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
+        //
+        //                    for(int ijack=0;ijack<njacks;ijack++) jGv_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][1]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][1])/(2.0*nr);
+        //                    for(int ijack=0;ijack<njacks;ijack++) jGa_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][3]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][3])/(2.0*nr);
+        //                    for(int ijack=0;ijack<njacks;ijack++) jGt_em_equivalent[ijack][ieq] += (jG_em_a_b[ijack][r+nr*mA][r+nr*mB][4]+jG_em_a_b[ijack][r+nr*mB][r+nr*mA][4])/(2.0*nr);
+        //
+        //                } //ieq={00,01,02,03,11,12,13,22,23,33}
         
         
         for(int mA=0; mA<nm; mA++)
@@ -1767,13 +1790,13 @@ int main(int narg,char **arg)
 #pragma omp parallel for
         for(int i=0;i<neq;i++)
         {
-            Gv_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_ave[i]-Gv_ave[i]*Gv_ave[i]);
-            Ga_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_ave[i]-Ga_ave[i]*Ga_ave[i]);
-            Gt_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_ave[i]-Gt_ave[i]*Gt_ave[i]);
+            Gv_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gv_ave[i]-Gv_ave[i]*Gv_ave[i]));
+            Ga_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Ga_ave[i]-Ga_ave[i]*Ga_ave[i]));
+            Gt_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gt_ave[i]-Gt_ave[i]*Gt_ave[i]));
             
-            Gv_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gv_em_ave[i]-Gv_em_ave[i]*Gv_em_ave[i]);      //Green function with gamma_mu         --> Renorm. with ZA
-            Ga_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Ga_em_ave[i]-Ga_em_ave[i]*Ga_em_ave[i]);      //Green function with gamma_mu*gamma_5 --> Renorm. with ZV
-            Gt_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Gt_em_ave[i]-Gt_em_ave[i]*Gt_em_ave[i]);
+            Gv_em_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gv_em_ave[i]-Gv_em_ave[i]*Gv_em_ave[i]));      //Green function with gamma_mu         --> Renorm. with ZA
+            Ga_em_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Ga_em_ave[i]-Ga_em_ave[i]*Ga_em_ave[i]));      //Green function with gamma_mu*gamma_5 --> Renorm. with ZV
+            Gt_em_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Gt_em_ave[i]-Gt_em_ave[i]*Gt_em_ave[i]));
         }
         
         //range for the fit
@@ -1809,11 +1832,9 @@ int main(int narg,char **arg)
             jGt_em_a_b_chiral[ijack]=jGt_em_pars[ijack](0);
         }
         
-        
         t1=high_resolution_clock::now();
         t_span = duration_cast<duration<double>>(t1-t0);
         cout<<"***** Chiral extrapolation of Gv,Ga&Gt in "<<t_span.count()<<" s ******"<<endl<<endl;
-        
         
         //chiral extrapolation of Zq
         t0=high_resolution_clock::now();
@@ -1824,19 +1845,19 @@ int main(int narg,char **arg)
         // m_eff_equivalent_Zq=0.0;
         ieq=0;
         
-//        //#pragma omp parallel for collapse(2)
-//        for(int m=0; m<nm; m++)
-//            for(int r=0; r<nr; r++)
-//            {
-//                ieq=m;
-//                if(imom==0)  m_eff_equivalent_Zq[ieq] += eff_mass[r+nr*m][r+nr*m]/nr; //charged channel
-//                //LO
-//                for(int ijack=0;ijack<njacks;ijack++) jZq_equivalent[ijack][ieq] += jZq[ijack][r+nr*m]/nr;
-//                for(int ijack=0;ijack<njacks;ijack++) jSigma1_equivalent[ijack][ieq] += jSigma1[ijack][r+nr*m]/nr;
-//                //EM
-//                for(int ijack=0;ijack<njacks;ijack++) jZq_em_equivalent[ijack][ieq] += jZq_em[ijack][r+nr*m]/nr;
-//                for(int ijack=0;ijack<njacks;ijack++) jSigma1_em_equivalent[ijack][ieq] += jSigma1_em[ijack][r+nr*m]/nr;
-//            }
+        //        //#pragma omp parallel for collapse(2)
+        //        for(int m=0; m<nm; m++)
+        //            for(int r=0; r<nr; r++)
+        //            {
+        //                ieq=m;
+        //                if(imom==0)  m_eff_equivalent_Zq[ieq] += eff_mass[r+nr*m][r+nr*m]/nr; //charged channel
+        //                //LO
+        //                for(int ijack=0;ijack<njacks;ijack++) jZq_equivalent[ijack][ieq] += jZq[ijack][r+nr*m]/nr;
+        //                for(int ijack=0;ijack<njacks;ijack++) jSigma1_equivalent[ijack][ieq] += jSigma1[ijack][r+nr*m]/nr;
+        //                //EM
+        //                for(int ijack=0;ijack<njacks;ijack++) jZq_em_equivalent[ijack][ieq] += jZq_em[ijack][r+nr*m]/nr;
+        //                for(int ijack=0;ijack<njacks;ijack++) jSigma1_em_equivalent[ijack][ieq] += jSigma1_em[ijack][r+nr*m]/nr;
+        //            }
         
         for(int m=0; m<nm; m++)
             for(int r=0; r<nr; r++)
@@ -1877,11 +1898,11 @@ int main(int narg,char **arg)
         
         for(int i=0;i<neq2;i++)
         {
-            Zq_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave[i]-Zq_ave[i]*Zq_ave[i]);
-            Sigma1_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Sigma1_ave[i]-Sigma1_ave[i]*Sigma1_ave[i]);
+            Zq_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Zq_ave[i]-Zq_ave[i]*Zq_ave[i]));
+            Sigma1_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Sigma1_ave[i]-Sigma1_ave[i]*Sigma1_ave[i]));
             
-            Zq_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_em_ave[i]-Zq_em_ave[i]*Zq_em_ave[i]);
-            Sigma1_em_err[i]=sqrt((double)(njacks-1))*sqrt(sqr_Sigma1_em_ave[i]-Sigma1_em_ave[i]*Sigma1_em_ave[i]);
+            Zq_em_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Zq_em_ave[i]-Zq_em_ave[i]*Zq_em_ave[i]));
+            Sigma1_em_err[i]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Sigma1_em_ave[i]-Sigma1_em_ave[i]*Sigma1_em_ave[i]));
         }
         
         //linear fit
@@ -1987,6 +2008,7 @@ int main(int narg,char **arg)
             jZq_sub[ijack]=subtract(c_q,jZq_chiral[ijack],p2,p4,g2_tilde);
             jSigma1_sub[ijack]=subtract(c_q,jSigma1_chiral[ijack],p2,p4,g2_tilde);
             //subtraction of O(e^2a^2) effects
+        
             jZq_em_sub[ijack]=subtract(c_q_em,jZq_em_chiral[ijack],p2,p4,3./4.);          //Wilson Action
             jSigma1_em_sub[ijack]=subtract(c_q_em,jSigma1_em_chiral[ijack],p2,p4,3./4.);
         }
@@ -2411,12 +2433,12 @@ int main(int narg,char **arg)
 #pragma omp parallel for collapse(2)
                 for(int ijack=0;ijack<njacks;ijack++)
                     for(int i=0;i<5;i++)
-                            {
-                                jZ_sub_eqmoms[tag][ijack][i] += jZ_sub_allmoms[imom][ijack][i] / count_tag_vector[tag];
-                                jZ1_sub_eqmoms[tag][ijack][i] += jZ1_sub_allmoms[imom][ijack][i] / count_tag_vector[tag];
-                                jZ_em_sub_eqmoms[tag][ijack][i] += jZ_em_sub_allmoms[imom][ijack][i] / count_tag_vector[tag];
-                                jZ1_em_sub_eqmoms[tag][ijack][i] += jZ1_em_sub_allmoms[imom][ijack][i] / count_tag_vector[tag];
-                            }
+                    {
+                        jZ_sub_eqmoms[tag][ijack][i] += jZ_sub_allmoms[imom][ijack][i] / count_tag_vector[tag];
+                        jZ1_sub_eqmoms[tag][ijack][i] += jZ1_sub_allmoms[imom][ijack][i] / count_tag_vector[tag];
+                        jZ_em_sub_eqmoms[tag][ijack][i] += jZ_em_sub_allmoms[imom][ijack][i] / count_tag_vector[tag];
+                        jZ1_em_sub_eqmoms[tag][ijack][i] += jZ1_em_sub_allmoms[imom][ijack][i] / count_tag_vector[tag];
+                    }
 #pragma omp parallel for
                 for(int ijack=0;ijack<njacks;ijack++)
                 {
