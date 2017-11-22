@@ -365,6 +365,7 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
     vvvvd_t den_deltam_cr_corr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nm),nm);
     vvvvd_t deltam_cr_corr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nm),nm);
     
+#pragma omp parallel for collapse (2)
     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
         for(int mr_bw=0;mr_bw<nmr;mr_bw++)
         {
@@ -380,6 +381,7 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
         }
     
     //average over r
+#pragma omp parallel for collapse(5)
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
             for(int r=0;r<nr;r++)
@@ -398,6 +400,7 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
                         jV0P5_P0_ave[m_fw][m_bw][ijack][t] += jV0P5_P0[r+nr*m_fw][r+nr*m_bw][ijack][t]*cr_even/nr;
                     }
     
+#pragma omp parallel for collapse(4)
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
             for(int ijack=0;ijack<njacks;ijack++)
@@ -410,6 +413,7 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
     
     vvvd_t mean_value(vvd_t(vd_t(0.0,T/2+1),nm),nm), sqr_mean_value(vvd_t(vd_t(0.0,T/2+1),nm),nm), error(vvd_t(vd_t(0.0,T/2+1),nm),nm);
     
+#pragma omp parallel for collapse(3)
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
             for(int t=0;t<T/2+1;t++)
@@ -455,6 +459,7 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
     
     vvvd_t deltam_cr(vvd_t(vd_t(0.0,nm),nm),njacks);
     
+#pragma omp parallel for collapse(3)
     for(int ijack=0;ijack<njacks;ijack++)
         for(int m_fw=0;m_fw<nm;m_fw++)
             for(int m_bw=0;m_bw<nm;m_bw++)
