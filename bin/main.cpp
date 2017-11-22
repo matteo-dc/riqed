@@ -2153,10 +2153,10 @@ int main(int narg,char **arg)
         for(int ijack=0;ijack<njacks;ijack++)
             for(int ieq=0; ieq<neq2; ieq++)
             {
-                jZq_equivalent_allmoms[imom]=jZq_equivalent;
-                jSigma1_equivalent_allmoms[imom]=jSigma1_equivalent;
-                jZq_em_equivalent_allmoms[imom]=jZq_em_equivalent;
-                jSigma1_em_equivalent_allmoms[imom]=jSigma1_em_equivalent;
+                jZq_equivalent_allmoms[imom][ijack][ieq]=jZq_equivalent[ijack][ieq];
+                jSigma1_equivalent_allmoms[imom][ijack][ieq]=jSigma1_equivalent[ijack][ieq];
+                jZq_em_equivalent_allmoms[imom][ijack][ieq]=jZq_em_equivalent[ijack][ieq];
+                jSigma1_em_equivalent_allmoms[imom][ijack][ieq]=jSigma1_em_equivalent[ijack][ieq];
             }
 #pragma omp parallel for
         for(int ijack=0;ijack<njacks;ijack++)
