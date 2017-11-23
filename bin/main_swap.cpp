@@ -352,7 +352,7 @@ vvd_t compute_jZq(vprop_t GAMMA, jprop_t jS_inv, double L, double T, int imom)
     vd_t p(0.0,4);
     vd_t p_tilde(0.0,4);
     prop_t p_slash(prop_t::Zero());
-    double p2=0.0;
+    double p2_not_tilde=0.0 , p2=0.0;
     
     // vvdcompl_t jZq(vdcompl_t(0.0,nmr),njacks);
     vvd_t jZq_real(vd_t(0.0,nmr),njacks);
@@ -376,6 +376,8 @@ vvd_t compute_jZq(vprop_t GAMMA, jprop_t jS_inv, double L, double T, int imom)
     /*  Note that: p_slash*p_slash=p2*GAMMA[0]  */
     
     //compute p^2
+    for(int coord=0;coord<4;coord++)
+        p2_not_tilde+=p[coord]*p[coord];
     for(int coord=0;coord<4;coord++)
         p2+=p_tilde[coord]*p_tilde[coord];
     
@@ -1439,12 +1441,15 @@ int main(int narg,char **arg)
         vd_t p(0.0,4);
         vd_t p_tilde(0.0,4);
         double p2=0.0;
+        double p2_not_tilde=0.0;
         double p2_space=0.0;
         double p4=0.0;  //for the democratic filter
         
         p={2*M_PI*mom_list[imom][1]/L,2*M_PI*mom_list[imom][2]/L,2*M_PI*mom_list[imom][3]/L,2*M_PI*(mom_list[imom][0]+0.5)/T};
         p_tilde={sin(p[0]),sin(p[1]),sin(p[2]),sin(p[3])};
         
+        for(int coord=0;coord<4;coord++)
+            p2_not_tilde+=p[coord]*p[coord];
         for(int coord=0;coord<4;coord++)
             p2+=p_tilde[coord]*p_tilde[coord];
         for(int coord=0;coord<3;coord++)
@@ -2026,12 +2031,12 @@ int main(int narg,char **arg)
         vd_t cO(0.0,5);
         
         // Note that ZV  ZA are RGI because they're protected by the WIs
-        cq=q_evolution_to_RIp_ainv(Nf,ainv,p2);
-        cO[0]=S_evolution_to_RIp_ainv(Nf,ainv,p2); //S
+        cq=q_evolution_to_RIp_ainv(Nf,ainv,p2_not_tilde);
+        cO[0]=S_evolution_to_RIp_ainv(Nf,ainv,p2_not_tilde); //S
         cO[1]=1.; //A
-        cO[2]=P_evolution_to_RIp_ainv(Nf,ainv,p2); //P
+        cO[2]=P_evolution_to_RIp_ainv(Nf,ainv,p2_not_tilde); //P
         cO[3]=1.; //V
-        cO[4]=T_evolution_to_RIp_ainv(Nf,ainv,p2); //T
+        cO[4]=T_evolution_to_RIp_ainv(Nf,ainv,p2_not_tilde); //T
         
         jSigma1_RIp_ainv = jSigma1_sub/cq;
         jSigma1_em_RIp_ainv = jSigma1_em_sub/cq;
