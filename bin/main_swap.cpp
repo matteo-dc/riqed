@@ -15,7 +15,7 @@
 #include <iomanip>
 
 #define lambdaQCD 0.250
-#define Z3 1.20206
+#define Z3 1.2020569031595942
 #define Nc 3.0
 
 using namespace std;
@@ -1020,7 +1020,6 @@ int main(int narg,char **arg)
     high_resolution_clock::time_point t1=high_resolution_clock::now();
     duration<double> t_span = duration_cast<duration<double>>(t1-t0);
     cout<<"***** Assigned input values in  "<<t_span.count()<<" s ******"<<endl<<endl;
-    
     
     //Delta m_cr
     
@@ -2583,8 +2582,7 @@ print_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     for(int imom=0; imom<moms; imom++)
         cout<<p2_vector_allmoms[imom]<<" "<<Gt_0_sub_allmoms[0][imom]<<"  "<<Gt_0_sub_allmoms[1][imom]<<endl;
 
-
-
+  
     
     return 0;
     
