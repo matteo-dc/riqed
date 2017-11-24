@@ -1198,7 +1198,7 @@ void plot_ZO_RIp_ainv(vector<vvd_t> &jZ_chiral, vector<double> &p2_vector, const
     }
     cout<<endl;
     
-    if(name=="ZO_em_RIp_ainv")
+    if(name=="ZO_em_RIp_ainv" || name=="ZO_em_sub_RIp_ainv")
     {
         for(int i=0;i<5;i++)
         {
@@ -1363,6 +1363,9 @@ int main(int narg,char **arg)
     
     vector<vd_t> jSigma1_RIp_ainv_allmoms(moms,vd_t(0.0,njacks)),jSigma1_em_RIp_ainv_allmoms(moms,vd_t(0.0,njacks));
     vector<vvd_t> jZO_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks)),jZO_em_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks));
+
+    vector<vd_t> jSigma1_sub_RIp_ainv_allmoms(moms,vd_t(0.0,njacks)),jSigma1_em_sub_RIp_ainv_allmoms(moms,vd_t(0.0,njacks));
+    vector<vvd_t> jZO_sub_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks)),jZO_em_sub_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks));
     
     vd_t m_eff_equivalent(1.0,neq);
     vd_t m_eff_equivalent_Zq(0.0,neq2);
@@ -1413,7 +1416,9 @@ int main(int narg,char **arg)
     vector<vd_t> jSigma1_RIp_ainv_eqmoms(neq_moms,vd_t(0.0,njacks)),jSigma1_em_RIp_ainv_eqmoms(neq_moms,vd_t(0.0,njacks));
     vector<vvd_t> jZO_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)),jZO_em_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
     
-    
+    vector<vd_t> jSigma1_sub_RIp_ainv_eqmoms(neq_moms,vd_t(0.0,njacks)),jSigma1_em_sub_RIp_ainv_eqmoms(neq_moms,vd_t(0.0,njacks));
+    vector<vvd_t> jZO_sub_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)),jZO_em_sub_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
+ 
     
 #define READ(NAME)				\
 read_vec(NAME##_##allmoms,"allmoms/"#NAME);	\
@@ -1504,7 +1509,12 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     READ(jSigma1_em_RIp_ainv);
     READ(jZO_RIp_ainv);
     READ(jZO_em_RIp_ainv);
-    
+
+    READ(jSigma1_sub_RIp_ainv);
+    READ(jSigma1_em_sub_RIp_ainv);
+    READ(jZO_sub_RIp_ainv);
+    READ(jZO_em_sub_RIp_ainv);
+
 #undef READ
     
     read_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
@@ -1703,6 +1713,12 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z RIp_ainv  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     
+    cout<<"Sigma1(1/a)"<<endl;
+    plot_Zq_RIp_ainv(jSigma1_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_RIp_ainv","eqmoms");
+    
+    cout<<"Sigma1(1/a) em correction"<<endl;
+    plot_Zq_RIp_ainv(jSigma1_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_em_RIp_ainv","eqmoms");
+    
     cout<<"Z1(1/a) -- p_min>1"<<endl;
     plot_ZO_RIp_ainv(jZO_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_RIp_ainv","eqmoms",1.0);
     
@@ -1721,13 +1737,33 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     cout<<"Z1(1/a) em correction -- p_min>1.1"<<endl;
     plot_ZO_RIp_ainv(jZO_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_RIp_ainv","eqmoms",1.1);
     
+    ////////////
     
+    cout<<"Sigma1_sub(1/a)"<<endl;
+    plot_Zq_RIp_ainv(jSigma1_sub_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_sub_RIp_ainv","eqmoms");
     
-    cout<<"Sigma1(1/a)"<<endl;
-    plot_Zq_RIp_ainv(jSigma1_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_RIp_ainv","eqmoms");
+    cout<<"Sigma1_sub(1/a) em correction"<<endl;
+    plot_Zq_RIp_ainv(jSigma1_em_sub_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_em_sub_RIp_ainv","eqmoms");
     
-    cout<<"Sigma1(1/a) em correction"<<endl;
-    plot_Zq_RIp_ainv(jSigma1_em_RIp_ainv_eqmoms,p2_vector_eqmoms,"Sigma1_em_RIp_ainv","eqmoms");
+    cout<<"Z1_sub(1/a) -- p_min>1"<<endl;
+    plot_ZO_RIp_ainv(jZO_sub_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_sub_RIp_ainv","eqmoms",1.0);
+    
+    cout<<"Z1_sub(1/a) em correction -- p_min>1"<<endl;
+    plot_ZO_RIp_ainv(jZO_em_sub_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_sub_RIp_ainv","eqmoms",1.0);
+    
+    cout<<"Z1_sub(1/a) -- p_min>0.9"<<endl;
+    plot_ZO_RIp_ainv(jZO_sub_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_sub_RIp_ainv","eqmoms",0.9);
+    
+    cout<<"Z1_sub(1/a) em correction -- p_min>0.9"<<endl;
+    plot_ZO_RIp_ainv(jZO_em_sub_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_sub_RIp_ainv","eqmoms",0.9);
+    
+    cout<<"Z1_sub(1/a) -- p_min>1.1"<<endl;
+    plot_ZO_RIp_ainv(jZO_sub_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_sub_RIp_ainv","eqmoms",1.1);
+    
+    cout<<"Z1_sub(1/a) em correction -- p_min>1.1"<<endl;
+    plot_ZO_RIp_ainv(jZO_em_sub_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_sub_RIp_ainv","eqmoms",1.1);
+    
+    /////////////
     
     
     

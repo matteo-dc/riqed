@@ -1177,7 +1177,9 @@ int main(int narg,char **arg)
     
     vector<vd_t> jSigma1_RIp_ainv_allmoms(moms,vd_t(0.0,njacks)),jSigma1_em_RIp_ainv_allmoms(moms,vd_t(0.0,njacks));
     vector<vvd_t> jZO_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks)),jZO_em_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks));
-    
+
+    vector<vd_t> jSigma1_sub_RIp_ainv_allmoms(moms,vd_t(0.0,njacks)),jSigma1_em_sub_RIp_ainv_allmoms(moms,vd_t(0.0,njacks));
+    vector<vvd_t> jZO_sub_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks)),jZO_em_sub_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks));
     
     vector< vXd_t > jGp_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), jGs_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), jGp_em_pars_allmoms(moms,vXd_t(VectorXd(3),njacks)), jGs_em_pars_allmoms(moms,vXd_t(VectorXd(3),njacks));
     vector< vXd_t > jGv_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGa_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGt_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGv_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGa_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks)), jGt_em_pars_allmoms(moms,vXd_t(VectorXd(2),njacks));
@@ -2027,28 +2029,41 @@ int main(int narg,char **arg)
         vd_t jSigma1_RIp_ainv(0.0,njacks),jSigma1_em_RIp_ainv(0.0,njacks);
         vvd_t jZO_RIp_ainv(vd_t(0.0,5),njacks),jZO_em_RIp_ainv(vd_t(0.0,5),njacks);
         
+        vd_t jSigma1_sub_RIp_ainv(0.0,njacks),jSigma1_em_sub_RIp_ainv(0.0,njacks);
+        vvd_t jZO_sub_RIp_ainv(vd_t(0.0,5),njacks),jZO_em_sub_RIp_ainv(vd_t(0.0,5),njacks);
+        
         double cq;
         vd_t cO(0.0,5);
         
         // Note that ZV  ZA are RGI because they're protected by the WIs
         cq=q_evolution_to_RIp_ainv(Nf,ainv,p2_not_tilde);
         cO[0]=S_evolution_to_RIp_ainv(Nf,ainv,p2_not_tilde); //S
-        cO[1]=1.; //A
+        cO[1]=1.0; //A
         cO[2]=P_evolution_to_RIp_ainv(Nf,ainv,p2_not_tilde); //P
-        cO[3]=1.; //V
+        cO[3]=1.0; //V
         cO[4]=T_evolution_to_RIp_ainv(Nf,ainv,p2_not_tilde); //T
         
-        jSigma1_RIp_ainv = jSigma1_sub/cq;
-        jSigma1_em_RIp_ainv = jSigma1_em_sub/cq;
+        jSigma1_RIp_ainv = jSigma1_chiral/cq;
+        jSigma1_em_RIp_ainv = jSigma1_em_chiral/cq;
+        
+        jSigma1_sub_RIp_ainv = jSigma1_sub/cq;
+        jSigma1_em_sub_RIp_ainv = jSigma1_em_sub/cq;
         
         for(int ijack=0;ijack<njacks;ijack++)
             for (int ibil=0; ibil<5; ibil++)
             {
-                jZO_RIp_ainv[ijack][ibil]=jZ1_sub[ijack][ibil]/cO[ibil];           //jZO_RIp_ainv = {S, A, P, V, T}
-                jZO_em_RIp_ainv[ijack][ibil]=jZ1_em_sub[ijack][ibil]/cO[ibil];
+                jZO_RIp_ainv[ijack][ibil]=jZ1_chiral[ijack][ibil]/cO[ibil];           //jZO_RIp_ainv = {S, A, P, V, T}
+                jZO_em_RIp_ainv[ijack][ibil]=jZ1_em_chiral[ijack][ibil]/cO[ibil];
+                
+                jZO_sub_RIp_ainv[ijack][ibil]=jZ1_sub[ijack][ibil]/cO[ibil];
+                jZO_em_sub_RIp_ainv[ijack][ibil]=jZ1_em_sub[ijack][ibil]/cO[ibil];
             }
- 
-        
+        cout<<"ZQ evolver ______"<<endl;
+        cout<<p2_not_tilde<<"  "<<q_evolution_to_RIp_ainv(Nf,ainv,p2_not_tilde)<<endl;
+        cout<<"ZS evolver ______"<<endl;
+        cout<<p2_not_tilde<<"  "<<S_evolution_to_RIp_ainv(Nf,ainv,p2_not_tilde)<<endl;
+        cout<<"ZT evolver ______"<<endl;
+        cout<<p2_not_tilde<<"  "<<T_evolution_to_RIp_ainv(Nf,ainv,p2_not_tilde)<<endl;
         //-------------------------------------------------------------------------------------//
         //-------------------------------------------------------------------------------------//
         //-------------------------------------------------------------------------------------//
@@ -2189,6 +2204,12 @@ int main(int narg,char **arg)
             jZO_RIp_ainv_allmoms[imom][ijack]=jZO_RIp_ainv[ijack];
             jZO_em_RIp_ainv_allmoms[imom][ijack]=jZO_em_RIp_ainv[ijack];
             
+            jSigma1_sub_RIp_ainv_allmoms[imom][ijack]=jSigma1_sub_RIp_ainv[ijack];
+            jSigma1_em_sub_RIp_ainv_allmoms[imom][ijack]=jSigma1_em_sub_RIp_ainv[ijack];
+            
+            jZO_sub_RIp_ainv_allmoms[imom][ijack]=jZO_sub_RIp_ainv[ijack];
+            jZO_em_sub_RIp_ainv_allmoms[imom][ijack]=jZO_em_sub_RIp_ainv[ijack];
+            
         }
 #pragma omp parallel for collapse(2)
         for(int ijack=0;ijack<njacks;ijack++)
@@ -2299,6 +2320,8 @@ int main(int narg,char **arg)
     vector<vd_t> jSigma1_RIp_ainv_eqmoms(neq_moms,vd_t(0.0,njacks)),jSigma1_em_RIp_ainv_eqmoms(neq_moms,vd_t(0.0,njacks));
     vector<vvd_t> jZO_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)),jZO_em_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
     
+    vector<vd_t> jSigma1_sub_RIp_ainv_eqmoms(neq_moms,vd_t(0.0,njacks)),jSigma1_em_sub_RIp_ainv_eqmoms(neq_moms,vd_t(0.0,njacks));
+    vector<vvd_t> jZO_sub_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)),jZO_em_sub_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
     
     
     for(int tag=0;tag<neq_moms;tag++)
@@ -2356,7 +2379,10 @@ int main(int narg,char **arg)
                     
                     jSigma1_RIp_ainv_eqmoms[tag][ijack] += jSigma1_RIp_ainv_allmoms[imom][ijack]/ count_tag_vector[tag];
                     jSigma1_em_RIp_ainv_eqmoms[tag][ijack] += jSigma1_em_RIp_ainv_allmoms[imom][ijack]/ count_tag_vector[tag];
-                    
+                   
+                    jSigma1_sub_RIp_ainv_eqmoms[tag][ijack] += jSigma1_sub_RIp_ainv_allmoms[imom][ijack]/ count_tag_vector[tag];
+                    jSigma1_em_sub_RIp_ainv_eqmoms[tag][ijack] += jSigma1_em_sub_RIp_ainv_allmoms[imom][ijack]/ count_tag_vector[tag];
+
                     jGp_em_a_b_chiral_eqmoms[tag][ijack] += jGp_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
                     jGa_em_a_b_chiral_eqmoms[tag][ijack] += jGa_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
                     jGv_em_a_b_chiral_eqmoms[tag][ijack] += jGv_em_a_b_chiral_allmoms[imom][ijack] / count_tag_vector[tag];
@@ -2408,7 +2434,9 @@ int main(int narg,char **arg)
                         
                         jZO_RIp_ainv_eqmoms[tag][ijack][i] += jZO_RIp_ainv_allmoms[imom][ijack][i] / count_tag_vector[tag];
                         jZO_em_RIp_ainv_eqmoms[tag][ijack][i] += jZO_em_RIp_ainv_allmoms[imom][ijack][i] / count_tag_vector[tag];
-                        
+                       
+                        jZO_sub_RIp_ainv_eqmoms[tag][ijack][i] += jZO_sub_RIp_ainv_allmoms[imom][ijack][i] / count_tag_vector[tag];
+                        jZO_em_sub_RIp_ainv_eqmoms[tag][ijack][i] += jZO_em_sub_RIp_ainv_allmoms[imom][ijack][i] / count_tag_vector[tag];
                     }
                 
                 for(int ijack=0;ijack<njacks;ijack++)
@@ -2515,7 +2543,11 @@ print_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     PRINT(jSigma1_em_RIp_ainv);
     PRINT(jZO_RIp_ainv);
     PRINT(jZO_em_RIp_ainv);
-    
+    PRINT(jSigma1_sub_RIp_ainv);
+    PRINT(jSigma1_em_sub_RIp_ainv);
+    PRINT(jZO_sub_RIp_ainv);
+    PRINT(jZO_em_sub_RIp_ainv);
+
 #undef PRINT
     
     print_vec(m_eff_equivalent,"allmoms/m_eff_equivalent");
