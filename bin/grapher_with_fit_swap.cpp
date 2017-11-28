@@ -1329,7 +1329,8 @@ int main(int narg,char **arg)
     jZq_em_sub_allmoms(moms,vd_t(0.0,njacks)), jSigma1_em_sub_allmoms(moms,vd_t(0.0,njacks));
     
     vector<vvd_t> jZ_sub_allmoms(moms,vvd_t(vd_t(0.0,5),njacks)), jZ1_sub_allmoms(moms,vvd_t(vd_t(0.0,5),njacks)), \
-    jZ_em_sub_allmoms(moms,vvd_t(vd_t(0.0,5),njacks)), jZ1_em_sub_allmoms(moms,vvd_t(vd_t(0.0,5),njacks));
+    jZ_em_sub_allmoms(moms,vvd_t(vd_t(0.0,5),njacks)), jZ1_em_sub_allmoms(moms,vvd_t(vd_t(0.0,5),njacks)), \
+    jZ_em_sub_strong_allmoms(moms,vvd_t(vd_t(0.0,5),njacks)), jZ1_em_sub_strong_allmoms(moms,vvd_t(vd_t(0.0,5),njacks));
     
     vector<vvd_t> jGp_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGs_equivalent_allmoms(moms,vvd_t(vd_t(neq),njacks)),\
     jGp_subpole_allmoms(moms,vvd_t(vd_t(neq),njacks)), jGs_subpole_allmoms(moms,vvd_t(vd_t(neq),njacks));
@@ -1367,6 +1368,8 @@ int main(int narg,char **arg)
     vector<vd_t> jSigma1_sub_RIp_ainv_allmoms(moms,vd_t(0.0,njacks)),jSigma1_em_sub_RIp_ainv_allmoms(moms,vd_t(0.0,njacks));
     vector<vvd_t> jZO_sub_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks)),jZO_em_sub_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks));
     
+    vector<vvd_t> jZO_em_sub_strong_RIp_ainv_allmoms(moms,vvd_t(vd_t(5),njacks));
+    
     vd_t m_eff_equivalent(1.0,neq);
     vd_t m_eff_equivalent_Zq(0.0,neq2);
     
@@ -1381,7 +1384,8 @@ int main(int narg,char **arg)
     jZq_em_sub_eqmoms(neq_moms,vd_t(0.0,njacks)), jSigma1_em_sub_eqmoms(neq_moms,vd_t(0.0,njacks));
     
     vector<vvd_t> jZ_sub_eqmoms(neq_moms,vvd_t(vd_t(0.0,5),njacks)), jZ1_sub_eqmoms(neq_moms,vvd_t(vd_t(0.0,5),njacks)), \
-    jZ_em_sub_eqmoms(neq_moms,vvd_t(vd_t(0.0,5),njacks)), jZ1_em_sub_eqmoms(neq_moms,vvd_t(vd_t(0.0,5),njacks));
+    jZ_em_sub_eqmoms(neq_moms,vvd_t(vd_t(0.0,5),njacks)), jZ1_em_sub_eqmoms(neq_moms,vvd_t(vd_t(0.0,5),njacks)), \
+    jZ_em_sub_strong_eqmoms(neq_moms,vvd_t(vd_t(0.0,5),njacks)), jZ1_em_sub_strong_eqmoms(neq_moms,vvd_t(vd_t(0.0,5),njacks));
     
     vector<vvd_t> jGp_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_equivalent_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)),\
     jGp_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks)), jGs_subpole_eqmoms(neq_moms,vvd_t(vd_t(neq),njacks));
@@ -1419,6 +1423,8 @@ int main(int narg,char **arg)
     vector<vd_t> jSigma1_sub_RIp_ainv_eqmoms(neq_moms,vd_t(0.0,njacks)),jSigma1_em_sub_RIp_ainv_eqmoms(neq_moms,vd_t(0.0,njacks));
     vector<vvd_t> jZO_sub_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks)),jZO_em_sub_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
  
+    vector<vvd_t> jZO_em_sub_strong_RIp_ainv_eqmoms(neq_moms,vvd_t(vd_t(5),njacks));
+
     
 #define READ(NAME)				\
 read_vec(NAME##_##allmoms,"allmoms/"#NAME);	\
@@ -1445,6 +1451,8 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     READ(jZ1_sub);
     READ(jZ_em_sub);
     READ(jZ1_em_sub);
+    READ(jZ_em_sub_strong);
+    READ(jZ1_em_sub_strong);
     
     READ(jGp_equivalent);
     READ(jGs_equivalent);
@@ -1514,6 +1522,7 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     READ(jSigma1_em_sub_RIp_ainv);
     READ(jZO_sub_RIp_ainv);
     READ(jZO_em_sub_RIp_ainv);
+    READ(jZO_em_sub_strong_RIp_ainv);
 
 #undef READ
     
@@ -1765,6 +1774,26 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     
     /////////////
     
+    cout<<"Z1_sub(1/a) -- p_min>1"<<endl;
+    plot_ZO_RIp_ainv(jZO_sub_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_sub_RIp_ainv","eqmoms",1.0);
+    
+    cout<<"Z1_sub(1/a) em correction -- p_min>1"<<endl;
+    plot_ZO_RIp_ainv(jZO_em_sub_strong_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_sub_strong_RIp_ainv","eqmoms",1.0);
+    
+    cout<<"Z1_sub(1/a) -- p_min>0.9"<<endl;
+    plot_ZO_RIp_ainv(jZO_sub_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_sub_RIp_ainv","eqmoms",0.9);
+    
+    cout<<"Z1_sub(1/a) em correction -- p_min>0.9"<<endl;
+    plot_ZO_RIp_ainv(jZO_em_sub_strong_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_sub_strong_RIp_ainv","eqmoms",0.9);
+    
+    cout<<"Z1_sub(1/a) -- p_min>1.1"<<endl;
+    plot_ZO_RIp_ainv(jZO_sub_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_sub_RIp_ainv","eqmoms",1.1);
+    
+    cout<<"Z1_sub(1/a) em correction -- p_min>1.1"<<endl;
+    plot_ZO_RIp_ainv(jZO_em_sub_strong_RIp_ainv_eqmoms,p2_vector_eqmoms,"ZO_em_sub_strong_RIp_ainv","eqmoms",1.1);
+    
+    /////////////
+
     
     
     vvvd_t eff_mass_array(vvd_t(vd_t(0.0,2),nmr),nmr);
