@@ -1883,12 +1883,12 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
             cout<<mr_fw%nr<<"\t"<<(mr_fw - mr_fw%nr)/nr<<"\t"<<mr_bw%nr<<"\t"<<(mr_bw - mr_bw%nr)/nr<<"\t"<<eff_mass[mr_fw][mr_bw]<<endl;
     
     // cout<<"eff_mass: "<<eff_mass_array[0]<<" +- "<<eff_mass_array[1]<<endl;
-    
-    cout<<endl;
-    cout<<moms<<endl;
-    for(int imom=0;imom<moms;imom++)
-        for(int ijack=0;ijack<njacks;ijack++)
-            cout<<"imom "<<imom<<" ijack "<<ijack<<" "<<jZ_chiral_allmoms[imom][ijack][1]<<"  "<<jZq_chiral_allmoms[imom][ijack]<<" "<<jGv_0_chiral_allmoms[imom][ijack]<<endl;
+//    
+//    cout<<endl;
+//    cout<<moms<<endl;
+//    for(int imom=0;imom<moms;imom++)
+//        for(int ijack=0;ijack<njacks;ijack++)
+//            cout<<"imom "<<imom<<" ijack "<<ijack<<" "<<jZ_chiral_allmoms[imom][ijack][1]<<"  "<<jZq_chiral_allmoms[imom][ijack]<<" "<<jGv_0_chiral_allmoms[imom][ijack]<<endl;
     
     return 0;
 }
