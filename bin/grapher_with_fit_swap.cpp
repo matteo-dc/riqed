@@ -1658,6 +1658,10 @@ read_vec(NAME##_##eqmoms,"eqmoms/"#NAME)
     
     plot_Z_sub(jZ1_em_chiral_allmoms,jZ1_em_sub_allmoms,p2_vector_allmoms,"Z1_em_correction","allmoms");
 
+    plot_Z_sub(jZ1_em_chiral_eqmoms,jZ1_em_sub_strong_eqmoms,p2_vector_eqmoms,"Z1_em_correction_strong","eqmoms");
+    
+    plot_Z_sub(jZ1_em_chiral_allmoms,jZ1_em_sub_strong_allmoms,p2_vector_allmoms,"Z1_em_correction_strong","allmoms");
+
     
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z chiral extrapolation  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     
