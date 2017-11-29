@@ -768,7 +768,7 @@ void plot_Z_sub(vector<vvd_t> &jZ, vector<vvd_t> &jZ_sub, vector<double> &p2_vec
         
         
         int moms=p2_vector.size();
-        int njacks=jZ.size();
+        int njacks=jZ[0].size();
         vector<vd_t> jZP_over_S(moms,vd_t(0.0,njacks));
         
 #pragma omp parallel for collapse(2)
