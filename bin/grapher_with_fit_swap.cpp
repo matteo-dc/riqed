@@ -780,7 +780,7 @@ void plot_Z_sub(vector<vvd_t> &jZ, vector<vvd_t> &jZ_sub, vector<double> &p2_vec
         
         ofstream datafile2;
         
-        datafile2.open("plot_data_and_script/plot_"+name+"_P_over_S_"+all_or_eq_moms+"_data.txt");
+        datafile2.open("plot_data_and_script/plot_"+name+"_P_over_S_sub_"+all_or_eq_moms+"_data.txt");
         
         for(size_t imom=0;imom<p2_vector.size();imom++)
             datafile2<<p2_vector[imom]<<"\t"<<ZP_over_S[0][imom]<<"\t"<<ZP_over_S[1][imom]<<endl;
@@ -790,21 +790,21 @@ void plot_Z_sub(vector<vvd_t> &jZ, vector<vvd_t> &jZ_sub, vector<double> &p2_vec
         
         ofstream scriptfile2;
         
-        scriptfile2.open("plot_data_and_script/plot_"+name+"_P_over_S_"+all_or_eq_moms+"_script.txt");
+        scriptfile2.open("plot_data_and_script/plot_"+name+"_P_over_S_sub_"+all_or_eq_moms+"_script.txt");
         scriptfile2<<"set autoscale xy"<<endl;
         scriptfile2<<"set xlabel '$a^2\\tilde{p}^2$'"<<endl;
         // scriptfile2<<"set yrange [0.7:0.9]"<<endl;
         scriptfile2<<"set ylabel '$Z_P/Z_S$'"<<endl;
-        scriptfile2<<"plot 'plot_data_and_script/plot_"<<name<<"_P_over_S_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_P/Z_S$ chiral'"<<endl;
+        scriptfile2<<"plot 'plot_data_and_script/plot_"<<name<<"_P_over_S_sub_"<<all_or_eq_moms<<"_data.txt' u 1:2:3 with errorbars pt 6 lc rgb 'blue' title '$Z_P/Z_S$ sub'"<<endl;
         scriptfile2<<"set terminal epslatex color"<<endl;
-        if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile2<<"set output 'allmoms/"<<name<<"_P_over_S.tex'"<<endl;
-        else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile2<<"set output 'eqmoms/"<<name<<"_P_over_S.tex'"<<endl;
+        if(strcmp(all_or_eq_moms.c_str(),"allmoms")==0) scriptfile2<<"set output 'allmoms/"<<name<<"_P_over_S_sub.tex'"<<endl;
+        else if(strcmp(all_or_eq_moms.c_str(),"eqmoms")==0) scriptfile2<<"set output 'eqmoms/"<<name<<"_P_over_S_sub.tex'"<<endl;
         scriptfile2<<"replot"<<endl;
         scriptfile2<<"set term unknown"<<endl;
         
         scriptfile2.close();
         
-        string command2="gnuplot plot_data_and_script/plot_"+name+"_P_over_S_"+all_or_eq_moms+"_script.txt";
+        string command2="gnuplot plot_data_and_script/plot_"+name+"_P_over_S_sub_"+all_or_eq_moms+"_script.txt";
         
         system(command2.c_str());
         
