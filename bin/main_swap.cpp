@@ -1923,8 +1923,8 @@ int main(int narg,char **arg)
             jSigma1_sub[ijack]=subtract(c_q,jSigma1_chiral[ijack],p2,p4,g2_tilde);
             
             //subtraction of O(e^2a^2) effects
-            jZq_em_sub[ijack]=subtract(c_q_em,jZq_em_chiral[ijack],p2,p4,3./4.);          //Wilson Action
-            jSigma1_em_sub[ijack]=subtract(c_q_em,jSigma1_em_chiral[ijack],p2,p4,3./4.);
+            jZq_em_sub[ijack]=subtract(c_q_em,jZq_em_chiral[ijack],p2,p4,-3./4.);          //Wilson Action //The coupling gets a - sign due to the definition of S^{-1}(QCD+QED)
+            jSigma1_em_sub[ijack]=subtract(c_q_em,jSigma1_em_chiral[ijack],p2,p4,-3./4.);
         }
 #pragma omp parallel for
         for(int ijack=0;ijack<njacks;ijack++)
