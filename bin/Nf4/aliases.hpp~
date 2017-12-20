@@ -1,0 +1,50 @@
+//coordinates in the lattice
+using coords_t=array<int,4>;
+
+//complex double
+using dcompl=complex<double>;
+
+//propagator (12X12)
+using prop_t=Matrix<dcompl,12,12>;
+
+//list of propagators
+using vprop_t=valarray<prop_t>;
+using vvprop_t=valarray< valarray<prop_t> >;
+using vvvprop_t=valarray< valarray< valarray<prop_t> > >;
+
+//list of gamma for a given momentum
+using qline_t=valarray<prop_t>;
+using vqline_t=valarray<qline_t>;
+using vvqline_t=valarray<vqline_t>;
+using vert_t = vvqline_t;
+
+//list of jackknife propagators
+using jprop_t=valarray< valarray<prop_t> >;
+
+//list of jackknife vertices
+using jvert_t=valarray< vert_t >;
+
+//valarray of complex double
+using vd_t=valarray<double>;
+
+//valarray of valarray of complex double
+using vvd_t=valarray< valarray<double> > ;
+
+//valarray of valarray of valarray of complex double
+using vvvd_t=valarray< valarray< valarray<double> > >;
+using vvvvd_t=valarray<vvvd_t>;
+using vvvvvd_t=valarray<vvvvd_t>;
+
+//valarray of complex double
+using vdcompl_t=valarray<dcompl>;
+using vvdcompl_t=valarray< vdcompl_t >;
+using vvvdcompl_t=valarray< vvdcompl_t >;
+using vvvvdcompl_t=valarray< vvvdcompl_t >;
+
+//valarray of Eigen Vectors
+using vXd_t=valarray<VectorXd>;
+
+//useful notation
+using jZ_t=vvd_t;
+using jZbil_t=vvvvd_t;
+using jproj_t=vvvvd_t;
