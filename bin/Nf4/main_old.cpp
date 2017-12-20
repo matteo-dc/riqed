@@ -475,14 +475,11 @@ jproj_t project(vprop_t GAMMA, const jvert_t &jLambda)
 //subtraction of O(a^2) effects
 double subtract(vector<double> c, double f, double p2, double p4, double g2_tilde)
 {
-    double f_new;
-    double c=1.0;
+    double sub;
+
+    sub = g2_tilde*(p2*(c[0]+c[1]*log(p2))+c[2]*p4/p2)/(12.*M_PI*M_PI);
     
-    if(g2_tilde-3./4.<1.0e-15) c=f;
-    
-    f_new = f - g2_tilde*(p2*(c[0]+c[1]*log(p2))+c[2]*p4/p2)/(12.*M_PI*M_PI)*c;
-    
-    return f_new;
+    return sub;
 }
 
 valarray<VectorXd> fit_par_jackknife(const vvd_t &coord, vd_t &error, const vvd_t &y, const int range_min, const int range_max)
@@ -1934,29 +1931,29 @@ int main(int narg,char **arg)
         for(int ijack=0;ijack<njacks;ijack++)
         {
             //subtraction of O(g^2a^2) effects
-            jZq_sub[ijack]=subtract(c_q,jZq_chiral[ijack],p2,p4,g2_tilde);
-            jSigma1_sub[ijack]=subtract(c_q,jSigma1_chiral[ijack],p2,p4,g2_tilde);
+            jZq_sub[ijack]-=subtract(c_q,jZq_chiral[ijack],p2,p4,g2_tilde);
+            jSigma1_sub[ijack]-=subtract(c_q,jSigma1_chiral[ijack],p2,p4,g2_tilde);
             
             //subtraction of O(e^2a^2) effects
-            jZq_em_sub[ijack]=subtract(c_q_em,jZq_em_chiral[ijack],p2,p4,-3./4.);          //Wilson Action //The coupling gets a - sign due to the definition of S^{-1}(QCD+QED)
-            jSigma1_em_sub[ijack]=subtract(c_q_em,jSigma1_em_chiral[ijack],p2,p4,-3./4.);
+            jZq_em_sub[ijack]-=subtract(c_q_em,jZq_em_chiral[ijack],p2,p4,-3./4.)*jZq_chiral[ijack];          //Wilson Action //The coupling gets a - sign due to the definition of S^{-1}(QCD+QED)
+            jSigma1_em_sub[ijack]-=subtract(c_q_em,jSigma1_em_chiral[ijack],p2,p4,-3./4.)*jSigma1_chiral[ijack];
         }
 #pragma omp parallel for
         for(int ijack=0;ijack<njacks;ijack++)
         {
             //subtraction of O(g^2a^2) effects
-            jGs_0_sub[ijack]=subtract(c_s,jGs_0_chiral[ijack],p2,p4,g2_tilde); //ZS
-            jGv_0_sub[ijack]=subtract(c_a,jGv_0_chiral[ijack],p2,p4,g2_tilde); //ZA
-            jGp_0_sub[ijack]=subtract(c_p,jGp_0_chiral[ijack],p2,p4,g2_tilde); //ZP
-            jGa_0_sub[ijack]=subtract(c_v,jGa_0_chiral[ijack],p2,p4,g2_tilde); //ZV
-            jGt_0_sub[ijack]=subtract(c_t,jGt_0_chiral[ijack],p2,p4,g2_tilde); //ZT
+            jGs_0_sub[ijack]-=subtract(c_s,jGs_0_chiral[ijack],p2,p4,g2_tilde); //ZS
+            jGv_0_sub[ijack]-=subtract(c_a,jGv_0_chiral[ijack],p2,p4,g2_tilde); //ZA
+            jGp_0_sub[ijack]-=subtract(c_p,jGp_0_chiral[ijack],p2,p4,g2_tilde); //ZP
+            jGa_0_sub[ijack]-=subtract(c_v,jGa_0_chiral[ijack],p2,p4,g2_tilde); //ZV
+            jGt_0_sub[ijack]-=subtract(c_t,jGt_0_chiral[ijack],p2,p4,g2_tilde); //ZT
             
             //subtraction of O(e^2a^2) effects
-            jGs_em_a_b_sub[ijack]=subtract(c_s_em,jGs_em_a_b_chiral[ijack],p2,p4,3./4.);   ///!!!!!  with Wilson Action
-            jGv_em_a_b_sub[ijack]=subtract(c_a_em,jGv_em_a_b_chiral[ijack],p2,p4,3./4.);
-            jGp_em_a_b_sub[ijack]=subtract(c_p_em,jGp_em_a_b_chiral[ijack],p2,p4,3./4.);
-            jGa_em_a_b_sub[ijack]=subtract(c_v_em,jGa_em_a_b_chiral[ijack],p2,p4,3./4.);
-            jGt_em_a_b_sub[ijack]=subtract(c_t_em,jGt_em_a_b_chiral[ijack],p2,p4,3./4.);
+            jGs_em_a_b_sub[ijack]-=subtract(c_s_em,jGs_em_a_b_chiral[ijack],p2,p4,3./4.)*jGs_0_chiral[ijack];   ///!!!!!  with Wilson Action
+            jGv_em_a_b_sub[ijack]-=subtract(c_a_em,jGv_em_a_b_chiral[ijack],p2,p4,3./4.)*jGv_0_chiral[ijack];
+            jGp_em_a_b_sub[ijack]-=subtract(c_p_em,jGp_em_a_b_chiral[ijack],p2,p4,3./4.)*jGp_0_chiral[ijack];
+            jGa_em_a_b_sub[ijack]-=subtract(c_v_em,jGa_em_a_b_chiral[ijack],p2,p4,3./4.)*jGa_0_chiral[ijack];
+            jGt_em_a_b_sub[ijack]-=subtract(c_t_em,jGt_em_a_b_chiral[ijack],p2,p4,3./4.)*jGt_0_chiral[ijack];
         }
 #pragma omp parallel for // collapse(4)
         for(int ijack=0;ijack<njacks;ijack++)
