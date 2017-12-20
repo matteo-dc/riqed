@@ -337,9 +337,9 @@ vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const stri
 //compute delta m_cr
 vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const int* conf_id, const string &string_path, const int t_min, const int t_max)
 {
-    int nmr=8;
-    int nr=2;
-    int nm=4;
+  // int nmr=10;
+  // int nr=2;
+  // int nm=5;
     
     //define jackknife V0P5 correlators
     vvvvd_t jV0P5_LL(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
@@ -473,8 +473,8 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
 int main(int narg,char **arg)
 {
     
-    if (narg!=6){
-        cerr<<"Number of arguments not valid:  <nconfs> <njacks> <tmin> <tmax> <path before 'out' directory: /marconi_work/.../ >"<<endl;
+    if (narg!=8){
+        cerr<<"Number of arguments not valid:  <nconfs> <njacks> <tmin> <tmax> <path before 'out' directory: /marconi_work/.../ > <nm> <T>"<<endl;
         exit(0);
     }
     
@@ -482,7 +482,6 @@ int main(int narg,char **arg)
     int njacks=stoi(arg[2]);
     //int clust_size=nconfs/njacks;
     int conf_id[nconfs];
-    double T=48;//,L=24
     //size_t nhits=1; //!
     
     int tmin = stoi(arg[3]);
@@ -490,13 +489,16 @@ int main(int narg,char **arg)
     
     string string_path = arg[5];
     
-    nm = 4;  //! to be passed from command line
+    nm = stoi(arg[6]);  //! to be passed from command line
     nr = 2;
+    nmr = nm*nr;
+
+    double T=stod(arg[7]);//,L=24
     
     //nmr=nm*nr;
     
     for(int iconf=0;iconf<nconfs;iconf++)
-        conf_id[iconf]=100+iconf*1;
+        conf_id[iconf]=390+iconf*10;
     
     vvvd_t deltam_cr_array = compute_deltam_cr(T,nconfs,njacks,conf_id,string_path,tmin,tmax); //deltam_cr_array[ijack][m_fw][m_bw]
     

@@ -892,7 +892,7 @@ int main(int narg,char **arg)
     
     size_t nhits=1; //!
     
-    nm = 4;  //! to be passed from command line
+    nm = 5;  //! to be passed from command line
     nr = 2;
     
     nmr=nm*nr;
@@ -1086,9 +1086,9 @@ int main(int narg,char **arg)
     
     
     //Quark Masses array
-    vd_t mass_array={0.0040,0.0060,0.0080,0.0100};
+//    vd_t mass_array={0.0040,0.0060,0.0080,0.0100};
 //    vd_t mass_array={0.0040,0.0064,0.0085,0.0100,0.0150};
-
+    vd_t mass_array={0.0085, 0.0150, 0.0203, 0.0252, 0.0298};
     
     //Effective Mass
     
@@ -1135,7 +1135,7 @@ int main(int narg,char **arg)
     //create gamma matrices
     vprop_t GAMMA=make_gamma();
     
-    vector<string> Mass={"M0_","M1_","M2_","M3_"};
+    vector<string> Mass={"M0_","M1_","M2_","M3_","M4_"};
     vector<string> R={"R0_","R1_"};
     vector<string> Type={"0","F","FF","T","P"/*,"S"*/};
     
@@ -1499,7 +1499,7 @@ int main(int narg,char **arg)
         
         
         //Sum of quark masses for the extrapolation
-        vd_t mass_sum(0.0,10);
+        vd_t mass_sum(0.0,neq);
         int i_sum = 0;
         
         for (int i=0; i<nm; i++)
