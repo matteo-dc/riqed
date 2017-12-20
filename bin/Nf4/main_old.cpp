@@ -360,7 +360,7 @@ vvd_t compute_jZq(vprop_t GAMMA, jprop_t jS_inv, double L, double T, int imom)
     
     int count=0;
     
-    p={2*M_PI*mom_list[imom][1]/L,2*M_PI*mom_list[imom][2]/L,2*M_PI*mom_list[imom][3]/L,2*M_PI*(mom_list[imom][0]+0.5)/T};
+    p={2*M_PI*mom_list[imom][1]/L,2*M_PI*mom_list[imom][2]/L,2*M_PI*mom_list[imom][3]/L,2*M_PI*(mom_list[imom][0]/*+0.5*/)/T};
     p_tilde={sin(p[0]),sin(p[1]),sin(p[2]),sin(p[3])};
     
     for(int igam=1;igam<5;igam++)
@@ -413,7 +413,7 @@ vvd_t compute_jSigma1(vprop_t GAMMA, jprop_t jS_inv, double L, double T, int imo
         {
             int count=0;
             
-            p={2*M_PI*mom_list[imom][1]/L,2*M_PI*mom_list[imom][2]/L,2*M_PI*mom_list[imom][3]/L,2*M_PI*(mom_list[imom][0]+0.5)/T};
+            p={2*M_PI*mom_list[imom][1]/L,2*M_PI*mom_list[imom][2]/L,2*M_PI*mom_list[imom][3]/L,2*M_PI*(mom_list[imom][0]/*+0.5*/)/T};
             p_tilde={sin(p[0]),sin(p[1]),sin(p[2]),sin(p[3])};
             
             for(int igam=1;igam<5;igam++)
@@ -476,8 +476,11 @@ jproj_t project(vprop_t GAMMA, const jvert_t &jLambda)
 double subtract(vector<double> c, double f, double p2, double p4, double g2_tilde)
 {
     double f_new;
+    double c=1.0;
     
-    f_new = f - g2_tilde*(p2*(c[0]+c[1]*log(p2))+c[2]*p4/p2)/(12.*M_PI*M_PI);
+    if(g2_tilde-3./4.<1.0e-15) c=f;
+    
+    f_new = f - g2_tilde*(p2*(c[0]+c[1]*log(p2))+c[2]*p4/p2)/(12.*M_PI*M_PI)*c;
     
     return f_new;
 }
@@ -966,42 +969,47 @@ int main(int narg,char **arg)
     
     double sea_mass=0.0;
     
-    //Check on beta
-    if(strcmp(arg[10],"3.80")==0 || strcmp(arg[10],"3.90")==0 || strcmp(arg[10],"4.05")==0)
-    {
-        beta = stod(arg[10]);
-        string_beta = arg[10];
-    }
-    else
-    {
-        cerr<<"WARNING: wrong beta argument. Please choice among: 3.80, 3.90 and 4.05.";
-        exit(0);
-    }
+    beta = stod(arg[10]);
+    string_beta = arg[10];
+    sea_mass = stod(arg[11]);
+    string_sea_mass = arg[11];
     
-    //Check on sea mass
-    if(strcmp(arg[10],"3.80")==0 && (strcmp(arg[11],"0.0080")==0 || strcmp(arg[11],"0.0110")==0 || strcmp(arg[11],"0.0165")==0))
-    {
-        sea_mass = stod(arg[11]);
-        string_sea_mass = arg[11];
-    }
-    else if(strcmp(arg[10],"3.90")==0 && (strcmp(arg[11],"0.0040")==0 || strcmp(arg[11],"0.0064")==0 || strcmp(arg[11],"0.0085")==0 || strcmp(arg[11],"0.0100")==0))
-    {
-        sea_mass = stod(arg[11]);
-        string_sea_mass = arg[11];
-    }
-    else if(strcmp(arg[10],"4.05")==0 && (strcmp(arg[11],"0.0030")==0 || strcmp(arg[11],"0.0060")==0 || strcmp(arg[11],"0.0080")==0))
-    {
-        sea_mass = stod(arg[11]);
-        string_sea_mass = arg[11];
-    }
-    else
-    {
-        if(strcmp(arg[10],"3.80")==0) cerr<<"WARNING: wrong sea mass argument. Please choice among: 0.0080, 0.0100 and 0.0165.";
-        if(strcmp(arg[10],"3.90")==0) cerr<<"WARNING: wrong sea mass argument. Please choice among: 0.0040, 0.0064, 0.0085 and 0.0100.";
-        if(strcmp(arg[10],"4.05")==0) cerr<<"WARNING: wrong sea mass argument. Please choice among: 0.0030, 0.0060 and 0.0080.";
-        
-        exit(0);
-    }
+//    //Check on beta
+//    if(strcmp(arg[10],"3.80")==0 || strcmp(arg[10],"3.90")==0 || strcmp(arg[10],"4.05")==0)
+//    {
+//        beta = stod(arg[10]);
+//        string_beta = arg[10];
+//    }
+//    else
+//    {
+//        cerr<<"WARNING: wrong beta argument. Please choice among: 3.80, 3.90 and 4.05.";
+//        exit(0);
+//    }
+//    
+//    //Check on sea mass
+//    if(strcmp(arg[10],"3.80")==0 && (strcmp(arg[11],"0.0080")==0 || strcmp(arg[11],"0.0110")==0 || strcmp(arg[11],"0.0165")==0))
+//    {
+//        sea_mass = stod(arg[11]);
+//        string_sea_mass = arg[11];
+//    }
+//    else if(strcmp(arg[10],"3.90")==0 && (strcmp(arg[11],"0.0040")==0 || strcmp(arg[11],"0.0064")==0 || strcmp(arg[11],"0.0085")==0 || strcmp(arg[11],"0.0100")==0))
+//    {
+//        sea_mass = stod(arg[11]);
+//        string_sea_mass = arg[11];
+//    }
+//    else if(strcmp(arg[10],"4.05")==0 && (strcmp(arg[11],"0.0030")==0 || strcmp(arg[11],"0.0060")==0 || strcmp(arg[11],"0.0080")==0))
+//    {
+//        sea_mass = stod(arg[11]);
+//        string_sea_mass = arg[11];
+//    }
+//    else
+//    {
+//        if(strcmp(arg[10],"3.80")==0) cerr<<"WARNING: wrong sea mass argument. Please choice among: 0.0080, 0.0100 and 0.0165.";
+//        if(strcmp(arg[10],"3.90")==0) cerr<<"WARNING: wrong sea mass argument. Please choice among: 0.0040, 0.0064, 0.0085 and 0.0100.";
+//        if(strcmp(arg[10],"4.05")==0) cerr<<"WARNING: wrong sea mass argument. Please choice among: 0.0030, 0.0060 and 0.0080.";
+//        
+//        exit(0);
+//    }
     
     
     int c1 = stoi(arg[12]);
@@ -1591,10 +1599,10 @@ int main(int narg,char **arg)
         for(int i=0; i<neq; i++)
         {
             coord[0][i] = 1.0;  //costante
-            //coord[1][i] = m_eff_equivalent[i]*m_eff_equivalent[i];   //M^2
-            //coord[2][i] = 1.0/(m_eff_equivalent[i]*m_eff_equivalent[i]);  //1/M^2
-            coord[1][i] = mass_sum[i];   // (am1+am2)
-            coord[2][i] = 1.0/mass_sum[i];  // 1/(am1+am2)
+            coord[1][i] = m_eff_equivalent[i]*m_eff_equivalent[i];   //M^2
+            coord[2][i] = 1.0/(m_eff_equivalent[i]*m_eff_equivalent[i]);  //1/M^2
+            //coord[1][i] = mass_sum[i];   // (am1+am2)
+            //coord[2][i] = 1.0/mass_sum[i];  // 1/(am1+am2)
         }
         
         vXd_t jGp_pars=fit_par_jackknife(coord,Gp_err,jGp_equivalent,t_min,t_max);  //jGp_pars[ijack](par)
@@ -1728,8 +1736,8 @@ int main(int narg,char **arg)
         for(int i=0; i<neq; i++)
         {
             coord_linear[0][i] = 1.0;  //costante
-            //coord_linear[1][i] = m_eff_equivalent[i]*m_eff_equivalent[i];   //M^2
-            coord_linear[1][i] = mass_sum[i];
+            coord_linear[1][i] = m_eff_equivalent[i]*m_eff_equivalent[i];   //M^2
+            //coord_linear[1][i] = mass_sum[i];
         }
         
         vXd_t jGv_pars(VectorXd(2),njacks), jGa_pars(VectorXd(2),njacks), jGt_pars(VectorXd(2),njacks);
@@ -1839,8 +1847,8 @@ int main(int narg,char **arg)
         for(int i=0; i<neq2; i++)
         {
             coord_linear[0][i] = 1.0;  //costante
-            //coord_linear[1][i] = m_eff_equivalent_Zq[i]*m_eff_equivalent_Zq[i];   //M^2
-            coord_linear[1][i] = mass_array[i]; //quark mass
+            coord_linear[1][i] = m_eff_equivalent_Zq[i]*m_eff_equivalent_Zq[i];   //M^2
+            //coord_linear[1][i] = mass_array[i]; //quark mass
         }
         
         vXd_t jZq_pars=fit_par_jackknife(coord_linear,Zq_err,jZq_equivalent,t_min,t_max);  //jZq_pars[ijack][par]
