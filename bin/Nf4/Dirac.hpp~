@@ -1,8 +1,0 @@
-#ifndef DIRAC_HPP
-#define DIRAC_HPP
-
-#include "aliases.hpp"
-
-vprop_t make_gamma();
-
-#endif

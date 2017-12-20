@@ -1,9 +1,0 @@
-#ifndef VERTICES_HPP
-#define VERTICES_HPP
-
-#include "aliases.hpp"
-#include "global.hpp"
-
-
-
-#endif
