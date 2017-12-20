@@ -498,7 +498,7 @@ int main(int narg,char **arg)
     //nmr=nm*nr;
     
     for(int iconf=0;iconf<nconfs;iconf++)
-        conf_id[iconf]=390+iconf*10;
+        conf_id[iconf]=530+iconf*10;
     
     vvvd_t deltam_cr_array = compute_deltam_cr(T,nconfs,njacks,conf_id,string_path,tmin,tmax); //deltam_cr_array[ijack][m_fw][m_bw]
     
