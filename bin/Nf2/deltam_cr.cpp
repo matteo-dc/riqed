@@ -487,6 +487,8 @@ int main(int narg,char **arg)
     int tmin = stoi(arg[3]);
     int tmax = stoi(arg[4]);
     
+    cout<<tmin<<"  "<<tmax;
+    
     string string_path = arg[5];
     
     nm = stoi(arg[6]);  //! to be passed from command line
