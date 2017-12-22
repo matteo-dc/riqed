@@ -1012,7 +1012,7 @@ int main(int narg,char **arg)
     int c1 = stoi(arg[12]);
     int c2 = stoi(arg[13]);
     
-    string string_path = string_path_to_ensemble+string_beta+"_"+string_L+"_"+string_sea_mass+"/";
+    string string_path = string_path_to_ensemble/*+string_beta+"_"+string_L+"_"+string_sea_mass+"/"*/;
     cout<<string_path<<endl;
     
     //g2_tilde
