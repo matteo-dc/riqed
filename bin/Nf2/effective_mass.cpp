@@ -484,7 +484,7 @@ int main(int narg,char **arg)
   nmr=nm*nr;
 
   for(int iconf=0;iconf<nconfs;iconf++)
-    conf_id[iconf]=100+iconf*1;
+    conf_id[iconf]=390+iconf*1;
 
   vvvd_t eff_mass_array = compute_eff_mass(T,nconfs,njacks,conf_id,string_path,tmin,tmax);
  
