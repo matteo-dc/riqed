@@ -411,10 +411,7 @@ vvvd_t compute_eff_mass(const int T, const int nconfs, const int njacks, const i
 
 	  cout<<"**********DEBUG*************"<<endl;
 	  cout<<mr_fw<<" "<<mr_bw<<" "<<" t  "<<t<<"  "<<mass_ave[mr_fw][mr_bw][t]<<"  +/-  "<< mass_err[mr_fw][mr_bw][t] <<endl;
-
-	  	  
 	}
-
 
   
   //t-range for the fit
@@ -481,7 +478,7 @@ int main(int narg,char **arg)
 
  
 
-  nm = 4;  //! to be passed from command line
+  nm = 5;  //! to be passed from command line
   nr = 2;
 
   nmr=nm*nr;
