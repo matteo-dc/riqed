@@ -2281,6 +2281,8 @@ int main(int narg,char **arg)
     
     int neq_moms = tag+1;
     
+    cout<<"neq_moms = "<<neq_moms<<endl<<endl;
+    
     vector<int> count_tag_vector(neq_moms);
     int count=0;
     for(int tag=0;tag<neq_moms;tag++)
