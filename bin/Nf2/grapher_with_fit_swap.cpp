@@ -1359,7 +1359,7 @@ int main(int narg,char **arg)
     
     read_mom_list(arg[1]);
     int moms=mom_list.size();
-    int neq_moms=17; //////////////////
+    int neq_moms=19; //////////////////
     
     vector<double> p2_vector_allmoms(moms);
     
