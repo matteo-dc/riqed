@@ -203,8 +203,11 @@ vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const stri
       infile.open(path_to_contr(conf_id[iconf],mr1,T1,mr2,T2,string_path));
 
       if(!infile.good())
-	{cerr<<"Unable to open file "<<path_to_contr(conf_id[iconf],mr1,T1,mr2,T2,string_path)<<endl;
-	  exit(1);}
+      {
+          cout<<"conf_id[iconf]:"<<conf_id[iconf]<<endl;
+          cerr<<"Unable to open file "<<path_to_contr(conf_id[iconf],mr1,T1,mr2,T2,string_path)<<endl;
+          exit(1);
+      }
 
       //DEBUG
       // cout<<"  Reading contraction from "<<path_to_contr(conf_id[iconf],mr1,T1,mr2,T2)<<endl;
