@@ -254,4 +254,17 @@ vvvprop_t read_prop_mom(ifstream input[],const vector<string> v_path,const int i
     return S;
 }
 
+//read file
+void read_internal(double &t,ifstream& infile)
+{
+    //infile.read((char*) &t,sizeof(double));
+    infile>>t;
+}
+//template <class T>
+void read_internal(VectorXd &V, ifstream& infile)
+{
+    for(int i=0; i<V.size();i++) read_internal(V(i),infile);
+}
+
+
 

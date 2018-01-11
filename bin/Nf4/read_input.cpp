@@ -5,15 +5,15 @@
 
 enum ERR_t{NO_FAIL,FAILED_READ,FAILED_CONVERSION,FAILED_OPEN,MISPLACED_TK,UNINITIALIZED_PAR};
 
-enum TK_t{FEOF_TK,VALUE_TK,MOM_LIST_TK,NCONFS_TK,NJACKS_TK,L_TK,T_TK,CONF_INIT_TK,CONF_STEP_TK,ACT_TK,PLAQ_TK,PATH_TK,BETA_TK,MU_SEA_TK,KAPPA_TK,NMASSES_VAL_TK,MASSES_VAL_TK,NR_TK,NTYPES_TK,NHITS_TK,USE_SIGMA_TK,SCHEME_TK};
+enum TK_t{FEOF_TK,VALUE_TK,MOM_LIST_TK,NCONFS_TK,NJACKS_TK,L_TK,T_TK,CONF_INIT_TK,CONF_STEP_TK,ACT_TK,PLAQ_TK,PATH_TK,BETA_TK,MU_SEA_TK,KAPPA_TK,NMASSES_VAL_TK,MASSES_VAL_TK,NR_TK,NTYPES_TK,NHITS_TK,USE_SIGMA_TK,USE_EFF_MASS_TK,SCHEME_TK,NF_TK,NC_TK,AINV_TK,LAMBDAQCD_TK};
 
 #define DEFAULT_STR_VAL ""
 #define DEFAULT_INT_VAL -1
 #define DEFAULT_DOUBLE_VAL 1.2345
 
 // define global variables
-int nconfs, njacks, clust_size, L, T, conf_init, conf_step, nm, neq, neq2, nbil, nr, nmr, nt, nhits, moms, neqmoms, Nf, ntypes, combo, UseSigma1;
-double beta, kappa, mu_sea, plaquette, g2, g2_tilde;
+int nconfs, njacks, clust_size, L, T, conf_init, conf_step, nm, neq, neq2, nbil, nr, nmr, nt, nhits, moms, neqmoms, Nf, Nc, ntypes, combo, UseSigma1, UseEffMass;
+double beta, kappa, mu_sea, plaquette, g2, g2_tilde, ainv, LambdaQCD;
 string mom_path, action, path_ensemble_str, scheme;
 vector<double> mass_val(10);
 coords_t size;
@@ -37,7 +37,12 @@ const char plaquette_tag[]="Plaquette";
 const char ntypes_tag[]="NTypes";
 const char nhits_tag[]="NHits";
 const char UseSigma1_tag[]="UseSigma1";
+const char UseEffMass_tag[]="UseEffMass";
 const char scheme_tag[]="Scheme";
+const char Nc_tag[]="Nc";
+const char Nf_tag[]="Nf";
+const char ainv_tag[]="ainv";
+const char LambdaQCD_tag[]="LambdaQCD";
 
 char tok[128];
 
@@ -76,8 +81,12 @@ TK_t get_TK(FILE *fin)
     if(strcasecmp(tok,ntypes_tag)==0) return NTYPES_TK;
     if(strcasecmp(tok,nhits_tag)==0) return NHITS_TK;
     if(strcasecmp(tok,UseSigma1_tag)==0) return USE_SIGMA_TK;
+    if(strcasecmp(tok,UseEffMass_tag)==0) return USE_EFF_MASS_TK;
     if(strcasecmp(tok,scheme_tag)==0) return SCHEME_TK;
-
+    if(strcasecmp(tok,Nc_tag)==0) return NC_TK;
+    if(strcasecmp(tok,Nf_tag)==0) return NF_TK;
+    if(strcasecmp(tok,ainv_tag)==0) return AINV_TK;
+    if(strcasecmp(tok,LambdaQCD_tag)==0) return LAMBDAQCD_TK;
     
     return VALUE_TK;
 }
@@ -164,13 +173,18 @@ void read_input(const char path[])
     nr=DEFAULT_INT_VAL;
     ntypes=DEFAULT_INT_VAL;
     nhits=DEFAULT_INT_VAL;
+    Nc=DEFAULT_INT_VAL;
+    Nf=DEFAULT_INT_VAL;
     
     UseSigma1=DEFAULT_INT_VAL;
+    UseEffMass=DEFAULT_INT_VAL;
     
     beta=DEFAULT_DOUBLE_VAL;
     kappa=DEFAULT_DOUBLE_VAL;
     mu_sea=DEFAULT_DOUBLE_VAL;
     plaquette=DEFAULT_DOUBLE_VAL;
+    ainv=DEFAULT_DOUBLE_VAL;
+    LambdaQCD=DEFAULT_DOUBLE_VAL;
     
     for(auto &m : mass_val) m=DEFAULT_DOUBLE_VAL;
     
@@ -242,8 +256,23 @@ void read_input(const char path[])
             case USE_SIGMA_TK:
                 get_value(fin,UseSigma1,"%d");
                 break;
+            case USE_EFF_MASS_TK:
+                get_value(fin,UseEffMass,"%d");
+                break;
             case SCHEME_TK:
                 get_value(fin,sch,"%s");
+                break;
+            case NC_TK:
+                get_value(fin,Nc,"%d");
+                break;
+            case NF_TK:
+                get_value(fin,Nf,"%d");
+                break;
+            case AINV_TK:
+                get_value(fin,ainv,"%lf");
+                break;
+            case LAMBDAQCD_TK:
+                get_value(fin,LambdaQCD,"%lf");
                 break;
                 
             case FEOF_TK:
@@ -270,18 +299,25 @@ void read_input(const char path[])
     check_int_par(ntypes,ntypes_tag);
     check_int_par(nhits,nhits_tag);
     check_int_par(nhits,UseSigma1_tag);
+    check_int_par(nhits,UseEffMass_tag);
+    check_int_par(Nc,Nc_tag);
+    check_int_par(Nf,Nf_tag);
     check_str_par(sch,scheme_tag);
+    check_double_par(ainv,ainv_tag);
+    check_double_par(LambdaQCD,LambdaQCD_tag);
     
     fclose(fin);
     
     //print input parameters
     printf("%s = %s\n",scheme_tag,sch);
-    printf("%s = \"%s\"\n",mom_list_tag,mom_list_path);
+    //printf("%s = \"%s\"\n",mom_list_tag,mom_list_path);
     printf("%s = %d  [from %d to %d]\n",nconfs_tag,nconfs,conf_init,conf_init+nconfs*conf_step-1);
     printf("%s = %d\n",njacks_tag,njacks);
     printf("%s = %d\n",L_tag,L);
     printf("%s = %d\n",T_tag,T);
     printf("%s = %s\n",act_tag,act);
+    printf("%s = %d\n",Nc_tag,Nc);
+    printf("%s = %d\n",Nf_tag,Nf);
     printf("%s = %lf\n",plaquette_tag,plaquette);
     printf("%s = \"%s\"\n",path_ensemble_tag,path_ensemble);
     printf("%s = %.2lf\n",beta_tag,beta);
@@ -294,6 +330,9 @@ void read_input(const char path[])
     printf("\n");
     printf("%s = %d\n",nr_tag,nr);
     printf("%s = %d\n",nhits_tag,nhits);
+    printf("%s = %.1lf\n",ainv_tag,ainv);
+    printf("%s = %.3lf\n",LambdaQCD_tag,LambdaQCD);
+
     
     clust_size=nconfs/njacks;
     nmr=nm*nr;
@@ -320,8 +359,10 @@ void read_input(const char path[])
     }
     
     //g2_tilde
-    double g2=6.0/beta;
-    double g2_tilde=g2/plaquette;
-
+    g2=6.0/beta;
+    g2_tilde=g2/plaquette;
+    printf("g2tilde = %lf\n",g2_tilde);
+    
+    printf("\n");
 }
 

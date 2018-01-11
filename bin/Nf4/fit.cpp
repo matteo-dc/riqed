@@ -1,4 +1,5 @@
 #include "aliases.hpp"
+#include "global.hpp"
 #include <iostream>
 
 vvd_t fit_par_jackknife(const vvd_t &coord, const int n_par, vd_t &error, const vvd_t &y, const int range_min, const int range_max)
@@ -6,8 +7,8 @@ vvd_t fit_par_jackknife(const vvd_t &coord, const int n_par, vd_t &error, const 
     int njacks = y.size();
     
     MatrixXd S(n_par,n_par);
-    valarray<VectorXd> Sy(VectorXd(n_par),njacks);
-    valarray<VectorXd> jpars(VectorXd(n_par),njacks);
+    vXd_t Sy(VectorXd(n_par),njacks);
+    vXd_t jpars(VectorXd(n_par),njacks);
     
     vvd_t jvpars(vd_t(0.0,n_par),njacks);
     
@@ -40,11 +41,102 @@ vvd_t fit_par_jackknife(const vvd_t &coord, const int n_par, vd_t &error, const 
         for(int ipar=0;ipar<n_par;ipar++) jvpars[ijack][ipar]=jpars[ijack](ipar);
     }
     
-    for(int i=range_min; i<=range_max; i++)
-        cout<<"(x,y) [ijack=0] = "<<coord[1][i]<<" "<<y[0][i]<<" "<<error[i]<<endl;
-    cout<<"Extrapolation: "<<jpars[0](0)<<endl;
-    
+//    for(int i=range_min; i<=range_max; i++)
+//        cout<<"(x,y) [ijack=0] = "<<coord[1][i]<<" "<<y[0][i]<<" "<<error[i]<<endl;
+//    cout<<"Extrapolation (jpars): "<<jpars[0](0)<<endl;
+//    cout<<"Extrapolation (jvpars): "<<jvpars[0][0]<<endl;
     
     return jvpars;
     
+}
+
+
+vXd_t fit_chiral_jackknife(const vvd_t &coord, vd_t &error, const vector<vd_t> &y, const int range_min, const int range_max, const double &p_min_value)
+{
+    int n_par = coord.size();
+    
+    MatrixXd S(n_par,n_par);
+    vXd_t Sy(VectorXd(n_par),njacks);
+    vXd_t jpars(VectorXd(n_par),njacks);
+    
+    //initialization
+    S=MatrixXd::Zero(n_par,n_par);
+    for(int ijack=0; ijack<njacks; ijack++)
+    {
+        Sy[ijack]=VectorXd::Zero(n_par);
+        jpars[ijack]=VectorXd::Zero(n_par);
+    }
+    
+    //definition
+    for(int i=range_min; i<range_max; i++)
+    {
+        if(error[i]<1e-50) error[i]+=1e-50;
+        
+        if(coord[1][i]>p_min_value)
+        {
+            for(int j=0; j<n_par; j++)
+                for(int k=0; k<n_par; k++)
+                    if(std::isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
+            
+            for(int ijack=0; ijack<njacks; ijack++)
+                for(int k=0; k<n_par; k++)
+                    if(std::isnan(error[i])==0) Sy[ijack](k) += y[i][ijack]*coord[k][i]/(error[i]*error[i]);
+        }
+    }
+    
+    for(int ijack=0; ijack<njacks; ijack++)
+        jpars[ijack] = S.colPivHouseholderQr().solve(Sy[ijack]);
+    
+    return jpars;
+    
+}
+
+vvXd_t fit_chiral_jackknife(const vvd_t &coord, vvd_t &error, const vector<vvd_t> &y, const int range_min, const int range_max, const double &p_min_value)
+{
+    int n_par = coord.size();
+    //int nbil = y[0].size();
+    
+    valarray<MatrixXd> S(MatrixXd(n_par,n_par),nbil);
+    vvXd_t Sy(valarray<VectorXd>(VectorXd(n_par),njacks),nbil);
+    vvXd_t jpars(valarray<VectorXd>(VectorXd(n_par),njacks),nbil);
+    
+    //initialization
+    for(int ibil=0; ibil<nbil;ibil++)
+        S[ibil]=MatrixXd::Zero(n_par,n_par);
+    
+    for(int ibil=0; ibil<nbil;ibil++)
+        for(int ijack=0; ijack<njacks; ijack++)
+        {
+            Sy[ibil][ijack]=VectorXd::Zero(n_par);
+            jpars[ibil][ijack]=VectorXd::Zero(n_par);
+        }
+    
+    //definition
+    for(int i=range_min; i<range_max; i++)
+    {
+        for(int ibil=0; ibil<nbil;ibil++)
+        {
+            if(error[i][ibil]<1e-50)
+                error[i][ibil]+=1e-50;
+        }
+        
+        if(coord[1][i]>p_min_value)
+        {
+            for(int ibil=0; ibil<nbil;ibil++)
+                for(int j=0; j<n_par; j++)
+                    for(int k=0; k<n_par; k++)
+                        if(std::isnan(error[i][ibil])==0) S[ibil](j,k) += coord[j][i]*coord[k][i]/(error[i][ibil]*error[i][ibil]);
+            
+            for(int ibil=0; ibil<nbil;ibil++)
+                for(int ijack=0; ijack<njacks; ijack++)
+                    for(int k=0; k<n_par; k++)
+                        if(std::isnan(error[i][ibil])==0) Sy[ibil][ijack](k) += y[i][ibil][ijack]*coord[k][i]/(error[i][ibil]*error[i][ibil]);
+        }
+    }
+    
+    for(int ibil=0; ibil<nbil;ibil++)
+        for(int ijack=0; ijack<njacks; ijack++)
+            jpars[ibil][ijack] = S[ibil].colPivHouseholderQr().solve(Sy[ibil][ijack]);
+    
+    return jpars; //jpars[ibil][ijack][ipar]
 }

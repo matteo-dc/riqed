@@ -37,6 +37,8 @@ extern int combo;
 extern int moms;
 // number of equivalent momenta
 extern int neqmoms;
+// number of colours
+extern int Nc;
 // number of flavours
 extern int Nf;
 // string action
@@ -57,10 +59,16 @@ extern double plaquette;
 extern double g2;
 // boosted coupling
 extern double g2_tilde;
+// inverse lattice spacing (Gev)
+extern double ainv;
+// Lambda QCD
+extern double LambdaQCD;
 // path to ensemble
 extern string path_ensemble_str;
 // use Sigma1 parameter
 extern int UseSigma1;
+// use Effective Mass parameter
+extern int UseEffMass;
 // N(p) vector
 extern vector<int> Np;
 // path to mom list
@@ -73,7 +81,7 @@ extern vector<double> p4, p4_tilde;
 // string scheme
 extern string scheme;
 
-typedef enum {           /* <--- the type definition */
+typedef enum {  
     LO = 0,
     EM = 1
 } ORDER;
