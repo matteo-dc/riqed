@@ -467,7 +467,7 @@ vvvd_t compute_deltam_cr(const int T, const int nconfs, const int njacks,const i
     
     return deltam_cr;
 }
-
+ 
 
 
 int main(int narg,char **arg)
