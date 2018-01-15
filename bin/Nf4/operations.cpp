@@ -688,7 +688,6 @@ oper_t oper_t::chiral_extr()
         jZq_0_pars_mom=fit_par_jackknife(coord_q,2,Zq_err[imom],jZq_ave_r[imom],t_min_q,t_max_q);
         jZq_em_pars_mom=fit_par_jackknife(coord_q,2,Zq_em_err[imom],jZq_em_ave_r[imom],t_min_q,t_max_q);
         
-#pragma omp parallel for
         for(int ijack=0;ijack<njacks;ijack++)
         {
             jZq_chir_mom[ijack] = jZq_0_pars_mom[ijack][0];
@@ -937,7 +936,7 @@ oper_t oper_t::average_equiv_moms()
         }
     
     // average over the equivalent momenta
-#pragma omp parallel for collapse(2)
+//#pragma omp parallel for collapse(2)
     for(int tag=0;tag<neq_moms;tag++)
         for(size_t imom=0;imom<bilmoms.size();imom++)
         {
