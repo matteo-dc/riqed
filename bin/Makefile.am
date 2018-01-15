@@ -1,7 +1,7 @@
 ACLOCAL_AMFLAGS=-I m4
 
 bin_PROGRAMS=Nf2/main Nf2/list_moms Nf2/deltam_cr Nf2/effective_mass Nf2/grapher Nf2/grapher_fit Nf2/main_swap Nf2/grapher_fit_swap \
-             Nf4/main Nf4/main_old Nf4/deltam_cr Nf4/effective_mass
+             Nf4/main Nf4/main_old
 
 
 Nf2_main_SOURCES=Nf2/main.cpp
@@ -34,8 +34,7 @@ Nf4_main_SOURCES=Nf4/main.cpp \
 		 Nf4/operations.cpp \
 		 Nf4/fit.cpp \
 		 Nf4/subtraction.cpp \
-		 Nf4/evolution.cpp 
-
-Nf4_deltam_cr_SOURCES=Nf4/deltam_cr.cpp
-
-Nf4_effective_mass_SOURCES=Nf4/effective_mass.cpp
+		 Nf4/evolution.cpp \
+		 Nf4/contractions.cpp \
+		 Nf4/deltam_cr.cpp \
+		 Nf4/effective_mass.cpp
