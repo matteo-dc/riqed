@@ -5,6 +5,8 @@
 #include <vector>
 #include <stdio.h>
 #include <iomanip>
+#include "effective_mass.hpp"
+#include "deltam_cr.hpp"
 
 
 // read input mom file
@@ -53,13 +55,19 @@ void read_mom_list(const string &path)
 
 
 // read effective mass
-vector<vector<double>> read_eff_mass(const string name,const int nmr)
+vector<vector<double>> read_eff_mass(const string name)
 {
-    
     vvvd_t eff_mass_array(vvd_t(vd_t(0.0,2),nmr),nmr);
     
     ifstream input_effmass;
     input_effmass.open(name,ios::binary);
+    
+    if(not input_effmass.good())
+    {
+        cout<<"Computing effective masses"<<endl<<endl;
+        compute_eff_mass();
+        input_effmass.open(name,ios::binary);
+    }
     
     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
         for(int mr_bw=0;mr_bw<nmr;mr_bw++)
@@ -69,7 +77,7 @@ vector<vector<double>> read_eff_mass(const string name,const int nmr)
                 input_effmass.read((char*)&temp,sizeof(double));
                 if(not input_effmass.good())
                 {
-                    cerr<<"Unable to read from eff_mass_array mr_fw: "<<mr_fw<<", mr_bw: "<<mr_bw<<", i: "<<i<<endl;
+                    cerr<<"Unable to read from \"eff_mass_array\" mr_fw: "<<mr_fw<<", mr_bw: "<<mr_bw<<", i: "<<i<<endl;
                     exit(1);
                 }
                 eff_mass_array[mr_fw][mr_bw][i]=temp; //store  [i=ave/err]
@@ -86,12 +94,19 @@ vector<vector<double>> read_eff_mass(const string name,const int nmr)
 }
 
 // read deltam_cr
-vvvd_t read_deltam_cr(const string name, const int nm, const int njacks)
+vvvd_t read_deltam_cr(const string name)
 {
     vvvd_t deltam_cr(vvd_t(vd_t(0.0,nm),nm),njacks);
     
     ifstream input_deltam;
     input_deltam.open(name,ios::binary);
+    
+     if(not input_deltam.good())
+     {
+         cout<<"Computing deltam_cr"<<endl<<endl;
+         compute_deltam_cr();
+         input_deltam.open(name,ios::binary);
+     }
     
     for(int ijack=0;ijack<njacks;ijack++)
         for(int m_fw=0;m_fw<nm;m_fw++)
@@ -101,7 +116,7 @@ vvvd_t read_deltam_cr(const string name, const int nm, const int njacks)
                 input_deltam.read((char*)&temp,sizeof(double));
                 if(not input_deltam.good())
                 {
-                    cerr<<"Unable to read from deltam_cr_array mr_fw: "<<m_fw<<", mr_bw: "<<m_bw<<", ijack: "<<ijack<<endl;
+                    cerr<<"Unable to read from \"deltam_cr_array\" mr_fw: "<<m_fw<<", mr_bw: "<<m_bw<<", ijack: "<<ijack<<endl;
                     exit(1);
                 }
                 deltam_cr[ijack][m_fw][m_bw]=temp; //store
@@ -113,15 +128,6 @@ vvvd_t read_deltam_cr(const string name, const int nm, const int njacks)
 size_t isc(size_t is,size_t ic)
 {return ic+3*is;}
 
-// creates the path-string to the configuration
-string path_to_conf(const string &string_path, int i_conf,const string &name)
-{
-    char path[1024];
-    sprintf(path,"%sout/%04d/fft_%s",string_path.c_str(),i_conf,name.c_str());
-    
-    return path;
-}
-
 // to string with precision
 template <typename T>
 string to_string_with_precision(const T a_value, const int n = 6)
@@ -130,6 +136,15 @@ string to_string_with_precision(const T a_value, const int n = 6)
     out << fixed;
     out << setprecision(n) << a_value;
     return out.str();
+}
+
+// creates the path-string to the configuration
+string path_to_conf(const string &string_path, int i_conf,const string &name)
+{
+    char path[1024];
+    sprintf(path,"%sout/%04d/fft_%s",string_path.c_str(),i_conf,name.c_str());
+    
+    return path;
 }
 
 // opens all the files and return a vector with all the string paths

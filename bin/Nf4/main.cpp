@@ -52,14 +52,14 @@ int main()
     moms=mom_list.size();
     cout<<"Read: "<<mom_list.size()<<" momenta from \""<<mom_path<<"\"."<<endl<<endl;
     
-    eff_mass=read_eff_mass("eff_mass_array",nmr);
-    
     oper_t basic;
     
     PRINT(p2_tilde);
     
     basic.step="basic";
     basic.create_basic();
+    
+    if(UseEffMass) eff_mass=read_eff_mass("eff_mass_array");
     
     oper_t rave = basic.average_r();
     

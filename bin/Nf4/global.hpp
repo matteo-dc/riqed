@@ -80,6 +80,9 @@ extern vector<double> p2, p2_tilde;
 extern vector<double> p4, p4_tilde;
 // string scheme
 extern string scheme;
+// range for deltam_cr fit
+extern int delta_tmin;
+extern int delta_tmax;
 
 typedef enum {  
     LO = 0,

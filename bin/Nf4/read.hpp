@@ -8,9 +8,9 @@
 
 void read_mom_list(const string &path);
 
-vector<vector<double>> read_eff_mass(const string name,const int nmr);
+vector<vector<double>> read_eff_mass(const string name);
 
-vvvd_t read_deltam_cr(const string name, const int nm, const int njacks);
+vvvd_t read_deltam_cr(const string name);
 
 size_t isc(size_t is,size_t ic);
 

@@ -209,7 +209,7 @@ vvprop_t build_EM_prop(jprop_t &jS,vvvprop_t &S)
     vvprop_t S_em(vprop_t(prop_t::Zero(),nmr),njacks);
     
     // read deltam_cr
-    vvvd_t deltam_cr = read_deltam_cr("deltam_cr_array",nm,njacks);
+    vvvd_t deltam_cr = read_deltam_cr("deltam_cr_array");
     
 #pragma omp parallel for collapse(3)
     for(int m=0;m<nm;m++)
@@ -1059,6 +1059,18 @@ void continuum_limit(oper_t out, const int LO_or_EM)
         
         cout<<"Z"<<bil[ibil]<<" = "<<A_bil[ibil]<<" +/- "<<A_bil_err[ibil]<<endl;
     }
+    
+//    vector<double> pert={-0.0695545,-0.100031,-0.118281,-0.130564,-0.108664};
+//    
+//    if(LO_or_EM==1)
+//    {
+//        cout<<"Z divided by the perturbative estimates (to be evolved in MSbar"
+//    for(int ibil=0;i<nbil;ibil++)
+//    {
+//        cout<<"Z"<<bil[ibil]<<"(fact) = "<<A_bil[ibil]/pert[ibil]<<" +/- "<<A_err[ibil]/pert[ibil]<<endl;
+//    }
+//    }
+    
     cout<<endl;
 }
 
