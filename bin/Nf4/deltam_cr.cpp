@@ -532,7 +532,7 @@
                 {
                     outfile.write((char*) &deltam_cr/*_array*/[ijack][m_fw][m_bw],sizeof(double));
                
-                    cout<<"ijack "<<ijack<<" m1 "<<m_fw<<" m2 "<<m_bw<<" delta: "<<deltam_cr/*_array*/[ijack][m_fw][m_bw]<<endl;
+//                    cout<<"ijack "<<ijack<<" m1 "<<m_fw<<" m2 "<<m_bw<<" delta: "<<deltam_cr/*_array*/[ijack][m_fw][m_bw]<<endl;
                 }
         
         outfile.close();

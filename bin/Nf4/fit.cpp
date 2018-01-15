@@ -33,7 +33,7 @@ vvd_t fit_par_jackknife(const vvd_t &coord, const int n_par, vd_t &error, const 
             for(int k=0; k<n_par; k++)
                 if(std::isnan(error[i])==0) Sy[ijack](k) += y[ijack][i]*coord[k][i]/(error[i]*error[i]);
     }
-        
+    
     for(int ijack=0; ijack<njacks; ijack++)
     {
         jpars[ijack] = S.colPivHouseholderQr().solve(Sy[ijack]);
@@ -41,10 +41,10 @@ vvd_t fit_par_jackknife(const vvd_t &coord, const int n_par, vd_t &error, const 
         for(int ipar=0;ipar<n_par;ipar++) jvpars[ijack][ipar]=jpars[ijack](ipar);
     }
     
-    for(int i=range_min; i<=range_max; i++)
-        cout<<"(x,y) [ijack=0] = "<<coord[0][i]<<" "<<y[0][i]<<" "<<error[i]<<endl;
-    cout<<"Extrapolation (jpars): "<<jpars[0](0)<<endl;
-    cout<<"Extrapolation (jvpars): "<<jvpars[0][0]<<endl;
+//    for(int i=range_min; i<=range_max; i++)
+//        cout<<"(x,y) [ijack=0] = "<<coord[0][i]<<" "<<y[0][i]<<" "<<error[i]<<endl;
+//    cout<<"Extrapolation (jpars): "<<jpars[0](0)<<endl;
+//    cout<<"Extrapolation (jvpars): "<<jvpars[0][0]<<endl;
     
     return jvpars;
     
