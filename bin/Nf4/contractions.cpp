@@ -141,10 +141,10 @@ vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const stri
             jvec_par[ijack][t]=(jvec[ijack][t]+par*jvec_sym[ijack][t])/2.0;
     }
     
-    string path=ID+"_"+reim+"_mrbw_"+to_string(mr1)+"_mrfw_"+to_string(mr2)+"_"+T1+T2+".xmg";
-    ofstream out(path);
-    for(int t=0;t<T;t++)
-        out<<t<<" "<<jvec_sym[0][t]<<endl;
+//    string path=ID+"_"+reim+"_mrbw_"+to_string(mr1)+"_mrfw_"+to_string(mr2)+"_"+T1+T2+".xmg";
+//    ofstream out(path);
+//    for(int t=0;t<T;t++)
+//        out<<t<<" "<<jvec_sym[0][t]<<endl;
     
     // if(ID=="P5P5" and reim=="RE" and parity=="EVEN"){
     //   cout<<"**********DEBUG*************"<<endl;
