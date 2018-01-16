@@ -115,9 +115,7 @@ vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const stri
         
         infile.close();
     }
-    
-    printf("\n");
-    
+        
     jV0P5_real=jackknife/*_double*/(jV0P5_real,T/*,nconfs,clust_size*/);
     jV0P5_imag=jackknife(jV0P5_imag,T);
     jP5P5_real=jackknife(jP5P5_real,T);
