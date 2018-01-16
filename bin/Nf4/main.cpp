@@ -32,8 +32,11 @@ vector<double> p4, p4_tilde;
 // list of N(p)
 vector<int> Np;
 
-//read effective mass
+// effective mass
 vector< vector<double> > eff_mass;
+
+// deltam_cr
+vvvd_t deltam_cr;
 
 //using namespace std;
 
@@ -55,6 +58,8 @@ int main()
     oper_t basic;
     
     PRINT(p2_tilde);
+    
+    deltam_cr=read_deltam_cr("deltam_cr_array");
     
     basic.step="basic";
     basic.create_basic();

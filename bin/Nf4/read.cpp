@@ -100,7 +100,7 @@ vvvd_t read_deltam_cr(const string name)
     
     ifstream input_deltam;
     input_deltam.open(name,ios::binary);
-    
+
      if(not input_deltam.good())
      {
          cout<<"Computing deltam_cr"<<endl<<endl;

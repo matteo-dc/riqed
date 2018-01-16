@@ -53,6 +53,8 @@ extern double mu_sea;
 extern vector<double> mass_val;
 // effective masses
 extern vector< vector<double> > eff_mass;
+// deltam_cr
+extern vvvd_t deltam_cr;
 // plaquette
 extern double plaquette;
 // coupling
