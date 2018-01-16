@@ -211,7 +211,7 @@ vvprop_t build_EM_prop(jprop_t &jS,vvvprop_t &S)
     // read deltam_cr
     vvvd_t deltam_cr = read_deltam_cr("deltam_cr_array");
     
-#pragma omp parallel for collapse(3)
+//#pragma omp parallel for collapse(3)
     for(int m=0;m<nm;m++)
         for(int r=0;r<nr;r++)
             for(int ijack=0;ijack<njacks;ijack++)
@@ -281,9 +281,11 @@ void oper_t::compute_bil()
     ifstream input[combo];
     vector<string> v_path = setup_read_prop(input);
     
-    for(int ibilmom=0;ibilmom<(int)bilmoms.size();ibilmom++)
+    int mom_size = (int)bilmoms.size();
+    
+    for(int ibilmom=0;ibilmom<mom_size;ibilmom++)
     {
-        cout<<"\r\t mom = "<<ibilmom+1<<"/"<<(int)bilmoms.size()<<flush;
+        cout<<"\r\t mom = "<<ibilmom+1<<"/"<<mom_size<<flush;
         
         const int imom1=bilmoms[ibilmom][1]; // p1
         const int imom2=bilmoms[ibilmom][2]; // p2
@@ -307,6 +309,7 @@ void oper_t::compute_bil()
         vvprop_t S2_0(vprop_t(prop_t::Zero(),nmr),njacks);
         vvprop_t S2_em(vprop_t(prop_t::Zero(),nmr),njacks);
         
+#pragma omp parallel for collapse(2)
         for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
             for(int ihit=0;ihit<nhits;ihit++)
             {
