@@ -44,8 +44,10 @@ int main()
 {
 #pragma omp parallel
 #pragma omp master
-    system("clear");
-    cout<<"Using "<<omp_get_num_threads()<<" threads"<<endl;
+    {
+        system("clear");
+        cout<<"Using "<<omp_get_num_threads()<<" threads"<<endl;
+    }
     
     char path[128]="input.txt";
     read_input(path);
