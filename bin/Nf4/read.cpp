@@ -108,7 +108,7 @@ vvvd_t read_deltam_cr(const string name)
          input_deltam.open(name,ios::binary);
      }
     
-    cout<<"Reading deltam_cr"<<endl<<endl;q
+    cout<<"Reading deltam_cr"<<endl<<endl;
     
     for(int ijack=0;ijack<njacks;ijack++)
         for(int m_fw=0;m_fw<nm;m_fw++)
