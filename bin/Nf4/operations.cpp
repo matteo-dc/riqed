@@ -235,6 +235,8 @@ void oper_t::compute_prop()
     
     for(int imom=0; imom<moms; imom++)
     {
+        cout<<"\r\t mom = "<<imom+1<<"/"<<moms<<flush;
+        
         // definition of jackknifed propagators
         jprop_t jS_0(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
         jprop_t jS_em(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
@@ -269,6 +271,7 @@ void oper_t::compute_prop()
         // printf("%lf\n",jZq[0][0]);
         
     } // close mom loop
+    cout<<endl<<endl;
 }
 
 void oper_t::compute_bil()
