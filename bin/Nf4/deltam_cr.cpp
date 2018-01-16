@@ -415,7 +415,7 @@
                         jV0P5_P0_ave[m_fw][m_bw][ijack][t] += jV0P5_P0[r+nr*m_fw][r+nr*m_bw][ijack][t]*cr_even/nr;
                     }
     
-//#pragma omp parallel for collapse(4)
+#pragma omp parallel for collapse(4)
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
             for(int ijack=0;ijack<njacks;ijack++)
@@ -427,12 +427,12 @@
                     
                     deltam_cr_corr[m_fw][m_bw][ijack][t] = num_deltam_cr_corr[m_fw][m_bw][ijack][t]/den_deltam_cr_corr[m_fw][m_bw][ijack][t];
                 
-                    printf("m_fw: %d m_bw: %d ijack: %d t: %d delta: %lf \n",m_fw,m_bw,ijack,t,deltam_cr_corr[m_fw][m_bw][ijack][t]);
+//                    printf("m_fw: %d m_bw: %d ijack: %d t: %d delta: %lf \n",m_fw,m_bw,ijack,t,deltam_cr_corr[m_fw][m_bw][ijack][t]);
                 }
     
     vvvd_t mean_value(vvd_t(vd_t(0.0,T/2+1),nm),nm), sqr_mean_value(vvd_t(vd_t(0.0,T/2+1),nm),nm), error(vvd_t(vd_t(0.0,T/2+1),nm),nm);
     
-#pragma omp parallel for collapse(3)
+//#pragma omp parallel for collapse(3)
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
             for(int t=0;t<T/2+1;t++)

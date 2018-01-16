@@ -5,7 +5,7 @@
 // clusterize propagator
 jprop_t clusterize(jprop_t &jS,vvprop_t &S)
 {
-#pragma omp parallel for collapse (2)
+//#pragma omp parallel for collapse (2)
     for(int ijack=0;ijack<njacks;ijack++)
         for(int mr=0;mr<nmr;mr++)
             jS[ijack][mr] += S[ijack][mr];
@@ -37,7 +37,7 @@ jprop_t jackknife(jprop_t &jS)
     
     for(int ijack=0;ijack<njacks;ijack++)
     {
-#pragma omp parallel for
+//#pragma omp parallel for
         for(int mr=0;mr<nmr;mr++)
             jSum[mr]+= jS[ijack][mr];
     }
@@ -57,7 +57,7 @@ jvert_t jackknife(jvert_t &jVert)
     
     for(int ijack=0;ijack<njacks;ijack++)
     {
-#pragma omp parallel for collapse(3)
+//#pragma omp parallel for collapse(3)
         for(int mrA=0;mrA<nmr;mrA++)
             for(int mrB=0;mrB<nmr;mrB++)
                 for(int igam=0;igam<16;igam++)

@@ -2,11 +2,11 @@
 #include <config.hpp>
 #endif
 
+#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include <omp.h>
 #include <vector>
 #include <iostream>
 #include <fstream>
