@@ -44,15 +44,15 @@ string path_to_contr(/*const string &string_path,*/ int i_conf, const int mr1, c
 
 
 //get the contraction from file
-vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const string &T2, const string &ID, const string &reim, const string &parity/*, const int T, const int nconfs, const int njacks , const int* conf_id, const string &string_path*/)
+vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const string &T2, const string &ID, const string &reim, const string &parity/*, const int T, const int nconfs, const int njacks*/ , const int* conf_id /*, const string &string_path*/)
 {
     
     int T=size[0];
     
-    // array of the configurations
-    int conf_id[nconfs];
-    for(int iconf=0;iconf<nconfs;iconf++)
-        conf_id[iconf]=conf_init+iconf*conf_step;
+//    // array of the configurations
+//    int conf_id[nconfs];
+//    for(int iconf=0;iconf<nconfs;iconf++)
+//        conf_id[iconf]=conf_init+iconf*conf_step;
     
     vd_t data_V0P5_real(0.0,T);
     vd_t data_V0P5_imag(0.0,T);
@@ -70,6 +70,9 @@ vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const stri
     
     for(int iconf=0;iconf<nconfs;iconf++)
     {
+        printf("%s  %s-%s",ID.c_str(),T1.c_str(),T2.c_str());
+        printf("\t conf = %d/%d\n",iconf+1,nconfs);
+        
         int ijack=iconf/clust_size;
         
         ifstream infile;
@@ -112,6 +115,8 @@ vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const stri
         
         infile.close();
     }
+    
+    printf("\n");
     
     jV0P5_real=jackknife/*_double*/(jV0P5_real,T/*,nconfs,clust_size*/);
     jV0P5_imag=jackknife(jV0P5_imag,T);

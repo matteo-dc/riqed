@@ -349,10 +349,10 @@
 //    int nr=2;
 //    int nm=4;
     
-//    // array of the configurations
-//    int conf_id[nconfs];
-//    for(int iconf=0;iconf<nconfs;iconf++)
-//        conf_id[iconf]=conf_init+iconf*conf_step;
+    // array of the configurations
+    int conf_id[nconfs];
+    for(int iconf=0;iconf<nconfs;iconf++)
+        conf_id[iconf]=conf_init+iconf*conf_step;
     
     int T=size[0];
     
@@ -385,14 +385,14 @@
         for(int mr_bw=0;mr_bw<nmr;mr_bw++)
         {
             //load corrections
-            jV0P5_LL[mr_fw][mr_bw]=get_contraction(mr_bw,"F",mr_fw,"F","V0P5","IM","ODD"/*,T,nconfs,njacks,conf_id,string_path*/);
-            jV0P5_0M[mr_fw][mr_bw]=get_contraction(mr_bw,"0",mr_fw,"FF","V0P5","IM","ODD");
-            jV0P5_M0[mr_fw][mr_bw]=get_contraction(mr_bw,"FF",mr_fw,"0","V0P5","IM","ODD");
-            jV0P5_0T[mr_fw][mr_bw]=get_contraction(mr_bw,"0",mr_fw,"T","V0P5","IM","ODD");
-            jV0P5_T0[mr_fw][mr_bw]=get_contraction(mr_bw,"T",mr_fw,"0","V0P5","IM","ODD");
+            jV0P5_LL[mr_fw][mr_bw]=get_contraction(mr_bw,"F",mr_fw,"F","V0P5","IM","ODD",conf_id/*,T,nconfs,njacks,conf_id,string_path*/);
+            jV0P5_0M[mr_fw][mr_bw]=get_contraction(mr_bw,"0",mr_fw,"FF","V0P5","IM","ODD",conf_id);
+            jV0P5_M0[mr_fw][mr_bw]=get_contraction(mr_bw,"FF",mr_fw,"0","V0P5","IM","ODD",conf_id);
+            jV0P5_0T[mr_fw][mr_bw]=get_contraction(mr_bw,"0",mr_fw,"T","V0P5","IM","ODD",conf_id);
+            jV0P5_T0[mr_fw][mr_bw]=get_contraction(mr_bw,"T",mr_fw,"0","V0P5","IM","ODD",conf_id);
             //load the derivative wrt counterterm
-            jV0P5_0P[mr_fw][mr_bw]=get_contraction(mr_bw,"0",mr_fw,"P","V0P5","RE","ODD");
-            jV0P5_P0[mr_fw][mr_bw]=get_contraction(mr_bw,"P",mr_fw,"0","V0P5","RE","ODD");
+            jV0P5_0P[mr_fw][mr_bw]=get_contraction(mr_bw,"0",mr_fw,"P","V0P5","RE","ODD",conf_id);
+            jV0P5_P0[mr_fw][mr_bw]=get_contraction(mr_bw,"P",mr_fw,"0","V0P5","RE","ODD",conf_id);
         }
     
     //average over r
