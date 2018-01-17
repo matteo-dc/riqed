@@ -5,7 +5,7 @@
 // clusterize propagator
 jprop_t clusterize(jprop_t &jS,vvprop_t &S)
 {
-//#pragma omp parallel for collapse (2)
+#pragma omp parallel for collapse (2)
     for(int ijack=0;ijack<njacks;ijack++)
         for(int mr=0;mr<nmr;mr++)
             jS[ijack][mr] += S[ijack][mr];

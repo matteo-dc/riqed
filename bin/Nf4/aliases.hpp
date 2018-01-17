@@ -32,8 +32,9 @@ using prop_t=Matrix<dcompl,12,12>;
 
 //list of propagators
 using vprop_t=valarray<prop_t>;
-using vvprop_t=valarray< valarray<prop_t> >;
-using vvvprop_t=valarray< valarray< valarray<prop_t> > >;
+using vvprop_t=valarray< vprop_t >;
+using vvvprop_t=valarray< vvprop_t >;
+using vvvvprop_t = valarray< vvvprop_t >;
 
 //list of gamma for a given momentum
 using qline_t=valarray<prop_t>;
