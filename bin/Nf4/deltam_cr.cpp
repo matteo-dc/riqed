@@ -4,6 +4,7 @@
 #include "jack.hpp"
 #include "fit.hpp"
 #include <iostream>
+#include <omp.h>
 
 
 //#ifdef HAVE_CONFIG_H

@@ -1,6 +1,7 @@
 #include "aliases.hpp"
 #include "global.hpp"
 #include "Dirac.hpp"
+#include <omp.h>
 
 //prop_t GAMMA=make_gamma();
 
