@@ -35,12 +35,9 @@ jprop_t jackknife(jprop_t &jS)
 {
     valarray<prop_t> jSum(prop_t::Zero(),nmr);
     
-    for(int ijack=0;ijack<njacks;ijack++)
-    {
-//#pragma omp parallel for
-        for(int mr=0;mr<nmr;mr++)
+    for(int mr=0;mr<nmr;mr++)
+        for(int ijack=0;ijack<njacks;ijack++)
             jSum[mr]+= jS[ijack][mr];
-    }
     
 #pragma omp parallel for collapse(2)
     for(int ijack=0;ijack<njacks;ijack++)
@@ -55,14 +52,13 @@ jvert_t jackknife(jvert_t &jVert)
 {
     vert_t jSum(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr);
     
-    for(int ijack=0;ijack<njacks;ijack++)
-    {
-//#pragma omp parallel for collapse(3)
-        for(int mrA=0;mrA<nmr;mrA++)
-            for(int mrB=0;mrB<nmr;mrB++)
-                for(int igam=0;igam<16;igam++)
+#pragma omp parallel for collapse(3)
+    for(int mrA=0;mrA<nmr;mrA++)
+        for(int mrB=0;mrB<nmr;mrB++)
+            for(int igam=0;igam<16;igam++)
+                for(int ijack=0;ijack<njacks;ijack++)
                     jSum[mrA][mrB][igam] += jVert[ijack][mrA][mrB][igam];
-    }
+    
 
 #pragma omp parallel for collapse(4)
     for(int ijack=0;ijack<njacks;ijack++)

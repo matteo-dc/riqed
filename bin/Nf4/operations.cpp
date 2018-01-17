@@ -186,27 +186,10 @@ void oper_t::resize_vectors()
     }
 
 
-vvprop_t build_LO_prop(jprop_t &jS,vvvprop_t &S)
+vvvprop_t build_prop(jprop_t &jS_0,jprop_t &jS_em,vvvprop_t &S)
 {
-    vvprop_t S_0(vprop_t(prop_t::Zero(),nmr),njacks);
-    
-#pragma omp parallel for collapse(3)
-    for(int m=0;m<nm;m++)
-        for(int r=0;r<nr;r++)
-            for(int ijack=0;ijack<njacks;ijack++)
-            {
-                int mr = r + nr*m;
-                S_0[ijack][mr] = S[ijack][0][mr];
-            }
-    
-    jS=clusterize(jS,S_0);
-    
-    return S_0;
-}
-
-vvprop_t build_EM_prop(jprop_t &jS,vvvprop_t &S)
-{
-    vvprop_t S_em(vprop_t(prop_t::Zero(),nmr),njacks);
+//    vvvprop_t S_LO_or_EM(vprop_t(prop_t::Zero(),nmr),njacks);
+    vvvprop_t S_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
     
 #pragma omp parallel for collapse(3)
     for(int m=0;m<nm;m++)
@@ -215,15 +198,36 @@ vvprop_t build_EM_prop(jprop_t &jS,vvvprop_t &S)
             {
                 int mr = r + nr*m;
                 
-                // Electromagnetic correction:  S_em = S_self + S_tad -+ deltam_cr*S_P
-                if(r==0) S_em[ijack][mr] = S[ijack][2][mr] + S[ijack][3][mr] + deltam_cr[ijack][m][m]*S[ijack][4][mr]; //r=0
-                if(r==1) S_em[ijack][mr] = S[ijack][2][mr] + S[ijack][3][mr] - deltam_cr[ijack][m][m]*S[ijack][4][mr]; //r=1
+                    S_LO_and_EM[LO][ijack][mr] = S[ijack][0][mr];
+                
+                    // Electromagnetic correction:  S_em = S_self + S_tad -+ deltam_cr*S_P
+                    if(r==0) S_LO_and_EM[EM][ijack][mr] = S[ijack][2][mr] + S[ijack][3][mr] + deltam_cr[ijack][m][m]*S[ijack][4][mr]; //r=0
+                    if(r==1) S_LO_and_EM[EM][ijack][mr] = S[ijack][2][mr] + S[ijack][3][mr] - deltam_cr[ijack][m][m]*S[ijack][4][mr]; //r=1
             }
     
-    jS=clusterize(jS,S_em);
+    jS_0=clusterize(jS_0,S_LO_and_EM[LO]);
+    jS_em=clusterize(jS_em,S_LO_and_EM[EM]);
     
-    return S_em;
+    return S_LO_and_EM;
 }
+
+//vvprop_t build_EM_prop(jprop_t &jS,vvvprop_t &S)
+//{
+//    vvprop_t S_em(vprop_t(prop_t::Zero(),nmr),njacks);
+//    
+//#pragma omp parallel for collapse(3)
+//    for(int m=0;m<nm;m++)
+//        for(int r=0;r<nr;r++)
+//            for(int ijack=0;ijack<njacks;ijack++)
+//            {
+//                int mr = r + nr*m;
+//                
+//                           }
+//    
+//    jS=clusterize(jS,S_em);
+//    
+//    return S_em;
+//}
 
 void oper_t::compute_prop()
 {
@@ -245,14 +249,20 @@ void oper_t::compute_prop()
         vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),ntypes),njacks);
         vvprop_t S_0(vprop_t(prop_t::Zero(),nmr),njacks);
         vvprop_t S_em(vprop_t(prop_t::Zero(),nmr),njacks);
+        vvvprop_t S_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
         
         for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
             for(int ihit=0;ihit<nhits;ihit++)
             {
                 S=read_prop_mom(input,v_path,i_in_clust,ihit,imom);
                 
-                S_0 = build_LO_prop(jS_0,S);
-                S_em = build_EM_prop(jS_em,S);
+                S_LO_and_EM = build_prop(jS_0,jS_em,S);
+                
+//                S_0 = build_prop(jS_0,S,LO);
+//                S_em = build_prop(jS_em,S,EM);
+                
+                S_0 = S_LO_and_EM[LO];
+                S_em = S_LO_and_EM[EM];
             }
         
         // jackknife average
@@ -298,6 +308,7 @@ void oper_t::compute_bil()
         jprop_t jS2_em(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
         
         // definition of vertices
+        valarray<jvert_t> jVert_LO_and_EM(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks),2);
         jvert_t jVert_0 (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
         jvert_t jVert_em (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
         
@@ -309,26 +320,34 @@ void oper_t::compute_bil()
         vvprop_t S2_0(vprop_t(prop_t::Zero(),nmr),njacks);
         vvprop_t S2_em(vprop_t(prop_t::Zero(),nmr),njacks);
         
+        vvvprop_t S1_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
+        vvvprop_t S2_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
+        
         for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
             for(int ihit=0;ihit<nhits;ihit++)
             {
                 S1=read_prop_mom(input,v_path,i_in_clust,ihit,imom1);
                 S2=(read2)?read_prop_mom(input,v_path,i_in_clust,ihit,imom2):S1;
                 
-                S1_0 = build_LO_prop(jS1_0,S1);
-                S1_em = build_EM_prop(jS1_em,S1);
-                S2_0 = build_LO_prop(jS2_0,S2);
-                S2_em = build_EM_prop(jS2_em,S2);
-                               
-                jVert_0 = build_LO_vert(S1,S2,jVert_0);
-                jVert_em = build_EM_vert(S1,S2,S1_em,S2_em,jVert_em);
+                S1_LO_and_EM = build_prop(jS1_0,jS1_em,S1);
+                S2_LO_and_EM = (read2)?build_prop(jS2_0,jS2_em,S2):S1_LO_and_EM;
+                
+                S1_0 = S1_LO_and_EM[LO];
+                S2_0 = S2_LO_and_EM[LO];
+                S1_em = S1_LO_and_EM[EM];
+                S2_em = S2_LO_and_EM[EM];
+                
+                jVert_LO_and_EM = build_vert(S1,S2,S1_em,S2_em,jVert_LO_and_EM);
+
+                jVert_0 = jVert_LO_and_EM[LO];
+                jVert_em = jVert_LO_and_EM[EM];
             }
         
         // jackknife averages
         jS1_0=jackknife(jS1_0);
         jS1_em=jackknife(jS1_em);
-        jS2_0=jackknife(jS2_0);
-        jS2_em=jackknife(jS2_em);
+        jS2_0=(read2)?jackknife(jS2_0):jS1_0;
+        jS2_em=(read2)?jackknife(jS2_em):jS1_em;
         
         jVert_0=jackknife(jVert_0);
         jVert_em=jackknife(jVert_em);
@@ -336,8 +355,8 @@ void oper_t::compute_bil()
         // invert propagators
         jprop_t jS1_0_inv = invert_jprop(jS1_0);
         jprop_t jS1_em_inv = jS1_0_inv*jS1_em*jS1_0_inv;
-        jprop_t jS2_0_inv = invert_jprop(jS2_0);
-        jprop_t jS2_em_inv = jS2_0_inv*jS2_em*jS2_0_inv;
+        jprop_t jS2_0_inv = (read2)?invert_jprop(jS2_0):jS1_0_inv;
+        jprop_t jS2_em_inv = (read2)?jS2_0_inv*jS2_em*jS2_0_inv:jS1_em_inv;
         
         // compute the projected green function (S,V,P,A,T)
         jproj_t jG_0_mom = compute_pr_bil(jS1_0_inv, jVert_0, jS2_0_inv);
