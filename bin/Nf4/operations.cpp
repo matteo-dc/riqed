@@ -246,7 +246,6 @@ void oper_t::compute_prop()
         vvprop_t S_0(vprop_t(prop_t::Zero(),nmr),njacks);
         vvprop_t S_em(vprop_t(prop_t::Zero(),nmr),njacks);
         
-//#pragma omp parallel for collapse(2)
         for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
             for(int ihit=0;ihit<nhits;ihit++)
             {

@@ -7,6 +7,7 @@
 #include <iomanip>
 #include "effective_mass.hpp"
 #include "deltam_cr.hpp"
+#include <omp.h>
 
 
 // read input mom file
