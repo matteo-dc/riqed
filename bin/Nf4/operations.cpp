@@ -309,7 +309,6 @@ void oper_t::compute_bil()
         vvprop_t S2_0(vprop_t(prop_t::Zero(),nmr),njacks);
         vvprop_t S2_em(vprop_t(prop_t::Zero(),nmr),njacks);
         
-#pragma omp parallel for collapse(2)
         for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
             for(int ihit=0;ihit<nhits;ihit++)
             {
@@ -491,7 +490,7 @@ tuple<vvvd_t,vvvd_t> ave_err(vector<vvvd_t> jG)
     vvvd_t sqr_G_ave(vvd_t(vd_t(0.0,neq),5),jG.size());
     vvvd_t G_err(vvd_t(vd_t(0.0,neq),5),jG.size());
     
-//#pragma omp parallel for collapse(4)
+#pragma omp parallel for collapse(3)
     for(size_t imom=0;imom<jG.size();imom++)
         for(int ieq=0;ieq<neq;ieq++)
             for(int ibil=0;ibil<5;ibil++)
@@ -517,7 +516,7 @@ tuple<vvd_t,vvd_t> ave_err(vector<vvd_t> jG)
     vvd_t sqr_G_ave(vd_t(0.0,5),jG.size());
     vvd_t G_err(vd_t(0.0,5),jG.size());
     
-    //#pragma omp parallel for collapse(4)
+#pragma omp parallel for collapse(2)
     for(size_t imom=0;imom<jG.size();imom++)
         for(int ibil=0;ibil<5;ibil++)
             for(int ijack=0;ijack<njacks;ijack++)
@@ -541,7 +540,7 @@ tuple<vvd_t,vvd_t> ave_err_q(vector<vvd_t> jZq)
     vvd_t sqr_Zq_ave(vd_t(0.0,neq2),jZq.size());
     vvd_t Zq_err(vd_t(0.0,neq2),jZq.size());
     
-//#pragma omp parallel for collapse(3)
+#pragma omp parallel for collapse(2)
     for(size_t imom=0;imom<jZq.size();imom++)
         for(int ieq=0;ieq<neq2;ieq++)
             for(int ijack=0;ijack<njacks;ijack++)
@@ -565,7 +564,7 @@ tuple<vd_t,vd_t> ave_err_q(vector<vd_t> jZq)
     vd_t sqr_Zq_ave(0.0,jZq.size());
     vd_t Zq_err(0.0,jZq.size());
     
-    //#pragma omp parallel for collapse(3)
+#pragma omp parallel for
     for(size_t imom=0;imom<jZq.size();imom++)
         for(int ijack=0;ijack<njacks;ijack++)
             {
@@ -816,7 +815,7 @@ oper_t oper_t::evolve()
     double cq=0.0;
     vd_t cO(0.0,5);
     
-//#pragma omp parallel for
+#pragma omp parallel for
     for(size_t imom=0;imom<bilmoms.size();imom++)
     {
         // Note that ZV  ZA are RGI because they're protected by the WIs
