@@ -815,7 +815,6 @@ oper_t oper_t::evolve()
     double cq=0.0;
     vd_t cO(0.0,5);
     
-#pragma omp parallel for
     for(size_t imom=0;imom<bilmoms.size();imom++)
     {
         // Note that ZV  ZA are RGI because they're protected by the WIs
