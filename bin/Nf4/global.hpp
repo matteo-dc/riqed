@@ -4,6 +4,7 @@
 #include "aliases.hpp"
 #include <string>
 #include <fstream>
+#include <omp.h>
 
 // number of configurations
 extern int nconfs;
