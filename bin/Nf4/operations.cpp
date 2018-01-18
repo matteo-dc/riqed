@@ -335,6 +335,9 @@ void oper_t::compute_bil()
         vvvprop_t S1_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
         vvvprop_t S2_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
         
+        cout<<endl<<endl;
+        cout<<"- Reading propagators and building vertices"<<endl;
+        
         for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
             for(int ihit=0;ihit<nhits;ihit++)
             {
@@ -358,6 +361,8 @@ void oper_t::compute_bil()
 //        jvert_t jVert_0 = jVert_LO_and_EM[LO];
 //        jvert_t jVert_em = jVert_LO_and_EM[EM];
         
+        cout<<"- Jackknife of propagators and vertices"<<endl;
+        
         // jackknife averages
         jS1_0=jackknife(jS1_0);
         jS1_em=jackknife(jS1_em);
@@ -367,6 +372,9 @@ void oper_t::compute_bil()
         jVert_LO_and_EM[LO]=jackknife(jVert_LO_and_EM[LO]);
         jVert_LO_and_EM[EM]=jackknife(jVert_LO_and_EM[EM]);
         
+        
+        cout<<"- Inverting propagators"<<endl;
+
         // invert propagators
         vvvprop_t jS1_inv_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
         vvvprop_t jS2_inv_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
@@ -376,11 +384,15 @@ void oper_t::compute_bil()
         jS2_inv_LO_and_EM[LO] = (read2)?invert_jprop(jS2_0):jS1_inv_LO_and_EM[LO];
         jS2_inv_LO_and_EM[EM] = (read2)?jS2_inv_LO_and_EM[LO]*jS2_em*jS2_inv_LO_and_EM[LO]:jS1_inv_LO_and_EM[EM];
         
+        cout<<"- Computing Zq"<<endl;
+        
         // compute Zq relative to imom1
         vvvd_t jZq_LO_and_EM = compute_jZq(jS1_inv_LO_and_EM,imom1);
         
         jZq[imom1] = jZq_LO_and_EM[LO];
         jZq_em[imom1] = - jZq_LO_and_EM[EM];
+        
+        cout<<"- Computing bilinears"<<endl;
         
         // compute the projected green function (S,V,P,A,T)
         vvvvvd_t jG_LO_and_EM = compute_pr_bil(jS1_inv_LO_and_EM,jVert_LO_and_EM,jS2_inv_LO_and_EM);
