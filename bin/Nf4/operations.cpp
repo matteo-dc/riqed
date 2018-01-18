@@ -343,6 +343,8 @@ void oper_t::compute_bil()
         
         cout<<"- Reading propagators and building vertices"<<endl;
         
+        double t_span1=0.0, t_span2=0.0, t_span3=0.0;
+        
         for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
             for(int ihit=0;ihit<nhits;ihit++)
             {
@@ -352,8 +354,7 @@ void oper_t::compute_bil()
                 S2=(read2)?read_prop_mom(input,v_path,i_in_clust,ihit,imom2):S1;
                 
                 high_resolution_clock::time_point tb=high_resolution_clock::now();
-                duration<double> t_span = duration_cast<duration<double>>(tb-ta);
-                cout<<"\t read: "<<t_span.count()<<" s"<<endl;
+                t_span1 += (duration_cast<duration<double>>(tb-ta)).count();
                 
                 ta=high_resolution_clock::now();
                 
@@ -361,8 +362,7 @@ void oper_t::compute_bil()
                 S2_LO_and_EM = (read2)?build_prop(jS2_0,jS2_em,S2):S1_LO_and_EM;
                 
                 tb=high_resolution_clock::now();
-                t_span = duration_cast<duration<double>>(tb-ta);
-                cout<<"\t build prop: "<<t_span.count()<<" s"<<endl;
+                t_span2 += (duration_cast<duration<double>>(tb-ta)).count();
                 
                 S1_em = S1_LO_and_EM[EM];
                 S2_em = S2_LO_and_EM[EM];
@@ -372,9 +372,12 @@ void oper_t::compute_bil()
                 jVert_LO_and_EM = build_vert(S1,S2,S1_em,S2_em,jVert_LO_and_EM);
                 
                 tb=high_resolution_clock::now();
-                t_span = duration_cast<duration<double>>(tb-ta);
-                cout<<"\t build vert: "<<t_span.count()<<" s"<<endl;
+                t_span3 += (duration_cast<duration<double>>(tb-ta)).count();
             }
+        cout<<"\t read: "<<t_span1<<" s"<<endl;
+        cout<<"\t build prop: "<<t_span2<<" s"<<endl;
+        cout<<"\t build vert: "<<t_span3<<" s"<<endl;
+
         
 //        S1_0 = S1_LO_and_EM[LO];
 //        S2_0 = S2_LO_and_EM[LO];
