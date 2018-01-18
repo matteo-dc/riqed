@@ -42,6 +42,7 @@ vvvd_t deltam_cr;
 
 int main()
 {
+    omp_set_nested(1);
 #pragma omp parallel
 #pragma omp master
     {
