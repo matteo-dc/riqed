@@ -8,9 +8,11 @@
 //calculate the vertex function in a given configuration for the given equal momenta
 prop_t make_vertex(const prop_t &prop1, const prop_t &prop2, const int mu)
 {
-    prop_t vert=prop1*GAMMA[mu]*GAMMA[5]*prop2.adjoint()*GAMMA[5];  /*it has to be "jackknifed"*/
+//    prop_t vert=prop1*GAMMA[mu]*GAMMA[5]*prop2.adjoint()*GAMMA[5];  /*it has to be "jackknifed"*/
     
-    return vert;
+//    return vert;
+    
+    return prop1*GAMMA[mu]*GAMMA[5]*prop2.adjoint()*GAMMA[5];
 }
 
 //// compute the LO vertex

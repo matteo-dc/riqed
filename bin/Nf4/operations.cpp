@@ -307,7 +307,8 @@ void oper_t::compute_bil()
     
     for(int ibilmom=0;ibilmom<mom_size;ibilmom++)
     {
-        cout<<"\r\t mom = "<<ibilmom+1<<"/"<<mom_size<<flush;
+        cout<<endl;
+        cout<<"\r\t mom = "<<ibilmom+1<<"/"<<mom_size<<endl;
         
         const int imom1=bilmoms[ibilmom][1]; // p1
         const int imom2=bilmoms[ibilmom][2]; // p2
@@ -335,7 +336,6 @@ void oper_t::compute_bil()
         vvvprop_t S1_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
         vvvprop_t S2_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
         
-        cout<<endl<<endl;
         cout<<"- Reading propagators and building vertices"<<endl;
         
         for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)

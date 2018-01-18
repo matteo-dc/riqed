@@ -14,7 +14,7 @@ valarray<jvert_t> build_vert(vvvprop_t &S1,vvvprop_t &S2,vvprop_t &S1_em,vvprop_
 
 
 // calculate the vertex function in a given configuration for the given equal momenta
-prop_t make_vertex(const prop_t &prop1, const prop_t &prop2, const int mu);
+//prop_t make_vertex(const prop_t &prop1, const prop_t &prop2, const int mu);
 
 // invert the propagator
 jprop_t invert_jprop( const jprop_t &jprop);
