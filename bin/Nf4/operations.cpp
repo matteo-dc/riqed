@@ -1039,7 +1039,8 @@ void continuum_limit(oper_t out, const int LO_or_EM)
     //linear fit
     int p2_min=0;  //a2p2~1
     int p2_max=neq_moms;
-    int p_min_value=0.9;
+//    int p_min_value=0.9;
+    double p_min_value=1.0;
     
     vvd_t coord_linear(vd_t(0.0,neq_moms),2);
     
