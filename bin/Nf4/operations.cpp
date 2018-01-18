@@ -346,19 +346,34 @@ void oper_t::compute_bil()
         for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
             for(int ihit=0;ihit<nhits;ihit++)
             {
-                cout<<"A"<<endl;
+                high_resolution_clock::time_point ta=high_resolution_clock::now();
+                
                 S1=read_prop_mom(input,v_path,i_in_clust,ihit,imom1);
                 S2=(read2)?read_prop_mom(input,v_path,i_in_clust,ihit,imom2):S1;
                 
-                cout<<"B"<<endl;
+                high_resolution_clock::time_point tb=high_resolution_clock::now();
+                duration<double> t_span = duration_cast<duration<double>>(tb-ta);
+                cout<<"\t read: "<<t_span.count()<<" s"<<endl;
+                
+                ta=high_resolution_clock::now();
+                
                 S1_LO_and_EM = build_prop(jS1_0,jS1_em,S1);
                 S2_LO_and_EM = (read2)?build_prop(jS2_0,jS2_em,S2):S1_LO_and_EM;
+                
+                tb=high_resolution_clock::now();
+                t_span = duration_cast<duration<double>>(tb-ta);
+                cout<<"\t build prop: "<<t_span.count()<<" s"<<endl;
                 
                 S1_em = S1_LO_and_EM[EM];
                 S2_em = S2_LO_and_EM[EM];
                 
-                cout<<"C"<<endl;
+                ta=high_resolution_clock::now();
+
                 jVert_LO_and_EM = build_vert(S1,S2,S1_em,S2_em,jVert_LO_and_EM);
+                
+                tb=high_resolution_clock::now();
+                t_span = duration_cast<duration<double>>(tb-ta);
+                cout<<"\t build vert: "<<t_span.count()<<" s"<<endl;
             }
         
 //        S1_0 = S1_LO_and_EM[LO];
