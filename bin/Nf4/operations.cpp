@@ -16,12 +16,15 @@
 #include "subtraction.hpp"
 #include "evolution.hpp"
 #include "print.hpp"
+#include <chrono>
 
 #define EXTERN_OPER
 
 #include "operations.hpp"
 
 #include "vertices.hpp"
+
+using namespace std::chrono;
 
 SCHEME_t get_scheme()
 {
@@ -297,6 +300,8 @@ void oper_t::compute_prop()
 
 void oper_t::compute_bil()
 {
+    high_resolution_clock::time_point t0=high_resolution_clock::now();
+    
     cout<<"Creating the vertices -- ";
     
     // array of input files to be read in a given conf
@@ -410,6 +415,10 @@ void oper_t::compute_bil()
         jG_0[imom1] = jG_LO_and_EM[LO];
         jG_em[imom1] = jG_LO_and_EM[EM];
         
+        high_resolution_clock::time_point t1=high_resolution_clock::now();
+        duration<double> t_span = duration_cast<duration<double>>(t1-t0);
+        cout<<"\t\t time: "<<t_span.count()<<" s"<<endl;
+    
     } // close mom loop
     cout<<endl<<endl;
 }
