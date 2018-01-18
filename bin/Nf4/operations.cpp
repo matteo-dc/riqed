@@ -300,8 +300,6 @@ void oper_t::compute_prop()
 
 void oper_t::compute_bil()
 {
-    high_resolution_clock::time_point t0=high_resolution_clock::now();
-    
     cout<<"Creating the vertices -- ";
     
     // array of input files to be read in a given conf
@@ -312,6 +310,8 @@ void oper_t::compute_bil()
     
     for(int ibilmom=0;ibilmom<mom_size;ibilmom++)
     {
+        high_resolution_clock::time_point t0=high_resolution_clock::now();
+
         cout<<endl;
         cout<<"\r\t mom = "<<ibilmom+1<<"/"<<mom_size<<endl;
         
@@ -346,15 +346,18 @@ void oper_t::compute_bil()
         for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
             for(int ihit=0;ihit<nhits;ihit++)
             {
+                cout<<"A"<<endl;
                 S1=read_prop_mom(input,v_path,i_in_clust,ihit,imom1);
                 S2=(read2)?read_prop_mom(input,v_path,i_in_clust,ihit,imom2):S1;
                 
+                cout<<"B"<<endl;
                 S1_LO_and_EM = build_prop(jS1_0,jS1_em,S1);
                 S2_LO_and_EM = (read2)?build_prop(jS2_0,jS2_em,S2):S1_LO_and_EM;
                 
                 S1_em = S1_LO_and_EM[EM];
                 S2_em = S2_LO_and_EM[EM];
                 
+                cout<<"C"<<endl;
                 jVert_LO_and_EM = build_vert(S1,S2,S1_em,S2_em,jVert_LO_and_EM);
             }
         
