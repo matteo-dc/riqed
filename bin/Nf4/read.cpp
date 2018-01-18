@@ -219,8 +219,11 @@ prop_t read_prop(ifstream &input, const string &path, const int imom)
     prop_t out(prop_t::Zero());
     
     // start to read from the momentum imom
-    long offset = imom*sizeof(dcompl)*4*4*3*3;
-    input.seekg(offset,input.beg);
+//    long offset = imom*sizeof(dcompl)*4*4*3*3;
+//    input.seekg(offset,input.beg);
+    long offset = sizeof(dcompl)*4*4*3*3;
+    input.seekg(offset,input.cur);
+
     
     for(int id_so=0;id_so<4;id_so++)
         for(int ic_so=0;ic_so<3;ic_so++)
