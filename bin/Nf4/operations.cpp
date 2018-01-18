@@ -217,86 +217,68 @@ vvvprop_t build_prop(jprop_t &jS_0,jprop_t &jS_em,vvvprop_t &S)
     return S_LO_and_EM;
 }
 
-//vvprop_t build_EM_prop(jprop_t &jS,vvvprop_t &S)
+//void oper_t::compute_prop()
 //{
-//    vvprop_t S_em(vprop_t(prop_t::Zero(),nmr),njacks);
+//    cout<<"Creating the propagators -- ";
 //    
-//#pragma omp parallel for collapse(3)
-//    for(int m=0;m<nm;m++)
-//        for(int r=0;r<nr;r++)
-//            for(int ijack=0;ijack<njacks;ijack++)
+//    // array of input files to be read in a given conf
+//    ifstream input[combo];
+//    vector<string> v_path = setup_read_prop(input);
+//    
+//    vvvd_t jZq_LO_and_EM(vvd_t(vd_t(0.0,nmr),njacks),2);
+//    
+//    for(int imom=0; imom<moms; imom++)
+//    {
+//        cout<<"\r\t mom = "<<imom+1<<"/"<<moms<<flush;
+//        
+//        // definition of jackknifed propagators
+//        jprop_t jS_0(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
+//        jprop_t jS_em(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
+//
+//        // initialize propagators
+//        vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),ntypes),njacks);
+//        vvprop_t S_0(vprop_t(prop_t::Zero(),nmr),njacks);
+//        vvprop_t S_em(vprop_t(prop_t::Zero(),nmr),njacks);
+//        vvvprop_t S_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
+//        
+//        for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
+//            for(int ihit=0;ihit<nhits;ihit++)
 //            {
-//                int mr = r + nr*m;
+//                S=read_prop_mom(input,v_path,i_in_clust,ihit,imom);
 //                
-//                           }
-//    
-//    jS=clusterize(jS,S_em);
-//    
-//    return S_em;
+//                S_LO_and_EM = build_prop(jS_0,jS_em,S);
+//                
+////                S_0 = build_prop(jS_0,S,LO);
+////                S_em = build_prop(jS_em,S,EM);
+//            }
+//        
+//        S_0 = S_LO_and_EM[LO];
+//        S_em = S_LO_and_EM[EM];
+//        
+//        // jackknife average
+//        jS_0=jackknife(jS_0);
+//        jS_em=jackknife(jS_em);
+//        
+//        // invert propagator
+//        vvvprop_t jS_inv_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
+//        
+//         jS_inv_LO_and_EM[LO] = invert_jprop(jS_0);
+//         jS_inv_LO_and_EM[EM] = jS_inv_LO_and_EM[LO]*jS_em*jS_inv_LO_and_EM[LO];
+//        
+//        // compute quark field RCs (Zq or Sigma1 established from input file!) and store
+//        jZq_LO_and_EM = compute_jZq(jS_inv_LO_and_EM,imom);
+//        
+//        jZq[imom] = jZq_LO_and_EM[LO];
+//        jZq_em[imom] = - jZq_LO_and_EM[EM];
+//        
+////        jZq[imom] = compute_jZq(jS_0_inv,jS_em_inv,imom);
+////        jZq_em[imom] = - compute_jZq(jS_em_inv,imom);
+//        
+//        // printf("%lf\n",jZq[0][0]);
+//        
+//    } // close mom loop
+//    cout<<endl<<endl;
 //}
-
-void oper_t::compute_prop()
-{
-    cout<<"Creating the propagators -- ";
-    
-    // array of input files to be read in a given conf
-    ifstream input[combo];
-    vector<string> v_path = setup_read_prop(input);
-    
-    vvvd_t jZq_LO_and_EM(vvd_t(vd_t(0.0,nmr),njacks),2);
-    
-    for(int imom=0; imom<moms; imom++)
-    {
-        cout<<"\r\t mom = "<<imom+1<<"/"<<moms<<flush;
-        
-        // definition of jackknifed propagators
-        jprop_t jS_0(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
-        jprop_t jS_em(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
-        
-        // initialize propagators
-        vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),ntypes),njacks);
-        vvprop_t S_0(vprop_t(prop_t::Zero(),nmr),njacks);
-        vvprop_t S_em(vprop_t(prop_t::Zero(),nmr),njacks);
-        vvvprop_t S_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
-        
-        for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
-            for(int ihit=0;ihit<nhits;ihit++)
-            {
-                S=read_prop_mom(input,v_path,i_in_clust,ihit,imom);
-                
-                S_LO_and_EM = build_prop(jS_0,jS_em,S);
-                
-//                S_0 = build_prop(jS_0,S,LO);
-//                S_em = build_prop(jS_em,S,EM);
-            }
-        
-        S_0 = S_LO_and_EM[LO];
-        S_em = S_LO_and_EM[EM];
-        
-        // jackknife average
-        jS_0=jackknife(jS_0);
-        jS_em=jackknife(jS_em);
-        
-        // invert propagator
-        vvvprop_t jS_inv_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
-        
-         jS_inv_LO_and_EM[LO] = invert_jprop(jS_0);
-         jS_inv_LO_and_EM[EM] = jS_inv_LO_and_EM[LO]*jS_em*jS_inv_LO_and_EM[LO];
-        
-        // compute quark field RCs (Zq or Sigma1 established from input file!) and store
-        jZq_LO_and_EM = compute_jZq(jS_inv_LO_and_EM,imom);
-        
-        jZq[imom] = jZq_LO_and_EM[LO];
-        jZq_em[imom] = - jZq_LO_and_EM[EM];
-        
-//        jZq[imom] = compute_jZq(jS_0_inv,jS_em_inv,imom);
-//        jZq_em[imom] = - compute_jZq(jS_em_inv,imom);
-        
-        // printf("%lf\n",jZq[0][0]);
-        
-    } // close mom loop
-    cout<<endl<<endl;
-}
 
 void oper_t::compute_bil()
 {
@@ -307,6 +289,18 @@ void oper_t::compute_bil()
     const vector<string> v_path = setup_read_prop(input);
     
     int mom_size = (int)bilmoms.size();
+    
+    // initialize propagators
+    vvvprop_t S1(vvprop_t(vprop_t(prop_t::Zero(),nmr),ntypes),njacks);
+    vvprop_t S1_0(vprop_t(prop_t::Zero(),nmr),njacks);
+    vvprop_t S1_em(vprop_t(prop_t::Zero(),nmr),njacks);
+    vvvprop_t S2(vvprop_t(vprop_t(prop_t::Zero(),nmr),ntypes),njacks);
+    vvprop_t S2_0(vprop_t(prop_t::Zero(),nmr),njacks);
+    vvprop_t S2_em(vprop_t(prop_t::Zero(),nmr),njacks);
+    
+    vvvprop_t S1_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
+    vvvprop_t S2_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
+
     
     for(int ibilmom=0;ibilmom<mom_size;ibilmom++)
     {
@@ -327,19 +321,9 @@ void oper_t::compute_bil()
         
         // definition of vertices
         valarray<jvert_t> jVert_LO_and_EM(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks),2);
-//        jvert_t jVert_0 (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
-//        jvert_t jVert_em (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
-        
-        // initialize propagators
-        vvvprop_t S1(vvprop_t(vprop_t(prop_t::Zero(),nmr),ntypes),njacks);
-        vvprop_t S1_0(vprop_t(prop_t::Zero(),nmr),njacks);
-        vvprop_t S1_em(vprop_t(prop_t::Zero(),nmr),njacks);
-        vvvprop_t S2(vvprop_t(vprop_t(prop_t::Zero(),nmr),ntypes),njacks);
-        vvprop_t S2_0(vprop_t(prop_t::Zero(),nmr),njacks);
-        vvprop_t S2_em(vprop_t(prop_t::Zero(),nmr),njacks);
-        
-        vvvprop_t S1_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
-        vvvprop_t S2_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
+        //        jvert_t jVert_0 (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
+        //        jvert_t jVert_em (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
+
         
         cout<<"- Reading propagators and building vertices"<<endl;
         
