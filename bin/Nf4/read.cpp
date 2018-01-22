@@ -27,8 +27,8 @@ void read_mom_list(const string &path)
         double p_sqr=0.0, p_tilde_sqr=0.0;
         double p_4=0.0, p_tilde_4=0.0;
         p_t shift;
-        if(BC_str.compare("Periodic")==0) shift={0.5,0.0,0.0,0.0};
-        if(BC_str.compare("Antiperiodic")==0) shift={0.0,0.0,0.0,0.0};
+        if(BC_str.compare("Periodic")==0) shift={0.0,0.0,0.0,0.0};
+        if(BC_str.compare("Antiperiodic")==0) shift={0.5,0.0,0.0,0.0};
         
         for(int mu=0;mu<4;mu++)
         {
