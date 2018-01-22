@@ -438,19 +438,19 @@ void oper_t::compute_Zbil()
         const int imom2=bilmoms[ibilmom][2]; // p2
         
         // definition of the RCs estimators
-        jZbil_t jZ_mom(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks);
-        jZbil_t jZ_em_mom(vvvd_t(vvd_t(vd_t(0.0,5),nmr),nmr),njacks);
+        jZbil_t jZ_mom(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nbil);
+        jZbil_t jZ_em_mom(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nbil);
         
         //compute Z's according to 'riqed.pdf', one for each momentum
 #pragma omp parallel for collapse(4)
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mr_fw=0;mr_fw<nmr;mr_fw++)
                 for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-                    for(int k=0;k<5;k++)
+                    for(int ibil=0;ibil<nbil;ibil++)
                     {
-                        jZ_mom[ijack][mr_fw][mr_bw][k] = sqrt(jZq[imom1][ijack][mr_fw])*sqrt(jZq[imom2][ijack][mr_bw])/jG_0[imom1][ijack][mr_fw][mr_bw][k];
+                        jZ_mom[ibil][ijack][mr_fw][mr_bw] = sqrt(jZq[imom1][ijack][mr_fw])*sqrt(jZq[imom2][ijack][mr_bw])/jG_0[imom1][ibil][ijack][mr_fw][mr_bw];
                         
-                        jZ_em_mom[ijack][mr_fw][mr_bw][k] = jG_em[imom1][ijack][mr_fw][mr_bw][k]/jG_0[imom1][ijack][mr_fw][mr_bw][k] + 0.5*(jZq_em[imom1][ijack][mr_fw]/jZq[imom1][ijack][mr_fw] + jZq_em[imom2][ijack][mr_bw]/jZq[imom2][ijack][mr_bw]);
+                        jZ_em_mom[ibil][ijack][mr_fw][mr_bw] = jG_em[imom1][ibil][ijack][mr_fw][mr_bw]/jG_0[imom1][ibil][ijack][mr_fw][mr_bw] + 0.5*(jZq_em[imom1][ijack][mr_fw]/jZq[imom1][ijack][mr_fw] + jZq_em[imom2][ijack][mr_bw]/jZq[imom2][ijack][mr_bw]);
                     }
         
         jZ[imom1]=jZ_mom;

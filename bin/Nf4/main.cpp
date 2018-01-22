@@ -64,10 +64,10 @@ int main()
     
     deltam_cr=read_deltam_cr("deltam_cr_array");
     
+    if(UseEffMass) eff_mass=read_eff_mass("eff_mass_array");
+    
     basic.step="basic";
     basic.create_basic();
-    
-    if(UseEffMass) eff_mass=read_eff_mass("eff_mass_array");
     
     oper_t rave = basic.average_r();
     
@@ -79,75 +79,14 @@ int main()
     
     oper_t rave_chir_sub_evo_ave = rave_chir_sub_evo.average_equiv_moms();
     
-//    for(int tag=0;tag<(int)(rave_chir_sub_evo_ave.jZq_evo).size();tag++)
-//        for(int ijack=0;ijack<njacks;ijack++)
-//            cout<<"mom: "<<tag<<" ijack: "<<ijack<<" "<<(rave_chir_sub_evo_ave.jZq_evo)[tag][ijack]<<endl;
-//    cout<<endl;
-    
-//    for(int ijack=0;ijack<njacks;ijack++)
-//        cout<<"mom: "<<0<<" ijack: "<<ijack<<" "<<(rave_chir_sub_evo.jZq_evo)[0][ijack]<<endl;
-    
-    
     continuum_limit(rave_chir_sub_evo_ave,LO);
     continuum_limit(rave_chir_sub_evo_ave,EM);
   
+    
     vector<vd_t> a=rave_chir_sub_evo_ave.jZq_evo;
     
     PRINT(a);
-    
-    
-
-    //    int neq_moms = (rave_chir_sub_evo_ave.jZq_evo).size();
-    
-    //    cout<<"ZQ EVOLVED (ALLMOMS)"<<endl;
-//    for (int imom=0; imom<moms; imom++)
-//        for (int ijack=0; ijack<njacks; ijack++)
-//        {
-//            cout<<"imom: "<<imom<<" ijack: "<<ijack<<"  "<<rave_chir_sub_evo.jZq_evo[imom][ijack]<<endl;
-//        }
-//    cout<<endl;
-//    cout<<"ZQ EVOLVED (EQMOMS)"<<endl;
-//    for (int imom=0; imom<neq_moms; imom++)
-//        for (int ijack=0; ijack<njacks; ijack++)
-//        {
-//            cout<<"imom: "<<imom<<" ijack: "<<ijack<<"  "<<rave_chir_sub_evo_ave.jZq_evo[imom][ijack]<<endl;
-//        }
-    
-    
-//    cout<<"Zq  "<<(sub.jZq_sub)[0][0]<<"  "<<(evo.jZq_evo)[0][0]<<endl;
-//    cout<<"Zs  "<<sub.jZ_sub[0][0][0]<<"  "<<(evo.jZ_evo)[0][0][0]<<endl;
-//    cout<<"Za  "<<sub.jZ_sub[0][1][0]<<"  "<<(evo.jZ_evo)[0][1][0]<<endl;
-//    cout<<"Zp  "<<sub.jZ_sub[0][2][0]<<"  "<<(evo.jZ_evo)[0][2][0]<<endl;
-//    cout<<"Zv  "<<sub.jZ_sub[0][3][0]<<"  "<<(evo.jZ_evo)[0][3][0]<<endl;
-//    cout<<"Zt  "<<sub.jZ_sub[0][4][0]<<"  "<<(evo.jZ_evo)[0][4][0]<<endl;
-    
-//    for(int m=0;m<neq2;m++)
-//        cout<<m<<"  basic: "<<basic.m_eff_equivalent_Zq[m]<<endl;
-//    for(int m=0;m<neq2;m++)
-//        cout<<m<<"  rave: "<<rave.m_eff_equivalent_Zq[m]<<endl;
-//    
-//    cout<<"basic ave: "<<((basic.jG_0)[0][0][0][0][0]+(basic.jG_0)[0][0][1][1][0])/2.0<<endl;
-//    cout<<"rave: "<<(rave.jG_0_ave_r)[0][0][0][0]<<endl;
-    
-    
-//    cout<<get<STEP>(basic.Zq[0])<<endl;
-    
-//    vvd_t coord(vd_t(0.0,5),2);
-//    vvd_t y(vd_t(0.0,5),njacks);
-//    vd_t err(0.0,5);
-//    for(int i=0; i<5; i++)
-//    {
-//        coord[0][i] = 1.0;  //costante
-//        coord[1][i] = i+1;   //M^2
-//        
-//        for(int ijack=0;ijack<njacks;ijack++)
-//        {
-//            y[ijack][i] = 3.0*i+4.0;
-//        }
-//        err[i] = 0.01;
-//    }
-//    
-//    vvd_t pars=fit_par_jackknife(coord,2,err,y,0,4);
+   
 
     
     cout<<"DONE!"<<endl;
