@@ -467,12 +467,17 @@ oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
     
     out.bilmoms=bilmoms;
     out.Zbil_computed=Zbil_computed;
+    
     out.jZq=jZq;
     out.jZq_em=jZq_em;
     out.jG_0=jG_0;
     out.jG_em=jG_em;
     out.jZ=jZ;
     out.jZ_em=jZ_em;
+    
+    
+    
+    // to be cancelled (maybe...)
     out.jG_0_chir=jG_0_chir;
     out.jG_em_chir=jG_em_chir;
     out.jZq_chir=jZq_chir;
