@@ -73,8 +73,8 @@ double read_plaquette()
     
     for(int iconf=0;iconf<nconfs;iconf++)
     {
-        double temp;
-        input_plaquette.read((char*)&temp,sizeof(double));
+        double temp=0.0;
+        input_plaquette>>temp;
         plaquette += temp/nconfs;
     }
     input_plaquette.close();
