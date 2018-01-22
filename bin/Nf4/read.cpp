@@ -69,6 +69,8 @@ double read_plaquette()
         exit(1);
     }
     
+    cout<<"Reading from \"plaquette.txt\"."<<endl<<endl;
+    
     for(int iconf=0;iconf<nconfs;iconf++)
     {
         double temp;
