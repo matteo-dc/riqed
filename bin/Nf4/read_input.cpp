@@ -5,7 +5,7 @@
 
 enum ERR_t{NO_FAIL,FAILED_READ,FAILED_CONVERSION,FAILED_OPEN,MISPLACED_TK,UNINITIALIZED_PAR};
 
-enum TK_t{FEOF_TK,VALUE_TK,MOM_LIST_TK,NCONFS_TK,NJACKS_TK,L_TK,T_TK,CONF_INIT_TK,CONF_STEP_TK,ACT_TK,PLAQ_TK,PATH_TK,BETA_TK,MU_SEA_TK,KAPPA_TK,NMASSES_VAL_TK,MASSES_VAL_TK,NR_TK,NTYPES_TK,NHITS_TK,USE_SIGMA_TK,USE_EFF_MASS_TK,SCHEME_TK,NF_TK,NC_TK,AINV_TK,LAMBDAQCD_TK,DELTA_TMIN_TK,DELTA_TMAX_TK};
+enum TK_t{FEOF_TK,VALUE_TK,MOM_LIST_TK,NCONFS_TK,NJACKS_TK,L_TK,T_TK,CONF_INIT_TK,CONF_STEP_TK,ACT_TK,PLAQ_TK,PATH_TK,BETA_TK,MU_SEA_TK,KAPPA_TK,NMASSES_VAL_TK,MASSES_VAL_TK,NR_TK,NTYPES_TK,NHITS_TK,USE_SIGMA_TK,USE_EFF_MASS_TK,SCHEME_TK,NF_TK,NC_TK,AINV_TK,LAMBDAQCD_TK,DELTA_TMIN_TK,DELTA_TMAX_TK,BC_TK};
 
 #define DEFAULT_STR_VAL ""
 #define DEFAULT_INT_VAL -1
@@ -14,7 +14,7 @@ enum TK_t{FEOF_TK,VALUE_TK,MOM_LIST_TK,NCONFS_TK,NJACKS_TK,L_TK,T_TK,CONF_INIT_T
 // define global variables
 int nconfs, njacks, clust_size, L, T, conf_init, conf_step, nm, neq, neq2, nbil, nr, nmr, nt, nhits, moms, neqmoms, Nf, Nc, ntypes, combo, UseSigma1, UseEffMass, delta_tmin, delta_tmax;
 double beta, kappa, mu_sea, plaquette, g2, g2_tilde, ainv, LambdaQCD;
-string mom_path, action, path_ensemble_str, scheme;
+string mom_path, action, path_ensemble_str, scheme,BC_str;
 vector<double> mass_val(10);
 coords_t size;
 
@@ -45,6 +45,7 @@ const char ainv_tag[]="ainv";
 const char LambdaQCD_tag[]="LambdaQCD";
 const char delta_tmin_tag[]="tmin(deltam_cr)";
 const char delta_tmax_tag[]="tmax(deltam_cr)";
+const char BC_tag[]="BC";
 
 char tok[128];
 
@@ -91,6 +92,7 @@ TK_t get_TK(FILE *fin)
     if(strcasecmp(tok,LambdaQCD_tag)==0) return LAMBDAQCD_TK;
     if(strcasecmp(tok,delta_tmin_tag)==0) return DELTA_TMIN_TK;
     if(strcasecmp(tok,delta_tmax_tag)==0) return DELTA_TMAX_TK;
+    if(strcasecmp(tok,BC_tag)==0) return BC_TK;
     
     return VALUE_TK;
 }
@@ -166,6 +168,7 @@ void read_input(const char path[])
     char act[128]=DEFAULT_STR_VAL;
     char sch[128]=DEFAULT_STR_VAL;
     char path_ensemble[128]=DEFAULT_STR_VAL;
+    char BC[128]=DEFAULT_STR_VAL;
     
     nconfs=DEFAULT_INT_VAL;
     njacks=DEFAULT_INT_VAL;
@@ -286,6 +289,9 @@ void read_input(const char path[])
             case DELTA_TMAX_TK:
                 get_value(fin,delta_tmax,"%d");
                 break;
+            case BC_TK:
+                get_value(fin,BC,"%s");
+                break;
                 
             case FEOF_TK:
                 break;
@@ -319,13 +325,14 @@ void read_input(const char path[])
     check_double_par(LambdaQCD,LambdaQCD_tag);
     check_int_par(delta_tmin,delta_tmin_tag);
     check_int_par(delta_tmax,delta_tmax_tag);
+    check_str_par(BC,BC_tag);
     
     fclose(fin);
     
     //print input parameters
     printf("%s = %s\n",scheme_tag,sch);
     //printf("%s = \"%s\"\n",mom_list_tag,mom_list_path);
-    printf("%s = %d  [from %d to %d]\n",nconfs_tag,nconfs,conf_init,conf_init+nconfs*conf_step-1);
+    printf("%s = %d  [from %d to %d]\n",nconfs_tag,nconfs,conf_init,conf_init+(nconfs-1)*conf_step);
     printf("%s = %d\n",njacks_tag,njacks);
     printf("%s = %d\n",L_tag,L);
     printf("%s = %d\n",T_tag,T);
@@ -364,6 +371,7 @@ void read_input(const char path[])
     action = string(act);
     path_ensemble_str=string(path_ensemble);
     scheme = string(sch);
+    BC_str = string(BC);
     
     //factors enabling average over r
     int c1, c2;

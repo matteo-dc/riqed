@@ -56,7 +56,7 @@ int main()
     //read mom list
     read_mom_list(mom_path);
     moms=mom_list.size();
-    cout<<"Read: "<<mom_list.size()<<" momenta from \""<<mom_path<<"\"."<<endl<<endl;
+    cout<<"Read: "<<mom_list.size()<<" momenta from \""<<mom_path<<"\" (BC: "<<BC_str<<")."<<endl<<endl;
     
     oper_t basic;
     

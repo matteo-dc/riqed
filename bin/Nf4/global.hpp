@@ -86,6 +86,8 @@ extern string scheme;
 // range for deltam_cr fit
 extern int delta_tmin;
 extern int delta_tmax;
+// boundary conditions
+extern string BC_str;
 
 typedef enum {  
     LO = 0,
