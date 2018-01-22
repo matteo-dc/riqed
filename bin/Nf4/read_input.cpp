@@ -2,6 +2,7 @@
 #include "aliases.hpp"
 #include "global.hpp"
 #include "operations.hpp"
+#include "read.hpp"
 
 enum ERR_t{NO_FAIL,FAILED_READ,FAILED_CONVERSION,FAILED_OPEN,MISPLACED_TK,UNINITIALIZED_PAR};
 
@@ -328,6 +329,8 @@ void read_input(const char path[])
     check_str_par(BC,BC_tag);
     
     fclose(fin);
+    
+    if(plaquette==0.0)  plaquette=read_plaquette();
     
     //print input parameters
     printf("%s = %s\n",scheme_tag,sch);

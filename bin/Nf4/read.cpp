@@ -56,6 +56,30 @@ void read_mom_list(const string &path)
     }
 }
 
+// read plaquette
+double read_plaquette()
+{
+    double plaquette=0.0;
+    
+    ifstream input_plaquette;
+    input_plaquette.open("plaquette.txt",ios::in);
+    if(not input_plaquette.good())
+    {
+        cout<<"Unable to open \"plaquette.txt\"."<<endl<<endl;
+        exit(1);
+    }
+    
+    for(int iconf=0;iconf<nconfs;iconf++)
+    {
+        double temp;
+        input_plaquette.read((char*)&temp,sizeof(double));
+        plaquette += temp/nconfs;
+    }
+    input_plaquette.close();
+    
+    return plaquette;
+}
+
 
 // read effective mass
 vector<vector<double>> read_eff_mass(const string name)
