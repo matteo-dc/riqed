@@ -32,6 +32,7 @@ Nf4_main_SOURCES=Nf4/main.cpp \
 		 Nf4/Zq.cpp \
 		 Nf4/Zbil.cpp \
 		 Nf4/operations.cpp \
+		 Nf4/ave_err.cpp \
 		 Nf4/fit.cpp \
 		 Nf4/subtraction.cpp \
 		 Nf4/evolution.cpp \

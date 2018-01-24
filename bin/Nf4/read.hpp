@@ -10,7 +10,7 @@ void read_mom_list(const string &path);
 
 double read_plaquette();
 
-vector<vector<double>> read_eff_mass(const string name);
+vvd_t read_eff_mass(const string name);
 
 vvvd_t read_deltam_cr(const string name);
 

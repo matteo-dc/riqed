@@ -10,12 +10,12 @@
 #include <iostream>
 #include <string>
 #include <omp.h>
-#include <tuple>
 #include "fit.hpp"
 #include <stdio.h>
 #include "subtraction.hpp"
 #include "evolution.hpp"
 #include "print.hpp"
+#include "ave_err.hpp"
 #include <chrono>
 
 #define EXTERN_OPER
@@ -113,9 +113,13 @@ void oper_t::create_basic()
 {
     step = "basic";
     
+    _nm=nm;
+    _nr=nr;
+    _nmr=_nm*_nr;
+    
     set_moms();
     
-    resize_vectors();
+    allocate();
     
     switch(get_scheme())
     {
@@ -149,7 +153,7 @@ void oper_t::smom()
 
 //////////
 
-void oper_t::resize_vectors()
+void oper_t::allocate()
 {
     jZq.resize(bilmoms.size());
     jZq_em.resize(bilmoms.size());
@@ -160,26 +164,26 @@ void oper_t::resize_vectors()
     jZ.resize(bilmoms.size());
     jZ_em.resize(bilmoms.size());
     
-    jZq_ave_r.resize(bilmoms.size());
-    jZq_em_ave_r.resize(bilmoms.size());
+//    jZq_ave_r.resize(bilmoms.size());
+//    jZq_em_ave_r.resize(bilmoms.size());
     
-    m_eff_equivalent_Zq.resize(neq2);
-    m_eff_equivalent.resize(neq);
+//    m_eff_equivalent_Zq.resize(neq2);
+//    m_eff_equivalent.resize(neq);
     
-    jZq_ave_r.resize(bilmoms.size());
-    jZq_em_ave_r.resize(bilmoms.size());
-    
-    jG_0_ave_r.resize(bilmoms.size());
-    jG_em_ave_r.resize(bilmoms.size());
-    
-    jZq_chir.resize(bilmoms.size());
-    jZq_em_chir.resize(bilmoms.size());
-    
-    jG_0_chir.resize(bilmoms.size());
-    jG_em_chir.resize(bilmoms.size());
-    
-    jZ_chir.resize(bilmoms.size());
-    jZ_em_chir.resize(bilmoms.size());
+//    jZq_ave_r.resize(bilmoms.size());
+//    jZq_em_ave_r.resize(bilmoms.size());
+//    
+//    jG_0_ave_r.resize(bilmoms.size());
+//    jG_em_ave_r.resize(bilmoms.size());
+//    
+//    jZq_chir.resize(bilmoms.size());
+//    jZq_em_chir.resize(bilmoms.size());
+//    
+//    jG_0_chir.resize(bilmoms.size());
+//    jG_em_chir.resize(bilmoms.size());
+//    
+//    jZ_chir.resize(bilmoms.size());
+//    jZ_em_chir.resize(bilmoms.size());
     
 //    cout<<"jZq "<<jZq.size()<<" "<<jZq_em.size()<<endl;
 //    cout<<"jG "<<jG_0.size()<<" "<<jG_em.size()<<endl;
@@ -438,14 +442,14 @@ void oper_t::compute_Zbil()
         const int imom2=bilmoms[ibilmom][2]; // p2
         
         // definition of the RCs estimators
-        jZbil_t jZ_mom(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nbil);
-        jZbil_t jZ_em_mom(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nbil);
+        jZbil_t jZ_mom(vvvd_t(vvd_t(vd_t(0.0,_nmr),_nmr),njacks),nbil);
+        jZbil_t jZ_em_mom(vvvd_t(vvd_t(vd_t(0.0,_nmr),_nmr),njacks),nbil);
         
         //compute Z's according to 'riqed.pdf', one for each momentum
 #pragma omp parallel for collapse(4)
         for(int ijack=0;ijack<njacks;ijack++)
-            for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-                for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+            for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
+                for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
                     for(int ibil=0;ibil<nbil;ibil++)
                     {
                         jZ_mom[ibil][ijack][mr_fw][mr_bw] = sqrt(jZq[imom1][ijack][mr_fw])*sqrt(jZq[imom2][ijack][mr_bw])/jG_0[imom1][ibil][ijack][mr_fw][mr_bw];
@@ -459,230 +463,185 @@ void oper_t::compute_Zbil()
     }// close mom loop
 }
 
+void oper_t::resize_vectors(oper_t out)
+{
+    for(auto &ijack : out.jZq)
+        for(auto &mr : ijack)
+            mr.resize(out._nmr);
+    
+    for(auto &ijack : out.jZq_em)
+        for(auto &mr : ijack)
+            mr.resize(out._nmr);
+    
+    for(auto &ibil : out.jG_0)
+        for(auto &ijack : ibil)
+            for(auto &mr1 : ijack)
+            {
+                mr1.resize(out._nmr);
+                for(auto &mr2 : mr1)
+                    mr2.resize(out._nmr);
+            }
+
+    for(auto &ibil : out.jG_em)
+        for(auto &ijack : ibil)
+            for(auto &mr1 : ijack)
+            {
+                mr1.resize(out._nmr);
+                for(auto &mr2 : mr1)
+                    mr2.resize(out._nmr);
+            }
+    
+    for(auto &ibil : out.jZ)
+        for(auto &ijack : ibil)
+            for(auto &mr1 : ijack)
+            {
+                mr1.resize(out._nmr);
+                for(auto &mr2 : mr1)
+                    mr2.resize(out._nmr);
+            }
+    
+    for(auto &ibil : out.jZ_em)
+        for(auto &ijack : ibil)
+            for(auto &mr1 : ijack)
+            {
+                mr1.resize(out._nmr);
+                for(auto &mr2 : mr1)
+                    mr2.resize(out._nmr);
+            }
+}
+
 oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
 {
     cout<<"Averaging over r"<<endl<<endl;
     
-    oper_t out;
+    oper_t out=(*this);
     
-    out.bilmoms=bilmoms;
-    out.Zbil_computed=Zbil_computed;
+    out._nr=1;
+    out._nm=_nm;
+    out._nmr=(out._nm)*(out._nr);
     
-    out.jZq=jZq;
-    out.jZq_em=jZq_em;
-    out.jG_0=jG_0;
-    out.jG_em=jG_em;
-    out.jZ=jZ;
-    out.jZ_em=jZ_em;
+//    out.bilmoms=bilmoms;
+//    out.Zbil_computed=Zbil_computed;
     
-    
-    
-    // to be cancelled (maybe...)
-    out.jG_0_chir=jG_0_chir;
-    out.jG_em_chir=jG_em_chir;
-    out.jZq_chir=jZq_chir;
-    out.jZq_em_chir=jZq_chir;
-    out.jZ_chir=jZ_chir;
-    out.jZ_em_chir=jZ_em_chir;
-  
-    for(int ieq=0;ieq<neq2;ieq++) m_eff_equivalent_Zq[ieq]=0.0;
-    for(int ieq=0;ieq<neq;ieq++)  m_eff_equivalent[ieq]=0.0;
+    resize_vectors(out);
 
+//    out.jZq_em=jZq_em;
+//    out.jG_0=jG_0;
+//    out.jG_em=jG_em;
+//    out.jZ=jZ;
+//    out.jZ_em=jZ_em;
+    
+
+//    // to be cancelled
+//    out.jG_0_chir=jG_0_chir;
+//    out.jG_em_chir=jG_em_chir;
+//    out.jZq_chir=jZq_chir;
+//    out.jZq_em_chir=jZq_chir;
+//    out.jZ_chir=jZ_chir;
+//    out.jZ_em_chir=jZ_em_chir;
+  
+//    for(int ieq=0;ieq<neq2;ieq++) m_eff_equivalent_Zq[ieq]=0.0;
+//    for(int ieq=0;ieq<neq;ieq++)  m_eff_equivalent[ieq]=0.0;
+    
+    if(UseEffMass==1)
+    {
+        vvd_t eff_mass_temp(vd_t(0.0,out._nmr),out._nmr);
+        
+        for(int mA=0; mA<_nm; mA++)
+            for(int mB=0; mB<_nm; mB++)
+                for(int r=0; r<_nr; r++)
+                {
+                    // masses
+                    eff_mass_temp[mA][mB] += eff_mass[r+_nr*mA][r+_nr*mB]/_nr;
+                }
+        eff_mass=eff_mass_temp;
+    }
+    
     for(size_t ibilmom=0;ibilmom<bilmoms.size();ibilmom++)
     {
         const int imom1=bilmoms[ibilmom][1]; // p1
-        const int imom2=bilmoms[ibilmom][2]; // p2
+//        const int imom2=bilmoms[ibilmom][2]; // p2
         
-        vvd_t jZq_ave_r_mom(vd_t(0.0,neq2),njacks);
-        vvd_t jZq_em_ave_r_mom(vd_t(0.0,neq2),njacks);
+        vvd_t jZq_mom_temp(vd_t(0.0,out._nmr),njacks);
+        vvd_t jZq_em_mom_temp(vd_t(0.0,out._nmr),njacks);
         
-        int ieq=0;
-        for(int m=0; m<nm; m++)
-            for(int r=0; r<nr; r++)
+        for(int m=0; m<_nm; m++)
+            for(int r=0; r<_nr; r++)
             {
-                ieq=m;
-                
-                // masses
-                if(UseEffMass==1 and ibilmom==0)
-                    m_eff_equivalent_Zq[ieq] += eff_mass[r+nr*m][r+nr*m]/nr;
-                else if(UseEffMass==0 and ibilmom==0 and r==0)
-                    m_eff_equivalent_Zq[ieq] = mass_val[ieq];
-                
                 //LO
-                for(int ijack=0;ijack<njacks;ijack++) jZq_ave_r_mom[ijack][ieq] += jZq[imom1][ijack][r+nr*m]/nr;
+                for(int ijack=0;ijack<njacks;ijack++) jZq_mom_temp[ijack][m] += jZq[imom1][ijack][r+_nr*m]/_nr;
                 //EM
-                for(int ijack=0;ijack<njacks;ijack++) jZq_em_ave_r_mom[ijack][ieq] += jZq_em[imom1][ijack][r+nr*m]/nr;
+                for(int ijack=0;ijack<njacks;ijack++) jZq_em_mom_temp[ijack][m] += jZq_em[imom1][ijack][r+_nr*m]/_nr;
             }
         
-        jZq_ave_r[imom1]=jZq_ave_r_mom;
-        jZq_em_ave_r[imom1]=jZq_em_ave_r_mom;
+        (out.jZq)[imom1] = jZq_mom_temp;
+        (out.jZq_em)[imom1] = jZq_em_mom_temp;
         
-        jproj_t jG_0_mom  = jG_0[imom1];
-        jproj_t jG_em_mom = jG_em[imom1];
+//        vvvd_t jG_0_ave_r_mom(vvd_t(vd_t(0.0,neq),njacks),5);
+//        vvvd_t jG_em_ave_r_mom(vvd_t(vd_t(0.0,neq),njacks),5);
         
-        vvvd_t jG_0_ave_r_mom(vvd_t(vd_t(0.0,neq),njacks),5);
-        vvvd_t jG_em_ave_r_mom(vvd_t(vd_t(0.0,neq),njacks),5);
+        jproj_t jG_0_mom_temp(vvvd_t(vvd_t(vd_t(0.0,out._nmr),out._nmr),njacks),nbil);
+        jproj_t jG_em_mom_temp(vvvd_t(vvd_t(vd_t(0.0,out._nmr),out._nmr),njacks),nbil);
+
         
-        ieq=0;
-        
-        for(int mA=0; mA<nm; mA++)
-            for(int mB=mA; mB<nm; mB++)
-            {
-                for(int r=0; r<nr; r++)
+        for(int mA=0; mA<_nm; mA++)
+            for(int mB=0; mB<_nm; mB++)
+                for(int r=0; r<_nr; r++)
                 {
-                    // masses
-                    if(UseEffMass==1 and ibilmom==0)
-                        m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr);
-                    else if(UseEffMass==0 and ibilmom==0 and r==0)
-                        m_eff_equivalent[ieq] = mass_val[mA] + mass_val[mB];
-                    
+//                    // masses
+//                    if(UseEffMass==1 and ibilmom==0)
+//                        m_eff_equivalent[ieq] += (eff_mass[r+nr*mA][r+nr*mB]+eff_mass[r+nr*mB][r+nr*mA])/(2.0*nr);
+//                    else if(UseEffMass==0 and ibilmom==0 and r==0)
+//                        m_eff_equivalent[ieq] = mass_val[mA] + mass_val[mB];
+//                    
+//                    //LO
+//                    for(int ijack=0;ijack<njacks;ijack++)
+//                        for(int ibil=0; ibil<5; ibil++)
+//                            jG_0_ave_r_mom[ibil][ijack][ieq] += (jG_0_mom[ijack][r+nr*mA][r+nr*mB][ibil]+jG_0_mom[ijack][r+nr*mB][r+nr*mA][ibil])/(2.0*nr);
+//                    //EM
+//                    for(int ijack=0;ijack<njacks;ijack++)
+//                        for(int ibil=0; ibil<5; ibil++)
+//                            jG_em_ave_r_mom[ibil][ijack][ieq] += (jG_em_mom[ijack][r+nr*mA][r+nr*mB][ibil]+jG_em_mom[ijack][r+nr*mB][r+nr*mA][ibil])/(2.0*nr);
+//                    
                     //LO
                     for(int ijack=0;ijack<njacks;ijack++)
                         for(int ibil=0; ibil<5; ibil++)
-                            jG_0_ave_r_mom[ibil][ijack][ieq] += (jG_0_mom[ijack][r+nr*mA][r+nr*mB][ibil]+jG_0_mom[ijack][r+nr*mB][r+nr*mA][ibil])/(2.0*nr);
+                            jG_0_mom_temp[ibil][ijack][mA][mB] += jG_0[imom1][ibil][ijack][r+_nr*mA][r+_nr*mB]/_nr;
                     //EM
                     for(int ijack=0;ijack<njacks;ijack++)
                         for(int ibil=0; ibil<5; ibil++)
-                            jG_em_ave_r_mom[ibil][ijack][ieq] += (jG_em_mom[ijack][r+nr*mA][r+nr*mB][ibil]+jG_em_mom[ijack][r+nr*mB][r+nr*mA][ibil])/(2.0*nr);
+                            jG_em_mom_temp[ibil][ijack][mA][mB] += jG_em[imom1][ibil][ijack][r+nr*mA][r+nr*mB]/nr;
+                    
+                    
                 }
-                ieq++;
-            }
         
-        jG_0_ave_r[imom1]=jG_0_ave_r_mom;
-        jG_em_ave_r[imom1]=jG_em_ave_r_mom;
+        (out.jG_0)[imom1]=jG_0_mom_temp;
+        (out.jG_em)[imom1]=jG_em_mom_temp;
     }
     
-    out.m_eff_equivalent_Zq=m_eff_equivalent_Zq;
-    out.m_eff_equivalent=m_eff_equivalent;
-    
-    out.jZq_ave_r=jZq_ave_r;
-    out.jZq_em_ave_r=jZq_em_ave_r;
-    out.jG_0_ave_r=jG_0_ave_r;
-    out.jG_em_ave_r=jG_em_ave_r;
+    out.compute_Zbil();
     
     return out;
 }
     
-tuple<vvvd_t,vvvd_t> ave_err(vector<vvvd_t> jG)
-{
-    vvvd_t G_ave(vvd_t(vd_t(0.0,neq),5),jG.size());
-    vvvd_t sqr_G_ave(vvd_t(vd_t(0.0,neq),5),jG.size());
-    vvvd_t G_err(vvd_t(vd_t(0.0,neq),5),jG.size());
-    
-#pragma omp parallel for collapse(3)
-    for(size_t imom=0;imom<jG.size();imom++)
-        for(int ieq=0;ieq<neq;ieq++)
-            for(int ibil=0;ibil<5;ibil++)
-                for(int ijack=0;ijack<njacks;ijack++)
-                {
-                    G_ave[imom][ibil][ieq]+=jG[imom][ibil][ijack][ieq]/njacks;
-                    sqr_G_ave[imom][ibil][ieq]+=jG[imom][ibil][ijack][ieq]*jG[imom][ibil][ijack][ieq]/njacks;
-                }
-#pragma omp parallel for collapse(3)
-    for(size_t imom=0;imom<jG.size();imom++)
-        for(int ieq=0;ieq<neq;ieq++)
-            for(int ibil=0;ibil<5;ibil++)
-                G_err[imom][ibil][ieq]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_G_ave[imom][ibil][ieq]-G_ave[imom][ibil][ieq]*G_ave[imom][ibil][ieq]));
-    
-    tuple<vvvd_t,vvvd_t> tuple_ave_err(G_ave,G_err);
-    
-    return tuple_ave_err;
-}
-
-tuple<vvd_t,vvd_t> ave_err(vector<vvd_t> jG)
-{
-    vvd_t G_ave(vd_t(0.0,5),jG.size());
-    vvd_t sqr_G_ave(vd_t(0.0,5),jG.size());
-    vvd_t G_err(vd_t(0.0,5),jG.size());
-    
-#pragma omp parallel for collapse(2)
-    for(size_t imom=0;imom<jG.size();imom++)
-        for(int ibil=0;ibil<5;ibil++)
-            for(int ijack=0;ijack<njacks;ijack++)
-            {
-                G_ave[imom][ibil]+=jG[imom][ibil][ijack]/njacks;
-                sqr_G_ave[imom][ibil]+=jG[imom][ibil][ijack]*jG[imom][ibil][ijack]/njacks;
-            }
-#pragma omp parallel for collapse(2)
-    for(size_t imom=0;imom<jG.size();imom++)
-        for(int ibil=0;ibil<5;ibil++)
-            G_err[imom][ibil]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_G_ave[imom][ibil]-G_ave[imom][ibil]*G_ave[imom][ibil]));
-    
-    tuple<vvd_t,vvd_t> tuple_ave_err(G_ave,G_err);
-    
-    return tuple_ave_err;
-}
-
-tuple<vvd_t,vvd_t> ave_err_q(vector<vvd_t> jZq)
-{
-    vvd_t Zq_ave(vd_t(0.0,neq2),jZq.size());
-    vvd_t sqr_Zq_ave(vd_t(0.0,neq2),jZq.size());
-    vvd_t Zq_err(vd_t(0.0,neq2),jZq.size());
-    
-#pragma omp parallel for collapse(2)
-    for(size_t imom=0;imom<jZq.size();imom++)
-        for(int ieq=0;ieq<neq2;ieq++)
-            for(int ijack=0;ijack<njacks;ijack++)
-            {
-                Zq_ave[imom][ieq]+=jZq[imom][ijack][ieq]/njacks;
-                sqr_Zq_ave[imom][ieq]+=jZq[imom][ijack][ieq]*jZq[imom][ijack][ieq]/njacks;
-            }
-#pragma omp parallel for collapse(2)
-    for(size_t imom=0;imom<jZq.size();imom++)
-        for(int ieq=0;ieq<neq2;ieq++)
-            Zq_err[imom][ieq]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Zq_ave[imom][ieq]-Zq_ave[imom][ieq]*Zq_ave[imom][ieq]));
-    
-    tuple<vvd_t,vvd_t> tuple_ave_err(Zq_ave,Zq_err);
-    
-    return tuple_ave_err;
-}
-
-tuple<vd_t,vd_t> ave_err_q(vector<vd_t> jZq)
-{
-    vd_t Zq_ave(0.0,jZq.size());
-    vd_t sqr_Zq_ave(0.0,jZq.size());
-    vd_t Zq_err(0.0,jZq.size());
-    
-#pragma omp parallel for
-    for(size_t imom=0;imom<jZq.size();imom++)
-        for(int ijack=0;ijack<njacks;ijack++)
-            {
-                Zq_ave[imom]+=jZq[imom][ijack]/njacks;
-                sqr_Zq_ave[imom]+=jZq[imom][ijack]*jZq[imom][ijack]/njacks;
-            }
-#pragma omp parallel for
-    for(size_t imom=0;imom<jZq.size();imom++)
-            Zq_err[imom]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Zq_ave[imom]-Zq_ave[imom]*Zq_ave[imom]));
-    
-    tuple<vd_t,vd_t> tuple_ave_err(Zq_ave,Zq_err);
-    
-    return tuple_ave_err;
-}
 
 oper_t oper_t::chiral_extr()
 {
     cout<<"Chiral extrapolation"<<endl<<endl;
     
-    oper_t out;
+    oper_t out=(*this);
     
-    out.bilmoms=bilmoms;
-    out.Zbil_computed=Zbil_computed;
-    out.jZq=jZq;
-    out.jZq_em=jZq_em;
-    out.jG_0=jG_0;
-    out.jG_em=jG_em;
-    out.jZ=jZ;
-    out.jZ_em=jZ_em;
-    out.m_eff_equivalent_Zq=m_eff_equivalent_Zq;
-    out.m_eff_equivalent=m_eff_equivalent;
-    out.jZq_ave_r=jZq_ave_r;
-    out.jZq_em_ave_r=jZq_em_ave_r;
+    out._nr=_nr;
+    out._nm=1;
+    out._nmr=(out._nm)*(out._nr);
     
-    vvvd_t G_0_err = get<1>(ave_err(jG_0_ave_r));
-    vvvd_t G_em_err = get<1>(ave_err(jG_em_ave_r));
+    resize_vectors(out);
     
-    vvd_t Zq_err = get<1>(ave_err_q(jZq_ave_r));
-    vvd_t Zq_em_err = get<1>(ave_err_q(jZq_em_ave_r));
+    vvvvd_t G_0_err = get<1>(ave_err(jG_0));
+    vvvvd_t G_em_err = get<1>(ave_err(jG_em));
+    
+    vvd_t Zq_err = get<1>(ave_err(jZq));
+    vvd_t Zq_em_err = get<1>(ave_err(jZq_em));
     
     //Sum of quark masses for the extrapolation
 //    vd_t mass_sum(0.0,10);
@@ -694,117 +653,118 @@ oper_t oper_t::chiral_extr()
 //            i_sum++;
 //        }
     
-    // coords for fit bilinears
-    vvd_t coord_bil(vd_t(0.0,neq),3);
-    vvd_t coord_q(vd_t(0.0,neq2),2);
-    for(int i=0; i<neq; i++)
-    {
-        coord_bil[0][i] = 1.0;  //costante
-        if(UseEffMass==1)
-        {
-            coord_bil[1][i] = m_eff_equivalent[i]*m_eff_equivalent[i];   //M^2
-            coord_bil[2][i] = 1.0/(m_eff_equivalent[i]*m_eff_equivalent[i]);  //1/M^2
-        }
-        else if(UseEffMass==0)
-        {
-            coord_bil[1][i] = m_eff_equivalent[i];        // (am1+am2)
-            coord_bil[2][i] = 1.0/m_eff_equivalent[i];    // 1/(am1+am2)
-        }
-    }
-    for(int i=0; i<neq2; i++)
-    {
-        coord_q[0][i] = 1.0;  //costante
-        if(UseEffMass==1)
-            coord_q[1][i] = m_eff_equivalent_Zq[i]*m_eff_equivalent_Zq[i];   //M^2
-        else if(UseEffMass==0)
-            coord_q[1][i] = m_eff_equivalent_Zq[i];        // (am1+am2)
-    }
+    //range for fit Zq
+    int x_min_q=0;
+    int x_max_q=_nm-1;
     
     // range for fit bilinears
-    int t_min=0;
-    int t_max=neq-1;
-    
-    //range for fit Zq
-    int t_min_q=0;
-    int t_max_q=neq2-1;
+    int x_min=0;
+    int x_max=_nm*(_nm+1)/2-1;
     
     // number of fit parameters for bilinears
     int npar[5]={3,2,3,2,2};
     
-    vvd_t jG_0_chir_mom(vd_t(0.0,njacks),5), jG_em_chir_mom(vd_t(0.0,njacks),5);
-    vvvd_t jG_0_pars_mom(vvd_t(vd_t(0.0,3),njacks),5);
-    vvvd_t jG_em_pars_mom(vvd_t(vd_t(0.0,3),njacks),5);
-    
-    vd_t jZq_chir_mom(0.0,njacks), jZq_em_chir_mom(0.0,njacks);
-    vvd_t jZq_0_pars_mom(vd_t(0.0,2),njacks);
-    vvd_t jZq_em_pars_mom(vd_t(0.0,2),njacks);
-    
-    vvd_t jZ_chir_mom(vd_t(0.0,njacks),5), jZ_em_chir_mom(vd_t(0.0,njacks),5);
-    
+    //extrapolate Zq
     for(size_t imom=0;imom<bilmoms.size();imom++)
     {
-        // Bilinears
-        for(int ibil=0;ibil<5;ibil++)
+        for(int r=0; r<_nr; r++)
         {
-            jG_0_pars_mom[ibil]=fit_par_jackknife(coord_bil,npar[ibil],G_0_err[imom][ibil],jG_0_ave_r[imom][ibil],t_min,t_max);
-            jG_em_pars_mom[ibil]=fit_par_jackknife(coord_bil,npar[ibil],G_em_err[imom][ibil],jG_em_ave_r[imom][ibil],t_min,t_max);
+            vvd_t coord_q(vd_t(0.0,_nm),2); // coords at fixed r
             
-            for(int ijack=0;ijack<njacks;ijack++)
+            for(int m=0; m<_nm; m++)
             {
-                if(ibil==0 or ibil==2)
-                    for(int ieq=0;ieq<neq;ieq++)
+                int mr = r + _nr*m;
+                
+                coord_q[0][m] = 1.0;
+                if(UseEffMass==0)
+                    coord_q[1][m]= mass_val[m];
+                else if(UseEffMass==0)
+                    coord_q[1][m] = pow(eff_mass[mr][mr],2.0);
+            }
+            
+            vvd_t jZq_pars_mom_r = polyfit(coord_q,2,Zq_err[imom],jZq[imom],x_min_q,x_max_q);
+            vvd_t jZq_em_pars_mom_r = polyfit(coord_q,2,Zq_em_err[imom],jZq_em[imom],x_min_q,x_max_q);
+            
+            for(int ijack=0; ijack<njacks; ijack++)
+            {
+                (out.jZq)[imom][ijack][r]=jZq_pars_mom_r[ijack][0];
+                (out.jZq_em)[imom][ijack][r]=jZq_em_pars_mom_r[ijack][0];
+            }
+        }
+    }
+
+    //extrapolate bilinears
+    for(size_t imom=0;imom<bilmoms.size();imom++)
+    {
+        for(int r1=0; r1<_nr; r1++)
+            for(int r2=0; r2<_nr; r2++)
+            {
+                vvd_t coord_bil(vd_t(0.0,_nm*(_nm+1)/2),3); // coords at fixed r1 and r2
+                
+                vvvd_t G_0_err_r1_r2(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),nbil),bilmoms.size());
+                vvvd_t G_em_err_r1_r2(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),nbil),bilmoms.size());
+                
+                vvvvd_t jG_0_r1_r2(vvvd_t(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),njacks),nbil),bilmoms.size());
+                vvvvd_t jG_em_r1_r2(vvvd_t(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),njacks),nbil),bilmoms.size());
+
+                int ieq=0;
+                for(int m1=0; m1<_nm; m1++)
+                    for(int m2=m1; m2<_nm; m2++)
                     {
-                        // Goldstone pole subtraction from bilinears
-                        jG_0_ave_r[imom][ibil][ijack][ieq] -= jG_0_pars_mom[ibil][ijack][2];
-                        jG_em_ave_r[imom][ibil][ijack][ieq] -= jG_em_pars_mom[ibil][ijack][2];
+                        int mr1 = r1 + _nr*m1;
+                        int mr2 = r2 + _nr*m2;
+
+                        coord_bil[0][ieq] = 1.0;
+                        if(UseEffMass==0)
+                        {
+                            coord_bil[1][ieq] = mass_val[m1]+mass_val[m2];  // (am1+am2)
+                            coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];    // 1/(am1+am2)
+                        }
+                        else if(UseEffMass==1)
+                        {
+                            coord_bil[1][ieq] = pow((eff_mass[mr1][mr2]+eff_mass[mr2][mr1])/2.0,2.0);   //M^2 (averaged over equivalent combinations)
+                            coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];  //1/M^2
+                        }
+                    
+                        for(int ibil=0;ibil<nbil;ibil++)
+                        {
+                            for(int ijack=0;ijack<njacks;ijack++)
+                            {
+                                jG_0_r1_r2[imom][ibil][ijack][ieq] = (jG_0[imom][ibil][ijack][mr1][mr2]+jG_0[imom][ibil][ijack][r1+_nr*m2][r2+_nr*m1])/2.0;
+                                jG_em_r1_r2[imom][ibil][ijack][ieq] = (jG_em[imom][ibil][ijack][mr1][mr2]+jG_em[imom][ibil][ijack][r1+_nr*m2][r2+_nr*m1])/2.0;
+                            }
+                            
+                            G_0_err_r1_r2[imom][ibil][ieq] = (G_0_err[imom][ibil][mr1][mr2] + G_0_err[imom][ibil][r1+_nr*m2][r2+_nr*m1])/2.0;
+                            G_em_err_r1_r2[imom][ibil][ieq] = (G_em_err[imom][ibil][mr1][mr2] + G_em_err[imom][ibil][r1+_nr*m2][r2+_nr*m1])/2.0;
+                        }
+                        
+                        ieq++;
                     }
                 
-                // extrapolated value
-                jG_0_chir_mom[ibil][ijack] = jG_0_pars_mom[ibil][ijack][0];
-                jG_em_chir_mom[ibil][ijack] = jG_em_pars_mom[ibil][ijack][0];
+                for(int ibil=0;ibil<nbil;ibil++)
+                {
+                    vvd_t jG_0_pars_mom_ibil_r1_r2 = polyfit(coord_bil,npar[ibil],G_0_err_r1_r2[imom][ibil],jG_0_r1_r2[imom][ibil],x_min,x_max);
+                    vvd_t jG_em_pars_mom_ibil_r1_r2 = polyfit(coord_bil,npar[ibil],G_em_err_r1_r2[imom][ibil],jG_em_r1_r2[imom][ibil],x_min,x_max);
+                    
+                    for(int ijack=0;ijack<njacks;ijack++)
+                    {
+//                        if(ibil==0 or ibil==2)
+//                            for(int ieq=0;ieq<neq;ieq++)
+//                            {
+//                                // Goldstone pole subtraction from bilinears
+//                                jG_0_ave_r[imom][ibil][ijack][ieq] -= jG_0_pars_mom[ibil][ijack][2];
+//                                jG_em_ave_r[imom][ibil][ijack][ieq] -= jG_em_pars_mom[ibil][ijack][2];
+//                            }
+                        
+                        // extrapolated value
+                        (out.jG_0)[imom][ibil][ijack][r1][r2] = jG_0_pars_mom_ibil_r1_r2[ijack][0];
+                        (out.jG_em)[imom][ibil][ijack][r1][r2] = jG_em_pars_mom_ibil_r1_r2[ijack][0];
+                    }
+                }
             }
-        }
-        
-        // Zq
-        jZq_0_pars_mom=fit_par_jackknife(coord_q,2,Zq_err[imom],jZq_ave_r[imom],t_min_q,t_max_q);
-        jZq_em_pars_mom=fit_par_jackknife(coord_q,2,Zq_em_err[imom],jZq_em_ave_r[imom],t_min_q,t_max_q);
-        
-        for(int ijack=0;ijack<njacks;ijack++)
-        {
-            jZq_chir_mom[ijack] = jZq_0_pars_mom[ijack][0];
-            jZq_em_chir_mom[ijack] = jZq_em_pars_mom[ijack][0];
-        }
-        
-        // pushback of chiral bils and Zq
-        jG_0_chir[imom]=jG_0_chir_mom;
-        jG_em_chir[imom]=jG_em_chir_mom;
-        jZq_chir[imom]=jZq_chir_mom;
-        jZq_em_chir[imom]=jZq_em_chir_mom;
-        
-        // constructing Z_chiral for each momentum
-#pragma omp parallel for collapse(2)
-        for(int ijack=0;ijack<njacks;ijack++)
-            for(int ibil=0;ibil<5;ibil++)
-            {
-                //LO
-                jZ_chir_mom[ibil][ijack] = jZq_chir_mom[ijack]/jG_0_chir_mom[ibil][ijack];
-                //EM
-                jZ_em_chir_mom[ibil][ijack] = jG_em_chir_mom[ibil][ijack]/jG_0_chir_mom[ibil][ijack] + jZq_em_chir_mom[ijack]/jZq_chir_mom[ijack];
-            }
-        
-        jZ_chir[imom]=jZ_chir_mom;
-        jZ_em_chir[imom]=jZ_em_chir_mom;
     }
     
-    out.jG_0_ave_r = jG_0_ave_r;
-    out.jG_em_ave_r = jG_em_ave_r;
-    
-    out.jG_0_chir = jG_0_chir;
-    out.jG_em_chir = jG_em_chir;
-    out.jZq_chir = jZq_chir;
-    out.jZq_em_chir = jZq_em_chir;
-    out.jZ_chir = jZ_chir;
-    out.jZ_em_chir = jZ_em_chir;
+    out.compute_Zbil();
     
     return out;
 }
@@ -813,59 +773,63 @@ oper_t oper_t::subtract()
 {
     cout<<"Subtracting the O(a2) effects"<<endl<<endl;
     
-    oper_t out;
+    oper_t out=(*this);
     
-    out.bilmoms=bilmoms;
-    out.Zbil_computed=Zbil_computed;
-    out.jZq=jZq;
-    out.jZq_em=jZq_em;
-    out.jG_0=jG_0;
-    out.jG_em=jG_em;
-    out.jZ=jZ;
-    out.jZ_em=jZ_em;
-    out.m_eff_equivalent_Zq=m_eff_equivalent_Zq;
-    out.m_eff_equivalent=m_eff_equivalent;
-    out.jZq_ave_r=jZq_ave_r;
-    out.jZq_em_ave_r=jZq_em_ave_r;
-    out.jZq_chir = jZq_chir;
-    out.jZq_em_chir = jZq_em_chir;
-    out.jZ_chir = jZ_chir;
-    out.jZ_em_chir = jZ_em_chir;
+//    out.bilmoms=bilmoms;
+//    out.Zbil_computed=Zbil_computed;
+//    out.jZq=jZq;
+//    out.jZq_em=jZq_em;
+//    out.jG_0=jG_0;
+//    out.jG_em=jG_em;
+//    out.jZ=jZ;
+//    out.jZ_em=jZ_em;
+//    out.m_eff_equivalent_Zq=m_eff_equivalent_Zq;
+//    out.m_eff_equivalent=m_eff_equivalent;
+//    out.jZq_ave_r=jZq_ave_r;
+//    out.jZq_em_ave_r=jZq_em_ave_r;
+//    out.jZq_chir = jZq_chir;
+//    out.jZq_em_chir = jZq_em_chir;
+//    out.jZ_chir = jZ_chir;
+//    out.jZ_em_chir = jZ_em_chir;
+//    
+//    jG_0_sub = jG_0_chir;
+//    jG_em_sub = jG_em_chir;
+//    jZq_sub = jZq_chir;
+//    jZq_em_sub = jZq_em_chir;
+//    
+//    jZ_sub = jZ_chir;
+//    jZ_em_sub = jZ_em_chir;
     
-    jG_0_sub = jG_0_chir;
-    jG_em_sub = jG_em_chir;
-    jZq_sub = jZq_chir;
-    jZq_em_sub = jZq_em_chir;
-    
-    jZ_sub = jZ_chir;
-    jZ_em_sub = jZ_em_chir;
-    
-#pragma omp parallel for collapse(2)
+#pragma omp parallel for collapse(3)
     for(size_t imom=0;imom<bilmoms.size();imom++)
         for(int ijack=0;ijack<njacks;ijack++)
-        {
-            jZq_sub[imom][ijack] = jZq_chir[imom][ijack] - subtraction_q(imom,LO);
-            jZq_em_sub[imom][ijack] = jZq_em_chir[imom][ijack] + /*(!)*/ subtraction_q(imom,EM)*jZq_chir[imom][ijack];
-            // N.B.: the subtraction gets an extra minus sign due to the definition of the e.m. expansion!
-            
-            for(int ibil=0;ibil<5;ibil++)
+            for(int mr1=0; mr1<_nmr; mr1++)
             {
-                jG_0_sub[imom][ibil][ijack] = jG_0_chir[imom][ibil][ijack] - subtraction(imom,ibil,LO);
-                jG_em_sub[imom][ibil][ijack] = jG_em_chir[imom][ibil][ijack] - subtraction(imom,ibil,EM)*jG_0_chir[imom][ibil][ijack];
+                (out.jZq)[imom][ijack][mr1] = jZq[imom][ijack][mr1] - subtraction_q(imom,LO);
+                (out.jZq_em)[imom][ijack][mr1] = jZq_em[imom][ijack][mr1] + /*(!)*/ subtraction_q(imom,EM)*jZq[imom][ijack][mr1];
+                // N.B.: the subtraction gets an extra minus sign due to the definition of the e.m. expansion!
                 
-                // constructing Z_sub
-                jZ_sub[imom][ibil][ijack] = jZq_sub[imom][ijack]/jG_0_sub[imom][ibil][ijack];
-                jZ_em_sub[imom][ibil][ijack] = jG_em_sub[imom][ibil][ijack]/jG_0_sub[imom][ibil][ijack] + jZq_em_sub[imom][ijack]/jZq_sub[imom][ijack];
+                for(int ibil=0;ibil<5;ibil++)
+                    for(int mr2=0; mr2<_nmr; mr2++)
+                    {
+                        (out.jG_0)[imom][ibil][ijack][mr1][mr2] = jG_0[imom][ibil][ijack][mr1][mr2] - subtraction(imom,ibil,LO);
+                        (out.jG_em)[imom][ibil][ijack][mr1][mr2] = jG_em[imom][ibil][ijack][mr1][mr2] - subtraction(imom,ibil,EM)*jG_0[imom][ibil][ijack][mr1][mr2];
+                        
+                        //                // constructing Z_sub
+                        //                jZ_sub[imom][ibil][ijack] = jZq_sub[imom][ijack]/jG_0_sub[imom][ibil][ijack];
+                        //                jZ_em_sub[imom][ibil][ijack] = jG_em_sub[imom][ibil][ijack]/jG_0_sub[imom][ibil][ijack] + jZq_em_sub[imom][ijack]/jZq_sub[imom][ijack];
+                    }
             }
-        }
 
-    out.jG_0_sub = jG_0_sub;
-    out.jG_em_sub = jG_em_sub;
-    out.jZq_sub = jZq_sub;
-    out.jZq_em_sub = jZq_em_sub;
-    
-    out.jZ_sub = jZ_sub;
-    out.jZ_em_sub = jZ_em_sub;
+//    out.jG_0_sub = jG_0_sub;
+//    out.jG_em_sub = jG_em_sub;
+//    out.jZq_sub = jZq_sub;
+//    out.jZq_em_sub = jZq_em_sub;
+//    
+//    out.jZ_sub = jZ_sub;
+//    out.jZ_em_sub = jZ_em_sub;
+
+    out.compute_Zbil();
     
     return out;
 }
@@ -874,22 +838,22 @@ oper_t oper_t::evolve()
 {
     cout<<"Evolving the Z's to the scale 1/a"<<endl<<endl;
     
-    oper_t out;
+    oper_t out=(*this);
     
-    out.bilmoms=bilmoms;
-    out.Zbil_computed=Zbil_computed;
-    out.jZq_sub = jZq_sub;
-    out.jZq_em_sub = jZq_em_sub;
-    out.jZ_sub = jZ_sub;
-    out.jZ_em_sub = jZ_em_sub;
+//    out.bilmoms=bilmoms;
+//    out.Zbil_computed=Zbil_computed;
+//    out.jZq_sub = jZq_sub;
+//    out.jZq_em_sub = jZq_em_sub;
+//    out.jZ_sub = jZ_sub;
+//    out.jZ_em_sub = jZ_em_sub;
     
 //    jZq_evo = jZq_sub;
 //    jZq_em_evo = jZq_em_sub;
 //    jZ_evo = jZ_sub;
 //    jZ_em_evo = jZ_em_sub;
     
-    vector<vd_t> jZq_evo_tmp(jZq_sub.size(),vd_t(0.0,njacks)), jZq_em_evo_tmp(jZq_sub.size(),vd_t(0.0,njacks));
-    vector<vvd_t> jZ_evo_tmp(jZ_sub.size(),vvd_t(vd_t(0.0,njacks),nbil)), jZ_em_evo_tmp(jZ_sub.size(),vvd_t(vd_t(0.0,njacks),nbil));
+//    vector<vd_t> jZq_evo_tmp(jZq_sub.size(),vd_t(0.0,njacks)), jZq_em_evo_tmp(jZq_sub.size(),vd_t(0.0,njacks));
+//    vector<vvd_t> jZ_evo_tmp(jZ_sub.size(),vvd_t(vd_t(0.0,njacks),nbil)), jZ_em_evo_tmp(jZ_sub.size(),vvd_t(vd_t(0.0,njacks),nbil));
 
     double cq=0.0;
     vd_t cO(0.0,5);
@@ -905,22 +869,24 @@ oper_t oper_t::evolve()
         cO[4]=T_evolution_to_RIp_ainv(Nf,ainv,p2[imom]); //T
         
         for(int ijack=0;ijack<njacks;ijack++)
-        {
-            jZq_evo_tmp[imom][ijack] = jZq_sub[imom][ijack]/cq;
-            jZq_em_evo_tmp[imom][ijack] = jZq_em_sub[imom][ijack]/cq;
-            
-            for(int ibil=0;ibil<5;ibil++)
+            for(int mr1=0; mr1<_nmr; mr1++)
             {
-                jZ_evo_tmp[imom][ibil][ijack] = jZ_sub[imom][ibil][ijack]/cO[ibil];
-                jZ_em_evo_tmp[imom][ibil][ijack] = jZ_em_sub[imom][ibil][ijack]/cO[ibil];
+                (out.jZq)[imom][ijack][mr1] = jZq[imom][ijack][mr1]/cq;
+                (out.jZq_em)[imom][ijack][mr1] = jZq_em[imom][ijack][mr1]/cq;
+                
+                for(int ibil=0;ibil<5;ibil++)
+                    for(int mr2=0; mr2<_nmr; mr2++)
+                    {
+                        (out.jZ)[imom][ibil][ijack][mr1][mr2] = jZ[imom][ibil][ijack][mr1][mr2]/cO[ibil];
+                        (out.jZ_em)[imom][ibil][ijack][mr1][mr2] = jZ_em[imom][ibil][ijack][mr1][mr2]/cO[ibil];
+                    }
             }
-        }
     }
     
-    out.jZq_evo = jZq_evo_tmp;
-    out.jZq_em_evo = jZq_em_evo_tmp;
-    out.jZ_evo = jZ_evo_tmp;
-    out.jZ_em_evo = jZ_em_evo_tmp;
+//    out.jZq_evo = jZq_evo_tmp;
+//    out.jZq_em_evo = jZq_em_evo_tmp;
+//    out.jZ_evo = jZ_evo_tmp;
+//    out.jZ_em_evo = jZ_em_evo_tmp;
     
     return out;
 }
@@ -932,9 +898,9 @@ double mom_xyz(size_t imom)
 
 oper_t oper_t::average_equiv_moms()
 {
-    cout<<"Averaging over the equivalent momenta -- "<<endl<<endl;
+    cout<<"Averaging over the equivalent momenta -- ";
     
-    oper_t out;
+    oper_t out=(*this);
     
     int tag=0, tag_aux=0;
     double eps=1.0e-15;
@@ -991,29 +957,32 @@ oper_t oper_t::average_equiv_moms()
     
     PRINT(p2_tilde_eqmoms);
     
-    out.jZq_evo = jZq_evo;
-    out.jZq_em_evo = jZq_em_evo;
-    out.jZ_evo = jZ_evo;
-    out.jZ_em_evo = jZ_em_evo;
+//    out.jZq_evo = jZq_evo;
+//    out.jZq_em_evo = jZq_em_evo;
+//    out.jZ_evo = jZ_evo;
+//    out.jZ_em_evo = jZ_em_evo;
 
-    (out.jZq_evo).resize(neq_moms);
-    (out.jZq_em_evo).resize(neq_moms);
-    (out.jZ_evo).resize(neq_moms);
-    (out.jZ_em_evo).resize(neq_moms);
+    (out.jZq).resize(neq_moms);
+    (out.jZq_em).resize(neq_moms);
+    (out.jZ).resize(neq_moms);
+    (out.jZ_em).resize(neq_moms);
     
     // initialize to zero
-#pragma omp parallel for collapse(2)
+#pragma omp parallel for collapse(3)
     for(int tag=0;tag<neq_moms;tag++)
         for(int ijack=0;ijack<njacks;ijack++)
-        {
-            (out.jZq_evo)[tag][ijack]=0.0;
-            (out.jZq_em_evo)[tag][ijack]=0.0;
-            for(int ibil=0;ibil<5;ibil++)
+            for(int mr1=0; mr1<_nmr; mr1++)
             {
-                (out.jZ_evo)[tag][ibil][ijack]=0.0;
-                (out.jZ_em_evo)[tag][ibil][ijack]=0.0;
+                (out.jZq)[tag][ijack][mr1]=0.0;
+                (out.jZq_em)[tag][ijack][mr1]=0.0;
+                
+                for(int ibil=0;ibil<5;ibil++)
+                    for(int mr2=0; mr2<_nmr; mr2++)
+                    {
+                        (out.jZ)[tag][ibil][ijack][mr1][mr2]=0.0;
+                        (out.jZ_em)[tag][ibil][ijack][mr1][mr2]=0.0;
+                    }
             }
-        }
     
     // average over the equivalent momenta
 //#pragma omp parallel for collapse(2)
@@ -1023,13 +992,16 @@ oper_t oper_t::average_equiv_moms()
             if(tag_vector[imom]==tag)
             {
                 for(int ijack=0;ijack<njacks;ijack++)
+                    for(int mr1=0; mr1<_nmr; mr1++)
                 {
-                    (out.jZq_evo)[tag][ijack]+=jZq_evo[imom][ijack]/count_tag_vector[tag];
-                    (out.jZq_em_evo)[tag][ijack]+=jZq_em_evo[imom][ijack]/count_tag_vector[tag];
+                    (out.jZq)[tag][ijack][mr1]+=jZq[imom][ijack][mr1]/count_tag_vector[tag];
+                    (out.jZq_em)[tag][ijack][mr1]+=jZq_em[imom][ijack][mr1]/count_tag_vector[tag];
+                    
                     for(int ibil=0;ibil<5;ibil++)
+                        for(int mr2=0; mr2<_nmr; mr2++)
                     {
-                        (out.jZ_evo)[tag][ibil][ijack]+=jZ_evo[imom][ibil][ijack]/count_tag_vector[tag];
-                        (out.jZ_em_evo)[tag][ibil][ijack]+=jZ_em_evo[imom][ibil][ijack]/count_tag_vector[tag];
+                        (out.jZ)[tag][ibil][ijack][mr1][mr2]+=jZ[imom][ibil][ijack][mr1][mr2]/count_tag_vector[tag];
+                        (out.jZ_em)[tag][ibil][ijack][mr1][mr2]+=jZ_em[imom][ibil][ijack][mr1][mr2]/count_tag_vector[tag];
                     }
                 }
             }
@@ -1041,31 +1013,69 @@ oper_t oper_t::average_equiv_moms()
 //! To be used after the average over the equivalent momenta! (*)
 void continuum_limit(oper_t out, const int LO_or_EM)
 {
-    vector<vd_t> jZq_out;
-    vector<vvd_t> jZ_out;
-    
-    if(LO_or_EM==0)
-    {
-        cout<<"Continuum limit extrapolation:"<<endl<<endl;
-        jZq_out = out.jZq_evo;
-        jZ_out = out.jZ_evo;
-        cout<<"-- Leading Order --"<<endl;
-    }
-    else if(LO_or_EM==1)
-    {
-        cout<<"Continuum limit extrapolation:"<<endl<<endl;
-        jZq_out = out.jZq_em_evo;
-        jZ_out = out.jZ_em_evo;
-        cout<<"-- EM Correction --"<<endl;
-    }
-    
     //! (*)
-    int neq_moms = jZq_out.size();
+    int neq_moms = (out.jZq).size();
     vector<double> p2_tilde_eqmoms(neq_moms);
     READ(p2_tilde_eqmoms);
     
-    vd_t Zq_err = get<1>(ave_err_q(jZq_out));
-    vvd_t Z_err = get<1>(ave_err(jZ_out));
+    vvd_t jZq_out(vd_t(0.0,neq_moms),njacks);
+    vvvd_t jZ_out(vvd_t(vd_t(0.0,neq_moms),njacks),nbil);
+    
+    vd_t Zq_err(0.0,neq_moms);
+    vvd_t Z_err(vd_t(0.0,neq_moms),nbil);
+    
+    if(LO_or_EM==0)
+    {
+        cout<<"-- Leading Order --"<<endl;
+        
+#pragma omp parallel for collapse(2)
+        for(int imom=0; imom<neq_moms; imom++)
+            for(int ijack=0; ijack<njacks; ijack++)
+            {
+                jZq_out[ijack][imom] = out.jZq[imom][ijack][0];
+                for(int ibil=0; ibil<nbil; ibil++)
+                    jZ_out[ibil][ijack][imom] = out.jZ[imom][ibil][ijack][0][0];
+            }
+        vvd_t Zq_err_tmp = get<1>(ave_err(out.jZq));
+        vvvvd_t Z_err_tmp = get<1>(ave_err(out.jZ));
+        
+        for(int imom=0; imom<neq_moms; imom++)
+        {
+            Zq_err[imom] = Zq_err_tmp[imom][0];
+            for(int ibil=0; ibil<nbil; ibil++)
+                Z_err[ibil][imom] = Z_err_tmp[imom][ibil][0][0];
+        }
+        
+    }
+    else if(LO_or_EM==1)
+    {
+        cout<<"-- EM Correction --"<<endl;
+        
+#pragma omp parallel for collapse(2)
+        for(int imom=0; imom<neq_moms; imom++)
+            for(int ijack=0; ijack<njacks; ijack++)
+            {
+                jZq_out[ijack][imom] = out.jZq_em[imom][ijack][0];
+                for(int ibil=0; ibil<nbil; ibil++)
+                    jZ_out[ibil][ijack][imom] = out.jZ_em[imom][ibil][ijack][0][0];
+            }
+        vvd_t Zq_err_tmp = get<1>(ave_err(out.jZq_em));
+        vvvvd_t Z_err_tmp = get<1>(ave_err(out.jZ_em));
+        
+        for(int imom=0; imom<neq_moms; imom++)
+        {
+            Zq_err[imom] = Zq_err_tmp[imom][0];
+            for(int ibil=0; ibil<nbil; ibil++)
+                Z_err[ibil][imom] = Z_err_tmp[imom][ibil][0][0];
+        }
+    }
+    
+//    vvd_t Zq_err_tmp = get<1>(ave_err(jZq_out));
+//    vvvvd_t Z_err_tmp = get<1>(ave_err(jZ_out));
+    
+   
+    
+    
     
     //linear fit
     int p2_min=0;  //a2p2~1
@@ -1081,63 +1091,48 @@ void continuum_limit(oper_t out, const int LO_or_EM)
         coord_linear[1][i] = p2_tilde_eqmoms[i];   //p^2
     }
     
-    vXd_t jZq_out_par=fit_chiral_jackknife(coord_linear,Zq_err,jZq_out,p2_min,p2_max,p_min_value);
-    vvXd_t jZ_out_par=fit_chiral_jackknife(coord_linear,Z_err,jZ_out,p2_min,p2_max,p_min_value);
+    vd_t jZq_out_par_ijack(0.0,2);
+    vvd_t jZ_out_par_ijack(vd_t(0.0,2),nbil);
     
-    int pars=jZq_out_par[0].size();
+    double Zq_ave_cont=0.0, sqr_Zq_ave_cont=0.0, Zq_err_cont=0.0;
+    vd_t Z_ave_cont(0.0,nbil), sqr_Z_ave_cont(0.0,nbil), Z_err_cont(0.0,nbil);
     
-    vd_t Zq_par_ave(0.0,pars), sqr_Zq_par_ave(0.0,pars), Zq_par_err(0.0,pars);
-    vvd_t Zq_par_ave_err(vd_t(0.0,pars),2);
-    
-    vvd_t Z_par_ave(vd_t(0.0,pars),nbil), sqr_Z_par_ave(vd_t(0.0,pars),nbil), Z_par_err(vd_t(0.0,pars),nbil);
-    vvvd_t Z_par_ave_err(vvd_t(vd_t(0.0,pars),nbil),2);
-    
-    for(int ipar=0;ipar<pars;ipar++)
-        for(int ijack=0;ijack<njacks;ijack++)
-        {
-            Zq_par_ave[ipar]+=jZq_out_par[ijack](ipar)/njacks;
-            sqr_Zq_par_ave[ipar]+=jZq_out_par[ijack](ipar)*jZq_out_par[ijack](ipar)/njacks;
-            
-            for(int ibil=0; ibil<nbil;ibil++)
-            {
-                Z_par_ave[ibil][ipar]+=jZ_out_par[ibil][ijack](ipar)/njacks;
-                sqr_Z_par_ave[ibil][ipar]+=jZ_out_par[ibil][ijack](ipar)*jZ_out_par[ibil][ijack](ipar)/njacks;
-            }
-        }
-    
-    for(int ipar=0;ipar<pars;ipar++)
+    for(int ijack=0; ijack<njacks; ijack++)
     {
-        Zq_par_err[ipar]=sqrt((double)(njacks-1))*sqrt(sqr_Zq_par_ave[ipar]-Zq_par_ave[ipar]*Zq_par_ave[ipar]);
+        jZq_out_par_ijack=fit_continuum(coord_linear,Zq_err,jZq_out[ijack],p2_min,p2_max,p_min_value);
         
-        for(int ibil=0; ibil<nbil;ibil++)
-            Z_par_err[ibil][ipar]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Z_par_ave[ibil][ipar]-Z_par_ave[ibil][ipar]*Z_par_ave[ibil][ipar]));
+        Zq_ave_cont += jZq_out_par_ijack[0]/njacks;
+        sqr_Zq_ave_cont += jZq_out_par_ijack[0]*jZq_out_par_ijack[0]/njacks;
+        
+        for(int ibil=0; ibil<nbil; ibil++)
+        {
+            jZ_out_par_ijack[ibil]=fit_continuum(coord_linear,Z_err[ibil],jZ_out[ibil][ijack],p2_min,p2_max,p_min_value);
+        
+            Z_ave_cont[ibil] += jZ_out_par_ijack[ibil][0]/njacks;
+            sqr_Z_ave_cont[ibil] += jZ_out_par_ijack[ibil][0]*jZ_out_par_ijack[ibil][0]/njacks;
+        }
     }
     
-    Zq_par_ave_err[0]=Zq_par_ave; //Zq_par_ave_err[ave/err][par]
-    Zq_par_ave_err[1]=Zq_par_err;
-    Z_par_ave_err[0]=Z_par_ave; //Z_par_ave_err[ave/err][ibil][par]
-    Z_par_ave_err[1]=Z_par_err;
+        Zq_err_cont=sqrt((double)(njacks-1))*sqrt(sqr_Zq_ave_cont-Zq_ave_cont*Zq_ave_cont);
+        
+        for(int ibil=0; ibil<nbil;ibil++)
+            Z_err_cont[ibil]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_Z_ave_cont[ibil]-Z_ave_cont[ibil]*Z_ave_cont[ibil]));
     
-    double A=Zq_par_ave_err[0][0];          //intercept
-    double A_err=Zq_par_ave_err[1][0];
-    //    double B=Zq_par_ave_err[0][1];          //slope
-    //    double B_err=Zq_par_ave_err[1][1];
+    cout<<"ZQ = "<<Zq_ave_cont<<" +/- "<<Zq_err_cont<<endl;
     
-    cout<<"ZQ = "<<A<<" +/- "<<A_err<<endl;
-    
-    vd_t A_bil(0.0,nbil),A_bil_err(0.0,nbil);
-    vd_t B_bil(0.0,nbil),B_bil_err(0.0,nbil);
+//    vd_t A_bil(0.0,nbil),A_bil_err(0.0,nbil);
+//    vd_t B_bil(0.0,nbil),B_bil_err(0.0,nbil);
     
     vector<string> bil={"S","A","P","V","T"};
     
     for(int ibil=0; ibil<nbil;ibil++)
     {
-        A_bil[ibil]=Z_par_ave_err[0][ibil][0];
-        A_bil_err[ibil]=Z_par_ave_err[1][ibil][0];
-        B_bil[ibil]=Z_par_ave_err[0][ibil][1];
-        B_bil_err[ibil]=Z_par_ave_err[1][ibil][1];
+//        A_bil[ibil]=Z_par_ave_err[0][ibil][0];
+//        A_bil_err[ibil]=Z_par_ave_err[1][ibil][0];
+//        B_bil[ibil]=Z_par_ave_err[0][ibil][1];
+//        B_bil_err[ibil]=Z_par_ave_err[1][ibil][1];
         
-        cout<<"Z"<<bil[ibil]<<" = "<<A_bil[ibil]<<" +/- "<<A_bil_err[ibil]<<endl;
+        cout<<"Z"<<bil[ibil]<<" = "<<Z_ave_cont[ibil]<<" +/- "<<Z_err_cont[ibil]<<endl;
     }
     
 //    vector<double> pert={-0.0695545,-0.100031,-0.118281,-0.130564,-0.108664};

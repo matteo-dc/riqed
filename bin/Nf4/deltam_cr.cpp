@@ -468,7 +468,7 @@
     
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
-            jdeltam_cr[m_fw][m_bw] = fit_par_jackknife(coord, 1, error[m_fw][m_bw], deltam_cr_corr[m_fw][m_bw], delta_tmin, delta_tmax);
+            jdeltam_cr[m_fw][m_bw] = /*fit_par_jackknife*/polyfit(coord, 1, error[m_fw][m_bw], deltam_cr_corr[m_fw][m_bw], delta_tmin, delta_tmax);
     
     //    vvvd_t deltam_cr(vvd_t(vd_t(0.0,2),nmr),nmr);
     //    for(int mr_fw=0;mr_fw<nmr;mr_fw++)

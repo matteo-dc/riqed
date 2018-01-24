@@ -84,7 +84,7 @@ double read_plaquette()
 
 
 // read effective mass
-vector<vector<double>> read_eff_mass(const string name)
+vvd_t read_eff_mass(const string name)
 {
     vvvd_t eff_mass_array(vvd_t(vd_t(0.0,2),nmr),nmr);
     
@@ -112,9 +112,9 @@ vector<vector<double>> read_eff_mass(const string name)
                 eff_mass_array[mr_fw][mr_bw][i]=temp; //store  [i=ave/err]
             }
     
-    vector<vector<double>> eff_mass;
-    eff_mass.resize(nmr);
-    for(auto &i : eff_mass) i.resize(nmr);
+    vvd_t eff_mass(vd_t(0.0,nmr),nmr);
+//    eff_mass.resize(nmr);
+//    for(auto &i : eff_mass) i.resize(nmr);
     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
         for(int mr_bw=0;mr_bw<nmr;mr_bw++)
             eff_mass[mr_fw][mr_bw] = eff_mass_array[mr_fw][mr_bw][0];

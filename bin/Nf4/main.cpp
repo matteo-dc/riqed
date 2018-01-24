@@ -33,7 +33,7 @@ vector<double> p4, p4_tilde;
 vector<int> Np;
 
 // effective mass
-vector< vector<double> > eff_mass;
+vvd_t eff_mass;
 
 // deltam_cr
 vvvd_t deltam_cr;
@@ -63,7 +63,6 @@ int main()
     PRINT(p2_tilde);
     
     deltam_cr=read_deltam_cr("deltam_cr_array");
-    
     if(UseEffMass) eff_mass=read_eff_mass("eff_mass_array");
     
     basic.step="basic";
@@ -72,20 +71,21 @@ int main()
     oper_t rave = basic.average_r();
     
     oper_t rave_chir = rave.chiral_extr();
-    
+
     oper_t rave_chir_sub = rave_chir.subtract();
-    
+
     oper_t rave_chir_sub_evo = rave_chir_sub.evolve();
-    
+
     oper_t rave_chir_sub_evo_ave = rave_chir_sub_evo.average_equiv_moms();
-    
+
+    cout<<"Continuum limit extrapolation:"<<endl<<endl;
     continuum_limit(rave_chir_sub_evo_ave,LO);
     continuum_limit(rave_chir_sub_evo_ave,EM);
-  
-    
-    vector<vd_t> a=rave_chir_sub_evo_ave.jZq_evo;
-    
-    PRINT(a);
+//
+//    
+//    vector<vd_t> a=rave_chir_sub_evo_ave.jZq_evo;
+//    
+//    PRINT(a);
    
 
     

@@ -2,7 +2,7 @@
 #include "global.hpp"
 #include <iostream>
 
-vvd_t fit_par_jackknife(const vvd_t &coord, const int n_par, vd_t &error, const vvd_t &y, const int range_min, const int range_max)
+vvd_t polyfit/*_par_jackknife*/(const vvd_t &coord, const int n_par, vd_t &error, const vvd_t &y, const int range_min, const int range_max)
 {
 //    int njacks = y.size();
     
@@ -49,6 +49,46 @@ vvd_t fit_par_jackknife(const vvd_t &coord, const int n_par, vd_t &error, const 
     return jvpars;
     
 }
+
+vd_t fit_continuum(const vvd_t &coord, vd_t &error, const vd_t &y, const int p2_min, const int p2_max, const double &p_min_value)
+{
+    int n_par = coord.size();
+    //int nbil = y[0].size();
+    
+    MatrixXd S(n_par,n_par);
+    VectorXd Sy(n_par);
+    VectorXd jpars(n_par);
+    vd_t jvpars(0.0,n_par);
+    
+    //initialization
+    S=MatrixXd::Zero(n_par,n_par);
+    Sy=VectorXd::Zero(n_par);
+    jpars=VectorXd::Zero(n_par);
+    
+    //definition
+    for(int i=p2_min; i<p2_max; i++)
+    {
+        if(error[i]<1e-50)
+            error[i]+=1e-50;
+        
+        if(coord[1][i]>p_min_value)
+        {
+            for(int j=0; j<n_par; j++)
+                for(int k=0; k<n_par; k++)
+                    if(std::isnan(error[i])==0) S(j,k) += coord[j][i]*coord[k][i]/(error[i]*error[i]);
+            
+            for(int k=0; k<n_par; k++)
+                if(std::isnan(error[i])==0) Sy(k) += y[i]*coord[k][i]/(error[i]*error[i]);
+        }
+    }
+    
+    jpars = S.colPivHouseholderQr().solve(Sy);
+    
+    for(int ipar=0;ipar<n_par;ipar++) jvpars[ipar]=jpars(ipar);
+    
+    return jvpars; //jpars[ibil][ijack][ipar]
+}
+
 
 
 vXd_t fit_chiral_jackknife(const vvd_t &coord, vd_t &error, const vector<vd_t> &y, const int range_min, const int range_max, const double &p_min_value)
