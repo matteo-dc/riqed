@@ -637,10 +637,10 @@ oper_t oper_t::chiral_extr()
     
     resize_vectors(out);
     
-    vvvvd_t G_0_err = get<1>(ave_err(jG_0));
+    vvvvd_t G_0_err = get<1>(ave_err(jG_0));    //[imom][ibil][mr1][mr2]
     vvvvd_t G_em_err = get<1>(ave_err(jG_em));
     
-    vvd_t Zq_err = get<1>(ave_err(jZq));
+    vvd_t Zq_err = get<1>(ave_err(jZq));        //[imom][mr]
     vvd_t Zq_em_err = get<1>(ave_err(jZq_em));
     
     //Sum of quark masses for the extrapolation
@@ -652,6 +652,7 @@ oper_t oper_t::chiral_extr()
 //            mass_sum[i_sum] = mass_val[i]+mass_val[j];
 //            i_sum++;
 //        }
+
     
     //range for fit Zq
     int x_min_q=0;
@@ -671,6 +672,12 @@ oper_t oper_t::chiral_extr()
         {
             vvd_t coord_q(vd_t(0.0,_nm),2); // coords at fixed r
             
+            vvvd_t jZq_r(vvd_t(vd_t(0.0,_nm),njacks),bilmoms.size());
+            vvvd_t jZq_em_r(vvd_t(vd_t(0.0,_nm),njacks),bilmoms.size());
+            
+            vvd_t Zq_err_r(vd_t(0.0,_nm),bilmoms.size());
+            vvd_t Zq_em_err_r(vd_t(0.0,_nm),bilmoms.size());
+            
             for(int m=0; m<_nm; m++)
             {
                 int mr = r + _nr*m;
@@ -680,10 +687,19 @@ oper_t oper_t::chiral_extr()
                     coord_q[1][m]= mass_val[m];
                 else if(UseEffMass==0)
                     coord_q[1][m] = pow(eff_mass[mr][mr],2.0);
+                
+                for(int ijack=0;ijack<njacks;ijack++)
+                {
+                    jZq_r[imom][ijack][m]=jZq[imom][ijack][mr];
+                    jZq_em_r[imom][ijack][m]=jZq[imom][ijack][mr];
+                }
+                
+                Zq_err_r[imom][m]=Zq_err[imom][mr];
+                Zq_em_err_r[imom][m]=Zq_em_err[imom][mr];
             }
             
-            vvd_t jZq_pars_mom_r = polyfit(coord_q,2,Zq_err[imom],jZq[imom],x_min_q,x_max_q);
-            vvd_t jZq_em_pars_mom_r = polyfit(coord_q,2,Zq_em_err[imom],jZq_em[imom],x_min_q,x_max_q);
+            vvd_t jZq_pars_mom_r = polyfit(coord_q,2,Zq_err_r[imom],jZq_r[imom],x_min_q,x_max_q);
+            vvd_t jZq_em_pars_mom_r = polyfit(coord_q,2,Zq_em_err_r[imom],jZq_em_r[imom],x_min_q,x_max_q);
             
             for(int ijack=0; ijack<njacks; ijack++)
             {
@@ -701,11 +717,11 @@ oper_t oper_t::chiral_extr()
             {
                 vvd_t coord_bil(vd_t(0.0,_nm*(_nm+1)/2),3); // coords at fixed r1 and r2
                 
-                vvvd_t G_0_err_r1_r2(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),nbil),bilmoms.size());
-                vvvd_t G_em_err_r1_r2(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),nbil),bilmoms.size());
-                
                 vvvvd_t jG_0_r1_r2(vvvd_t(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),njacks),nbil),bilmoms.size());
                 vvvvd_t jG_em_r1_r2(vvvd_t(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),njacks),nbil),bilmoms.size());
+                
+                vvvd_t G_0_err_r1_r2(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),nbil),bilmoms.size());
+                vvvd_t G_em_err_r1_r2(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),nbil),bilmoms.size());
 
                 int ieq=0;
                 for(int m1=0; m1<_nm; m1++)

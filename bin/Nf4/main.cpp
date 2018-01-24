@@ -71,7 +71,7 @@ int main()
     oper_t rave = basic.average_r();
     
     oper_t rave_chir = rave.chiral_extr();
-
+    
     oper_t rave_chir_sub = rave_chir.subtract();
 
     oper_t rave_chir_sub_evo = rave_chir_sub.evolve();
