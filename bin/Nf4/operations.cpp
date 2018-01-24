@@ -1070,22 +1070,15 @@ void continuum_limit(oper_t out, const int LO_or_EM)
         }
     }
     
-//    vvd_t Zq_err_tmp = get<1>(ave_err(jZq_out));
-//    vvvvd_t Z_err_tmp = get<1>(ave_err(jZ_out));
-    
-   
-    
-    
-    
     //linear fit
-    int p2_min=0;  //a2p2~1
-    int p2_max=neq_moms;
+    int range_min=0;  //a2p2~1
+    int range_max=neq_moms;
 //    int p_min_value=0.9;
-    double p_min_value=1.0;
+    double p_min_value=p2min;
     
     vvd_t coord_linear(vd_t(0.0,neq_moms),2);
     
-    for(int i=0; i<p2_max; i++)
+    for(int i=0; i<range_max; i++)
     {
         coord_linear[0][i] = 1.0;  //costante
         coord_linear[1][i] = p2_tilde_eqmoms[i];   //p^2
@@ -1099,14 +1092,14 @@ void continuum_limit(oper_t out, const int LO_or_EM)
     
     for(int ijack=0; ijack<njacks; ijack++)
     {
-        jZq_out_par_ijack=fit_continuum(coord_linear,Zq_err,jZq_out[ijack],p2_min,p2_max,p_min_value);
+        jZq_out_par_ijack=fit_continuum(coord_linear,Zq_err,jZq_out[ijack],range_min,range_max,p_min_value);
         
         Zq_ave_cont += jZq_out_par_ijack[0]/njacks;
         sqr_Zq_ave_cont += jZq_out_par_ijack[0]*jZq_out_par_ijack[0]/njacks;
         
         for(int ibil=0; ibil<nbil; ibil++)
         {
-            jZ_out_par_ijack[ibil]=fit_continuum(coord_linear,Z_err[ibil],jZ_out[ibil][ijack],p2_min,p2_max,p_min_value);
+            jZ_out_par_ijack[ibil]=fit_continuum(coord_linear,Z_err[ibil],jZ_out[ibil][ijack],range_min,range_max,p_min_value);
         
             Z_ave_cont[ibil] += jZ_out_par_ijack[ibil][0]/njacks;
             sqr_Z_ave_cont[ibil] += jZ_out_par_ijack[ibil][0]*jZ_out_par_ijack[ibil][0]/njacks;
@@ -1120,18 +1113,10 @@ void continuum_limit(oper_t out, const int LO_or_EM)
     
     cout<<"ZQ = "<<Zq_ave_cont<<" +/- "<<Zq_err_cont<<endl;
     
-//    vd_t A_bil(0.0,nbil),A_bil_err(0.0,nbil);
-//    vd_t B_bil(0.0,nbil),B_bil_err(0.0,nbil);
-    
     vector<string> bil={"S","A","P","V","T"};
     
     for(int ibil=0; ibil<nbil;ibil++)
     {
-//        A_bil[ibil]=Z_par_ave_err[0][ibil][0];
-//        A_bil_err[ibil]=Z_par_ave_err[1][ibil][0];
-//        B_bil[ibil]=Z_par_ave_err[0][ibil][1];
-//        B_bil_err[ibil]=Z_par_ave_err[1][ibil][1];
-        
         cout<<"Z"<<bil[ibil]<<" = "<<Z_ave_cont[ibil]<<" +/- "<<Z_err_cont[ibil]<<endl;
     }
     

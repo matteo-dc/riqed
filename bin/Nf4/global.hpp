@@ -88,6 +88,8 @@ extern int delta_tmin;
 extern int delta_tmax;
 // boundary conditions
 extern string BC_str;
+// minimum p2 value for continuum limit
+extern double p2min;
 
 typedef enum {  
     LO = 0,
