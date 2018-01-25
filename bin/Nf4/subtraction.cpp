@@ -64,6 +64,7 @@ vd_t Zq_Oa2(const int LO_or_EM, const int imom)
     
     // Coefficients from the Mathematica file 'O(g2a2).nb'
     
+    // Nf=4 analysis
     if(action=="Iwa")
     {
         if(LO_or_EM==LO)
@@ -75,6 +76,7 @@ vd_t Zq_Oa2(const int LO_or_EM, const int imom)
             c_q={-0.0112397+2.26296238/(double)Np[imom],31./240.-101./120./(double)Np[imom],17./120.};	   //Wilson action (QED)
         }
     }
+    // Nf=2 analysis
     if (action=="Sym")
     {
         if(LO_or_EM==LO)
