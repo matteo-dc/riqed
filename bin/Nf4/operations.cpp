@@ -460,24 +460,24 @@ void oper_t::compute_bil()
         duration<double> t_span = duration_cast<duration<double>>(t1-t0);
         cout<<"\t\t time: "<<t_span.count()<<" s"<<endl;
         
-        /* DEBUG */
-        
-        cout<<endl;
-        
-        vd_t ZS(0.0,_moms);
-        vd_t ZQ(0.0,_moms);
-        vd_t GS(0.0,_moms);
-        
-        cout<<"-------"<<endl;
-        for(int ijack=0; ijack<njacks;ijack++)
-        {
-            cout<<jZq[imom1][ijack][0]<<" "<<jG_0[imom1][0][ijack][0][0]<<" "<<jZq[imom1][ijack][0]/jG_0[imom1][0][ijack][0][0]<<endl;
-            ZS[imom1]+=sqrt(jZq[imom1][ijack][0])*sqrt(jZq[imom1][ijack][0])/jG_0[imom1][0][ijack][0][0]/njacks;
-            ZQ[imom1]+=jZq[imom1][ijack][0]/njacks;
-            GS[imom1]+=jG_0[imom1][0][ijack][0][0]/njacks;
-        }
-        cout<<"-------"<<endl;
-        cout<<ZQ[imom1]<<" "<<GS[imom1]<<" "<<ZS[imom1]<<endl;
+//        /* DEBUG */
+//        
+//        cout<<endl;
+//        
+//        vd_t ZS(0.0,_moms);
+//        vd_t ZQ(0.0,_moms);
+//        vd_t GS(0.0,_moms);
+//        
+//        cout<<"-------"<<endl;
+//        for(int ijack=0; ijack<njacks;ijack++)
+//        {
+//            cout<<jZq[imom1][ijack][0]<<" "<<jG_0[imom1][0][ijack][0][0]<<" "<<jZq[imom1][ijack][0]/jG_0[imom1][0][ijack][0][0]<<endl;
+//            ZS[imom1]+=sqrt(jZq[imom1][ijack][0])*sqrt(jZq[imom1][ijack][0])/jG_0[imom1][0][ijack][0][0]/njacks;
+//            ZQ[imom1]+=jZq[imom1][ijack][0]/njacks;
+//            GS[imom1]+=jG_0[imom1][0][ijack][0][0]/njacks;
+//        }
+//        cout<<"-------"<<endl;
+//        cout<<ZQ[imom1]<<" "<<GS[imom1]<<" "<<ZS[imom1]<<endl;
     
     } // close mom loop
     cout<<endl<<endl;
