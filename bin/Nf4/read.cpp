@@ -242,13 +242,15 @@ vector<string> setup_read_prop(ifstream *input)
 
 
 //read a propagator file
-prop_t read_prop(ifstream &input, const string &path, const int imom)
+prop_t read_prop(ifstream &input, const string &path, const int imom, const int i)
 {
     prop_t out(prop_t::Zero());
     
     // start to read from the momentum imom
-    long offset = imom*sizeof(dcompl)*4*4*3*3;
-    input.seekg(offset,input.beg);
+//    long offset = imom*sizeof(dcompl)*4*4*3*3;
+//    input.seekg(offset,input.beg);
+    
+    int j=0; ////
     
     for(int id_so=0;id_so<4;id_so++)
         for(int ic_so=0;ic_so<3;ic_so++)
@@ -261,13 +263,19 @@ prop_t read_prop(ifstream &input, const string &path, const int imom)
                         cerr<<"Bad before reading"<<endl;
                         exit(1);
                     }
+                    
                     input.read((char*)&temp,sizeof(double)*2);
+                    
+//                    printf("%d\t%d \tRead (%lf,%lf)   id_so: %d  ic_so: %d  id_si: %d  ic_si: %d   imom %d\n",i,j,temp[0],temp[1],id_so,ic_so,id_si,ic_si,imom);
+                    
                     if(not input.good())
                     {
                         cerr<<"Unable to read from "<<path<<" id_so: "<<id_so<<", ic_so: "<<ic_so<<", id_si: "<<id_si<<", ic_si:"<<ic_si<<endl;
                         exit(1);
                     }
                     out(isc(id_si,ic_si),isc(id_so,ic_so))=dcompl(temp[0],temp[1]); //store
+               
+                    j++;
                 }
     
     return out;
@@ -278,12 +286,15 @@ vvvprop_t read_prop_mom(ifstream *input,const vector<string> v_path,const int i_
 {
     vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),ntypes),njacks);
     
+    int i=0;
+
 #pragma omp parallel for collapse(4)
     for(int t=0;t<ntypes;t++)
         for(int m=0;m<nm;m++)
             for(int r=0;r<nr;r++)
                 for(int ijack=0;ijack<njacks;ijack++)
                 {
+                    
 ////                    if(omp_get_thread_num()==0)
 //                    {
 //                        cout<<" Thread "<<omp_get_thread_num()<<"/"<<omp_get_num_threads()<<" --";
@@ -300,11 +311,12 @@ vvvprop_t read_prop_mom(ifstream *input,const vector<string> v_path,const int i_
                     
                     //printf("  Reading propagator from %s\n",path.c_str());
                     
-                    //create all the propagators in a given conf and a given mom
-                    S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom);
+                    //create all the propagators in a given conf and a given mom                    
+                    S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom,i);
                     
                     if(t==4) S[ijack][t][mr]*=dcompl(0.0,1.0);      // i*(pseudoscalar insertion)
                     //if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);    // (minus sign?)
+                    i++;
                 }
     return S;
 }
