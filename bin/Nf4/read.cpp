@@ -179,7 +179,7 @@ string path_to_conf(const string &string_path, int i_conf,const string &name)
 }
 
 // opens all the files and return a vector with all the string paths
-vector<string> setup_read_prop(ifstream input[])
+vector<string> setup_read_prop(ifstream *input)
 {
     // complete path to conf
     string string_path;
@@ -274,7 +274,7 @@ prop_t read_prop(ifstream &input, const string &path, const int imom)
 }
 
 //read all the propagators at a given momentum
-vvvprop_t read_prop_mom(ifstream input[],const vector<string> v_path,const int i_in_clust,const int ihit,const int imom)
+vvvprop_t read_prop_mom(ifstream *input,const vector<string> v_path,const int i_in_clust,const int ihit,const int imom)
 {
     vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),ntypes),njacks);
     
