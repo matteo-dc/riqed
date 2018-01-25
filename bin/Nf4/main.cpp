@@ -67,16 +67,39 @@ int main()
     
     basic.step="basic";
     basic.create_basic();
+    basic.plot("");
+    
+    oper_t ave = basic.average_equiv_moms();
+    ave.plot("ave");
     
     oper_t rave = basic.average_r();
+    rave.plot("rave");
+    
+    oper_t rave_ave = rave.average_equiv_moms();  ///
+    rave_ave.plot("rave_ave");
     
     oper_t rave_chir = rave.chiral_extr();
+    rave_chir.plot("rave_chir");
+    
+    oper_t rave_chir_ave = rave_chir.average_equiv_moms();  ///
+    rave_chir_ave.plot("rave_chir_ave");
+
+    
+//    oper_t chir = basic.chiral_extr(); //!
+//    
+//    oper_t rave_chir = chir.average_r(); //!
     
     oper_t rave_chir_sub = rave_chir.subtract();
+    rave_chir_sub.plot("rave_chir_sub");
+    
+    oper_t rave_chir_sub_ave = rave_chir_sub.average_equiv_moms();  ///
+    rave_chir_sub_ave.plot("rave_chir_sub_ave");
 
     oper_t rave_chir_sub_evo = rave_chir_sub.evolve();
+    rave_chir_sub_evo.plot("rave_chir_sub_evo");
 
     oper_t rave_chir_sub_evo_ave = rave_chir_sub_evo.average_equiv_moms();
+    rave_chir_sub_evo_ave.plot("rave_chir_sub_evo_ave");
 
     cout<<"Continuum limit extrapolation:"<<endl<<endl;
     continuum_limit(rave_chir_sub_evo_ave,LO);

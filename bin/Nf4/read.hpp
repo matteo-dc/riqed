@@ -54,5 +54,8 @@ void read_vec( T &vec, const char* path)
 #define READ(NAME)				\
 read_vec(NAME,"print/"#NAME".txt");
 
+#define READ2(NAME1,NAME2)       \
+read_vec(NAME1,"print/"#NAME2".txt");
+
 
 #endif

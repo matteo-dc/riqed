@@ -76,9 +76,11 @@ using jZbil_t=vvvvd_t;
 using jproj_t=vvvvd_t;
 
 //tuple
-using Zq_tuple=tuple<vector<jZ_t>,vector<jZ_t>,string>;
-using G_tuple=tuple<vector<jproj_t>,vector<jproj_t>,string>;
-using Zbil_tuple=tuple<vector<jZbil_t>,vector<jZbil_t>,string>;
+//using Zq_tuple=tuple<vector<jZ_t>,vector<jZ_t>,string>;
+//using G_tuple=tuple<vector<jproj_t>,vector<jproj_t>,string>;
+//using Zbil_tuple=tuple<vector<jZbil_t>,vector<jZbil_t>,string>;
 
+using Zbil_tup=tuple<vvvvd_t,vvvvd_t>;
+using Zq_tup=tuple<vvd_t,vvd_t>;
 
 #endif

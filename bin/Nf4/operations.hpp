@@ -41,27 +41,17 @@ struct oper_t
     int _nr;
     int _nmr;
     
+    // size of bilmoms
+    int _moms;
+    
     // definition of jZq
     vector<jZ_t> jZq, jZq_em;
-    
-//    //!!TO BE CANCELLED
-//    vector<vvd_t> jZq_ave_r, jZq_em_ave_r; //
-//    vector<vd_t> jZq_chir, jZq_em_chir; //
-//    vector<vd_t> jZq_sub, jZq_em_sub; //
-//    vector<vd_t> jZq_evo, jZq_em_evo;     //
     
     // create props and compute Zq
     void compute_prop();
     
     // definition of projected bils
     vector<jproj_t> jG_0, jG_em;
-    
-//    //!!TO BE CANCELLED
-//    vector<vvvd_t> jG_0_ave_r, jG_em_ave_r;
-//    vector<vvd_t> jG_0_chir, jG_em_chir;
-//    vector<vvd_t> jG_0_sub, jG_em_sub;
-//    vector<vvd_t> jG_0_eqmoms, jG_em_eqmoms;
-
     
     // compute projected bils
     void compute_bil();
@@ -70,20 +60,11 @@ struct oper_t
     bool Zbil_computed{false};
     vector<jZbil_t> jZ, jZ_em;
     
-//    //!!TO BE CANCELLED
-//    vector<vvd_t> jZ_chir, jZ_em_chir;
-//    vector<vvd_t> jZ_sub, jZ_em_sub;
-//    vector<vvd_t> jZ_evo, jZ_em_evo;
-    
     // compute Zbils
     void compute_Zbil();
     
     // step string
     string step;
-    
-//    // definition of the equivalent masses
-//    vvd_t m_eff_equivalent_Zq;
-//    vvd_t m_eff_equivalent;
     
     // average r
     oper_t average_r(/*const bool recompute_Zbil=false*/) ;
@@ -99,7 +80,9 @@ struct oper_t
     
     // average of equivalent momenta
     oper_t average_equiv_moms();
-
+    
+    // plot Zq and Z
+    void plot(const string suffix);
     
 };
 

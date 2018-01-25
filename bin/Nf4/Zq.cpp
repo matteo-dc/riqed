@@ -72,5 +72,9 @@ vvvd_t compute_jZq(vvvprop_t &jS_inv,const int imom)
     jZq_LO_and_EM[LO]=jZq_0_real;
     jZq_LO_and_EM[EM]=jZq_em_real;
     
+//    if(imom==10)
+//        for(int ijack=0;ijack<njacks;ijack++)
+//            printf("%lf\n",jZq_LO_and_EM[LO][ijack][0]);
+    
     return jZq_LO_and_EM;
 }
