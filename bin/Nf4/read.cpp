@@ -284,6 +284,15 @@ vvvprop_t read_prop_mom(ifstream *input,const vector<string> v_path,const int i_
             for(int r=0;r<nr;r++)
                 for(int ijack=0;ijack<njacks;ijack++)
                 {
+                    if(omp_get_thread_num()==0)
+                    {
+                        cout<<" Thread "<<omp_get_thread_num()<<"/"<<omp_get_num_threads()<<" --";
+                        cout<<" ijack "<<ijack;
+                        cout<<" m "<<m;
+                        cout<<" r "<<r;
+                        cout<<" t "<<t<<endl;
+                    }
+                    
                     int iconf=clust_size*ijack+i_in_clust;
                     int icombo=r + nr*m + nr*nm*t + nr*nm*ntypes*ihit + nr*nm*ntypes*nhits*iconf;
                     

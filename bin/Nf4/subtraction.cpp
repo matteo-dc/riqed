@@ -1,6 +1,9 @@
 #include "aliases.hpp"
 #include "global.hpp"
 
+//debug
+#include <iostream>
+
 
 vvd_t pr_bil_Oa2(const int LO_or_EM)
 {
@@ -104,6 +107,12 @@ double subtraction(const int imom, const int ibil, const int LO_or_EM)
     else if(LO_or_EM==EM)
         sub = (p2_tilde[imom]*(c[ibil][0]+c[ibil][1]*log(p2_tilde[imom]))+c[ibil][2]*p4_tilde[imom]/p2_tilde[imom])/(16.*M_PI*M_PI);
     
+    
+//    cout<<"p2t "<<p2_tilde[imom]<<endl;
+//    cout<<"p4t "<<p4_tilde[imom]<<endl;
+//    cout<<"c "<<c[ibil][0]<<" "<<c[ibil][1]<<" "<<c[ibil][2]<<endl;
+//    cout<<"g2t "<<g2_tilde<<endl;
+//    cout<<endl;
     return sub;
 }
 
