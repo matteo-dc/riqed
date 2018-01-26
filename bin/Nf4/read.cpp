@@ -264,7 +264,7 @@ prop_t read_prop(ifstream &input, const string &path, const int imom, const int 
                         exit(1);
                     }
                     
-//                    input.read((char*)&temp,sizeof(double)*2);
+                    input.read((char*)&temp,sizeof(double)*2);
                     
                     if(not input.good())
                     {
@@ -323,13 +323,14 @@ vvvprop_t read_prop_mom(ifstream *input,const vector<string> v_path,const int i_
     for(int ilin=0;ilin<nm*nr*ntypes*njacks;ilin++)
     {
         int k=ilin;
-        int ijack = k % njacks;
-        k/=njacks;
         int r = k % nr;
         k/=nr;
         int m = k % nm;
         k/=nm;
         int t = k % ntypes;
+        k/=ntypes;
+        int ijack = k % njacks;
+
         int mr = r + nr*m;
         
         int iconf=clust_size*ijack+i_in_clust;
