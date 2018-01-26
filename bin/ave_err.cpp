@@ -84,12 +84,12 @@ tuple<vvd_t,vvd_t> ave_err(vvvd_t jM)
             for(int ijack=0;ijack<_njacks;ijack++)
             {
                 M_ave[mrA][mrB]+=jM[ijack][mrA][mrB]/njacks;
-                sqr_M_ave[mrA][mrB]+=JM[ijack][mrA][mrB]*jM[ijack][mrA][mrB]/njacks;
+                sqr_M_ave[mrA][mrB]+=jM[ijack][mrA][mrB]*jM[ijack][mrA][mrB]/njacks;
             }
     
     for(int mrA=0;mrA<_nmr;mrA++)
         for(int mrB=0;mrB<_nmr;mrB++)
-            M_err[mrA][mrB]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_M_ave[imom][mr]-M_ave[imom][mr]*M_ave[imom][mr]));
+            M_err[mrA][mrB]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_M_ave[mrA][mrB]-M_ave[mrA][mrB]*M_ave[mrA][mrB]));
     
     tuple<vvd_t,vvd_t> tuple_ave_err(M_ave,M_err);
 

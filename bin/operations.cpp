@@ -527,7 +527,7 @@ oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
     
     if(UseEffMass==1)
     {
-        vvvd_t eff_mass_temp(vvd_t(vd_t(0.0,out._nmr),out._nmr),ijack);
+        vvvd_t eff_mass_temp(vvd_t(vd_t(0.0,out._nmr),out._nmr),njacks);
         
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mA=0; mA<_nm; mA++)
@@ -616,8 +616,7 @@ oper_t oper_t::chiral_extr()
 //        }
 
     // average of eff_mass
-    vvd_t M_eff = get<0>=ave_err(eff_mass);
-    
+    vvd_t M_eff = get<0>(ave_err(eff_mass));
     
     //range for fit Zq
     int x_min_q=0;
@@ -651,7 +650,7 @@ oper_t oper_t::chiral_extr()
                 if(UseEffMass==0)
                     coord_q[1][m]= mass_val[m];
                 else if(UseEffMass==0)
-                    coord_q[1][m] = pow(eff_mass[mr][mr],2.0);
+                    coord_q[1][m] = pow(M_eff[mr][mr],2.0);
                 
                 for(int ijack=0;ijack<njacks;ijack++)
                 {
@@ -703,7 +702,7 @@ oper_t oper_t::chiral_extr()
                         }
                         else if(UseEffMass==1)
                         {
-                            coord_bil[1][ieq] = pow((eff_mass[mr1][mr2]+eff_mass[mr2][mr1])/2.0,2.0);   //M^2 (averaged over equivalent combinations)
+                            coord_bil[1][ieq] = pow((M_eff[mr1][mr2]+M_eff[mr2][mr1])/2.0,2.0);   //M^2 (averaged over equivalent combinations)
                             coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];  //1/M^2
                         }
                     

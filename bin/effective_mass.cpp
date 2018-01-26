@@ -160,7 +160,7 @@ void compute_eff_mass()
     
     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
         for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-            jeff_mass[m_fw][m_bw] = polyfit(coord, 1, mass_err[m_fw][m_bw], M_eff[m_fw][m_bw], t_min, t_max);
+            jeff_mass[mr_fw][mr_bw] = polyfit(coord, 1, mass_err[mr_fw][mr_bw], M_eff[mr_fw][mr_bw], t_min, t_max);
 //        {
 //            eff_mass_fit_parameters[mr_fw][mr_bw]=fit_par(coord,mass_err[mr_fw][mr_bw],M_eff[mr_fw][mr_bw],t_min,t_max);
 //        }
@@ -178,9 +178,9 @@ void compute_eff_mass()
     
 #pragma omp parallel for collapse(3)
     for(int ijack=0;ijack<njacks;ijack++)
-        for(int mr_fw=0;mr_fw<nmr;m_fw++)
-            for(int mr_bw=0;mr_bw<nmr;m_bw++)
-                deltam_cr[ijack][mr_fw][mr_bw]=jdeltam_cr[mr_fw][mr_bw][ijack][0];
+        for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+            for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+                eff_mass[ijack][mr_fw][mr_bw]=jeff_mass[mr_fw][mr_bw][ijack][0];
     
     
     ofstream outfile;
@@ -198,7 +198,7 @@ void compute_eff_mass()
                     int m2 = (mr_bw-r2)/nr;
                     
                     for(int i=0;i<2;i++)
-                        outfile.write((char*) &eff_mass_array[ijack][mr_fw][mr_bw][i],sizeof(double));
+                        outfile.write((char*) &eff_mass[ijack][mr_fw][mr_bw],sizeof(double));
                 }
         
 
