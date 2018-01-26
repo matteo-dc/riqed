@@ -319,27 +319,28 @@ vvvprop_t read_prop_mom(ifstream *input,const vector<string> v_path,const int i_
 //                    i++;
 //                }
     
-    for(int ijack=0;ijack<njacks;ijack++)
-    {
-        int iconf=clust_size*ijack+i_in_clust;
-
+//    for(int ijack=0;ijack<njacks;ijack++)
+//    {
 #pragma omp parallel for
-        for(int ilin=0;ilin<nm*nr*ntypes;ilin++)
-        {
-            int r = ilin % nr;
-            int m = (ilin/nr) % nm;
-            int t = (ilin/nr/nm) % ntypes;
-            int mr = r + nr*m;
-            int icombo = r + nr*m + nr*nm*t + nr*nm*ntypes*ihit + nr*nm*ntypes*nhits*iconf;
-            
-            //create all the propagators in a given conf and a given mom
-            S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom,i);
-            
-            if(t==4) S[ijack][t][mr]*=dcompl(0.0,1.0);      // i*(pseudoscalar insertion)
-            //if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);    // (minus sign?)
-            i++;
-        }
+    for(int ilin=0;ilin<nm*nr*ntypes*njacks;ilin++)
+    {
+        int ijack = ilin % njacks;
+        int r = (ilin/njacks) % nr;
+        int m = (ilin/nr/njacks) % nm;
+        int t = (ilin/nr/nm/njacks) % ntypes;
+        int mr = r + nr*m;
+        
+        int iconf=clust_size*ijack+i_in_clust;
+        int icombo = r + nr*m + nr*nm*t + nr*nm*ntypes*ihit + nr*nm*ntypes*nhits*iconf;
+        
+        //create all the propagators in a given conf and a given mom
+        S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom,i);
+        
+        if(t==4) S[ijack][t][mr]*=dcompl(0.0,1.0);      // i*(pseudoscalar insertion)
+        //if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);    // (minus sign?)
+        i++;
     }
+//    }
     
     return S;
 }
