@@ -354,9 +354,6 @@ void oper_t::compute_bil()
         
         // definition of vertices
         valarray<jvert_t> jVert_LO_and_EM(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks),2);
-        //        jvert_t jVert_0 (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
-        //        jvert_t jVert_em (vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks);
-
         
         cout<<"- Reading propagators and building vertices"<<endl;
         
@@ -395,15 +392,7 @@ void oper_t::compute_bil()
         cout<<"\t build prop: "<<t_span2<<" s"<<endl;
         cout<<"\t build vert: "<<t_span3<<" s"<<endl;
 
-        
-//        S1_0 = S1_LO_and_EM[LO];
-//        S2_0 = S2_LO_and_EM[LO];
-//        S1_em = S1_LO_and_EM[EM];
-//        S2_em = S2_LO_and_EM[EM];
-        
-//        jvert_t jVert_0 = jVert_LO_and_EM[LO];
-//        jvert_t jVert_em = jVert_LO_and_EM[EM];
-        
+    
         cout<<"- Jackknife of propagators and vertices"<<endl;
         
         // jackknife averages
@@ -438,17 +427,7 @@ void oper_t::compute_bil()
         cout<<"- Computing bilinears"<<endl;
         
         // compute the projected green function (S,V,P,A,T)
-        vvvvvd_t jG_LO_and_EM = compute_pr_bil(jS1_inv_LO_and_EM,jVert_LO_and_EM,jS2_inv_LO_and_EM);
-        
-//        jproj_t jG_0_mom = compute_pr_bil(jS1_0_inv, jVert_0, jS2_0_inv);
-//        jproj_t jG_1 = compute_pr_bil(jS1_0_inv, jVert_em, jS2_0_inv);
-//        jproj_t jG_a = compute_pr_bil(jS1_em_inv, jVert_0, jS2_0_inv);
-//        jproj_t jG_b = compute_pr_bil(jS1_0_inv, jVert_0, jS2_em_inv);
-//        
-//        jproj_t jG_em_mom = -jG_1+jG_a+jG_b;
-        
-//        jG_0[imom1]=jG_0_mom;
-//        jG_em[imom1]=jG_em_mom;
+        vvvvvd_t jG_LO_and_EM = compute_pr_bil(jS1_inv_LO_and_EM,jVert_LO_and_EM,jS2_inv_LO_and_EM, ibilmom);
         
         jG_0[imom1] = jG_LO_and_EM[LO];
         jG_em[imom1] = jG_LO_and_EM[EM];
@@ -457,25 +436,6 @@ void oper_t::compute_bil()
         duration<double> t_span = duration_cast<duration<double>>(t1-t0);
         cout<<"\t\t time: "<<t_span.count()<<" s"<<endl;
         
-//        /* DEBUG */
-//        
-//        cout<<endl;
-//        
-//        vd_t ZS(0.0,_moms);
-//        vd_t ZQ(0.0,_moms);
-//        vd_t GS(0.0,_moms);
-//        
-//        cout<<"-------"<<endl;
-//        for(int ijack=0; ijack<njacks;ijack++)
-//        {
-//            cout<<jZq[imom1][ijack][0]<<" "<<jG_0[imom1][0][ijack][0][0]<<" "<<jZq[imom1][ijack][0]/jG_0[imom1][0][ijack][0][0]<<endl;
-//            ZS[imom1]+=sqrt(jZq[imom1][ijack][0])*sqrt(jZq[imom1][ijack][0])/jG_0[imom1][0][ijack][0][0]/njacks;
-//            ZQ[imom1]+=jZq[imom1][ijack][0]/njacks;
-//            GS[imom1]+=jG_0[imom1][0][ijack][0][0]/njacks;
-//        }
-//        cout<<"-------"<<endl;
-//        cout<<ZQ[imom1]<<" "<<GS[imom1]<<" "<<ZS[imom1]<<endl;
-    
     } // close mom loop
     cout<<endl<<endl;
 }
