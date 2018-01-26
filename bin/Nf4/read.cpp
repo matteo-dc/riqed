@@ -288,36 +288,59 @@ vvvprop_t read_prop_mom(ifstream *input,const vector<string> v_path,const int i_
     
     int i=0;
 
-#pragma omp parallel for collapse(4)
-    for(int t=0;t<ntypes;t++)
-        for(int m=0;m<nm;m++)
-            for(int r=0;r<nr;r++)
-                for(int ijack=0;ijack<njacks;ijack++)
-                {
-                    
-////                    if(omp_get_thread_num()==0)
-//                    {
-//                        cout<<" Thread "<<omp_get_thread_num()<<"/"<<omp_get_num_threads()<<" --";
-//                        cout<<" ijack "<<ijack;
-//                        cout<<" m "<<m;
-//                        cout<<" r "<<r;
-//                        cout<<" t "<<t<<endl;
-//                    }
-                    
-                    int iconf=clust_size*ijack+i_in_clust;
-                    int icombo=r + nr*m + nr*nm*t + nr*nm*ntypes*ihit + nr*nm*ntypes*nhits*iconf;
-                    
-                    int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
-                    
-                    //printf("  Reading propagator from %s\n",path.c_str());
-                    
-                    //create all the propagators in a given conf and a given mom                    
-                    S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom,i);
-                    
-                    if(t==4) S[ijack][t][mr]*=dcompl(0.0,1.0);      // i*(pseudoscalar insertion)
-                    //if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);    // (minus sign?)
-                    i++;
-                }
+//#pragma omp parallel for collapse(4)
+//    for(int t=0;t<ntypes;t++)
+//        for(int m=0;m<nm;m++)
+//            for(int r=0;r<nr;r++)
+//                for(int ijack=0;ijack<njacks;ijack++)
+//                {
+//                    
+//////                    if(omp_get_thread_num()==0)
+////                    {
+////                        cout<<" Thread "<<omp_get_thread_num()<<"/"<<omp_get_num_threads()<<" --";
+////                        cout<<" ijack "<<ijack;
+////                        cout<<" m "<<m;
+////                        cout<<" r "<<r;
+////                        cout<<" t "<<t<<endl;
+////                    }
+//                    
+//                    int iconf=clust_size*ijack+i_in_clust;
+//                    int icombo=r + nr*m + nr*nm*t + nr*nm*ntypes*ihit + nr*nm*ntypes*nhits*iconf;
+//                    
+//                    int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
+//                    
+//                    //printf("  Reading propagator from %s\n",path.c_str());
+//                    
+//                    //create all the propagators in a given conf and a given mom
+//                    S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom,i);
+//                    
+//                    if(t==4) S[ijack][t][mr]*=dcompl(0.0,1.0);      // i*(pseudoscalar insertion)
+//                    //if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);    // (minus sign?)
+//                    i++;
+//                }
+    
+    for(int ijack=0;ijack<njacks;ijack++)
+    {
+        int iconf=clust_size*ijack+i_in_clust;
+
+#pragma omp parallel for
+        for(int ilin=0;ilin<nm*nr*ntypes;ilin++)
+        {
+            int r = ilin % nr;
+            int m = (ilin/nr) % nm;
+            int t = (ilin/nr/nm) % ntypes;
+            int mr = r + nr*m;
+            int icombo = r + nr*m + nr*nm*t + nr*nm*ntypes*ihit + nr*nm*ntypes*nhits*iconf;
+            
+            //create all the propagators in a given conf and a given mom
+            S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom,i);
+            
+            if(t==4) S[ijack][t][mr]*=dcompl(0.0,1.0);      // i*(pseudoscalar insertion)
+            //if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);    // (minus sign?)
+            i++;
+        }
+    }
+    
     return S;
 }
 
