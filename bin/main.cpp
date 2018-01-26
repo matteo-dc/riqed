@@ -31,6 +31,7 @@ vector<coords_t> mom_list;
 vector<p_t> p, p_tilde;
 vector<double> p2, p2_tilde;
 vector<double> p4, p4_tilde;
+vector<bool> filt_moms;
 
 // list of N(p)
 vector<int> Np;

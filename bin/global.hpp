@@ -90,6 +90,10 @@ extern int delta_tmax;
 extern string BC_str;
 // minimum p2 value for continuum limit
 extern double p2min;
+// filtered yes/no
+extern vector<bool> filt_moms;
+// filter threshold
+extern double thresh;
 
 typedef enum {  
     LO = 0,

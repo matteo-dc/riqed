@@ -52,6 +52,11 @@ void read_mom_list(const string &path)
             p2_tilde.push_back(p_tilde_sqr);
             p4.push_back(p_4);
             p4_tilde.push_back(p_tilde_4);
+            
+            const double D4=p_tilde_4/(p_tilde_sqr*p_tilde_4);
+            const bool filt=(D4<thresh);
+            filt_moms.push_back(filt);
+
         }
     }
 }

@@ -6,7 +6,7 @@
 
 enum ERR_t{NO_FAIL,FAILED_READ,FAILED_CONVERSION,FAILED_OPEN,MISPLACED_TK,UNINITIALIZED_PAR};
 
-enum TK_t{FEOF_TK,VALUE_TK,MOM_LIST_TK,NCONFS_TK,NJACKS_TK,L_TK,T_TK,CONF_INIT_TK,CONF_STEP_TK,ACT_TK,PLAQ_TK,PATH_TK,BETA_TK,MU_SEA_TK,KAPPA_TK,NMASSES_VAL_TK,MASSES_VAL_TK,NR_TK,NTYPES_TK,NHITS_TK,USE_SIGMA_TK,USE_EFF_MASS_TK,SCHEME_TK,NF_TK,NC_TK,AINV_TK,LAMBDAQCD_TK,DELTA_TMIN_TK,DELTA_TMAX_TK,BC_TK,P2MIN_TK};
+enum TK_t{FEOF_TK,VALUE_TK,MOM_LIST_TK,NCONFS_TK,NJACKS_TK,L_TK,T_TK,CONF_INIT_TK,CONF_STEP_TK,ACT_TK,PLAQ_TK,PATH_TK,BETA_TK,MU_SEA_TK,KAPPA_TK,NMASSES_VAL_TK,MASSES_VAL_TK,NR_TK,NTYPES_TK,NHITS_TK,USE_SIGMA_TK,USE_EFF_MASS_TK,SCHEME_TK,NF_TK,NC_TK,AINV_TK,LAMBDAQCD_TK,DELTA_TMIN_TK,DELTA_TMAX_TK,BC_TK,P2MIN_TK,THRESH_TK};
 
 #define DEFAULT_STR_VAL ""
 #define DEFAULT_INT_VAL -1
@@ -14,8 +14,8 @@ enum TK_t{FEOF_TK,VALUE_TK,MOM_LIST_TK,NCONFS_TK,NJACKS_TK,L_TK,T_TK,CONF_INIT_T
 
 // define global variables
 int nconfs, njacks, clust_size, L, T, conf_init, conf_step, nm, neq, neq2, nbil, nr, nmr, nt, nhits, moms, neqmoms, Nf, Nc, ntypes, combo, UseSigma1, UseEffMass, delta_tmin, delta_tmax;
-double beta, kappa, mu_sea, plaquette, g2, g2_tilde, ainv, LambdaQCD, p2min;
-string mom_path, action, path_ensemble_str, scheme,BC_str;
+double beta, kappa, mu_sea, plaquette, g2, g2_tilde, ainv, LambdaQCD, p2min, thresh;
+string mom_path, action, path_ensemble_str, scheme, BC_str;
 vector<double> mass_val(10);
 coords_t size;
 
@@ -48,6 +48,7 @@ const char delta_tmin_tag[]="tmin(deltam_cr)";
 const char delta_tmax_tag[]="tmax(deltam_cr)";
 const char BC_tag[]="BC";
 const char p2min_tag[]="p2min";
+const char thresh_tag[]="Thresh";
 
 char tok[128];
 
@@ -96,6 +97,7 @@ TK_t get_TK(FILE *fin)
     if(strcasecmp(tok,delta_tmax_tag)==0) return DELTA_TMAX_TK;
     if(strcasecmp(tok,BC_tag)==0) return BC_TK;
     if(strcasecmp(tok,p2min_tag)==0) return P2MIN_TK;
+    if(strcasecmp(tok,thresh_tag)==0) return THRESH_TK;
 
     
     return VALUE_TK;
@@ -199,6 +201,7 @@ void read_input(const char path[])
     ainv=DEFAULT_DOUBLE_VAL;
     LambdaQCD=DEFAULT_DOUBLE_VAL;
     p2min=DEFAULT_DOUBLE_VAL;
+    thresh=DEFAULT_DOUBLE_VAL;
     
     for(auto &m : mass_val) m=DEFAULT_DOUBLE_VAL;
     
@@ -300,6 +303,9 @@ void read_input(const char path[])
             case P2MIN_TK:
                 get_value(fin,p2min,"%lf");
                 break;
+            case THRESH_TK:
+                get_value(fin,thresh,"%lf");
+                break;
                 
             case FEOF_TK:
                 break;
@@ -335,6 +341,7 @@ void read_input(const char path[])
     check_int_par(delta_tmax,delta_tmax_tag);
     check_str_par(BC,BC_tag);
     check_double_par(p2min,p2min_tag);
+    check_double_par(thresh,thresh_tag);
     
     fclose(fin);
     
@@ -363,7 +370,9 @@ void read_input(const char path[])
     printf("%s = %d\n",nr_tag,nr);
     printf("%s = %d\n",nhits_tag,nhits);
     printf("%s = %.1lf\n",ainv_tag,ainv);
-    printf("%s = %.3lf\n\n",LambdaQCD_tag,LambdaQCD);
+    printf("%s = %.3lf\n",LambdaQCD_tag,LambdaQCD);
+    printf("%s = %.2lf\n",thresh_tag,thresh);
+    printf("\n");
 
     printf("Fit range for deltam_cr: [%d,%d]\n",delta_tmin,delta_tmax);
     printf("Continuum limit range: a2p2 > %.1lf\n\n",p2min);
@@ -385,13 +394,13 @@ void read_input(const char path[])
     scheme = string(sch);
     BC_str = string(BC);
     
-    //factors enabling average over r
-    int c1, c2;
-    if(nr==2)
-    {
-        c1 = 1;
-        c2 = 1;
-    }
+//    //factors enabling average over r
+//    int c1, c2;
+//    if(nr==2)
+//    {
+//        c1 = 1;
+//        c2 = 1;
+//    }
     
     //g2_tilde
     g2=6.0/beta;
