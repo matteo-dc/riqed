@@ -36,7 +36,7 @@ vector<double> p4, p4_tilde;
 vector<int> Np;
 
 // effective mass
-vvd_t eff_mass;
+vvvd_t eff_mass;
 
 // deltam_cr
 vvvd_t deltam_cr;

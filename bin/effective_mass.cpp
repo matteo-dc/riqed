@@ -154,45 +154,54 @@ void compute_eff_mass()
         coord[0][j] = 1.0;  //fit a costante
     }
     
-    vvvvd_t eff_mass_fit_parameters(vvvd_t(vvd_t(vd_t(0.0,2),coord.size()),nmr),nmr);
+//    vvvvd_t eff_mass_fit_parameters(vvvd_t(vvd_t(vd_t(0.0,2),coord.size()),nmr),nmr);
+    
+    vvvvd_t jeff_mass(vvvd_t(vvd_t(vd_t(0.0,coord.size()),njacks),nmr),nmr);
     
     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
         for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-        {
-            eff_mass_fit_parameters[mr_fw][mr_bw]=fit_par(coord,mass_err[mr_fw][mr_bw],M_eff[mr_fw][mr_bw],t_min,t_max);
-        }
+            jeff_mass[m_fw][m_bw] = polyfit(coord, 1, mass_err[m_fw][m_bw], M_eff[m_fw][m_bw], t_min, t_max);
+//        {
+//            eff_mass_fit_parameters[mr_fw][mr_bw]=fit_par(coord,mass_err[mr_fw][mr_bw],M_eff[mr_fw][mr_bw],t_min,t_max);
+//        }
+
+//    vvvd_t eff_mass_array(vvd_t(vd_t(0.0,2),nmr),nmr);
     
-    vvvd_t eff_mass_array(vvd_t(vd_t(0.0,2),nmr),nmr);
+//    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+//        for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+//        {
+//            eff_mass_array[mr_fw][mr_bw][0]=eff_mass_fit_parameters[mr_fw][mr_bw][0][0];
+//            eff_mass_array[mr_fw][mr_bw][1]=eff_mass_fit_parameters[mr_fw][mr_bw][0][1];
+//        }
     
-    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-        for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-        {
-            eff_mass_array[mr_fw][mr_bw][0]=eff_mass_fit_parameters[mr_fw][mr_bw][0][0];
-            eff_mass_array[mr_fw][mr_bw][1]=eff_mass_fit_parameters[mr_fw][mr_bw][0][1];
-        }
+    vvvd_t eff_mass(vvd_t(vd_t(0.0,nmr),nmr),njacks);
+    
+#pragma omp parallel for collapse(3)
+    for(int ijack=0;ijack<njacks;ijack++)
+        for(int mr_fw=0;mr_fw<nmr;m_fw++)
+            for(int mr_bw=0;mr_bw<nmr;m_bw++)
+                deltam_cr[ijack][mr_fw][mr_bw]=jdeltam_cr[mr_fw][mr_bw][ijack][0];
+    
     
     ofstream outfile;
     outfile.open("eff_mass_array", ios::out | ios::binary);
     
     if (outfile.is_open())
-    {	  
-        for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-            for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-            {
-                int r1 = mr_fw%nr;
-                int m1 = (mr_fw-r1)/nr;
-                int r2 = mr_bw%nr;
-                int m2 = (mr_bw-r2)/nr;
-                
-                for(int i=0;i<2;i++)
-                    outfile.write((char*) &eff_mass_array[mr_fw][mr_bw][i],sizeof(double));
-                
-                cout<<" ma "<<m1<<" ra "<<r1<<" mb "<<m2<<" rb "<<r2<<"  "<<eff_mass_array[mr_fw][mr_bw][0]<<" +/- "<<eff_mass_array[mr_fw][mr_bw][1]<<endl;
-            }
+    {
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+                for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+                {
+                    int r1 = mr_fw%nr;
+                    int m1 = (mr_fw-r1)/nr;
+                    int r2 = mr_bw%nr;
+                    int m2 = (mr_bw-r2)/nr;
+                    
+                    for(int i=0;i<2;i++)
+                        outfile.write((char*) &eff_mass_array[ijack][mr_fw][mr_bw][i],sizeof(double));
+                }
         
-        
-        
-        
+
         outfile.close();
     }
     else cerr<<"Unable to create the output file \"eff_mass_array\" "<<endl;

@@ -116,7 +116,7 @@ void compute_deltam_cr()
     
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
-            jdeltam_cr[m_fw][m_bw] = /*fit_par_jackknife*/polyfit(coord, 1, error[m_fw][m_bw], deltam_cr_corr[m_fw][m_bw], delta_tmin, delta_tmax);
+            jdeltam_cr[m_fw][m_bw] = polyfit(coord, 1, error[m_fw][m_bw], deltam_cr_corr[m_fw][m_bw], delta_tmin, delta_tmax);
     
     vvvd_t deltam_cr(vvd_t(vd_t(0.0,nm),nm),njacks);
     
@@ -136,7 +136,7 @@ void compute_deltam_cr()
             for(int m_fw=0;m_fw<nm;m_fw++)
                 for(int m_bw=0;m_bw<nm;m_bw++)
                 {
-                    outfile.write((char*) &deltam_cr/*_array*/[ijack][m_fw][m_bw],sizeof(double));
+                    outfile.write((char*) &deltam_cr[ijack][m_fw][m_bw],sizeof(double));
                
 //                    cout<<"ijack "<<ijack<<" m1 "<<m_fw<<" m2 "<<m_bw<<" delta: "<<deltam_cr/*_array*/[ijack][m_fw][m_bw]<<endl;
                 }
