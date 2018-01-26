@@ -12,6 +12,7 @@
 #include <omp.h>
 #include "fit.hpp"
 #include <stdio.h>
+#include <stdlib.h>
 #include "subtraction.hpp"
 #include "evolution.hpp"
 #include "print.hpp"
@@ -322,7 +323,8 @@ void oper_t::compute_bil()
     cout<<"Creating the vertices -- ";
     
     // array of input files to be read in a given conf
-    ifstream input[combo];
+//    ifstream input[combo];
+    FILE* input[combo];
     
     const vector<string> v_path = setup_read_prop(input);
     

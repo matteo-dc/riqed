@@ -179,7 +179,7 @@ string path_to_conf(const string &string_path, int i_conf,const string &name)
 }
 
 // opens all the files and return a vector with all the string paths
-vector<string> setup_read_prop(ifstream *input)
+vector<string> setup_read_prop(FILE* input[])
 {
     // complete path to conf
     string string_path;
@@ -226,9 +226,11 @@ vector<string> setup_read_prop(ifstream *input)
                         string path = path_to_conf(string_path,conf_id[iconf],"S_"+Mass[m]+R[r]+Types[t]+hit_suffix);
                         v_path.push_back(path);
                         
-                        input[icombo].open(path,ios::binary);
+//                        input[icombo].open(path,ios::binary);
+                         input[icombo] = fopen(path.c_str(),"rb");
                         
-                        if(!input[icombo].good())
+//                        if(!input[icombo].good())
+                        if(input[icombo]==NULL)
                         {
                             fprintf(stderr,"Unable to open file %s - combo %d / %d \n", path.c_str(), icombo, combo);
                             exit(1);
@@ -242,13 +244,15 @@ vector<string> setup_read_prop(ifstream *input)
 
 
 //read a propagator file
-prop_t read_prop(ifstream &input, const string &path, const int imom, const int i)
+//prop_t read_prop(ifstream &input, const string &path, const int imom, const int i)
+prop_t read_prop(FILE* input, const string &path, const int imom, const int i)
 {
     prop_t out(prop_t::Zero());
     
     // start to read from the momentum imom
     long offset = imom*sizeof(dcompl)*4*4*3*3;
-    input.seekg(offset,input.beg);
+    //    input.seekg(offset,input.beg);
+    fseek(input,offset,SEEK_SET);
     
     int j=0; ////
     
@@ -258,25 +262,35 @@ prop_t read_prop(ifstream &input, const string &path, const int imom, const int 
                 for(int ic_si=0;ic_si<3;ic_si++)
                 {
                     double temp[]={0.0,0.0};
-                    if(not input.good())
+                  
+//                    if(not input.good())
+//                    {
+//                        cerr<<"Bad before reading"<<endl;
+//                        exit(1);
+//                    }
+
+                    if(input==NULL)
                     {
                         cerr<<"Bad before reading"<<endl;
                         exit(1);
                     }
                     
-<<<<<<< HEAD
-		    //		    input.read((char*)&temp,sizeof(double)*2);
-=======
-                    input.read((char*)&temp,sizeof(double)*2);
->>>>>>> flexible
-                    
-                    if(not input.good())
+//                    input.read((char*)&temp,sizeof(double)*2);
+                    int rc=fread(&temp,sizeof(double)*2,1,input);
+                    if(rc!=1)
                     {
                         cerr<<"Unable to read from "<<path<<" id_so: "<<id_so<<", ic_so: "<<ic_so<<", id_si: "<<id_si<<", ic_si:"<<ic_si<<endl;
                         exit(1);
                     }
+                    
+                    //                    if(not input.good())
+                    //                    {
+                    //                        cerr<<"Unable to read from "<<path<<" id_so: "<<id_so<<", ic_so: "<<ic_so<<", id_si: "<<id_si<<", ic_si:"<<ic_si<<endl;
+                    //                        exit(1);
+                    //                    }
+                    
                     out(isc(id_si,ic_si),isc(id_so,ic_so))=dcompl(temp[0],temp[1]); //store
-               
+                    
                     j++;
                 }
     
@@ -284,7 +298,8 @@ prop_t read_prop(ifstream &input, const string &path, const int imom, const int 
 }
 
 //read all the propagators at a given momentum
-vvvprop_t read_prop_mom(ifstream *input,const vector<string> v_path,const int i_in_clust,const int ihit,const int imom)
+//vvvprop_t read_prop_mom(ifstream *input,const vector<string> v_path,const int i_in_clust,const int ihit,const int imom)
+vvvprop_t read_prop_mom(FILE* input[],const vector<string> v_path,const int i_in_clust,const int ihit,const int imom)
 {
     vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),ntypes),njacks);
     

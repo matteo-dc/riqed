@@ -18,11 +18,13 @@ size_t isc(size_t is,size_t ic);
 
 string path_to_conf(const string &string_path, int i_conf,const string &name);
 
-vector<string> setup_read_prop(ifstream input[]);
+//vector<string> setup_read_prop(ifstream input[]);
+vector<string> setup_read_prop(FILE* input[]);
 
 //prop_t read_prop(ifstream &input, const string &path, const int imom);
 
-vvvprop_t read_prop_mom(ifstream input[],const vector<string> v_path,const int i_in_clust,const int ihit,const int imom);
+//vvvprop_t read_prop_mom(ifstream input[],const vector<string> v_path,const int i_in_clust,const int ihit,const int imom);
+vvvprop_t read_prop_mom(FILE* input[],const vector<string> v_path,const int i_in_clust,const int ihit,const int imom);
 
 void read_internal(double &t,ifstream& infile);
 
