@@ -3,8 +3,6 @@
 #include "Dirac.hpp"
 #include <omp.h>
 
-//vprop_t GAMMA=make_gamma();
-
 vvvd_t compute_jZq(vvvprop_t &jS_inv,const int imom)
 {
     double V=size[0]*size[1]*size[2]*size[3];
@@ -14,7 +12,6 @@ vvvd_t compute_jZq(vvvprop_t &jS_inv,const int imom)
     vvprop_t jS_0_inv = jS_inv[LO];
     vvprop_t jS_em_inv = jS_inv[EM];
     
-    // vvdcompl_t jZq(vdcompl_t(0.0,nmr),njacks);
     vvd_t jZq_0_real(vd_t(0.0,nmr),njacks);
     vvd_t jZq_em_real(vd_t(0.0,nmr),njacks);
     
