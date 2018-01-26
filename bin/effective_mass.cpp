@@ -200,7 +200,6 @@ void compute_eff_mass()
                     for(int i=0;i<2;i++)
                         outfile.write((char*) &eff_mass[ijack][mr_fw][mr_bw],sizeof(double));
                 }
-        
 
         outfile.close();
     }
