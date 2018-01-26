@@ -323,6 +323,7 @@ void oper_t::compute_bil()
     
     // array of input files to be read in a given conf
     ifstream input[combo];
+    
     const vector<string> v_path = setup_read_prop(input);
     
     int mom_size = (int)bilmoms.size();
