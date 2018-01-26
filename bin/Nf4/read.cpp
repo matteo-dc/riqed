@@ -127,14 +127,17 @@ vvvd_t read_deltam_cr(const string name)
 {
     vvvd_t deltam_cr(vvd_t(vd_t(0.0,nm),nm),njacks);
     
-    ifstream input_deltam;
-    input_deltam.open(name,ios::binary);
-
-     if(not input_deltam.good())
+//    ifstream input_deltam;
+    FILE* input_deltam;
+//    input_deltam.open(name,ios::binary);
+    input_deltam = fopen(name.c_str(),"rb");
+    
+     if(input_deltam == NULL)
      {
          cout<<"Computing deltam_cr"<<endl<<endl;
          compute_deltam_cr();
-         input_deltam.open(name,ios::binary);
+//         input_deltam.open(name,ios::binary);
+         input_deltam = fopen(name.c_str(),"rb");
      }
     
     cout<<"Reading deltam_cr"<<endl<<endl;
@@ -144,8 +147,12 @@ vvvd_t read_deltam_cr(const string name)
             for(int m_bw=0;m_bw<nm;m_bw++)
             {
                 double temp;
-                input_deltam.read((char*)&temp,sizeof(double));
-                if(not input_deltam.good())
+                
+//                input_deltam.read((char*)&temp,sizeof(double));
+                
+                int rd=fread(&temp,sizeof(double),1,input_deltam);
+//                if(not input_deltam.good())
+                if(rd!=1)
                 {
                     cerr<<"Unable to read from \"deltam_cr_array\" mr_fw: "<<m_fw<<", mr_bw: "<<m_bw<<", ijack: "<<ijack<<endl;
                     exit(1);
