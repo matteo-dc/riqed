@@ -264,7 +264,7 @@ prop_t read_prop(ifstream &input, const string &path, const int imom, const int 
                         exit(1);
                     }
                     
-//                    input.read((char*)&temp,sizeof(double)*2);
+		    //		    input.read((char*)&temp,sizeof(double)*2);
                     
                     if(not input.good())
                     {
