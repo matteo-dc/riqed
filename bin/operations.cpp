@@ -140,12 +140,6 @@ void oper_t::create_basic()
     
     compute_Zbil();
     
-//    vvvvd_t Z=get<0>(ave_err(jZ));
-//    vvvvd_t Zerr=get<1>(ave_err(jZ));
-    
-//    cout<<"_____DEBUG_______"<<endl;
-//    for(int imom=0; imom<_moms; imom++)
-//        cout<<p2_tilde[imom]<<" "<<Z[imom][0][0][0]<<" "<<Zerr[imom][0][0][0]<<endl;
 }
 
 void oper_t::ri_mom()
@@ -533,15 +527,14 @@ oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
     
     if(UseEffMass==1)
     {
-        vvd_t eff_mass_temp(vd_t(0.0,out._nmr),out._nmr);
+        vvvd_t eff_mass_temp(vvd_t(vd_t(0.0,out._nmr),out._nmr),ijack);
         
-        for(int mA=0; mA<_nm; mA++)
-            for(int mB=0; mB<_nm; mB++)
-                for(int r=0; r<_nr; r++)
-                {
-                    // masses
-                    eff_mass_temp[mA][mB] += eff_mass[r+_nr*mA][r+_nr*mB]/_nr;
-                }
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mA=0; mA<_nm; mA++)
+                for(int mB=0; mB<_nm; mB++)
+                    for(int r=0; r<_nr; r++)
+                        eff_mass_temp[ijack][mA][mB] += eff_mass[ijack][r+_nr*mA][r+_nr*mB]/_nr;
+        
         eff_mass=eff_mass_temp;
     }
     
@@ -622,6 +615,9 @@ oper_t oper_t::chiral_extr()
 //            i_sum++;
 //        }
 
+    // average of eff_mass
+    vvd_t M_eff = get<0>=ave_err(eff_mass);
+    
     
     //range for fit Zq
     int x_min_q=0;

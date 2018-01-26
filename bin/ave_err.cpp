@@ -3,7 +3,7 @@
 #include <tuple>
 #include <omp.h>
 
-
+// average bilinears and Z
 tuple<vvvvd_t,vvvvd_t> ave_err(vector<jproj_t> jG)
 {
     int _moms=(int)jG.size();
@@ -40,6 +40,7 @@ tuple<vvvvd_t,vvvvd_t> ave_err(vector<jproj_t> jG)
     return tuple_ave_err;
 }
 
+// average Zq
 tuple<vvd_t,vvd_t> ave_err(vector<vvd_t> jZq)
 {
     int _moms=(int)jZq.size();
@@ -65,5 +66,32 @@ tuple<vvd_t,vvd_t> ave_err(vector<vvd_t> jZq)
     
     tuple<vvd_t,vvd_t> tuple_ave_err(Zq_ave,Zq_err);
     
+    return tuple_ave_err;
+}
+
+// average effective mass
+tuple<vvd_t,vvd_t> ave_err(vvvd_t jM)
+{
+    int _njacks=njacks;
+    int _nmr=(int)jM[0].size();
+    
+    vvd_t M_ave(vd_t(0.0,_nmr),_nmr);
+    vvd_t sqr_M_ave(vd_t(0.0,_nmr),_nmr);
+    vvd_t M_err(vd_t(0.0,_nmr),_nmr);
+    
+    for(int mrA=0;mrA<_nmr;mrA++)
+        for(int mrB=0;mrB<_nmr;mrB++)
+            for(int ijack=0;ijack<_njacks;ijack++)
+            {
+                M_ave[mrA][mrB]+=jM[ijack][mrA][mrB]/njacks;
+                sqr_M_ave[mrA][mrB]+=JM[ijack][mrA][mrB]*jM[ijack][mrA][mrB]/njacks;
+            }
+    
+    for(int mrA=0;mrA<_nmr;mrA++)
+        for(int mrB=0;mrB<_nmr;mrB++)
+            M_err[mrA][mrB]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_M_ave[imom][mr]-M_ave[imom][mr]*M_ave[imom][mr]));
+    
+    tuple<vvd_t,vvd_t> tuple_ave_err(M_ave,M_err);
+
     return tuple_ave_err;
 }
