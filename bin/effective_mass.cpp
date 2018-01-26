@@ -77,7 +77,7 @@ double solve_Newton (vvd_t C, int ijack, int t, const int T)
 }
 
 // compute effective mass
-/*vvvd_t*/void compute_eff_mass(/*const int T, const int nconfs, const int njacks, const int *conf_id, const string &string_path, const int t_min, const int t_max*/)
+void compute_eff_mass()
 {
     // array of the configurations
     int conf_id[nconfs];
@@ -91,7 +91,7 @@ double solve_Newton (vvd_t C, int ijack, int t, const int T)
     
     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
         for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-            jP5P5_00[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"0","P5P5","RE","EVEN",conf_id/*,T,nconfs,njacks,conf_id,string_path*/);
+            jP5P5_00[mr_fw][mr_bw]=get_contraction(mr_fw,"0",mr_bw,"0","P5P5","RE","EVEN",conf_id);
     
     //   cout<<"**********DEBUG: P5P5 correlator  *************"<<endl;
     //   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -125,7 +125,6 @@ double solve_Newton (vvd_t C, int ijack, int t, const int T)
     
     
     vvvd_t mass_ave(vvd_t(vd_t(0.0,T/2),nmr),nmr), sqr_mass_ave(vvd_t(vd_t(0.0,T/2),nmr),nmr), mass_err(vvd_t(vd_t(0.0,T/2),nmr),nmr);
-    //   vd_t mass_ave(0.0,T/2), sqr_mass_ave(0.0,T/2), mass_err(0.0,T/2);
     
 #pragma omp parallel for collapse(3)
     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -160,7 +159,6 @@ double solve_Newton (vvd_t C, int ijack, int t, const int T)
     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
         for(int mr_bw=0;mr_bw<nmr;mr_bw++)
         {
-//            eff_mass_fit_parameters[mr_fw][mr_bw]=fit_par(coord,mass_err[mr_fw][mr_bw],M_eff[mr_fw][mr_bw],t_min,t_max,"plot_eff_mass_mrfw_"+to_string(mr_fw)+"_mrbw_"+to_string(mr_bw));
             eff_mass_fit_parameters[mr_fw][mr_bw]=fit_par(coord,mass_err[mr_fw][mr_bw],M_eff[mr_fw][mr_bw],t_min,t_max);
         }
     

@@ -3,8 +3,6 @@
 
 #include "aliases.hpp"
 
-//vvvd_t compute_deltam_cr();
-
 void compute_deltam_cr();
 
 #endif
