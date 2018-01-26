@@ -247,8 +247,8 @@ prop_t read_prop(ifstream &input, const string &path, const int imom, const int 
     prop_t out(prop_t::Zero());
     
     // start to read from the momentum imom
-//    long offset = imom*sizeof(dcompl)*4*4*3*3;
-//    input.seekg(offset,input.beg);
+    long offset = imom*sizeof(dcompl)*4*4*3*3;
+    input.seekg(offset,input.beg);
     
     int j=0; ////
     
@@ -257,16 +257,14 @@ prop_t read_prop(ifstream &input, const string &path, const int imom, const int 
             for(int id_si=0;id_si<4;id_si++)
                 for(int ic_si=0;ic_si<3;ic_si++)
                 {
-                    double temp[2];
+                    double temp[]={0.0,0.0};
                     if(not input.good())
                     {
                         cerr<<"Bad before reading"<<endl;
                         exit(1);
                     }
                     
-                    input.read((char*)&temp,sizeof(double)*2);
-                    
-//                    printf("%d\t%d \tRead (%lf,%lf)   id_so: %d  ic_so: %d  id_si: %d  ic_si: %d   imom %d\n",i,j,temp[0],temp[1],id_so,ic_so,id_si,ic_si,imom);
+//                    input.read((char*)&temp,sizeof(double)*2);
                     
                     if(not input.good())
                     {
@@ -324,10 +322,14 @@ vvvprop_t read_prop_mom(ifstream *input,const vector<string> v_path,const int i_
 #pragma omp parallel for
     for(int ilin=0;ilin<nm*nr*ntypes*njacks;ilin++)
     {
-        int ijack = ilin % njacks;
-        int r = (ilin/njacks) % nr;
-        int m = (ilin/nr/njacks) % nm;
-        int t = (ilin/nr/nm/njacks) % ntypes;
+        int k=ilin;
+        int ijack = k % njacks;
+        k/=njacks;
+        int r = k % nr;
+        k/=nr;
+        int m = k % nm;
+        k/=nm;
+        int t = k % ntypes;
         int mr = r + nr*m;
         
         int iconf=clust_size*ijack+i_in_clust;
