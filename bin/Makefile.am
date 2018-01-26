@@ -1,41 +1,42 @@
 ACLOCAL_AMFLAGS=-I m4
 
-bin_PROGRAMS=Nf2/main Nf2/list_moms Nf2/deltam_cr Nf2/effective_mass Nf2/grapher Nf2/grapher_fit Nf2/main_swap Nf2/grapher_fit_swap \
-             Nf4/main Nf4/main_old
+# bin_PROGRAMS=Nf2/main Nf2/list_moms Nf2/deltam_cr Nf2/effective_mass Nf2/grapher Nf2/grapher_fit Nf2/main_swap Nf2/grapher_fit_swap \
+             main
 
+bin_PROGRAMS=main
 
-Nf2_main_SOURCES=Nf2/main.cpp
+# Nf2_main_SOURCES=OLD_Nf2/main.cpp
 
-Nf2_list_moms_SOURCES=Nf2/list_moms.cpp
+# Nf2_list_moms_SOURCES=OLD_Nf2/list_moms.cpp
 
-Nf2_deltam_cr_SOURCES=Nf2/deltam_cr.cpp
+# Nf2_deltam_cr_SOURCES=OLD_Nf2/deltam_cr.cpp
 
-Nf2_effective_mass_SOURCES=Nf2/effective_mass.cpp
+# Nf2_effective_mass_SOURCES=OLD_Nf2/effective_mass.cpp
 
-Nf2_grapher_SOURCES=Nf2/grapher.cpp
+# Nf2_grapher_SOURCES=OLD_Nf2/grapher.cpp
 
-Nf2_grapher_fit_SOURCES=Nf2/grapher_with_fit.cpp
+# Nf2_grapher_fit_SOURCES=OLD_Nf2/grapher_with_fit.cpp
 
-Nf2_main_swap_SOURCES=Nf2/main_swap.cpp
+# Nf2_main_swap_SOURCES=OLD_Nf2/main_swap.cpp
 
-Nf2_grapher_fit_swap_SOURCES=Nf2/grapher_with_fit_swap.cpp
+# Nf2_grapher_fit_swap_SOURCES=OLD_Nf2/grapher_with_fit_swap.cpp
 
-Nf4_main_old_SOURCES=Nf4/main_old.cpp
+# main_old_SOURCES=main_old.cpp
 
-Nf4_main_SOURCES=Nf4/main.cpp \
-		 Nf4/read.cpp \
-		 Nf4/read_input.cpp \
-		 Nf4/Dirac.cpp \
-                 Nf4/vertices.cpp \
-		 Nf4/print.cpp \
-		 Nf4/jack.cpp \
-		 Nf4/Zq.cpp \
-		 Nf4/Zbil.cpp \
-		 Nf4/operations.cpp \
-		 Nf4/ave_err.cpp \
-		 Nf4/fit.cpp \
-		 Nf4/subtraction.cpp \
-		 Nf4/evolution.cpp \
-		 Nf4/contractions.cpp \
-		 Nf4/deltam_cr.cpp \
-		 Nf4/effective_mass.cpp
+main_SOURCES  =	 main.cpp \
+		 read.cpp \
+		 read_input.cpp \
+		 Dirac.cpp \
+                 vertices.cpp \
+		 print.cpp \
+		 jack.cpp \
+		 Zq.cpp \
+		 Zbil.cpp \
+		 operations.cpp \
+		 ave_err.cpp \
+		 fit.cpp \
+		 subtraction.cpp \
+		 evolution.cpp \
+		 contractions.cpp \
+		 deltam_cr.cpp \
+		 effective_mass.cpp
