@@ -1090,8 +1090,8 @@ void oper_t::plot(const string suffix)
     ofstream Zq_data, Zq_em_data;
     vector<ofstream> Zbil_data(nbil), Zbil_em_data(nbil);
     
-    Zq_data.open("print/Zq"+(suffix!=""?("_"+suffix):string(""))+".txt");
-    Zq_em_data.open("print/Zq_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
+    Zq_data.open("plots/Zq"+(suffix!=""?("_"+suffix):string(""))+".txt");
+    Zq_em_data.open("plots/Zq_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
     
     vector<double> p2t;
     if(in._moms==moms)
@@ -1113,8 +1113,8 @@ void oper_t::plot(const string suffix)
     
     for(int ibil=0;ibil<nbil;ibil++)
     {
-        Zbil_data[ibil].open("print/Z"+bil[ibil]+(suffix!=""?("_"+suffix):string(""))+".txt");
-        Zbil_em_data[ibil].open("print/Z"+bil[ibil]+"_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
+        Zbil_data[ibil].open("plots/Z"+bil[ibil]+(suffix!=""?("_"+suffix):string(""))+".txt");
+        Zbil_em_data[ibil].open("plots/Z"+bil[ibil]+"_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
         
         for(int imom=0; imom<_moms; imom++)
         {
