@@ -407,6 +407,9 @@ void read_input(const char path[])
     g2_tilde=g2/plaquette;
     printf("g2tilde = %lf\n",g2_tilde);
     
+    //slightly increment thresh to include border
+    thresh*=1+1e-10;
+    
     printf("\n");
 }
 

@@ -56,8 +56,9 @@ void oper_t::set_moms()
 void oper_t::set_ri_mom_moms()
 {
     bilmoms.resize(moms);
-    _moms=moms;
+    
     for(int imom=0;imom<moms;imom++)
+        if(filt_moms[imom])
     {
         bilmoms[imom]={imom,imom,imom};
     }
@@ -65,48 +66,79 @@ void oper_t::set_ri_mom_moms()
 
 void oper_t::set_smom_moms()
 {
+    // http://xxx.lanl.gov/pdf/0901.2599v2 (Sturm et al.)
+    
+    linmoms.clear();
+    bilmoms.clear();
+    
     double eps=1e-10;
+    _moms=moms;
+    
     for(int i=0;i<moms;i++)
-        for(int j=0;j<moms;j++)
-        {
-            if(2.0*fabs(p2[i]-p2[j])<(p2[i]+p2[j])*eps)
-            {
-                coords_t momk;
-                p_t k_array;
-                double k2=0.0;
-                for(size_t mu=0;mu<4;mu++)
+        if(filt_moms[i])
+            for(int j=0;j<moms;j++)
+                if(filt_moms[j])
                 {
-                    momk[mu]=mom_list[i][mu]+mom_list[j][mu];
-                    k_array[mu]=2*M_PI*momk[mu]/size[mu];
-                    k2+=k_array[mu]*k_array[mu];
-                }
-                
-                if(2.0*fabs(p2[i]-k2)<(p2[i]+k2)*eps)
-                {
-                    //search in mom_list
-                    auto posk = find(mom_list.begin(),mom_list.end(),momk);
-                    
-                    if(posk!=mom_list.end())
+                    if(2.0*fabs(p2[i]-p2[j])<(p2[i]+p2[j])*eps)
                     {
-                        const int k=distance(mom_list.begin(),posk);
-                        //inform and add to the list
-//                        cout<<"Found smom pair: "<<i<<" ";
-//                        for(auto &ip1 : mom_list[i]) cout<<ip1;
-//                        cout<<" + "<<j<<" ";
-//                        for(auto &ip2 : mom_list[j]) cout<<ip2;
-//                        cout<<" = "<<k<<" ";
-//                        for(auto &ik : momk)cout<<ik;
-//                        cout<<endl;
-                        bilmoms.push_back({k,i,j});
-                    }
-                    else
-                        cout<<"Unable to find it!"<<endl;
+                        coords_t momk;
+                        p_t k_array;
+                        double k2=0.0;
+                        for(size_t mu=0;mu<4;mu++)
+                        {
+                            momk[mu]=mom_list[i][mu]-mom_list[j][mu];
+                            k_array[mu]=2*M_PI*momk[mu]/size[mu];
+                            k2+=k_array[mu]*k_array[mu];
+                        }
+                        
+                        if(2.0*fabs(p2[i]-k2)<(p2[i]+k2)*eps)
+                        {
+                            //search in mom_list
+                            auto posk = find(mom_list.begin(),mom_list.end(),momk);
+                            
+                            //if not found, push into mom_list
+                            if(posk==mom_list.end())
+                            {
+                                posk=mom_list.end();
+                                mom_list.push_back(momk);
+                            }
+                            
+                            const int k=distance(mom_list.begin(),posk);
+                            
+                            vector<int> pos;
+                            
+                            //search in the linmoms: if found take the distance, otherwise add
+                            for(const int ic : {i,j})
+                            {
+                                cout<<"searching for "<<ic<<endl;
+                                auto pos_ic=find(linmoms.begin(),linmoms.end(),array<int,1>{ic});
+                                size_t d;
+                                if(pos_ic==linmoms.end())
+                                {
+                                    //the position will be the end
+                                    d=linmoms.size();
+                                    //include it
+                                    linmoms.push_back({ic});
+                                    
+                                    cout<<" not found"<<endl;
+                                }
+                                else
+                                {
+                                    d=distance(linmoms.begin(),pos_ic);
+                                    cout<<" found"<<endl;
+                                }
+                                
+                                //add to the list
+                                cout<<"Position: "<<d<<endl;
+                                pos.push_back(d);
+                            }
+                            
+                            //store
+                            bilmoms.push_back({k,pos[0],pos[1]});
+                            
+                        } else cout<<"p2-k2 != 0"<<endl;
+                    } else cout<<"p1^2-p2^2 != 0"<<endl;
                 }
-                else cout<<"p2-k2 != 0"<<endl;
-                
-            }else cout<<"p1^2-p2^2 != 0"<<endl;
-            
-        }
 }
 
 ////////

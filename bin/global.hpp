@@ -78,9 +78,9 @@ extern vector<int> Np;
 extern string mom_path;
 // mom lists
 extern vector<coords_t> mom_list;
-extern vector<p_t> p, p_tilde;
-extern vector<double> p2, p2_tilde;
-extern vector<double> p4, p4_tilde;
+extern vector<p_t> p, p_tilde, k;
+extern vector<double> p2, p2_tilde, k2;
+extern vector<double> p4, p4_tilde, k4;
 // string scheme
 extern string scheme;
 // range for deltam_cr fit
