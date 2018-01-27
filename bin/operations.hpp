@@ -30,7 +30,7 @@ struct oper_t
     
     void allocate();
     
-    void resize_vectors(oper_t out);
+    void resize_output(oper_t out);
     
     void ri_mom();
 
@@ -41,8 +41,9 @@ struct oper_t
     int _nr;
     int _nmr;
     
-    // size of bilmoms
-    int _moms;
+    // size of linmoms and bilmoms
+    int _linmoms;
+    int _bilmoms;
     
     // definition of jZq
     vector<jZ_t> jZq, jZq_em;

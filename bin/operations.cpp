@@ -51,6 +51,8 @@ void oper_t::set_moms()
             exit(0);
             break;
     }
+    _linmoms=linmoms.size();
+    _bilmoms=bilmoms.size();
 }
 
 void oper_t::set_ri_mom_moms()
@@ -72,7 +74,6 @@ void oper_t::set_smom_moms()
     bilmoms.clear();
     
     double eps=1e-10;
-    _moms=moms;
     
     for(int i=0;i<moms;i++)
         if(filt_moms[i])
@@ -190,27 +191,27 @@ void oper_t::smom()
 
 void oper_t::allocate()
 {
-    jZq.resize(_moms);
-    jZq_em.resize(_moms);
+    jZq.resize(_linmoms);
+    jZq_em.resize(_linmoms);
     
-    jG_0.resize(_moms);
-    jG_em.resize(_moms);
+    jG_0.resize(_bilmoms);
+    jG_em.resize(_bilmoms);
     
-    jZ.resize(_moms);
-    jZ_em.resize(_moms);
+    jZ.resize(_bilmoms);
+    jZ_em.resize(_bilmoms);
     
 }
 
-void oper_t::resize_vectors(oper_t out)
+void oper_t::resize_output(oper_t out)
 {
-    out.jZq.resize(_moms);
-    out.jZq_em.resize(_moms);
+    out.jZq.resize(out._linmoms);
+    out.jZq_em.resize(out._linmoms);
     
-    out.jG_0.resize(_moms);
-    out.jG_em.resize(_moms);
+    out.jG_0.resize(out._bilmoms);
+    out.jG_em.resize(out._bilmoms);
     
-    out.jZ.resize(_moms);
-    out.jZ_em.resize(_moms);
+    out.jZ.resize(out._bilmoms);
+    out.jZ_em.resize(out._bilmoms);
     
     for(auto &ijack : out.jZq)
         for(auto &mr : ijack)
@@ -354,9 +355,9 @@ void oper_t::compute_bil()
     
     const vector<string> v_path = setup_read_prop(input);
     
-    int mom_size = (int)bilmoms.size();
+//    int mom_size = (int)bilmoms.size();
     
-    for(int ibilmom=0;ibilmom<mom_size;ibilmom++)
+    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
     {
         high_resolution_clock::time_point t0=high_resolution_clock::now();
 
@@ -368,24 +369,24 @@ void oper_t::compute_bil()
         const bool read2=(imom1!=imom2);
         
         // initialize propagators
-        vvvprop_t S1(vvprop_t(vprop_t(prop_t::Zero(),nmr),ntypes),njacks);
-        vvprop_t S1_0(vprop_t(prop_t::Zero(),nmr),njacks);
-        vvprop_t S1_em(vprop_t(prop_t::Zero(),nmr),njacks);
-        vvvprop_t S2(vvprop_t(vprop_t(prop_t::Zero(),nmr),ntypes),njacks);
-        vvprop_t S2_0(vprop_t(prop_t::Zero(),nmr),njacks);
-        vvprop_t S2_em(vprop_t(prop_t::Zero(),nmr),njacks);
+        vvvprop_t S1(vvprop_t(vprop_t(prop_t::Zero(),_nmr),ntypes),njacks);
+        vvprop_t S1_0(vprop_t(prop_t::Zero(),_nmr),njacks);
+        vvprop_t S1_em(vprop_t(prop_t::Zero(),_nmr),njacks);
+        vvvprop_t S2(vvprop_t(vprop_t(prop_t::Zero(),_nmr),ntypes),njacks);
+        vvprop_t S2_0(vprop_t(prop_t::Zero(),_nmr),njacks);
+        vvprop_t S2_em(vprop_t(prop_t::Zero(),_nmr),njacks);
         
-        vvvprop_t S1_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
-        vvvprop_t S2_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),2);
+        vvvprop_t S1_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),_nmr),njacks),2);
+        vvvprop_t S2_LO_and_EM(vvprop_t(vprop_t(prop_t::Zero(),_nmr),njacks),2);
         
         // definition of jackknifed propagators
-        jprop_t jS1_0(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
-        jprop_t jS1_em(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
-        jprop_t jS2_0(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
-        jprop_t jS2_em(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
+        jprop_t jS1_0(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
+        jprop_t jS1_em(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
+        jprop_t jS2_0(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
+        jprop_t jS2_em(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
         
         // definition of vertices
-        valarray<jvert_t> jVert_LO_and_EM(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks),2);
+        valarray<jvert_t> jVert_LO_and_EM(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),_nmr),_nmr),njacks),2);
         
         cout<<"- Reading propagators and building vertices"<<endl;
         
@@ -452,9 +453,11 @@ void oper_t::compute_bil()
         
         // compute Zq relative to imom1
         vvvd_t jZq_LO_and_EM = compute_jZq(jS1_inv_LO_and_EM,imom1);
-        
         jZq[imom1] = jZq_LO_and_EM[LO];
         jZq_em[imom1] = - jZq_LO_and_EM[EM];
+        
+        // compute Zq relative to imom2
+        if(read2)
         
         cout<<"- Computing bilinears"<<endl;
         
@@ -514,7 +517,7 @@ oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
     out._nm=_nm;
     out._nmr=(out._nm)*(out._nr);
     
-    resize_vectors(out);
+    resize_output(out);
 
     
     if(UseEffMass==1)
@@ -589,7 +592,7 @@ oper_t oper_t::chiral_extr()
     out._nm=1;
     out._nmr=(out._nm)*(out._nr);
     
-    resize_vectors(out);
+    resize_output(out);
     
     vvvvd_t G_0_err = get<1>(ave_err(jG_0));    //[imom][ibil][mr1][mr2]
     vvvvd_t G_em_err = get<1>(ave_err(jG_em));
@@ -879,7 +882,7 @@ oper_t oper_t::average_equiv_moms()
 //    (out.jZ).resize(neq_moms);
 //    (out.jZ_em).resize(neq_moms);
     
-    resize_vectors(out);
+    resize_output(out);
     
     // initialize to zero
 #pragma omp parallel for collapse(3)
