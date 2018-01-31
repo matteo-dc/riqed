@@ -65,6 +65,14 @@ vd_t Zq_Oa2(const int LO_or_EM, const int imom)
 {
     vd_t c_q(3);
     
+    int Np;
+    int count=0;
+    
+    for(int igam=1;igam<5;igam++)
+        if(p_tilde[imom][igam%4]!=0.)
+            count++;
+    Np=count;
+    
     // Coefficients from the Mathematica file 'O(g2a2).nb'
     
     // Nf=4 analysis
@@ -72,11 +80,11 @@ vd_t Zq_Oa2(const int LO_or_EM, const int imom)
     {
         if(LO_or_EM==LO)
         {
-            c_q={0.6202244+1.8490436/(double)Np[imom],-0.0748167-0.963033/(double)Np[imom],0.0044};      //Iwasaki action
+            c_q={0.6202244+1.8490436/(double)Np/*[imom]*/,-0.0748167-0.963033/(double)Np/*[imom]*/,0.0044};      //Iwasaki action
         }
         else if(LO_or_EM==EM)
         {
-            c_q={-0.0112397+2.26296238/(double)Np[imom],31./240.-101./120./(double)Np[imom],17./120.};	   //Wilson action (QED)
+            c_q={-0.0112397+2.26296238/(double)Np/*[imom]*/,31./240.-101./120./(double)Np/*[imom]*/,17./120.};	   //Wilson action (QED)
         }
     }
     // Nf=2 analysis
@@ -84,11 +92,11 @@ vd_t Zq_Oa2(const int LO_or_EM, const int imom)
     {
         if(LO_or_EM==LO)
         {
-            c_q={1.14716212+2.07733285/(double)Np[imom],-73./360.-157./180./(double)Np[imom],7./240.};   //Symanzik action
+            c_q={1.14716212+2.07733285/(double)Np/*[imom]*/,-73./360.-157./180./(double)Np/*[imom]*/,7./240.};   //Symanzik action
         }
         else if(LO_or_EM==EM)
         {
-            c_q={-0.0112397+2.26296238/(double)Np[imom],31./240.-101./120./(double)Np[imom],17./120.};	   //Wilson action (QED)
+            c_q={-0.0112397+2.26296238/(double)Np/*[imom]*/,31./240.-101./120./(double)Np/*[imom]*/,17./120.};	   //Wilson action (QED)
         }
     }
     
