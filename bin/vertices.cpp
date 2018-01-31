@@ -42,7 +42,7 @@ prop_t make_vertex(const prop_t &prop1, const prop_t &prop2, const int mu)
 //}
 
 // compute LO and EM vertices
-/*valarray<jvert_t>*/void build_vert(vvvprop_t &S1,vvvprop_t &S2,vvprop_t &S1_em,vvprop_t &S2_em,valarray<jvert_t> &jVert_LO_and_EM)
+/*valarray<jvert_t>*/void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,const vvprop_t &S1_em,const vvprop_t &S2_em,valarray<jvert_t> &jVert_LO_and_EM)
 {
 #pragma omp parallel for collapse (4)
     for(int ijack=0;ijack<njacks;ijack++)
