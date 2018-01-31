@@ -34,7 +34,7 @@ vector<double> p4, p4_tilde;
 vector<bool> filt_moms;
 
 // list of N(p)
-vector<int> Np;
+//vector<int> Np;
 
 // effective mass
 vvvd_t eff_mass;
@@ -68,19 +68,6 @@ int main()
     
     deltam_cr=read_deltam_cr("deltam_cr_array");
     if(UseEffMass) eff_mass=read_eff_mass("eff_mass_array");
-    
-//    //debug
-//    for(int imom=0; imom<moms;imom++)
-//    {
-//        cout<<imom<<"____"<<endl;
-//        cout<<"LO"<<endl;
-//        for(int ibil=0;ibil<nbil;ibil++)
-//            cout<<subtraction(imom,ibil,LO)<<endl;
-//        cout<<"EM"<<endl;
-//        for(int ibil=0;ibil<nbil;ibil++)
-//            cout<<subtraction(imom,ibil,EM)<<endl;;
-//    }
-
     
 //    basic.step="basic";
     
@@ -125,11 +112,7 @@ int main()
     cout<<"Continuum limit extrapolation:"<<endl<<endl;
     continuum_limit(rave_chir_sub_evo_ave,LO);
     continuum_limit(rave_chir_sub_evo_ave,EM);
-//
-//    
-//    vector<vd_t> a=rave_chir_sub_evo_ave.jZq_evo;
-//    
-//    PRINT(a);
+
    
 
     
