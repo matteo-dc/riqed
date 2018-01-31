@@ -29,7 +29,7 @@ vvvd_t compute_jZq(vvvprop_t &jS_inv,const int imom)
             count++;
     }
     
-    Np.push_back(count);
+//    Np.push_back(count);
     
     /*  Note that: p_slash*p_slash=p2*GAMMA[0]  */
  
