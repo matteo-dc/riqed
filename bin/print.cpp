@@ -14,24 +14,20 @@ void print_internal(VectorXd &V, ofstream& outfile)
     for(int i=0; i<V.size();i++) print_internal(V(i),outfile);
 }
 
-//template <class T>
-//void print_internal(valarray<T> &v, ofstream& outfile)
+////print of file binary
+//void print_internal_bin(double t,ofstream& outfile)
 //{
-//    for(auto &i : v) print_internal(i,outfile);
+//    outfile.write((char*) &t,sizeof(double));
+////    outfile<<t<<endl;
 //}
-//
-//template <class T>
-//void print_vec( T &vec, const char* path)
+//void print_internal_bin(int t,ofstream& outfile)
 //{
-//    ofstream outfile(path/*,ofstream::binary*/,ofstream::out);
-//     
-//    if (outfile.is_open())
-//    {
-//        for(auto &i : vec)
-//            print_internal(i,outfile);
-//        
-//        outfile.close();
-//        
-//    }
-//    else cout << "Unable to open the output file "<<path<<endl;
+//    outfile.write((char*) &t,sizeof(int));
+//    //    outfile<<t<<endl;
 //}
+
+//template <class T>
+void print_internal_bin(VectorXd &V, ofstream& outfile)
+{
+    for(int i=0; i<V.size();i++) print_internal(V(i),outfile);
+}
