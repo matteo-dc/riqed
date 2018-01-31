@@ -2,39 +2,41 @@
 #include "aliases.hpp"
 #include <tuple>
 #include <omp.h>
+#include <iostream>
 
 // average bilinears and Z
 tuple<vvvvd_t,vvvvd_t> ave_err(vector<jproj_t> jG)
 {
-    int _moms=(int)jG.size();
-    int _nbil=nbil;
-    int _njacks=njacks;
+    int _bilmoms=(int)jG.size();
+    int _nbil=(int)jG[0].size();
+    int _njacks=(int)jG[0][0].size();
     int _nmr=(int)jG[0][0][0].size();
+        
+    vvvvd_t G_ave(vvvd_t(vvd_t(vd_t(0.0,_nmr),_nmr),_nbil),_bilmoms);
+    vvvvd_t sqr_G_ave(vvvd_t(vvd_t(vd_t(0.0,_nmr),_nmr),_nbil),_bilmoms);
+    vvvvd_t G_err(vvvd_t(vvd_t(vd_t(0.0,_nmr),_nmr),_nbil),_bilmoms);
     
-    vvvvd_t G_ave(vvvd_t(vvd_t(vd_t(0.0,_nmr),_nmr),_nbil),_moms);
-    vvvvd_t sqr_G_ave(vvvd_t(vvd_t(vd_t(0.0,_nmr),_nmr),_nbil),_moms);
-    vvvvd_t G_err(vvvd_t(vvd_t(vd_t(0.0,_nmr),_nmr),_nbil),_moms);
     
-#pragma omp parallel for collapse(4)
-    for(int imom=0;imom<_moms;imom++)
+    for(int imom=0;imom<_bilmoms;imom++)
+    {
+#pragma omp parallel for collapse(3)
         for(int ibil=0;ibil<_nbil;ibil++)
             for(int mrA=0;mrA<_nmr;mrA++)
                 for(int mrB=0;mrB<_nmr;mrB++)
                     for(int ijack=0;ijack<_njacks;ijack++)
                     {
-                        G_ave[imom][ibil][mrA][mrB]+=jG[imom][ibil][ijack][mrA][mrB]/njacks;
-                        sqr_G_ave[imom][ibil][mrA][mrB]+=jG[imom][ibil][ijack][mrA][mrB]*jG[imom][ibil][ijack][mrA][mrB]/njacks;
+                        G_ave[imom][ibil][mrA][mrB]+=jG[imom][ibil][ijack][mrA][mrB]/_njacks;
+                        sqr_G_ave[imom][ibil][mrA][mrB]+=(jG[imom][ibil][ijack][mrA][mrB]*jG[imom][ibil][ijack][mrA][mrB])/_njacks;
                     }
-#pragma omp parallel for collapse(4)
-    for(int imom=0;imom<_moms;imom++)
+#pragma omp parallel for collapse(3)
         for(int ibil=0;ibil<_nbil;ibil++)
             for(int mrA=0;mrA<_nmr;mrA++)
                 for(int mrB=0;mrB<_nmr;mrB++)
-                    for(int ijack=0;ijack<_njacks;ijack++)
-                    {
-                        G_err[imom][ibil][mrA][mrB]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_G_ave[imom][ibil][mrA][mrB]-G_ave[imom][ibil][mrA][mrB]*G_ave[imom][ibil][mrA][mrB]));
-                    }
-                                                                                  
+                {
+                    G_err[imom][ibil][mrA][mrB]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_G_ave[imom][ibil][mrA][mrB]-G_ave[imom][ibil][mrA][mrB]*G_ave[imom][ibil][mrA][mrB]));
+                }
+    }
+    
     tuple<vvvvd_t,vvvvd_t> tuple_ave_err(G_ave,G_err);
     
     return tuple_ave_err;
