@@ -53,7 +53,7 @@ void read_mom_list(const string &path)
             p4.push_back(p_4);
             p4_tilde.push_back(p_tilde_4);
             
-            const double D4=p_tilde_4/(p_tilde_sqr*p_tilde_4);
+            const double D4=p_tilde_4/(p_tilde_sqr*p_tilde_sqr);
             const bool filt=(D4<thresh);
             filt_moms.push_back(filt);
 
@@ -382,7 +382,7 @@ vvvprop_t read_prop_mom(FILE* input[],const vector<string> v_path,const int i_in
 //read file
 void read_internal(double &t,ifstream& infile)
 {
-    //infile.read((char*) &t,sizeof(double));
+//    infile.read((char*) &t,sizeof(double));
     infile>>t;
 }
 //template <class T>
@@ -391,5 +391,15 @@ void read_internal(VectorXd &V, ifstream& infile)
     for(int i=0; i<V.size();i++) read_internal(V(i),infile);
 }
 
-
+////read file binary
+//void read_internal_bin(double &t,ifstream& infile)
+//{
+//    infile.read((char*) &t,sizeof(double));
+////    infile>>t;
+//}
+//template <class T>
+void read_internal_bin(VectorXd &V, ifstream& infile)
+{
+    for(int i=0; i<V.size();i++) read_internal(V(i),infile);
+}
 

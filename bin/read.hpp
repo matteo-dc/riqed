@@ -36,6 +36,23 @@ void read_internal(valarray<T> &v, ifstream& infile)
     for(auto &i : v) read_internal(i,infile);
 }
 
+//void read_internal_bin(double &t,ifstream& infile);
+
+template <class T>
+void read_internal_bin(T &t,ifstream& infile)
+{
+    infile.read((char*) &t,sizeof(T));
+}
+
+
+void read_internal_bin(VectorXd &V, ifstream& infile);
+
+template <class T>
+void read_internal_bin(valarray<T> &v, ifstream& infile)
+{
+    for(auto &i : v) read_internal_bin(i,infile);
+}
+
 template <class T>
 void read_vec( T &vec, const char* path)
 {
@@ -53,11 +70,31 @@ void read_vec( T &vec, const char* path)
     else cout << "Unable to open the input file "<<path<<endl;
 }
 
+template <class T>
+void read_vec_bin( T &vec, const char* path)
+{
+    ifstream infile;
+    infile.open(path,ios::binary);
+    
+    if (infile.is_open())
+    {
+        for(auto &i : vec)
+            read_internal_bin(i,infile);
+        
+        infile.close();
+        
+    }
+    else cout << "Unable to open the input file "<<path<<endl;
+}
+
 #define READ(NAME)				\
 read_vec(NAME,"print/"#NAME".txt");
 
 #define READ2(NAME1,NAME2)       \
 read_vec(NAME1,"print/"#NAME2".txt");
+
+#define READ_BIN(NAME)           \
+read_vec_bin(NAME,"print/"#NAME);
 
 
 #endif
