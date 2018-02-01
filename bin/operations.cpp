@@ -181,7 +181,7 @@ void oper_t::create_basic()
     ifstream jG_em_data("print/jG_em");
     if(jZq_data.good() and jZq_em_data.good() and jG_0_data.good() and jG_em_data.good())
     {
-        cout<<"Reading data from files"<<endl;
+        cout<<"Reading data from files"<<endl<<endl;
         
 //        vector<int> Np(_linmoms);
         
@@ -607,12 +607,6 @@ oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
 {
     cout<<"Averaging over r"<<endl<<endl;
     
-    cout<<"linmoms: "<<_linmoms<<endl;
-    cout<<"bilmoms: "<<_bilmoms<<endl;
-    cout<<"nm: "<<_nm<<endl;
-    cout<<"nr: "<<_nr<<endl;
-    cout<<"nmr: "<<_nmr<<endl;
-    
     oper_t out=(*this);
     
     out._nr=1;
@@ -686,12 +680,6 @@ oper_t oper_t::chiral_extr()
 {
     cout<<"Chiral extrapolation"<<endl<<endl;
     
-    cout<<"linmoms: "<<_linmoms<<endl;
-    cout<<"bilmoms: "<<_bilmoms<<endl;
-    cout<<"nm: "<<_nm<<endl;
-    cout<<"nr: "<<_nr<<endl;
-    cout<<"nmr: "<<_nmr<<endl;
-    
     oper_t out=(*this);
     
     out._nr=_nr;
@@ -700,10 +688,6 @@ oper_t oper_t::chiral_extr()
     
 //    resize_output(out);
     out.allocate();
-    
-    cout<<"jZqsize "<<(out.jZq).size()<<endl;
-    cout<<"jZq[0]size "<<(out.jZq)[0].size()<<endl;
-    cout<<"jZq[0][0]size "<<(out.jZq)[0][0].size()<<endl;
     
     vvvvd_t G_0_err = get<1>(ave_err(jG_0));    //[imom][ibil][mr1][mr2]
     vvvvd_t G_em_err = get<1>(ave_err(jG_em));
@@ -941,7 +925,7 @@ int mom_list_xyz(const size_t imom)
 
 oper_t oper_t::average_equiv_moms()
 {
-    cout<<"Averaging over the equivalent momenta -- "<<endl<<endl;
+    cout<<"Averaging over the equivalent momenta -- ";
     
     oper_t out=(*this);
     
@@ -1008,7 +992,7 @@ oper_t oper_t::average_equiv_moms()
                 // fill the new linmoms and p2tilde
                 out.linmoms[tag] = {imom};
                 p2_tilde_eqmoms[tag] = p2_tilde[imom];
-                cout<<"{"<<tag<<"}"<<endl;
+//                cout<<"{"<<tag<<"}"<<endl;
             }
         }
     
@@ -1058,7 +1042,7 @@ oper_t oper_t::average_equiv_moms()
     int neq_bil_moms = tag+1;
     
     out._bilmoms=neq_bil_moms;
-    cout<<"and "<<neq_bil_moms<<" equivalent bilmoms ";
+    cout<<"and "<<neq_bil_moms<<" equivalent bilmoms "<<endl<<endl;
     (out.bilmoms).resize(out._bilmoms);
     
     // count the different tags
@@ -1085,7 +1069,7 @@ oper_t oper_t::average_equiv_moms()
                 const int imom2=bilmoms[ibilmom][2]; // p2
                 
                 out.bilmoms[tag] = {imom0,imom1,imom2};
-                cout<<tag<<" {"<<imom0<<","<<imom1<<","<<imom2<<"}"<<endl;
+//                cout<<tag<<" {"<<imom0<<","<<imom1<<","<<imom2<<"}"<<endl;
             }
         }
     
@@ -1301,7 +1285,6 @@ void oper_t::plot(const string suffix)
     Zq_tup Zq_ave_err = ave_err(in.jZq);
     Zq_tup Zq_em_ave_err = ave_err(in.jZq_em);
     
-    cout<<"________________"<<endl;
     Zbil_tup Zbil_ave_err = ave_err(in.jZ);
     Zbil_tup Zbil_em_ave_err = ave_err(in.jZ_em);
    
@@ -1329,17 +1312,15 @@ void oper_t::plot(const string suffix)
     
     if(in._linmoms==moms)
     {
-        cout<<"A"<<endl;
+//        cout<<"A"<<endl;
         p2t.resize(in._linmoms);
         READ2(p2t,p2_tilde)
-        cout<<"V"<<endl;
     }
     else
     {
-        cout<<"B"<<endl;
+//        cout<<"B"<<endl;
         p2t.resize(in._linmoms);
         READ2(p2t,p2_tilde_eqmoms);
-        cout<<"K"<<endl;
     }
     
     for(int imom=0; imom<in._linmoms; imom++)
