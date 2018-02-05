@@ -27,8 +27,10 @@ void read_mom_list(const string &path)
         double p_sqr=0.0, p_tilde_sqr=0.0;
         double p_4=0.0, p_tilde_4=0.0;
         p_t shift;
-        if(BC_str.compare("Periodic")==0) shift={0.0,0.0,0.0,0.0};
-        if(BC_str.compare("Antiperiodic")==0) shift={0.5,0.0,0.0,0.0};
+//        if(BC_str.compare("Periodic")==0) shift={0.0,0.0,0.0,0.0};
+//        if(BC_str.compare("Antiperiodic")==0) shift={0.5,0.0,0.0,0.0};
+        if(BC.compare("Periodic")==0) shift={0.0,0.0,0.0,0.0};
+        if(BC.compare("Antiperiodic")==0) shift={0.5,0.0,0.0,0.0};
         
         for(int mu=0;mu<4;mu++)
         {
@@ -197,11 +199,11 @@ vector<string> setup_read_prop(FILE* input[])
     string string_path;
     if(strcmp(action.c_str(),"Iwa")==0)
     {
-        string_path = path_ensemble_str+action+"_b"+to_string_with_precision(beta,2)+"_L"+to_string(size[1])+"T"+to_string(size[0])+"_k"+to_string_with_precision(kappa,6)+"_mu"+to_string_with_precision(mu_sea,4)+"/";
+//        string_path = path_ensemble_str+action+"_b"+to_string_with_precision(beta,2)+"_L"+to_string(size[1])+"T"+to_string(size[0])+"_k"+to_string_with_precision(kappa,6)+"_mu"+to_string_with_precision(mu_sea,4)+"/";
     }
     if(strcmp(action.c_str(),"Sym")==0)
     {
-        string_path = path_ensemble_str+to_string_with_precision(beta,2)+"_"+to_string(size[1])+"_"+to_string_with_precision(mu_sea,4)+"/";
+//        string_path = path_ensemble_str+to_string_with_precision(beta,2)+"_"+to_string(size[1])+"_"+to_string_with_precision(mu_sea,4)+"/";
     }
     
     // array of the configurations

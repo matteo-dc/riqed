@@ -41,6 +41,8 @@ struct oper_t
     int _nr;
     int _nmr;
     
+    // beta
+    
     // size of linmoms and bilmoms
     int _linmoms;
     int _bilmoms;
@@ -64,8 +66,8 @@ struct oper_t
     // compute Zbils
     void compute_Zbil();
     
-    // step string
-    string step;
+//  // step string
+//    string step;
     
     // average r
     oper_t average_r(/*const bool recompute_Zbil=false*/) ;

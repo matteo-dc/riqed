@@ -24,8 +24,8 @@ bin_PROGRAMS=main
 # main_old_SOURCES=main_old.cpp
 
 main_SOURCES  =	 main.cpp \
+		 read_input.cpp # \
 		 read.cpp \
-		 read_input.cpp \
 		 Dirac.cpp \
                  vertices.cpp \
 		 print.cpp \
