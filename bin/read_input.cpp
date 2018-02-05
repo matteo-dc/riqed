@@ -103,7 +103,7 @@ TK_t get_TK(FILE *fin)
 
 //parse the value string (glb input)
 template <class T>
-void get_value_glb(FILE *fin,T &ret,const char *t)
+void _get_value_glb(FILE *fin,T &ret,const char *t)
 {
     TK_t tk=get_TK_glb(fin);
     if(tk!=VALUE_TK)
@@ -120,6 +120,26 @@ void get_value_glb(FILE *fin,T &ret,const char *t)
         exit(FAILED_CONVERSION);
     }
 }
+
+void get_value_glb(FILE *fin,double &out)
+{
+  return _get_value_glb(fin,out,"%lg");
+}
+
+void get_value_glb(FILE *fin,int &out)
+{
+  return _get_value_glb(fin,out,"%d");
+}
+
+void get_value_glb(FILE *fin,string &out)
+{
+  char temp[1024];
+  return _get_value_glb(fin,temp,"%s");
+  out=temp;
+}
+
+
+
 
 //parse the value string
 template <class T>
@@ -229,37 +249,37 @@ void read_input_glb(const char path[])
                 exit(1);
                 break;
             case NCONFS_TK:
-                get_value_glb(fin,nconfs,"%d");
+                get_value_glb(fin,nconfs);
                 printf(" read 1 ");
                 break;
             case NJACKS_TK:
-                get_value_glb(fin,njacks,"%d");
+                get_value_glb(fin,njacks);
                 printf(" read 2 ");
                 break;
             case BC_TK:
                 printf(" read 3 ");
-                get_value_glb(fin,BC,"%s");
+                get_value_glb(fin,BC);
                 printf(" read 3 ");
                 break;
             case NBETA_TK:
-                get_value_glb(fin,nbeta,"%d");
+                get_value_glb(fin,nbeta);
                 printf(" read 4 ");
                 break;
             case BETA_TK:
                 beta.resize(nbeta);
                 for(int b=0;b<nbeta;b++)
-                    get_value_glb(fin,beta[b],"%lf");
+                    get_value_glb(fin,beta[b]);
                 printf(" read 5");
                 break;
             case BETA_LAB_TK:
                 beta_label.resize(nbeta);
                 for(int b=0;b<nbeta;b++)
-                    get_value_glb(fin,beta_label[b],"%s");
+                    get_value_glb(fin,beta_label[b]);
                 break;
             case NM_SEA_TK:
                 nm_Sea.resize(nbeta);
                 for(int b=0;b<nbeta;b++)
-                    get_value_glb(fin,nm_Sea[b],"%d");
+                    get_value_glb(fin,nm_Sea[b]);
                 break;
             case SEAMASSES_LAB_TK:
                 SeaMasses_label.resize(nbeta);
@@ -267,62 +287,62 @@ void read_input_glb(const char path[])
                 {
                     SeaMasses_label[b].resize(nm_Sea[b]);
                     for(int m=0;m<nm_Sea[b];m++)
-                        get_value_glb(fin,SeaMasses_label[b][m],"%d");
+                        get_value_glb(fin,SeaMasses_label[b][m]);
                 }
                 break;
             case NTHETA_TK:
-                get_value_glb(fin,ntheta,"%d");
+                get_value_glb(fin,ntheta);
                 break;
             case THETA_LAB_TK:
                 theta_label.resize(ntheta);
                 for(int t=0;t<ntheta;t++)
-                    get_value_glb(fin,theta_label[t],"%s");
+                    get_value_glb(fin,theta_label[t]);
                 break;
             case ACT_TK:
-                get_value_glb(fin,action,"%s");
+                get_value_glb(fin,action);
                 break;
             case PATH_TK:
-                get_value_glb(fin,path_ensemble,"%s");
+                get_value_glb(fin,path_ensemble);
                 break;
             case NR_TK:
-                get_value_glb(fin,nr,"%d");
+                get_value_glb(fin,nr);
                 break;
             case NTYPES_TK:
-                get_value_glb(fin,ntypes,"%d");
+                get_value_glb(fin,ntypes);
                 break;
             case NHITS_TK:
-                get_value_glb(fin,nhits,"%d");
+                get_value_glb(fin,nhits);
                 break;
             case USE_SIGMA_TK:
-                get_value_glb(fin,UseSigma1,"%d");
+                get_value_glb(fin,UseSigma1);
                 break;
             case USE_EFF_MASS_TK:
-                get_value_glb(fin,UseEffMass,"%d");
+                get_value_glb(fin,UseEffMass);
                 break;
             case SCHEME_TK:
                 printf(" read 6 ");
-                get_value_glb(fin,scheme,"%s");
+                get_value_glb(fin,scheme);
                 printf(" read 6 ");
                 break;
             case NC_TK:
-                get_value_glb(fin,Nc,"%d");
+                get_value_glb(fin,Nc);
                 break;
             case NF_TK:
-                get_value_glb(fin,Nf,"%d");
+                get_value_glb(fin,Nf);
                 break;
             case AINV_TK:
                 ainv.resize(nbeta);
                 for(int b=0;b<nbeta;b++)
-                    get_value_glb(fin,ainv[b],"%lf");
+                    get_value_glb(fin,ainv[b]);
                 break;
             case LAMBDAQCD_TK:
-                get_value_glb(fin,LambdaQCD,"%lf");
+                get_value_glb(fin,LambdaQCD);
                 break;
             case P2MIN_TK:
-                get_value_glb(fin,p2min,"%lf");
+                get_value_glb(fin,p2min);
                 break;
             case THRESH_TK:
-                get_value_glb(fin,thresh,"%lf");
+                get_value_glb(fin,thresh);
                 break;
                 
             case FEOF_TK:
