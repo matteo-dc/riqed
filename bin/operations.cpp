@@ -202,7 +202,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     
     deltam_cr=read_deltam_cr(path_to_ens+"deltam_cr_array");
     if(UseEffMass) eff_mass=read_eff_mass(path_to_ens+"eff_mass_array");
-    if(UseEffMass) eff_mass_sea=read_eff_mass_sea(path_to_ens+"eff_mass_sea_array");
+    if(UseEffMass and _nm_Sea>1) eff_mass_sea=read_eff_mass_sea(path_to_ens+"eff_mass_sea_array");
 
     ifstream jZq_data(path_print+"jZq");
     ifstream jZq_em_data(path_print+"jZq_em");
@@ -705,7 +705,6 @@ oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
     if(UseEffMass==1)
     {
         vvvd_t eff_mass_temp(vvd_t(vd_t(0.0,out._nmr),out._nmr),njacks);
-        vvvd_t eff_mass_sea_temp(vvd_t(vd_t(0.0,out._nr),out._nr),njacks);
         
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mA=0; mA<_nm; mA++)
@@ -715,12 +714,19 @@ oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
                         eff_mass_temp[ijack][mA][mB] += eff_mass[ijack][r+_nr*mA][r+_nr*mB]/_nr;
                     }
         
-        for(int ijack=0;ijack<njacks;ijack++)
-            for(int r=0; r<_nr; r++)
-                eff_mass_sea_temp[ijack][0][0] += eff_mass[ijack][r][r]/_nr;
-                
         out.eff_mass=eff_mass_temp;
-        out.eff_mass_sea=eff_mass_sea_temp;
+        
+        
+        if(_nm_Sea>1)
+        {
+            vvvd_t eff_mass_sea_temp(vvd_t(vd_t(0.0,out._nr),out._nr),njacks);
+            
+            for(int ijack=0;ijack<njacks;ijack++)
+                for(int r=0; r<_nr; r++)
+                    eff_mass_sea_temp[ijack][0][0] += eff_mass[ijack][r][r]/_nr;
+            
+            out.eff_mass_sea=eff_mass_sea_temp;
+        }
     }
     
     for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
