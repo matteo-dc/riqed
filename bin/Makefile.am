@@ -24,19 +24,19 @@ bin_PROGRAMS=main
 # main_old_SOURCES=main_old.cpp
 
 main_SOURCES  =	 main.cpp \
-		 read_input.cpp # \
+		 read_input.cpp  \
 		 read.cpp \
-		 Dirac.cpp \
-                 vertices.cpp \
-		 print.cpp \
+		 operations.cpp \
+		 vertices.cpp \
+		 contractions.cpp \
+		 fit.cpp \
+		 deltam_cr.cpp \
+		 effective_mass.cpp \
 		 jack.cpp \
+		 Dirac.cpp \
+                 print.cpp \
 		 Zq.cpp \
 		 Zbil.cpp \
-		 operations.cpp \
 		 ave_err.cpp \
-		 fit.cpp \
 		 subtraction.cpp \
-		 evolution.cpp \
-		 contractions.cpp \
-		 deltam_cr.cpp \
-		 effective_mass.cpp
+		 evolution.cpp 
