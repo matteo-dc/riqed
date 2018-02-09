@@ -9,9 +9,9 @@
 vvvvvd_t compute_pr_bil( vvvprop_t &jprop1_inv,  valarray<jvert_t> &jVert,  vvvprop_t  &jprop2_inv)
 {
    
-    int i1[4]={LO,LO,EM,LO};
-    int iv[4]={LO,EM,LO,LO};
-    int i2[4]={LO,LO,LO,EM};
+    const int i1[4]={LO,LO,EM,LO};
+    const int iv[4]={LO,EM,LO,LO};
+    const int i2[4]={LO,LO,LO,EM};
     
     valarray<jvert_t> jLambda(vvvvprop_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks),4);
 
@@ -27,16 +27,16 @@ vvvvvd_t compute_pr_bil( vvvprop_t &jprop1_inv,  valarray<jvert_t> &jVert,  vvvp
                     {
                         jLambda[k][ijack][mr_fw][mr_bw][igam]=jprop1_inv[i1[k]][ijack][mr_fw]*jVert[iv[k]][ijack][mr_fw][mr_bw][igam]*GAMMA[5]*(jprop2_inv[i2[k]][ijack][mr_bw]).adjoint()*GAMMA[5];
                         
-                        if(igam==0) jG[k][0][ijack][mr_fw][mr_bw]=(jLambda[k][ijack][mr_fw][mr_bw][0]*P[0]).trace().real()/12.0;
-                        if(igam>0 and igam<5) jG[k][1][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*P[igam]).trace().real()/12.0;
-                        if(igam==5) jG[k][2][ijack][mr_fw][mr_bw]=(jLambda[k][ijack][mr_fw][mr_bw][5]*P[5]).trace().real()/12.0;
-                        if(igam>5 and igam<10) jG[k][3][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*P[igam]).trace().real()/12.0;
-                        if(igam>=10 and igam<16) jG[k][4][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*P[igam]).trace().real()/12.0;
+                        if(igam==0) jG[k][0][ijack][mr_fw][mr_bw]=(jLambda[k][ijack][mr_fw][mr_bw][0]*Proj[0]).trace().real()/12.0;
+                        if(igam>0 and igam<5) jG[k][1][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*Proj[igam]).trace().real()/12.0;
+                        if(igam==5) jG[k][2][ijack][mr_fw][mr_bw]=(jLambda[k][ijack][mr_fw][mr_bw][5]*Proj[5]).trace().real()/12.0;
+                        if(igam>5 and igam<10) jG[k][3][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*Proj[igam]).trace().real()/12.0;
+                        if(igam>=10 and igam<16) jG[k][4][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*Proj[igam]).trace().real()/12.0;
                         
                     }
     
     jG_LO_and_EM[LO] = jG[0];
-    jG_LO_and_EM[EM] = -jG[1]+jG[2]+jG[3];  // jG_em = -jG_1+jG_a+jG_b;
+    jG_LO_and_EM[EM] = jG[1]-jG[2]-jG[3];  // jG_em = -jG_1+jG_a+jG_b;
     
     return jG_LO_and_EM;
 }

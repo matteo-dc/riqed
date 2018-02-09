@@ -1,8 +1,10 @@
 #include "aliases.hpp"
 #include "global.hpp"
+#include "operations.hpp"
 
 //debug
-#include <iostream>
+//#include <iostream>
+
 
 
 vvd_t pr_bil_Oa2(const int LO_or_EM)
@@ -61,7 +63,7 @@ vvd_t pr_bil_Oa2(const int LO_or_EM)
     return c;
 }
 
-vd_t Zq_Oa2(const int LO_or_EM, const int imom)
+vd_t Zq_Oa2(const int LO_or_EM, const int imom, vector<p_t> &p_tilde)
 {
     vd_t c_q(3);
     
@@ -104,7 +106,7 @@ vd_t Zq_Oa2(const int LO_or_EM, const int imom)
 }
 
 //subtraction of O(a^2) effects to bilinears
-double subtraction(const int imom, const int ibil, const int LO_or_EM)
+double oper_t::subtraction(const int imom, const int ibil, const int LO_or_EM)
 {
     double sub=0.0;
     
@@ -125,11 +127,11 @@ double subtraction(const int imom, const int ibil, const int LO_or_EM)
 }
 
 //subtraction of O(a^2) effects to Zq
-double subtraction_q(const int imom, const int LO_or_EM)
+double oper_t::subtraction_q(const int imom, const int LO_or_EM)
 {
     double sub=0.0;
     
-    vd_t c=Zq_Oa2(LO_or_EM,imom);  // c[k]
+    vd_t c=Zq_Oa2(LO_or_EM,imom,p_tilde);  // c[k]
     
     if(LO_or_EM==LO)
         sub = g2_tilde*(p2_tilde[imom]*(c[0]+c[1]*log(p2_tilde[imom]))+c[2]*p4_tilde[imom]/p2_tilde[imom])/(12.*M_PI*M_PI);

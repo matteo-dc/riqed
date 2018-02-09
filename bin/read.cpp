@@ -4,14 +4,15 @@
 #include <iostream>
 #include <vector>
 #include <stdio.h>
-#include <iomanip>
 #include "effective_mass.hpp"
 #include "deltam_cr.hpp"
 #include <omp.h>
+#include "operations.hpp"
+#include "read.hpp"
 
 
 // read input mom file
-void read_mom_list(const string &path)
+void oper_t::read_mom_list(const string &path)
 {
     ifstream input(path);
     if(!input.good())
@@ -27,8 +28,6 @@ void read_mom_list(const string &path)
         double p_sqr=0.0, p_tilde_sqr=0.0;
         double p_4=0.0, p_tilde_4=0.0;
         p_t shift;
-//        if(BC_str.compare("Periodic")==0) shift={0.0,0.0,0.0,0.0};
-//        if(BC_str.compare("Antiperiodic")==0) shift={0.5,0.0,0.0,0.0};
         if(BC.compare("Periodic")==0) shift={0.0,0.0,0.0,0.0};
         if(BC.compare("Antiperiodic")==0) shift={0.5,0.0,0.0,0.0};
         
@@ -40,7 +39,6 @@ void read_mom_list(const string &path)
             p_sqr+=p_array[mu]*p_array[mu];
             p_4+=p_array[mu]*p_array[mu]*p_array[mu]*p_array[mu];
 
-            
             p_tilde_array[mu]=sin(p_array[mu]);
             p_tilde_sqr+=p_tilde_array[mu]*p_tilde_array[mu];
             p_tilde_4+=p_tilde_array[mu]*p_tilde_array[mu]*p_tilde_array[mu]*p_tilde_array[mu];
@@ -64,12 +62,12 @@ void read_mom_list(const string &path)
 }
 
 // read plaquette
-double read_plaquette()
+double read_plaquette(const string &path)
 {
     double plaquette=0.0;
     
     ifstream input_plaquette;
-    input_plaquette.open("plaquette.txt",ios::in);
+    input_plaquette.open(path+"plaquette.txt",ios::in);
     if(not input_plaquette.good())
     {
         cout<<"Unable to open \"plaquette.txt\"."<<endl<<endl;
@@ -91,59 +89,88 @@ double read_plaquette()
 
 
 // read effective mass
-vvd_t read_eff_mass(const string name)
+vvvd_t oper_t::read_eff_mass(const string name)
 {
-    vvvd_t eff_mass_array(vvd_t(vd_t(0.0,2),nmr),nmr);
+    vvvd_t eff_mass_tmp(vvd_t(vd_t(0.0,nmr),nmr),njacks);
+
+    FILE* input_effmass;
+    input_effmass = fopen(name.c_str(),"rb");
     
-    ifstream input_effmass;
-    input_effmass.open(name,ios::binary);
-    
-    if(not input_effmass.good())
+    if(input_effmass == NULL)
     {
         cout<<"Computing effective masses"<<endl<<endl;
         compute_eff_mass();
-        input_effmass.open(name,ios::binary);
+        input_effmass = fopen(name.c_str(),"rb");
     }
     
-    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-        for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-            for(int i=0;i<2;i++)
+    cout<<"Reading eff_mass"<<endl<<endl;
+    
+    for(int ijack=0;ijack<njacks;ijack++)
+        for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+            for(int mr_bw=0;mr_bw<nmr;mr_bw++)
             {
                 double temp;
-                input_effmass.read((char*)&temp,sizeof(double));
-                if(not input_effmass.good())
+                
+                int rd=fread(&temp,sizeof(double),1,input_effmass);
+                if(rd!=1)
                 {
-                    cerr<<"Unable to read from \"eff_mass_array\" mr_fw: "<<mr_fw<<", mr_bw: "<<mr_bw<<", i: "<<i<<endl;
+                    cerr<<"Unable to read from \"eff_mass_array\" mr_fw: "<<mr_fw<<", mr_bw: "<<mr_bw<<", ijack: "<<ijack<<endl;
                     exit(1);
                 }
-                eff_mass_array[mr_fw][mr_bw][i]=temp; //store  [i=ave/err]
+                eff_mass_tmp[ijack][mr_fw][mr_bw]=temp; //store
             }
     
-    vvd_t eff_mass(vd_t(0.0,nmr),nmr);
-//    eff_mass.resize(nmr);
-//    for(auto &i : eff_mass) i.resize(nmr);
-    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-        for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-            eff_mass[mr_fw][mr_bw] = eff_mass_array[mr_fw][mr_bw][0];
-    
-    return eff_mass;
+    return eff_mass_tmp;
 }
 
+// read effective mass
+vvvd_t oper_t::read_eff_mass_sea(const string name)
+{
+    vvvd_t eff_mass_sea_tmp(vvd_t(vd_t(0.0,nr),nr),njacks);
+    
+    FILE* input_effmass_sea;
+    input_effmass_sea = fopen(name.c_str(),"rb");
+    
+    if(input_effmass_sea == NULL)
+    {
+        cout<<"Computing effective sea masses"<<endl<<endl;
+        compute_eff_mass_sea();
+        input_effmass_sea = fopen(name.c_str(),"rb");
+    }
+    
+    cout<<"Reading eff_mass sea"<<endl<<endl;
+    
+    for(int ijack=0;ijack<njacks;ijack++)
+        for(int r1=0;r1<nr;r1++)
+            for(int r2=0;r2<nr;r2++)
+            {
+                double temp;
+                
+                int rd=fread(&temp,sizeof(double),1,input_effmass_sea);
+                if(rd!=1)
+                {
+                    cerr<<"Unable to read from \"eff_mass_sea_array\" mr_fw: "<<r1<<", mr_bw: "<<r2<<", ijack: "<<ijack<<endl;
+                    exit(1);
+                }
+                eff_mass_sea_tmp[ijack][r1][r2]=temp; //store
+            }
+    
+    return eff_mass_sea_tmp;
+}
+
+
 // read deltam_cr
-vvvd_t read_deltam_cr(const string name)
+vvvd_t oper_t::read_deltam_cr(const string name)
 {
     vvvd_t deltam_cr(vvd_t(vd_t(0.0,nm),nm),njacks);
     
-//    ifstream input_deltam;
     FILE* input_deltam;
-//    input_deltam.open(name,ios::binary);
     input_deltam = fopen(name.c_str(),"rb");
     
      if(input_deltam == NULL)
      {
          cout<<"Computing deltam_cr"<<endl<<endl;
          compute_deltam_cr();
-//         input_deltam.open(name,ios::binary);
          input_deltam = fopen(name.c_str(),"rb");
      }
     
@@ -155,10 +182,7 @@ vvvd_t read_deltam_cr(const string name)
             {
                 double temp;
                 
-//                input_deltam.read((char*)&temp,sizeof(double));
-                
                 int rd=fread(&temp,sizeof(double),1,input_deltam);
-//                if(not input_deltam.good())
                 if(rd!=1)
                 {
                     cerr<<"Unable to read from \"deltam_cr_array\" mr_fw: "<<m_fw<<", mr_bw: "<<m_bw<<", ijack: "<<ijack<<endl;
@@ -173,16 +197,6 @@ vvvd_t read_deltam_cr(const string name)
 size_t isc(size_t is,size_t ic)
 {return ic+3*is;}
 
-// to string with precision
-template <typename T>
-string to_string_with_precision(const T a_value, const int n = 6)
-{
-    ostringstream out;
-    out << fixed;
-    out << setprecision(n) << a_value;
-    return out.str();
-}
-
 // creates the path-string to the configuration
 string path_to_conf(const string &string_path, int i_conf,const string &name)
 {
@@ -193,18 +207,18 @@ string path_to_conf(const string &string_path, int i_conf,const string &name)
 }
 
 // opens all the files and return a vector with all the string paths
-vector<string> setup_read_prop(FILE* input[])
+vector<string> oper_t::setup_read_prop(FILE* input[])
 {
     // complete path to conf
-    string string_path;
-    if(strcmp(action.c_str(),"Iwa")==0)
-    {
-//        string_path = path_ensemble_str+action+"_b"+to_string_with_precision(beta,2)+"_L"+to_string(size[1])+"T"+to_string(size[0])+"_k"+to_string_with_precision(kappa,6)+"_mu"+to_string_with_precision(mu_sea,4)+"/";
-    }
-    if(strcmp(action.c_str(),"Sym")==0)
-    {
-//        string_path = path_ensemble_str+to_string_with_precision(beta,2)+"_"+to_string(size[1])+"_"+to_string_with_precision(mu_sea,4)+"/";
-    }
+//    string string_path;
+//    if(strcmp(action.c_str(),"Iwa")==0)
+//    {
+////        string_path = path_ensemble_str+action+"_b"+to_string_with_precision(beta,2)+"_L"+to_string(size[1])+"T"+to_string(size[0])+"_k"+to_string_with_precision(kappa,6)+"_mu"+to_string_with_precision(mu_sea,4)+"/";
+//    }
+//    if(strcmp(action.c_str(),"Sym")==0)
+//    {
+////        string_path = path_ensemble_str+to_string_with_precision(beta,2)+"_"+to_string(size[1])+"_"+to_string_with_precision(mu_sea,4)+"/";
+//    }
     
     // array of the configurations
     int conf_id[nconfs];
@@ -237,7 +251,8 @@ vector<string> setup_read_prop(FILE* input[])
                         
                         int icombo=r + nr*m + nr*nm*t + nr*nm*ntypes*ihit + nr*nm*ntypes*nhits*iconf;
                         
-                        string path = path_to_conf(string_path,conf_id[iconf],"S_"+Mass[m]+R[r]+Types[t]+hit_suffix);
+//                        string path = path_to_conf(string_path,conf_id[iconf],"S_"+Mass[m]+R[r]+Types[t]+hit_suffix);
+                        string path = path_to_conf(path_to_ens,conf_id[iconf],"S_"+Mass[m]+R[r]+Types[t]+hit_suffix);
                         v_path.push_back(path);
                         
 //                        input[icombo].open(path,ios::binary);
@@ -251,7 +266,7 @@ vector<string> setup_read_prop(FILE* input[])
                         }
                     }
     
-    printf("Opened all the files in %s\n",string_path.c_str());
+    printf("Opened all the files in %s\n",path_to_ens.c_str());
     
     return v_path;
 }
@@ -312,7 +327,6 @@ prop_t read_prop(FILE* input, const string &path, const int imom, const int i)
 }
 
 //read all the propagators at a given momentum
-//vvvprop_t read_prop_mom(ifstream *input,const vector<string> v_path,const int i_in_clust,const int ihit,const int imom)
 vvvprop_t read_prop_mom(FILE* input[],const vector<string> v_path,const int i_in_clust,const int ihit,const int imom)
 {
     vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),ntypes),njacks);
@@ -324,34 +338,7 @@ vvvprop_t read_prop_mom(FILE* input[],const vector<string> v_path,const int i_in
 //        for(int m=0;m<nm;m++)
 //            for(int r=0;r<nr;r++)
 //                for(int ijack=0;ijack<njacks;ijack++)
-//                {
-//                    
-//////                    if(omp_get_thread_num()==0)
-////                    {
-////                        cout<<" Thread "<<omp_get_thread_num()<<"/"<<omp_get_num_threads()<<" --";
-////                        cout<<" ijack "<<ijack;
-////                        cout<<" m "<<m;
-////                        cout<<" r "<<r;
-////                        cout<<" t "<<t<<endl;
-////                    }
-//                    
-//                    int iconf=clust_size*ijack+i_in_clust;
-//                    int icombo=r + nr*m + nr*nm*t + nr*nm*ntypes*ihit + nr*nm*ntypes*nhits*iconf;
-//                    
-//                    int mr = r + nr*m; // M0R0,M0R1,M1R0,M1R1,M2R0,M2R1,M3R0,M3R1
-//                    
-//                    //printf("  Reading propagator from %s\n",path.c_str());
-//                    
-//                    //create all the propagators in a given conf and a given mom
-//                    S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom,i);
-//                    
-//                    if(t==4) S[ijack][t][mr]*=dcompl(0.0,1.0);      // i*(pseudoscalar insertion)
-//                    //if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);    // (minus sign?)
-//                    i++;
-//                }
     
-//    for(int ijack=0;ijack<njacks;ijack++)
-//    {
 #pragma omp parallel for
     for(int ilin=0;ilin<nm*nr*ntypes*njacks;ilin++)
     {
@@ -376,7 +363,6 @@ vvvprop_t read_prop_mom(FILE* input[],const vector<string> v_path,const int i_in
         //if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);    // (minus sign?)
         i++;
     }
-//    }
     
     return S;
 }

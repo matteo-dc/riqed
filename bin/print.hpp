@@ -34,11 +34,11 @@ void print_internal_bin(valarray<T> &v, ofstream& outfile)
 
 
 template <class T>
-void print_vec( T &vec, const char* path)
+void print_vec( T &vec, const string path)
 {
 //    ofstream outfile(path/*,ofstream::binary*/);
     ofstream outfile;
-    outfile.open(path);
+    outfile.open(path.c_str());
     
     if (outfile.is_open())
     {
@@ -52,11 +52,11 @@ void print_vec( T &vec, const char* path)
 }
 
 template <class T>
-void print_vec_bin( T &vec, const char* path)
+void print_vec_bin( T &vec, const string path)
 {
     //    ofstream outfile(path/*,ofstream::binary*/);
     ofstream outfile;
-    outfile.open(path, ios::binary);
+    outfile.open(path.c_str(), ios::binary);
     
     if (outfile.is_open())
     {
