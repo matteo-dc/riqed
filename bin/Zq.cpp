@@ -2,8 +2,9 @@
 #include "global.hpp"
 #include "Dirac.hpp"
 #include <omp.h>
+#include "operations.hpp"
 
-vvvd_t compute_jZq(vvvprop_t &jS_inv,const int imom)
+vvvd_t oper_t::compute_jZq(vvvprop_t &jS_inv,const int imom)
 {
     double V=size[0]*size[1]*size[2]*size[3];
     
