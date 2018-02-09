@@ -73,4 +73,4 @@ vprop_t create_projectors()
     return P;
 }
 
-vprop_t P=create_projectors();
+vprop_t Proj=create_projectors();

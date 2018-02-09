@@ -5,6 +5,6 @@
 
 extern vprop_t GAMMA;
 
-extern vprop_t P;
+extern vprop_t Proj;
 
 #endif
