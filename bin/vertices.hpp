@@ -10,7 +10,7 @@
 //jvert_t build_EM_vert(vvvprop_t &S1,vvvprop_t &S2,vvprop_t &S1_em,vvprop_t &S2_em,jvert_t &jVert_em);
 
 // compute LO and EM vertices
-/*valarray<jvert_t>*/void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,const vvprop_t &S1_em,const vvprop_t &S2_em,valarray<jvert_t> &jVert_LO_and_EM);
+/*valarray<jvert_t>*/void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,/*const vvprop_t &S1_em,const vvprop_t &S2_em,*/valarray<jvert_t> &jVert_LO_and_EM);
 
 
 // calculate the vertex function in a given configuration for the given equal momenta

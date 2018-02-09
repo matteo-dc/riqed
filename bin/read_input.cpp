@@ -4,7 +4,7 @@
 #include "operations.hpp"
 #include "read.hpp"
 
-#define DEFAULT_STR_VAL ""
+#define DEFAULT_STR_VAL "null"
 #define DEFAULT_INT_VAL -1
 #define DEFAULT_DOUBLE_VAL 1.2345
 
@@ -17,22 +17,24 @@ vector<vector<int>> SeaMasses_label; // SeaMasses_label[Nbeta][NSeaMass]
 int L, T;
 vector<double> ainv;
 int conf_init, conf_step, nm, neq, neq2, nmr, delta_tmin, delta_tmax;
-double kappa, mu_sea, plaquette, g2, g2_tilde, LambdaQCD, p2min, thresh;
+double kappa, mu_sea, plaquette, LambdaQCD, p2min, thresh;
 vector<double> mass_val;
 string mom_path, action, path_ensemble, scheme, BC;
 vector<string> beta_label;  // beta_label[Nbeta]
 vector<string> theta_label;  // theta_label[Ntheta]
 
+coords_t size;
+
 
 char tok[128];
 
-TK_t get_TK_glb(FILE *fin)
+TK_glb_t get_TK_glb(FILE *fin)
 {
     //read a token
     int rc=fscanf(fin,"%s",tok);
     if(rc!=1)
     {
-        if(feof(fin)) return FEOF_TK;
+        if(feof(fin)) return FEOF_GLB_TK;
         else
         {
             fprintf(stderr,"Getting %d while reading token\n",rc);
@@ -66,7 +68,7 @@ TK_t get_TK_glb(FILE *fin)
     if(strcasecmp(tok,p2min_tag)==0) return P2MIN_TK;
     if(strcasecmp(tok,thresh_tag)==0) return THRESH_TK;
     
-    return VALUE_TK;
+    return VALUE_GLB_TK;
 }
 
 TK_t get_TK(FILE *fin)
@@ -105,8 +107,8 @@ TK_t get_TK(FILE *fin)
 template <class T>
 void _get_value_glb(FILE *fin,T &ret,const char *t)
 {
-    TK_t tk=get_TK_glb(fin);
-    if(tk!=VALUE_TK)
+    TK_glb_t tk=get_TK_glb(fin);
+    if(tk!=VALUE_GLB_TK)
     {
         fprintf(stderr,"Getting token %s in the wrong place\n",tok);
         exit(MISPLACED_TK);
@@ -123,27 +125,25 @@ void _get_value_glb(FILE *fin,T &ret,const char *t)
 
 void get_value_glb(FILE *fin,double &out)
 {
-  return _get_value_glb(fin,out,"%lg");
+    return _get_value_glb(fin,out,"%lg");
 }
 
 void get_value_glb(FILE *fin,int &out)
 {
-  return _get_value_glb(fin,out,"%d");
+    return _get_value_glb(fin,out,"%d");
 }
 
 void get_value_glb(FILE *fin,string &out)
 {
-  char temp[1024];
-  return _get_value_glb(fin,temp,"%s");
-  out=temp;
+    char temp[1024];
+    _get_value_glb(fin,temp,"%s");
+    out=string(temp);
+
 }
-
-
-
 
 //parse the value string
 template <class T>
-void get_value(FILE *fin,T &ret,const char *t)
+void _get_value(FILE *fin,T &ret,const char *t)
 {
     TK_t tk=get_TK(fin);
     if(tk!=VALUE_TK)
@@ -161,10 +161,29 @@ void get_value(FILE *fin,T &ret,const char *t)
     }
 }
 
-//check
-void check_str_par(const char *str,const char *name)
+void get_value(FILE *fin,double &out)
 {
-    if(strcasecmp(str,DEFAULT_STR_VAL)==0)
+    return _get_value(fin,out,"%lg");
+}
+
+void get_value(FILE *fin,int &out)
+{
+    return _get_value(fin,out,"%d");
+}
+
+void get_value(FILE *fin,string &out)
+{
+    char temp[1024];
+    _get_value(fin,temp,"%s");
+    out=string(temp);
+    
+}
+
+
+//check
+void check_str_par(const string str,const char *name)
+{
+    if(str.compare(DEFAULT_STR_VAL)==0)
     {
         fprintf(stderr,"%s not initialized\n",name);
         exit(UNINITIALIZED_PAR);
@@ -207,9 +226,7 @@ void read_input_glb(const char path[])
         fprintf(stderr,"Failed to open \"%s\"\n",path);
         exit(FAILED_OPEN);
     }
-    
-    printf("READING:\n");
-    
+        
     action=DEFAULT_STR_VAL;
     scheme=DEFAULT_STR_VAL;
     path_ensemble=DEFAULT_STR_VAL;
@@ -227,8 +244,6 @@ void read_input_glb(const char path[])
     p2min=DEFAULT_DOUBLE_VAL;
     thresh=DEFAULT_DOUBLE_VAL;
     
-    printf("A\n");
-    
 //    for(auto &bl : beta_label) bl=DEFAULT_STR_VAL;
 //    //        for(auto &l : L) l=DEFAULT_INT_VAL;
 //    //        for(auto &t : T) t=DEFAULT_INT_VAL;
@@ -241,35 +256,29 @@ void read_input_glb(const char path[])
     
     while(not feof(fin))
     {
-        TK_t tk=get_TK_glb(fin);
+        TK_glb_t tk=get_TK_glb(fin);
         switch(tk)
         {
-            case VALUE_TK:
+            case VALUE_GLB_TK:
                 fprintf(stderr,"Invalid token %s found\n",tok);
                 exit(1);
                 break;
             case NCONFS_TK:
                 get_value_glb(fin,nconfs);
-                printf(" read 1 ");
                 break;
             case NJACKS_TK:
                 get_value_glb(fin,njacks);
-                printf(" read 2 ");
                 break;
             case BC_TK:
-                printf(" read 3 ");
                 get_value_glb(fin,BC);
-                printf(" read 3 ");
                 break;
             case NBETA_TK:
                 get_value_glb(fin,nbeta);
-                printf(" read 4 ");
                 break;
             case BETA_TK:
                 beta.resize(nbeta);
                 for(int b=0;b<nbeta;b++)
                     get_value_glb(fin,beta[b]);
-                printf(" read 5");
                 break;
             case BETA_LAB_TK:
                 beta_label.resize(nbeta);
@@ -320,9 +329,7 @@ void read_input_glb(const char path[])
                 get_value_glb(fin,UseEffMass);
                 break;
             case SCHEME_TK:
-                printf(" read 6 ");
                 get_value_glb(fin,scheme);
-                printf(" read 6 ");
                 break;
             case NC_TK:
                 get_value_glb(fin,Nc);
@@ -345,7 +352,7 @@ void read_input_glb(const char path[])
                 get_value_glb(fin,thresh);
                 break;
                 
-            case FEOF_TK:
+            case FEOF_GLB_TK:
                 break;
         }
     }
@@ -353,12 +360,10 @@ void read_input_glb(const char path[])
     //check initialization
     check_int_par(nconfs,nconfs_tag);
     check_int_par(njacks,njacks_tag);
-    //        for(auto &l : L) check_int_par(l,L_tag);
-    //        for(auto &t : L) check_int_par(t,T_tag);
-    check_str_par(path_ensemble.c_str(),path_ensemble_tag);
-    check_str_par(scheme.c_str(),scheme_tag);
-    check_str_par(BC.c_str(),BC_tag);
-    check_str_par(action.c_str(),act_tag);
+    check_str_par(path_ensemble,path_ensemble_tag);
+    check_str_par(scheme,scheme_tag);
+    check_str_par(BC,BC_tag);
+    check_str_par(action,act_tag);
     check_int_par(Nc,Nc_tag);
     check_int_par(Nf,Nf_tag);
     check_int_par(nr,nr_tag);
@@ -382,9 +387,9 @@ void read_input_glb(const char path[])
     
     //print input parameters
     
-    printf(".------------------------------------------------------.\n");
+    printf("*------------------------------------------------------*\n");
     printf("|                Global configuration                  |\n");
-    printf(".------------------------------------------------------.\n\n");
+    printf("*------------------------------------------------------*\n\n");
     
     printf(" %s = %s\n",scheme_tag,scheme.c_str());
     printf("    with BC: %s \n\n",BC.c_str());
@@ -392,25 +397,22 @@ void read_input_glb(const char path[])
     printf(" %s = %.2lf\n",thresh_tag,thresh);
     printf(" Continuum limit range: a2p2 > %.1lf\n\n",p2min);
     
-    printf(" %s = %s  --  %s = %d  -- %s = %d \n",act_tag,action.c_str(),Nf_tag,Nf,Nc_tag,Nc);
+    printf(" %s = %s  --  %s = %d  -- %s = %d -- %s = %.3lf \n",act_tag,action.c_str(),Nf_tag,Nf,Nc_tag,Nc,LambdaQCD_tag,LambdaQCD);
     printf(" %s = %d  (%d njacks) \n",nconfs_tag,nconfs,njacks);
     printf(" %s = %s \n\n",path_ensemble_tag,path_ensemble.c_str());
     
-    printf("%s = %d\n",nr_tag,nr);
-    printf("%s = %d\n",ntypes_tag,ntypes);
-    printf("%s = %d\n\n",nhits_tag,nhits);
-    
-    printf("%s = %.3lf\n",LambdaQCD_tag,LambdaQCD);
+    printf(" %s = %d\n",nr_tag,nr);
+    printf(" %s = %d\n",ntypes_tag,ntypes);
+    printf(" %s = %d\n\n",nhits_tag,nhits);
     
     printf(" Working with %d beta: \n",nbeta);
     for(int b=0;b<nbeta;b++)
     {
-        printf("   beta = %.2lf : ainv=%.2lf\n",beta[b],ainv[b]);
+        printf("    beta = %.2lf : ainv = %.2lf\n",beta[b],ainv[b]);
         printf("                  Ensembles: ");
         for(int m=0; m<nm_Sea[b]; m++)
-            printf("%s%d, ",beta_label[b].c_str(),SeaMasses_label[b][m]);
+            printf("%s%d ",beta_label[b].c_str(),SeaMasses_label[b][m]);
         printf("\n");
-        
     }
     
     
@@ -419,37 +421,24 @@ void read_input_glb(const char path[])
     
     nbil=5;
     
-    
-    //    //factors enabling average over r
-    //    int c1, c2;
-    //    if(nr==2)
-    //    {
-    //        c1 = 1;
-    //        c2 = 1;
-    //    }
-    
-    //g2_tilde
-    //        g2=6.0/beta;
-    //        g2_tilde=g2/plaquette;
-    //        printf("g2tilde = %lf\n",g2_tilde);
-    
     //slightly increment thresh to include border
     thresh*=1+1e-10;
     
-    printf("\n");
+    printf("\n\n");
 }
 
-void read_input(const char path[])
+void read_input(const string &path_to_ens, const string &name)
 {
-    FILE *fin=fopen(path,"r");
+    string path_to_input = path_to_ens + "input.txt";
+    
+    FILE *fin=fopen(path_to_input.c_str(),"r");
     if(not fin)
     {
-        fprintf(stderr,"Failed to open \"%s\"\n",path);
+        fprintf(stderr,"Failed to open \"%s\"\n",path_to_input.c_str());
         exit(FAILED_OPEN);
     }
     
-    
-    char mom_list_path[128]=DEFAULT_STR_VAL;
+    mom_path=DEFAULT_STR_VAL;
     
     int L=DEFAULT_INT_VAL;
     int T=DEFAULT_INT_VAL;
@@ -459,10 +448,10 @@ void read_input(const char path[])
     nm=DEFAULT_INT_VAL;
     delta_tmin=DEFAULT_INT_VAL;
     delta_tmax=DEFAULT_INT_VAL;
-    //        kappa=DEFAULT_DOUBLE_VAL;
+    kappa=DEFAULT_DOUBLE_VAL;
     mu_sea=DEFAULT_DOUBLE_VAL;
     plaquette=DEFAULT_DOUBLE_VAL;
-    for(auto &m : mass_val) m=DEFAULT_DOUBLE_VAL;
+//    for(auto &m : mass_val) m=DEFAULT_DOUBLE_VAL;
     
     while(not feof(fin))
     {
@@ -474,54 +463,50 @@ void read_input(const char path[])
                 exit(1);
                 break;
             case MOM_LIST_TK:
-                get_value(fin,mom_list_path,"%s");
+                get_value(fin,mom_path);
                 break;
             case L_TK:
-                get_value(fin,L,"%d");
+                get_value(fin,L);
                 break;
             case T_TK:
-                get_value(fin,T,"%d");
+                get_value(fin,T);
                 break;
             case CONF_INIT_TK:
-                get_value(fin,conf_init,"%d");
+                get_value(fin,conf_init);
                 break;
             case CONF_STEP_TK:
-                get_value(fin,conf_step,"%d");
+                get_value(fin,conf_step);
                 break;
             case PLAQ_TK:
-                get_value(fin,plaquette,"%lf");
+                get_value(fin,plaquette);
                 break;
-                //                case KAPPA_TK:
-                //                    get_value(fin,kappa,"%lf");
-                //                    break;
+            case KAPPA_TK:
+                get_value(fin,kappa);
+                break;
             case MU_SEA_TK:
-                get_value(fin,mu_sea,"%lf");
+                get_value(fin,mu_sea);
                 break;
-                
             case NM_VAL_TK:
-                get_value(fin,nm,"%d");
+                get_value(fin,nm);
                 break;
             case VALMASSES_TK:
                 mass_val.resize(nm);
                 for (int i=0; i<nm; i++)
-                    get_value(fin,mass_val[i],"%lf");
+                    get_value(fin,mass_val[i]);
                 break;
-                
             case DELTA_TMIN_TK:
-                get_value(fin,delta_tmin,"%d");
+                get_value(fin,delta_tmin);
                 break;
             case DELTA_TMAX_TK:
-                get_value(fin,delta_tmax,"%d");
+                get_value(fin,delta_tmax);
                 break;
-                
-                
                 
             case FEOF_TK:
                 break;
         }
     }
     
-    check_str_par(mom_list_path,mom_list_tag);
+    check_str_par(mom_path.c_str(),mom_list_tag);
     check_int_par(L,L_tag);
     check_int_par(T,T_tag);
     check_double_par(plaquette,plaquette_tag);
@@ -536,30 +521,28 @@ void read_input(const char path[])
     
     fclose(fin);
     
-//    if(plaquette==0.0)  plaquette=read_plaquette();
+    if(plaquette==0.0)  plaquette=read_plaquette(path_to_ens);
     
-    mom_path = string(mom_list_path);
+    size={T,L,L,L};
     
-    coords_t size={T,L,L,L};
+    printf("*------------------------------------------------------*\n");
+    printf("|                     Ensemble %s                     |\n",name.c_str());
+    printf("*------------------------------------------------------*\n\n");
     
-    printf(" %s = \"%s\"\n",mom_list_tag,mom_list_path);
-    printf("%s = %d\n",L_tag,L);
-    printf("%s = %d\n",T_tag,T);
-    printf("%s = %lf\n",plaquette_tag,plaquette);
+    
+    printf(" %s = \"%s\"\n",mom_list_tag,mom_path.c_str());
+    printf(" Dimensions = %dc%d\n",L,T);
+    printf(" %s = %lf -- %s = %.6lf -- %s = %.4lf \n",plaquette_tag,plaquette,kappa_tag,kappa,mu_sea_tag,mu_sea);
     
     
     printf(" %s = %d  [from %d to %d]\n",nconfs_tag,nconfs,conf_init,conf_init+(nconfs-1)*conf_step);
     
-    printf("Fit range for deltam_cr: [%d,%d]\n",delta_tmin,delta_tmax);
+    printf(" Fit range for deltam_cr: [%d,%d]\n",delta_tmin,delta_tmax);
     
-    printf("%s = %.6lf\n",kappa_tag,kappa);
-    printf("%s = %.4lf\n",mu_sea_tag,mu_sea);
-    printf("%s = %d\n",nm_tag,nm);
-    printf("%s = ",mass_val_tag);
+    printf(" %s = ",mass_val_tag);
     for (int i=0; i<nm; i++)
         printf("%.4lf  ",mass_val[i]);
-    printf("\n");
-    
+    printf("\n\n");
     
     nmr=nm*nr;
     combo=nm*nr*ntypes*nhits*nconfs;

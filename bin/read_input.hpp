@@ -6,7 +6,9 @@
 
 enum ERR_t{NO_FAIL,FAILED_READ,FAILED_CONVERSION,FAILED_OPEN,MISPLACED_TK,UNINITIALIZED_PAR};
 
-enum TK_t{FEOF_TK,VALUE_TK,MOM_LIST_TK,NCONFS_TK,NJACKS_TK,L_TK,T_TK,CONF_INIT_TK,CONF_STEP_TK,ACT_TK,PLAQ_TK,PATH_TK,NBETA_TK,BETA_TK,BETA_LAB_TK,NTHETA_TK,THETA_LAB_TK,NM_SEA_TK,SEAMASSES_LAB_TK,MU_SEA_TK,KAPPA_TK,NM_TK,NM_VAL_TK,VALMASSES_TK,NR_TK,NTYPES_TK,NHITS_TK,USE_SIGMA_TK,USE_EFF_MASS_TK,SCHEME_TK,NF_TK,NC_TK,AINV_TK,LAMBDAQCD_TK,DELTA_TMIN_TK,DELTA_TMAX_TK,BC_TK,P2MIN_TK,THRESH_TK};
+enum TK_t{FEOF_TK,VALUE_TK,MOM_LIST_TK,L_TK,T_TK,CONF_INIT_TK,CONF_STEP_TK,PLAQ_TK,MU_SEA_TK,KAPPA_TK,NM_VAL_TK,VALMASSES_TK,DELTA_TMIN_TK,DELTA_TMAX_TK};
+
+enum TK_glb_t{FEOF_GLB_TK,VALUE_GLB_TK,NCONFS_TK,NJACKS_TK,ACT_TK,PATH_TK,NBETA_TK,BETA_TK,BETA_LAB_TK,NTHETA_TK,THETA_LAB_TK,NM_SEA_TK,SEAMASSES_LAB_TK,NR_TK,NTYPES_TK,NHITS_TK,USE_SIGMA_TK,USE_EFF_MASS_TK,SCHEME_TK,NF_TK,NC_TK,AINV_TK,LAMBDAQCD_TK,BC_TK,P2MIN_TK,THRESH_TK};
 
 const char nconfs_tag[]="NConfs";
 const char mom_list_tag[]="MomList";
@@ -46,15 +48,12 @@ const char p2min_tag[]="p2min";
 const char thresh_tag[]="Thresh";
 
 
-
-
-
 // parse the value string
 template <class T>
 void get_value(FILE *fin,T &ret,const char *t);
 
 // check
-void check_str_par(const char *str,const char *name);
+void check_str_par(const string str,const char *name);
 void check_int_par(const int val,const char *name);
 void check_double_par(const double val,const char *name);
 
@@ -62,6 +61,6 @@ void check_double_par(const double val,const char *name);
 void read_input_glb(const char input_path[]);
 
 // read input file relative to single ensembles
-void read_input(const char input_path[]);
+void read_input(const string &input, const string &name);
 
 #endif
