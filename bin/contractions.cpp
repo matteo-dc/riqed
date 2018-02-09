@@ -15,28 +15,39 @@ string to_string_with_precision(const T a_value, const int n = 6)
 }
 
 //create the path-string to the contraction
-string path_to_contr(/*const string &string_path,*/ int i_conf, const int mr1, const string &T1, const int mr2, const string &T2)
+string path_to_contr(const string &suffix, const string &string_path, int i_conf, const int mr1, const string &T1, const int mr2, const string &T2)
 {
-    int r1 = mr1%nr;
-    int m1 = (mr1-r1)/nr;
-    int r2 = mr2%nr;
-    int m2 = (mr2-r2)/nr;
+    char path[1024];
+
+    if(suffix.compare("")==0)
+    {
+        int r1 = mr1%nr;
+        int m1 = (mr1-r1)/nr;
+        int r2 = mr2%nr;
+        int m2 = (mr2-r2)/nr;
+        
+        sprintf(path,"%sout/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",string_path.c_str(),i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
+    }
+    else if(suffix.compare("sea")==0)
+    {
+        int r1=mr1;
+        int r2=mr2;
+        
+        sprintf(path,"%sout/%04d/mes_contr_M%s_R%d_%s_M%s_R%d_%s",string_path.c_str(),i_conf,suffix.c_str(),r1,T1.c_str(),suffix.c_str(),r2,T2.c_str());
+    }
     
     // complete path
-    string string_path;
+//    string string_path;
     
-    if(strcmp(action.c_str(),"Iwa")==0)
-    {
-        string_path = path_ensemble_str+action+"_b"+to_string_with_precision(beta,2)+"_L"+to_string(size[1])+"T"+to_string(size[0])+"_k"+to_string_with_precision(kappa,6)+"_mu"+to_string_with_precision(mu_sea,4)+"/";
-    }
-    if(strcmp(action.c_str(),"Sym")==0)
-    {
-        string_path = path_ensemble_str+to_string_with_precision(beta,2)+"_"+to_string(size[1])+"_"+to_string_with_precision(mu_sea,4)+"/";
-    }
+//    if(strcmp(action.c_str(),"Iwa")==0)
+//    {
+//        string_path = path_ensemble_str+action+"_b"+to_string_with_precision(beta,2)+"_L"+to_string(size[1])+"T"+to_string(size[0])+"_k"+to_string_with_precision(kappa,6)+"_mu"+to_string_with_precision(mu_sea,4)+"/";
+//    }
+//    if(strcmp(action.c_str(),"Sym")==0)
+//    {
+//        string_path = path_ensemble_str+to_string_with_precision(beta,2)+"_"+to_string(size[1])+"_"+to_string_with_precision(mu_sea,4)+"/";
+//    }
 
-    char path[1024];
-    sprintf(path,"%sout/%04d/mes_contr_M%d_R%d_%s_M%d_R%d_%s",string_path.c_str(),i_conf,m1,r1,T1.c_str(),m2,r2,T2.c_str());
-    
     // cout<<path<<endl;
     
     return path;
@@ -44,7 +55,7 @@ string path_to_contr(/*const string &string_path,*/ int i_conf, const int mr1, c
 
 
 //get the contraction from file
-vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const string &T2, const string &ID, const string &reim, const string &parity/*, const int T, const int nconfs, const int njacks*/ , const int* conf_id /*, const string &string_path*/)
+vvd_t get_contraction(const string &suffix, const int mr1, const string &T1, const int mr2, const string &T2, const string &ID, const string &reim, const string &parity/*, const int T, const int nconfs, const int njacks*/ , const int* conf_id , const string &string_path)
 {
     
     int T=size[0];
@@ -77,13 +88,13 @@ vvd_t get_contraction(const int mr1, const string &T1, const int mr2, const stri
         
         ifstream infile;
         
-        string path=path_to_contr(/*string_path,*/conf_id[iconf],mr1,T1,mr2,T2);
+        string path=path_to_contr(suffix,string_path,conf_id[iconf],mr1,T1,mr2,T2);
 //        cout<<"opening: "<<path<<endl;
         infile.open(path);
         
         if(!infile.good())
         {
-            cerr<<"Unable to open file "<<path_to_contr(/*string_path,*/conf_id[iconf],mr1,T1,mr2,T2)<<endl;
+            cerr<<"Unable to open file "<<path_to_contr(suffix,string_path,conf_id[iconf],mr1,T1,mr2,T2)<<endl;
             exit(1);
         }
         
