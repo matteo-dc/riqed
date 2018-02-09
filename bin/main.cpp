@@ -117,7 +117,7 @@ int main()
                 rave_chir_sub_ave[b][th][m].plot("rave_chir_sub_ave");
             } //close nm_sea
             
-            if(nm_Sea[b]>0)
+            if(nm_Sea[b]>1)
             {
                 /*  sea chiral extr  */
                 
