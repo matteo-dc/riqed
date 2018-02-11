@@ -13,7 +13,7 @@ vvvvvd_t compute_pr_bil( vvvprop_t &jprop1_inv,  valarray<jvert_t> &jVert,  vvvp
     const int iv[4]={LO,EM,LO,LO};
     const int i2[4]={LO,LO,LO,EM};
     
-    // electric charge of the quark
+    // add electric charge of the quarks when one amputates with the EM corrected propagator
     const double Q[4]={1.0,1.0,q1*q1,q2*q2};
     
     valarray<jvert_t> jLambda(vvvvprop_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),nmr),nmr),njacks),4);
