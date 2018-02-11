@@ -561,12 +561,9 @@ void oper_t::compute_bil()
                 tb=high_resolution_clock::now();
                 t_span2 += (duration_cast<duration<double>>(tb-ta)).count();
                 
-//                const vvprop_t S1_em = S1_LO_and_EM[EM];
-//                const vvprop_t S2_em = S2_LO_and_EM[EM];
-                
                 ta=high_resolution_clock::now();
 
-                build_vert(S1,S2,/*S1_em,S2_em,*/jVert_LO_EM_P);
+                build_vert(S1,S2,jVert_LO_EM_P,1.0,1.0);
                 
                 tb=high_resolution_clock::now();
                 t_span3 += (duration_cast<duration<double>>(tb-ta)).count();
@@ -650,7 +647,7 @@ void oper_t::compute_bil()
         cout<<"- Computing bilinears"<<endl;
         
         // compute the projected green function (S,V,P,A,T)
-        vvvvvd_t jG_LO_and_EM = compute_pr_bil(jS1_inv_LO_and_EM,jVert_LO_and_EM,jS2_inv_LO_and_EM);
+        vvvvvd_t jG_LO_and_EM = compute_pr_bil(jS1_inv_LO_and_EM,jVert_LO_and_EM,jS2_inv_LO_and_EM,1.0,1.0);
         
         jG_0[ibilmom] = jG_LO_and_EM[LO];
         jG_em[ibilmom] = jG_LO_and_EM[EM];
