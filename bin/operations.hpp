@@ -20,6 +20,7 @@ struct oper_t
 {
     vector<array<int,1>> linmoms;   // list of momenta used for Z, relative to glb list
     vector<array<int,3>> bilmoms;   // lists of momenta used for bilinears {k,i,j}
+    vector<array<int,3>> meslepmoms=bilmoms; // list of momenta used for meslep
     
     void read_mom_list(const string &path);
     
@@ -31,6 +32,7 @@ struct oper_t
     // size of linmoms and bilmoms
     int _linmoms;
     int _bilmoms;
+    int _meslepmoms;
     
     // variables that characterize the data struct
     double _beta;
@@ -115,6 +117,12 @@ struct oper_t
     
     // compute Zbils
     void compute_Zbil();
+    
+    
+    // compute meslep
+    void compute_meslep();
+    
+    
     
 //  // step string
 //    string step;

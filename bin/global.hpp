@@ -113,6 +113,8 @@ extern double p2min;
 extern vector<bool> filt_moms;
 // filter threshold
 extern double thresh;
+// compute MesLep
+extern int compute_4f;
 
 typedef enum {  
     LO = 0,

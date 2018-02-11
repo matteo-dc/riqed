@@ -9,7 +9,7 @@
 #define DEFAULT_DOUBLE_VAL 1.2345
 
 // define global variables
-int nconfs, njacks, nr, ntypes, nhits, Nf, Nc, UseSigma1, UseEffMass, nbeta, ntheta;
+int nconfs, njacks, nr, ntypes, nhits, Nf, Nc, UseSigma1, UseEffMass, nbeta, ntheta, compute_4f;
 int clust_size, nbil, combo;
 vector<double> beta;
 vector<int> nm_Sea;
@@ -67,7 +67,8 @@ TK_glb_t get_TK_glb(FILE *fin)
     if(strcasecmp(tok,BC_tag)==0) return BC_TK;
     if(strcasecmp(tok,p2min_tag)==0) return P2MIN_TK;
     if(strcasecmp(tok,thresh_tag)==0) return THRESH_TK;
-    
+    if(strcasecmp(tok,compute_meslep_tag)==0) return COMPUTE_MESLEP_TK;
+
     return VALUE_GLB_TK;
 }
 
@@ -243,6 +244,7 @@ void read_input_glb(const char path[])
     LambdaQCD=DEFAULT_DOUBLE_VAL;
     p2min=DEFAULT_DOUBLE_VAL;
     thresh=DEFAULT_DOUBLE_VAL;
+    compute_4f=DEFAULT_INT_VAL;
     
 //    for(auto &bl : beta_label) bl=DEFAULT_STR_VAL;
 //    //        for(auto &l : L) l=DEFAULT_INT_VAL;
@@ -351,6 +353,9 @@ void read_input_glb(const char path[])
             case THRESH_TK:
                 get_value_glb(fin,thresh);
                 break;
+            case COMPUTE_MESLEP_TK:
+                get_value_glb(fin,compute_4f);
+                break;
                 
             case FEOF_GLB_TK:
                 break;
@@ -382,6 +387,7 @@ void read_input_glb(const char path[])
     check_double_par(LambdaQCD,LambdaQCD_tag);
     check_double_par(p2min,p2min_tag);
     check_double_par(thresh,thresh_tag);
+    check_int_par(compute_4f,compute_meslep_tag);
     
     fclose(fin);
     
@@ -413,8 +419,7 @@ void read_input_glb(const char path[])
         for(int m=0; m<nm_Sea[b]; m++)
             printf("%s%d ",beta_label[b].c_str(),SeaMasses_label[b][m]);
         printf("\n");
-    }
-    
+    }    
     
     // define global variables from input
     clust_size=nconfs/njacks;

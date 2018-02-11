@@ -252,6 +252,7 @@ void oper_t::ri_mom()
 {
     compute_prop();
     compute_bil();
+    if(compute_4f) compute_meslep();
 }
 
 void oper_t::smom()
@@ -686,6 +687,19 @@ void oper_t::compute_Zbil()
         
     }// close mom loop
 }
+
+
+void oper_t::compute_meslep()
+{
+    cout<<"A"<<endl;
+}
+
+
+
+
+
+
+
 
 oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
 {
