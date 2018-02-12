@@ -101,7 +101,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
                          jG_g[k][igam][iproj][ijack][mr_bw][mr_fw] = (jLambda_QCD_IN_OUT[k][ijack][mr_fw][mr_bw][igam][iproj]*(GAMMA[0]+g5_sign[iproj]*GAMMA[5]).adjoint()*Proj[iG[iproj]]).trace().real()/12.0/2.0;
                          // the factor 2.0 is to normalize the projector with (1+-g5)
                          
-                         print("igam[%d] iproj[%d] ijack[%d] mr1[%d] mr2[%d]  jpr_meslep: %lg\n",igam,iproj,ijack,mr_fw,mr_bw,jG_g[IN][igam][iproj][ijack][mr_bw][mr_fw]+jG_g[OUT][igam][iproj][ijack][mr_bw][mr_fw]);
+                         printf("igam[%d] iproj[%d] ijack[%d] mr1[%d] mr2[%d]  jpr_meslep: %lg\n",igam,iproj,ijack,mr_fw,mr_bw,jG_g[IN][igam][iproj][ijack][mr_bw][mr_fw]+jG_g[OUT][igam][iproj][ijack][mr_bw][mr_fw]);
                      }
     
 #pragma omp parallel for collapse(5)
