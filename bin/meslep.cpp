@@ -123,6 +123,8 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
                                 {
                                     jG_op[k][iop1][iop2][ijack][mr_bw][mr_fw] += jG_g[k][ig][ip][ijack][mr_bw][mr_fw];
                                 }
+
+			    if(mr_fw==0 and mr_bw==0) printf("iop[%d-%d] ijack[%d] jpr_meslep%d_5x5: %lg\n",iop1,iop2,ijack,k,jG_op[k][iop1][iop2][ijack][0][0]);
                         }
     
     return jG_op;
