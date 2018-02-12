@@ -32,11 +32,11 @@ void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,valarray<jvert_t> &jVert
                     jVert_LO_EM_P[LO][ijack][mr_fw][mr_bw][igam] += make_vertex(S1[ijack][0][mr_fw], S2[ijack][0][mr_bw],igam);
                     
                     jVert_LO_EM_P[EM][ijack][mr_fw][mr_bw][igam] +=
-                    (q2*q2)*make_vertex(S1[ijack][0][mr_fw],S2[ijack][2][mr_bw],igam) +
-                    (q2*q2)*make_vertex(S1[ijack][0][mr_fw],S2[ijack][3][mr_bw],igam) +
-                    (q1*q1)*make_vertex(S1[ijack][2][mr_fw],S2[ijack][0][mr_bw],igam) +
-                    (q1*q1)*make_vertex(S1[ijack][3][mr_fw],S2[ijack][0][mr_bw],igam) +
-                    (q1*q2)*make_vertex(S1[ijack][1][mr_fw],S1[ijack][1][mr_bw],igam) ;
+                    make_vertex(S1[ijack][0][mr_fw],S2[ijack][2][mr_bw],igam) +
+                    make_vertex(S1[ijack][0][mr_fw],S2[ijack][3][mr_bw],igam) +
+                    make_vertex(S1[ijack][2][mr_fw],S2[ijack][0][mr_bw],igam) +
+                    make_vertex(S1[ijack][3][mr_fw],S2[ijack][0][mr_bw],igam) +
+                    make_vertex(S1[ijack][1][mr_fw],S1[ijack][1][mr_bw],igam) ;
                     
                     // P (fw)
                     if(r_fw==0) jVert_LO_EM_P[2][ijack][mr_fw][mr_bw][igam] +=
