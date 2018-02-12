@@ -1048,7 +1048,7 @@ void oper_t::compute_Z4f()
                             if(mr_bw==0 and mr_fw==0)
                             {
                                 if(iop1==0 and iop2==0) cout<<"ibilmom "<<ibilmom<<" ijack "<<ijack<<endl;
-                                cout<<jZ_em_4f[ibilmom][iop1][iop2][ijack][0][0]<<" ";
+                                cout<<jZ_em_4f[ibilmom][iop1][iop2][ijack][0][0]<<" \t";
                                 if(iop2==nbil-1) cout<<endl;
                                 if(iop1==nbil-1 and iop2==nbil-1) cout<<endl;
                             }
