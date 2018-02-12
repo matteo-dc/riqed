@@ -387,7 +387,7 @@ vvprop_t read_lprop_mom(FILE* input[],const vector<string> v_path,const int i_in
     {
         int k=ilin;
         int t = k % ntypes_lep;
-        k/=ntypes;
+        k/=ntypes_lep;
         int ijack = k % njacks;
         
         int iconf=clust_size*ijack+i_in_clust;
