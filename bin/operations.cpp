@@ -408,39 +408,39 @@ void oper_t::allocate()
         }
     }
 
-    for(auto &ijack : jpr_meslep_0)
+    for(auto &iop1 : jpr_meslep_0)
     {
-        ijack.resize(njacks);
-        for(auto &mr1 : ijack)
+        iop1.resize(nbil);
+        for(auto &iop2 : iop1)
         {
-            mr1.resize(_nmr);
-            for(auto &mr2 : mr1)
+            iop2.resize(nbil);
+            for(auto &ijack : iop2)
             {
-                mr2.resize(_nmr);
-                for(auto &iop1 : mr2)
+                ijack.resize(njacks);
+                for(auto &mr1 : ijack)
                 {
-                    iop1.resize(nbil);
-                    for(auto &iop2 : iop1)
-                        iop2.resize(nbil);
+                    mr1.resize(_nmr);
+                    for(auto &mr2 : mr1)
+                        mr2.resize(_nmr);
                 }
             }
         }
     }
     
-    for(auto &ijack : jpr_meslep_em)
+    for(auto &iop1 : jpr_meslep_em)
     {
-        ijack.resize(njacks);
-        for(auto &mr1 : ijack)
+        iop1.resize(nbil);
+        for(auto &iop2 : iop1)
         {
-            mr1.resize(_nmr);
-            for(auto &mr2 : mr1)
+            iop2.resize(nbil);
+            for(auto &ijack : iop2)
             {
-                mr2.resize(_nmr);
-                for(auto &iop1 : mr2)
+                ijack.resize(njacks);
+                for(auto &mr1 : ijack)
                 {
-                    iop1.resize(nbil);
-                    for(auto &iop2 : iop1)
-                        iop2.resize(nbil);
+                    mr1.resize(_nmr);
+                    for(auto &mr2 : mr1)
+                        mr2.resize(_nmr);
                 }
             }
         }
