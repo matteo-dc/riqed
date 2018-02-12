@@ -7,24 +7,18 @@
 #include <iomanip>
 #include <vector>
 
-//void read_mom_list(const string &path);
-
 double read_plaquette(const string &path);
-
-//vvvd_t read_eff_mass(const string name);
-//
-//vvvd_t read_deltam_cr(const string name);
 
 string path_to_conf(const string &string_path, int i_conf,const string &name);
 
-vector<string> setup_read_prop(FILE* input[]);
-
-//prop_t read_prop(ifstream &input, const string &path, const int imom);
+vector<string> setup_read_qprop(FILE* input[]);
 
 size_t isc(size_t is,size_t ic);
 
-//vvvprop_t read_prop_mom(ifstream input[],const vector<string> v_path,const int i_in_clust,const int ihit,const int imom);
-vvvprop_t read_prop_mom(FILE* input[],const vector<string> v_path,const int i_in_clust,const int ihit,const int imom);
+vvvprop_t read_qprop_mom(FILE* input[],const vector<string> v_path,const int i_in_clust,const int ihit,const int imom);
+
+vvprop_t read_lprop_mom(FILE* input[],const vector<string> v_path,const int i_in_clust,const int ihit,const int imom);
+
 
 // to string with precision
 template <typename T>
@@ -45,16 +39,11 @@ void read_internal(valarray<T> &v, ifstream& infile)
     for(auto &i : v) read_internal(i,infile);
 }
 
-//void read_internal_bin(double &t,ifstream& infile);
-
 template <class T>
 void read_internal_bin(T &t,ifstream& infile)
 {
     infile.read((char*) &t,sizeof(T));
 }
-
-
-//void read_internal_bin(VectorXd &V, ifstream& infile);
 
 template <class T>
 void read_internal_bin(valarray<T> &v, ifstream& infile)

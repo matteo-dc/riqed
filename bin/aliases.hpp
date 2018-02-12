@@ -74,6 +74,10 @@ using vvvXd_t=valarray<vvXd_t>;
 using jZ_t=vvd_t;
 using jZbil_t=vvvvd_t;
 using jproj_t=vvvvd_t;
+using jmeslep_t=valarray<jvert_t>;
+using jvproj_meslep_t = valarray<vvvvvd_t>;
+using jproj_meslep_t = vvvvvd_t;
+using jZ4f_t = jproj_meslep_t;
 
 //tuple
 //using Zq_tuple=tuple<vector<jZ_t>,vector<jZ_t>,string>;
