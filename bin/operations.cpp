@@ -1030,12 +1030,12 @@ void oper_t::compute_Z4f()
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
                 for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
-                    for(int iop1=0;iop1<nbil;iop1++)      //  For the moment we neglect O5!
-                        for(int iop2=0;iop2<nbil;iop2++)  //
+                    for(int iop1=0;iop1<nbil;iop1++)
+                        for(int iop2=0;iop2<nbil;iop2++)
                         {
                             //                        jZ_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])/jG_0[ibilmom][ibil][ijack][mr_fw][mr_bw];
                             
-                            jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = - jpr_meslep_em[ibilmom][iop1][iop2][ijack][mr_bw][mr_fw]/jpr_meslep_0[ibilmom][iop1][iop2][ijack][mr_bw][mr_fw];
+                            jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = - jpr_meslep_em[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw]/jpr_meslep_0[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw];
                             
                             if(iop1==iop2)
                             {
@@ -1052,7 +1052,6 @@ void oper_t::compute_Z4f()
                                 if(iop2==nbil-1) cout<<endl;
                                 if(iop1==nbil-1 and iop2==nbil-1) cout<<endl;
                             }
-                            
                         }
         
     }// close mom loop
