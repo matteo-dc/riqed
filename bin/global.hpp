@@ -34,6 +34,8 @@ extern int ntypes;
 extern int nhits;
     // number of combos
     extern int combo;
+    // number of lepton combos
+    extern int combo_lep;
 //// number of momenta
 //extern int moms;
 // number of equivalent momenta
@@ -115,6 +117,12 @@ extern vector<bool> filt_moms;
 extern double thresh;
 // compute MesLep
 extern int compute_4f;
+// out folder for quarks
+extern string out_hadr;
+// out folder for leptons
+extern string out_lep;
+// types of lepton propagators
+extern int ntypes_lep;
 
 typedef enum {  
     LO = 0,
@@ -122,6 +130,12 @@ typedef enum {
     P = 2
 } ORDER;
 
-extern ORDER ord;
+typedef enum {
+    QCD = 0,
+    IN = 1,
+    OUT = 2,
+} IN_OR_OUT;
 
+extern ORDER ord;
+extern IN_OR_OUT in_out;
 #endif
