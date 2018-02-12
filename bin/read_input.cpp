@@ -10,7 +10,7 @@
 
 // define global variables
 int nconfs, njacks, nr, ntypes, nhits, Nf, Nc, UseSigma1, UseEffMass, nbeta, ntheta, compute_4f;
-int clust_size, nbil, combo;
+int clust_size, nbil, combo, combo_lep, ntypes_lep;
 vector<double> beta;
 vector<int> nm_Sea;
 vector<vector<int>> SeaMasses_label; // SeaMasses_label[Nbeta][NSeaMass]
@@ -19,7 +19,7 @@ vector<double> ainv;
 int conf_init, conf_step, nm, neq, neq2, nmr, delta_tmin, delta_tmax;
 double kappa, mu_sea, plaquette, LambdaQCD, p2min, thresh;
 vector<double> mass_val;
-string mom_path, action, path_ensemble, scheme, BC;
+string mom_path, action, path_ensemble, scheme, BC, out_hadr, out_lep;
 vector<string> beta_label;  // beta_label[Nbeta]
 vector<string> theta_label;  // theta_label[Ntheta]
 
@@ -68,6 +68,8 @@ TK_glb_t get_TK_glb(FILE *fin)
     if(strcasecmp(tok,p2min_tag)==0) return P2MIN_TK;
     if(strcasecmp(tok,thresh_tag)==0) return THRESH_TK;
     if(strcasecmp(tok,compute_meslep_tag)==0) return COMPUTE_MESLEP_TK;
+    if(strcasecmp(tok,out_hadr_tag)==0) return OUT_HADR_TK;
+    if(strcasecmp(tok,out_lep_tag)==0) return OUT_LEP_TK;
 
     return VALUE_GLB_TK;
 }
@@ -245,6 +247,8 @@ void read_input_glb(const char path[])
     p2min=DEFAULT_DOUBLE_VAL;
     thresh=DEFAULT_DOUBLE_VAL;
     compute_4f=DEFAULT_INT_VAL;
+    out_hadr=DEFAULT_STR_VAL;
+    out_lep=DEFAULT_STR_VAL;
     
 //    for(auto &bl : beta_label) bl=DEFAULT_STR_VAL;
 //    //        for(auto &l : L) l=DEFAULT_INT_VAL;
@@ -356,6 +360,12 @@ void read_input_glb(const char path[])
             case COMPUTE_MESLEP_TK:
                 get_value_glb(fin,compute_4f);
                 break;
+            case OUT_HADR_TK:
+                get_value_glb(fin,out_hadr);
+                break;
+            case OUT_LEP_TK:
+                get_value_glb(fin,out_lep);
+                break;
                 
             case FEOF_GLB_TK:
                 break;
@@ -388,6 +398,8 @@ void read_input_glb(const char path[])
     check_double_par(p2min,p2min_tag);
     check_double_par(thresh,thresh_tag);
     check_int_par(compute_4f,compute_meslep_tag);
+    check_str_par(out_hadr,out_hadr_tag);
+    check_str_par(out_lep,out_lep_tag);
     
     fclose(fin);
     
@@ -549,8 +561,12 @@ void read_input(const string &path_to_ens, const string &name)
         printf("%.4lf  ",mass_val[i]);
     printf("\n\n");
     
+    
+    ntypes_lep = 2;
+    
     nmr=nm*nr;
     combo=nm*nr*ntypes*nhits*nconfs;
+    combo_lep=ntypes_lep*nhits*nconfs;
     neq=fact(nm+nr-1)/fact(nr)/fact(nm-1);
     neq2=nm;
     
