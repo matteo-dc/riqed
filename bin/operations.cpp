@@ -409,11 +409,11 @@ void oper_t::allocate()
             for(auto &mr2 : mr1)
             {
                 mr2.resize(_nmr);
-                for(auto &igam : mr2)
+                for(auto &iop1 : mr2)
                 {
-                    igam.resize(16);
-                    for(auto &iproj : igam)
-                        iproj.resize(16);
+                    iop1.resize(nbil);
+                    for(auto &iop2 : igam)
+                        iop2.resize(nbil);
                 }
             }
         }
@@ -428,11 +428,11 @@ void oper_t::allocate()
             for(auto &mr2 : mr1)
             {
                 mr2.resize(_nmr);
-                for(auto &igam : mr2)
+                for(auto &iop1 : mr2)
                 {
-                    igam.resize(16);
-                    for(auto &iproj : igam)
-                        iproj.resize(16);
+                    iop1.resize(nbil);
+                    for(auto &iop2 : igam)
+                        iop2.resize(nbil);
                 }
             }
         }
