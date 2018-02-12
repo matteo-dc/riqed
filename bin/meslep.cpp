@@ -74,6 +74,8 @@ void build_meslep(const vvvprop_t &S1,const vvvprop_t &S2, const vvprop_t &L, va
                             cout<<"meslep IN "<<make_meslep(S1[ijack][EM][mr_fw],S2[ijack][LO][mr_bw],mesloop[EM][ijack][igam][iproj],igam)(0,0)<<endl;
                             cout<<"meslep OUT "<<make_meslep(S1[ijack][LO][mr_fw],S2[ijack][EM][mr_bw],mesloop[EM][ijack][igam][iproj],igam)(0,0)<<endl;
                             cout<<"a "<<GAMMA[iG[igam]]*(GAMMA[0]+g5_sign[igam]*GAMMA[5])<<endl;
+			    cout<<"GAMMA "<<igam<<endl;
+			    cout<<GAMMA[igam]<<endl;
                         }
                     }
     
