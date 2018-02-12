@@ -20,7 +20,7 @@ struct oper_t
 {
     vector<array<int,1>> linmoms;   // list of momenta used for Z, relative to glb list
     vector<array<int,3>> bilmoms;   // lists of momenta used for bilinears {k,i,j}
-    vector<array<int,3>> meslepmoms=bilmoms; // list of momenta used for meslep
+    vector<array<int,3>> meslepmoms; // list of momenta used for meslep
     
     void read_mom_list(const string &path);
     
@@ -89,7 +89,9 @@ struct oper_t
     
     void resize_output(oper_t out);
     
-    vector<string> setup_read_prop(FILE* input[]);
+    vector<string> setup_read_qprop(FILE* input[]);
+    
+    vector<string> setup_read_lprop(FILE* input_l[]);
     
     void ri_mom();
 
@@ -108,20 +110,30 @@ struct oper_t
     // definition of projected bils
     vector<jproj_t> jG_0, jG_em;
     
+    // definition of projected charged bils (for 4fermions)
+    vector<jproj_t> jG_0_4f, jG_em_4f;
+    
+    // definition of projected meslep
+    vector<jproj_meslep_t> jpr_meslep_0, jpr_meslep_em;
+    
     // compute projected bils
     void compute_bil();
+    
+    // compute meslep
+    void compute_meslep();
     
     // definition of Z
     bool Zbil_computed{false};
     vector<jZbil_t> jZ, jZ_em;
     
+    // definition of Z (4fermions)
+    vector<jZ4f_t> jZ_4f, jZ_em_4f;
+    
     // compute Zbils
     void compute_Zbil();
     
-    
-    // compute meslep
-    void compute_meslep();
-    
+    // compute Z4f
+    void compute_Z4f();
     
     
 //  // step string
