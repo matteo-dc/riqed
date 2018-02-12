@@ -11,32 +11,6 @@ prop_t make_vertex(const prop_t &prop1, const prop_t &prop2, const int mu)
     return prop1*GAMMA[mu]*GAMMA[5]*prop2.adjoint()*GAMMA[5];
 }
 
-//// compute the LO vertex
-//jvert_t build_LO_vert(vvvprop_t &S1,vvvprop_t &S2, jvert_t &jVert_0)
-//{
-//#pragma omp parallel for collapse (4)
-//    for(int ijack=0;ijack<njacks;ijack++)
-//        for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-//            for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-//                for(int igam=0;igam<16;igam++)
-//                    jVert_0[ijack][mr_fw][mr_bw][igam] += make_vertex(S1[ijack][0][mr_fw], S2[ijack][0][mr_bw],igam);
-//    
-//    return jVert_0;
-//}
-//
-//// compute the EM vertex (up to 1st order in QED)
-//jvert_t build_EM_vert(vvvprop_t &S1,vvvprop_t &S2,vvprop_t &S1_em,vvprop_t &S2_em,jvert_t &jVert_em)
-//{
-//#pragma omp parallel for collapse (4)
-//    for(int ijack=0;ijack<njacks;ijack++)
-//        for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-//            for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-//                for(int igam=0;igam<16;igam++)
-//                    jVert_em[ijack][mr_fw][mr_bw][igam] += make_vertex(S1[ijack][0][mr_fw],S2_em[ijack][mr_bw],igam) + make_vertex(S1_em[ijack][mr_fw],S2[ijack][0][mr_bw],igam) + make_vertex(S1[ijack][1][mr_fw],S1[ijack][1][mr_bw],igam) ;
-//    
-//    return jVert_em;
-//}
-
 // compute LO and EM vertices
 void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,valarray<jvert_t> &jVert_LO_EM_P, const double q1, const double q2)
 {
@@ -70,7 +44,6 @@ void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,valarray<jvert_t> &jVert
                         (q2*q2)*make_vertex(S1[ijack][0][mr_fw],-1.0*S2[ijack][4][mr_bw],igam);
                 }
     
-    // return jVert_LO_and_EM;
 }
 
 
