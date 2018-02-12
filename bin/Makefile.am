@@ -39,4 +39,5 @@ main_SOURCES  =	 main.cpp \
 		 Zbil.cpp \
 		 ave_err.cpp \
 		 subtraction.cpp \
-		 evolution.cpp 
+		 evolution.cpp \
+		 meslep.cpp
