@@ -11,5 +11,7 @@ jprop_t jackknife(jprop_t &jS);
 
 jvert_t jackknife(jvert_t &jVert);
 
+jmeslep_t jackknife(jmeslep_t &jmeslep);
+
 
 #endif
