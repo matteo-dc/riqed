@@ -39,7 +39,9 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
                 {
                     mesloop[i][ijack][igam][iproj] = (L[ijack][i]*GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*Proj[iG[iproj]]).trace()/12.0;
                     
-                    printf("igam[%d] iproj[%d] ijack[%d]  (%lf,%lf)",igam,iproj,ijack,mesloop[EM][ijack][igam][iproj].real(),mesloop[EM][ijack][igam][iproj].imag());
+		    if(i==1 and igam==0 and iproj==0) printf("ijack[%d]  L=(%lg,%lg)\n",ijack,L[ijack][i](0,0).real(),L[ijack][i](0,0).imag());
+
+                    if(i==1) printf("igam[%d] iproj[%d] ijack[%d]  (%lg,%lg) \n",igam,iproj,ijack,mesloop[EM][ijack][igam][iproj].real(),mesloop[EM][ijack][igam][iproj].imag());
                 }
     
     return mesloop;
