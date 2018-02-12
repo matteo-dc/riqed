@@ -51,8 +51,8 @@ vprop_t make_gamma()
         gam[6+j]=gam[1+j]*gam[5];
     }
     //sigma
-    size_t ind1[6]={2,3,1,4,4,4};
-    size_t ind2[6]={3,1,2,1,2,3};
+    size_t ind1[6]={4,4,4,2,3,1};
+    size_t ind2[6]={1,2,3,3,1,2};
     for(int i=0;i<6;i++)
         gam[10+i]=0.5*(gam[ind1[i]]*gam[ind2[i]]-gam[ind2[i]]*gam[ind1[i]]);
     
