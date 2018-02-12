@@ -1009,7 +1009,6 @@ void oper_t::compute_Z4f()
     vector<vector<int>> ibil_of_iop = {{1,3},{1,3},{2,4},{2,4}/*,{5,5tilde}*/};
     
     //these are the charges in the lagrangian
-    const double ql=-1.0;     //!< the program simulates muon *particle*
     const double q1=-1.0/3.0; //!< charge of the quark1
     const double q2=+2.0/3.0; //!< charge of the quark2
     
