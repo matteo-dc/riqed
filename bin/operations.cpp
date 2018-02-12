@@ -1014,20 +1014,11 @@ void oper_t::compute_meslep()
 
 void oper_t::compute_Z4f()
 {
-    vector<vector<int>> ibil_of_iop = {{1,3},{1,3},{2,4},{2,4},{5,6}};
+    vector<vector<int>> ibil_of_iop = {{0,2},{0,2},{1,3},{1,3},{4,5}};
     
     //these are the charges in the lagrangian
     const double q1=-1.0/3.0; //!< charge of the quark1
     const double q2=+2.0/3.0; //!< charge of the quark2
-    
-    cout<<"jG_em_4f: "<<jG_em_4f.size()<<" "<<jG_em_4f[0].size()<<" "<<jG_em_4f[0][0].size()<<" "<<jG_em_4f[0][0][0].size()<<" "<<jG_em_4f[0][0][0][0].size()<<endl;
-    cout<<"jG_0_4f: "<<jG_0_4f.size()<<" "<<jG_0_4f[0].size()<<" "<<jG_0_4f[0][0].size()<<" "<<jG_0_4f[0][0][0].size()<<" "<<jG_0_4f[0][0][0][0].size()<<endl;
-    
-    cout<<"jZ_em_4f: "<<jZ_em_4f.size()<<" "<<jZ_em_4f[0].size()<<" "<<jZ_em_4f[0][0].size()<<" "<<jZ_em_4f[0][0][0].size()<<" "<<jZ_em_4f[0][0][0][0].size()<<" "<<jZ_em_4f[0][0][0][0][0].size()<<endl;
-    
-    cout<<"jprmeslep_0: "<<jpr_meslep_0.size()<<" "<<jpr_meslep_0[0].size()<<" "<<jpr_meslep_0[0][0].size()<<" "<<jpr_meslep_0[0][0][0].size()<<" "<<jpr_meslep_0[0][0][0][0].size()<<" "<<jpr_meslep_0[0][0][0][0][0].size()<<" "<<endl;
-    
-    cout<<"jprmeslep_em: "<<jpr_meslep_em.size()<<" "<<jpr_meslep_em[0].size()<<" "<<jpr_meslep_em[0][0].size()<<" "<<jpr_meslep_em[0][0][0].size()<<" "<<jpr_meslep_em[0][0][0][0].size()<<" "<<jpr_meslep_em[0][0][0][0][0].size()<<" "<<endl;
     
     for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
     {
