@@ -66,8 +66,8 @@ vprop_t make_gamma_4f()
     vprop_t gam=make_gamma();
     vprop_t gam_4f(NGamma+4);
     
-    for(i=0;i<16;i++) gam_4f[i]=gam[i];
-    for(i=16;i<20;i++) gam_4f[i]=gam[i-6]*gam[5];
+    for(int i=0;i<16;i++) gam_4f[i]=gam[i];
+    for(int i=16;i<20;i++) gam_4f[i]=gam[i-6]*gam[5];
     
     return gam_4f;
 }
