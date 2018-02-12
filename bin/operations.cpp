@@ -372,7 +372,7 @@ void oper_t::allocate()
 
     for(auto &ibil : jG_0_4f)
     {
-        ibil.resize(nbil);
+        ibil.resize(nbil+1);
         for(auto &ijack : ibil)
         {
             ijack.resize(njacks);
@@ -387,7 +387,7 @@ void oper_t::allocate()
     
     for(auto &ibil : jG_em_4f)
     {
-        ibil.resize(nbil);
+        ibil.resize(nbil+1);
         for(auto &ijack : ibil)
         {
             ijack.resize(njacks);
@@ -695,7 +695,7 @@ void oper_t::compute_bil()
                 
                 ta=high_resolution_clock::now();
 
-                build_vert(S1,S2,jVert_LO_EM_P,1.0,1.0);
+                build_vert(S1,S2,jVert_LO_EM_P);
                 
                 tb=high_resolution_clock::now();
                 t_span3 += (duration_cast<duration<double>>(tb-ta)).count();
@@ -779,7 +779,7 @@ void oper_t::compute_bil()
         cout<<"- Computing bilinears"<<endl;
         
         // compute the projected green function (S,V,P,A,T)
-        vvvvvd_t jG_LO_and_EM = compute_pr_bil(jS1_inv_LO_and_EM,jVert_LO_and_EM,jS2_inv_LO_and_EM,1.0,1.0);
+        vvvvvd_t jG_LO_and_EM = compute_pr_bil(jS1_inv_LO_and_EM,jVert_LO_and_EM,jS2_inv_LO_and_EM);
         
         jG_0[ibilmom] = jG_LO_and_EM[LO];
         jG_em[ibilmom] = jG_LO_and_EM[EM];
@@ -897,7 +897,7 @@ void oper_t::compute_meslep()
                 
                 ta=high_resolution_clock::now();
                 
-                build_vert(S1,S2,jVert_LO_EM_P,q1,q2);
+                build_vert_4f(S1,S2,jVert_LO_EM_P,q1,q2);
                 
                 tb=high_resolution_clock::now();
                 t_span3 += (duration_cast<duration<double>>(tb-ta)).count();
@@ -979,7 +979,7 @@ void oper_t::compute_meslep()
         cout<<"- Computing bilinears"<<endl;
         
         // compute the projected green function (S,V,P,A,T)
-        vvvvvd_t jG_LO_and_EM = compute_pr_bil(jS1_inv_LO_and_EM,jVert_LO_and_EM,jS2_inv_LO_and_EM,q1,q2);
+        vvvvvd_t jG_LO_and_EM = compute_pr_bil_4f(jS1_inv_LO_and_EM,jVert_LO_and_EM,jS2_inv_LO_and_EM,q1,q2);
         
         jG_0_4f[ibilmom] = jG_LO_and_EM[LO];
         jG_em_4f[ibilmom] = jG_LO_and_EM[EM];
