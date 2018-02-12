@@ -67,12 +67,14 @@ void build_meslep(const vvvprop_t &S1,const vvvprop_t &S2, const vvprop_t &L, va
                         
                         if(mr_bw==0 and mr_fw==0)
                         {
-                            cout<<"ijack "<<ijack<<" mr1 "<<mr_fw<<" mr2 "<<mr_bw<<" gam "<<igam<<" iproj "<<iproj<<endl;
+                            cout<<"----------------------------"<<endl;
+                            cout<<" gam "<<igam<<" iproj "<<iproj<<" ijack "<<ijack<<" mr1 "<<mr_fw<<" mr2 "<<mr_bw<<endl;
+                            cout<<"----------------------------"<<endl;
                             cout<<"S1 "<<S1[ijack][LO][mr_fw](0,0)<<" S1em "<<S1[ijack][EM][mr_fw](0,0)<<endl;
                             cout<<"S2 "<<S2[ijack][LO][mr_bw](0,0)<<" S2em "<<S2[ijack][EM][mr_bw](0,0)<<endl;
                             cout<<"meslep IN "<<make_meslep(S1[ijack][EM][mr_fw],S2[ijack][LO][mr_bw],mesloop[EM][ijack][igam][iproj],igam)(0,0)<<endl;
                             cout<<"meslep OUT "<<make_meslep(S1[ijack][LO][mr_fw],S2[ijack][EM][mr_bw],mesloop[EM][ijack][igam][iproj],igam)(0,0)<<endl;
-			}
+                        }
                     }
     
 
@@ -90,6 +92,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
     
     double Q[3]={1.0,ql*q1,ql*q2}; // charge factors: QCD,IN,OUT
     
+    cout<<"---------  projected meslep 16x16 (QCD,IN,OUT)  ----------"<<endl;
 #pragma omp parallel for collapse(5)
     for(int ijack=0;ijack<njacks;ijack++)
         for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -97,15 +100,19 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
                 for(int igam=0;igam<16;igam++)
                     for(int iproj=0;iproj<16;iproj++)
                         for(int k=0; k<3; k++)
-                     {
-                         jLambda_QCD_IN_OUT[k][ijack][mr_fw][mr_bw][igam][iproj] = Q[k]*jprop1_inv[LO][ijack][mr_fw]*jmeslep[k][ijack][mr_fw][mr_bw][igam][iproj]*GAMMA[5]*jprop2_inv[LO][ijack][mr_bw].adjoint()*GAMMA[5];
-                      
-                         jG_g[k][igam][iproj][ijack][mr_fw][mr_bw] = (jLambda_QCD_IN_OUT[k][ijack][mr_fw][mr_bw][igam][iproj]*(GAMMA[0]+g5_sign[iproj]*GAMMA[5]).adjoint()*Proj[iG[iproj]]).trace().real()/12.0/2.0;
-                         // the factor 2.0 is to normalize the projector with (1+-g5)
-                         
-			 if(mr_fw==0 and mr_bw==0)  printf("igam[%d] iproj[%d] ijack[%d] mr1[%d] mr2[%d]  jpr_meslep%d: %lg\n",igam,iproj,ijack,mr_fw,mr_bw,k,jG_g[k][igam][iproj][ijack][mr_bw][mr_fw]/Q[k]);
-                     }
+                        {
+                            jLambda_QCD_IN_OUT[k][ijack][mr_fw][mr_bw][igam][iproj] = Q[k]*jprop1_inv[LO][ijack][mr_fw]*jmeslep[k][ijack][mr_fw][mr_bw][igam][iproj]*GAMMA[5]*jprop2_inv[LO][ijack][mr_bw].adjoint()*GAMMA[5];
+                            
+                            jG_g[k][igam][iproj][ijack][mr_fw][mr_bw] = (jLambda_QCD_IN_OUT[k][ijack][mr_fw][mr_bw][igam][iproj]*(GAMMA[0]+g5_sign[iproj]*GAMMA[5]).adjoint()*Proj[iG[iproj]]).trace().real()/12.0/2.0;
+                            // the factor 2.0 is to normalize the projector with (1+-g5)
+                            
+                            if(mr_fw==0 and mr_bw==0)
+                            {
+                                printf("igam[%d-%d] ijack[%d] jpr_meslep%d: %lg\n",igam,iproj,ijack,k,jG_g[k][igam][iproj][ijack][mr_bw][mr_fw]/Q[k]);
+                            }
+                        }
     
+    cout<<"---------  projected meslep 5x5 (QCD,IN,OUT)  ----------"<<endl;
 #pragma omp parallel for collapse(5)
     for(int ijack=0;ijack<njacks;ijack++)
         for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -123,7 +130,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
                                     jG_op[k][iop1][iop2][ijack][mr_fw][mr_bw] += jG_g[k][ig][ip][ijack][mr_fw][mr_bw];
                                 }
 
-			    if(mr_fw==0 and mr_bw==0) printf("iop[%d-%d] ijack[%d] jpr_meslep%d_5x5: %lg\n",iop1,iop2,ijack,k,jG_op[k][iop1][iop2][ijack][0][0]);
+                            if(mr_fw==0 and mr_bw==0) printf("iop[%d-%d] ijack[%d] jpr_meslep%d_5x5: %lg\n",iop1,iop2,ijack,k,jG_op[k][iop1][iop2][ijack][0][0]);
                         }
     
     return jG_op;
