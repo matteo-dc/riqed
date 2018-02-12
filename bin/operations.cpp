@@ -412,7 +412,7 @@ void oper_t::allocate()
                 for(auto &iop1 : mr2)
                 {
                     iop1.resize(nbil);
-                    for(auto &iop2 : igam)
+                    for(auto &iop2 : iop1)
                         iop2.resize(nbil);
                 }
             }
@@ -431,7 +431,7 @@ void oper_t::allocate()
                 for(auto &iop1 : mr2)
                 {
                     iop1.resize(nbil);
-                    for(auto &iop2 : igam)
+                    for(auto &iop2 : iop1)
                         iop2.resize(nbil);
                 }
             }
