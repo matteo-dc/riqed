@@ -39,9 +39,9 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
                 {
                     mesloop[i][ijack][igam][iproj] = (L[ijack][i]*GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*Proj[iG[iproj]]).trace()/12.0;
                     
-                    if(i==1 and igam==0 and iproj==0) printf("ijack[%d]  L=(%lg,%lg)\n",ijack,L[ijack][i](0,0).real(),L[ijack][i](0,0).imag());
+//                    if(i==1 and igam==0 and iproj==0) printf("ijack[%d]  L=(%lg,%lg)\n",ijack,L[ijack][i](0,0).real(),L[ijack][i](0,0).imag());
                     
-                    if(i==1) printf("igam[%d] iproj[%d] ijack[%d]  (%lg,%lg) \n",igam,iproj,ijack,mesloop[EM][ijack][igam][iproj].real(),mesloop[EM][ijack][igam][iproj].imag());
+//                    if(i==1) printf("igam[%d] iproj[%d] ijack[%d]  (%lg,%lg) \n",igam,iproj,ijack,mesloop[EM][ijack][igam][iproj].real(),mesloop[EM][ijack][igam][iproj].imag());
                 }
     
     return mesloop;
@@ -65,16 +65,17 @@ void build_meslep(const vvvprop_t &S1,const vvvprop_t &S2, const vvprop_t &L, va
                         jmeslep[IN][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(S1[ijack][EM][mr_fw],S2[ijack][LO][mr_bw],mesloop[EM][ijack][igam][iproj],igam);
                         
                         jmeslep[OUT][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(S1[ijack][LO][mr_fw],S2[ijack][EM][mr_bw],mesloop[EM][ijack][igam][iproj],igam);
-                    
-			if(mr_bw==0 and mr_fw==0)
-			  {			
-			    cout<<"ijack "<<ijack<<" mr1 "<<mr_fw<<" mr2 "<<mr_bw<<" gam "<<igam<<" iproj "<<iproj<<endl;
-			    cout<<"S1 "<<S1[ijack][LO][mr_fw](0,0)<<" S1em "<<S1[ijack][EM][mr_fw](0,0)<<endl;
-			    cout<<"S2 "<<S2[ijack][LO][mr_bw](0,0)<<" S2em "<<S2[ijack][EM][mr_bw](0,0)<<endl;
-			    cout<<"meslep IN "<<make_meslep(S1[ijack][EM][mr_fw],S2[ijack][LO][mr_bw],mesloop[EM][ijack][igam][iproj],igam)(0,0)<<endl;
-			    cout<<"meslep OUT "<<make_meslep(S1[ijack][LO][mr_fw],S2[ijack][EM][mr_bw],mesloop[EM][ijack][igam][iproj],igam)(0,0)<<endl;
-			  }
-		    }
+                        
+                        if(mr_bw==0 and mr_fw==0)
+                        {
+                            cout<<"ijack "<<ijack<<" mr1 "<<mr_fw<<" mr2 "<<mr_bw<<" gam "<<igam<<" iproj "<<iproj<<endl;
+                            cout<<"S1 "<<S1[ijack][LO][mr_fw](0,0)<<" S1em "<<S1[ijack][EM][mr_fw](0,0)<<endl;
+                            cout<<"S2 "<<S2[ijack][LO][mr_bw](0,0)<<" S2em "<<S2[ijack][EM][mr_bw](0,0)<<endl;
+                            cout<<"meslep IN "<<make_meslep(S1[ijack][EM][mr_fw],S2[ijack][LO][mr_bw],mesloop[EM][ijack][igam][iproj],igam)(0,0)<<endl;
+                            cout<<"meslep OUT "<<make_meslep(S1[ijack][LO][mr_fw],S2[ijack][EM][mr_bw],mesloop[EM][ijack][igam][iproj],igam)(0,0)<<endl;
+                            cout<<"a "<<GAMMA[iG[igam]]*(GAMMA[0]+g5_sign[igam]*GAMMA[5])<<endl;
+                        }
+                    }
     
 
     
