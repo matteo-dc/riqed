@@ -100,7 +100,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
                      {
                          jLambda_QCD_IN_OUT[k][ijack][mr_fw][mr_bw][igam][iproj] = Q[k]*jprop1_inv[LO][ijack][mr_fw]*jmeslep[k][ijack][mr_fw][mr_bw][igam][iproj]*GAMMA[5]*jprop2_inv[LO][ijack][mr_bw].adjoint()*GAMMA[5];
                       
-                         jG_g[k][igam][iproj][ijack][mr_bw][mr_fw] = (jLambda_QCD_IN_OUT[k][ijack][mr_fw][mr_bw][igam][iproj]*(GAMMA[0]+g5_sign[iproj]*GAMMA[5]).adjoint()*Proj[iG[iproj]]).trace().real()/12.0/2.0;
+                         jG_g[k][igam][iproj][ijack][mr_fw][mr_bw] = (jLambda_QCD_IN_OUT[k][ijack][mr_fw][mr_bw][igam][iproj]*(GAMMA[0]+g5_sign[iproj]*GAMMA[5]).adjoint()*Proj[iG[iproj]]).trace().real()/12.0/2.0;
                          // the factor 2.0 is to normalize the projector with (1+-g5)
                          
 			 if(mr_fw==0 and mr_bw==0)  printf("igam[%d] iproj[%d] ijack[%d] mr1[%d] mr2[%d]  jpr_meslep%d: %lg\n",igam,iproj,ijack,mr_fw,mr_bw,k,jG_g[k][igam][iproj][ijack][mr_bw][mr_fw]/Q[k]);
@@ -120,7 +120,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
                             for(auto &ig : igam)
                                 for(auto &ip : iproj)
                                 {
-                                    jG_op[k][iop1][iop2][ijack][mr_bw][mr_fw] += jG_g[k][ig][ip][ijack][mr_bw][mr_fw];
+                                    jG_op[k][iop1][iop2][ijack][mr_fw][mr_bw] += jG_g[k][ig][ip][ijack][mr_fw][mr_bw];
                                 }
 
 			    if(mr_fw==0 and mr_bw==0) printf("iop[%d-%d] ijack[%d] jpr_meslep%d_5x5: %lg\n",iop1,iop2,ijack,k,jG_op[k][iop1][iop2][ijack][0][0]);
