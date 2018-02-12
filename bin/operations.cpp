@@ -1036,6 +1036,15 @@ void oper_t::compute_Z4f()
                                 
                                 jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] += - (jG_em_4f[ibilmom][ibil1][ijack][mr_fw][mr_bw] + jG_em_4f[ibilmom][ibil2][ijack][mr_fw][mr_bw])/(jG_0_4f[ibilmom][ibil1][ijack][mr_fw][mr_bw] + jG_0_4f[ibilmom][ibil2][ijack][mr_fw][mr_bw]) + 0.5*(q1*q1*jZq_em[imom1][ijack][mr_fw]/jZq[imom1][ijack][mr_fw] + q2*q2*jZq_em[imom2][ijack][mr_bw]/jZq[imom2][ijack][mr_bw]);
                             }
+                            
+                            if(mr_bw==0 and mr_fw==0)
+                            {
+                                if(iop1==0 and iop2==0) cout<<"ibilmom "<<ibilmom<<" ijack "<<ijack<<endl;
+                                cout<<jZ_em_4f[ibilmom][iop1][iop2][ijack][0][0]<<" ";
+                                if(iop2==nbil-1) cout<<endl;
+                                if(iop1==nbil-1 and iop2==nbil-1) cout<<endl;
+                            }
+                            
                         }
         
     }// close mom loop
