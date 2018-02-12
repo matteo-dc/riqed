@@ -1006,7 +1006,7 @@ void oper_t::compute_meslep()
 
 void oper_t::compute_Z4f()
 {
-    vector<vector<int>> ibil_of_iop = {{1,3},{1,3},{2,4},{2,4}/*,{5,5tilde}*/};
+    vector<vector<int>> ibil_of_iop = {{1,3},{1,3},{2,4},{2,4},{5,6}};
     
     //these are the charges in the lagrangian
     const double q1=-1.0/3.0; //!< charge of the quark1
@@ -1022,8 +1022,8 @@ void oper_t::compute_Z4f()
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
                 for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
-                    for(int iop1=0;iop1<nbil-1;iop1++)      //  For the moment we neglect O5!
-                        for(int iop2=0;iop2<nbil-1;iop2++)  //
+                    for(int iop1=0;iop1<nbil;iop1++)      //  For the moment we neglect O5!
+                        for(int iop2=0;iop2<nbil;iop2++)  //
                         {
                             //                        jZ_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])/jG_0[ibilmom][ibil][ijack][mr_fw][mr_bw];
                             
