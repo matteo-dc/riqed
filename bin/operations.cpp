@@ -219,7 +219,11 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     ifstream jZq_em_data(path_print+"jZq_em");
     ifstream jG_0_data(path_print+"jG_0");
     ifstream jG_em_data(path_print+"jG_em");
-    if(jZq_data.good() and jZq_em_data.good() and jG_0_data.good() and jG_em_data.good())
+    ifstream jG_0_4f_data(path_print+"jG_0_4f");
+    ifstream jG_em_4f_data(path_print+"jG_em_4f");
+    ifstream jpr_meslep_0_data(path_print+"jpr_meslep_0");
+    ifstream jpr_meslep_em_data(path_print+"jpr_meslep_em");
+    if(jZq_data.good() and jZq_em_data.good() and jG_0_data.good() and jG_em_data.good() and jG_0_4f_data.good() and jG_em_4f_data.good() and jpr_meslep_0_data.good() and jpr_meslep_em_data.good())
     {
         cout<<"Reading data from files"<<endl<<endl;
 
@@ -229,6 +233,10 @@ void oper_t::create_basic(const int b, const int th, const int msea)
         read_vec_bin(jZq_em,path_print+"jZq_em");
         read_vec_bin(jG_0,path_print+"jG_0");
         read_vec_bin(jG_em,path_print+"jG_em");
+        read_vec_bin(jG_0_4f,path_print+"jG_0_4f");
+        read_vec_bin(jG_em_4f,path_print+"jG_em_4f");
+        read_vec_bin(jpr_meslep_0,path_print+"jpr_meslep_0");
+        read_vec_bin(jpr_meslep_em,path_print+"jpr_meslep_em");
 
 //        READ_BIN(jZq);
 //        READ_BIN(jZq_em);
