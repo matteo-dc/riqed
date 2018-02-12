@@ -25,6 +25,7 @@
 #include "fit.hpp"
 
 ORDER ord;
+IN_OR_OUT in_out;
 
 //// mom lists
 //vector<coords_t> mom_list;
