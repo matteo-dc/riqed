@@ -102,7 +102,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
                     {
                         if(mr_fw==0 and mr_bw==0)
                         {
-                            printf("igam[%d-%d] ijack[%d] - jpr_meslep: ",igam,iproj,ijack);
+                            printf("igam[%d-%d] ijack[%d] - jpr_meslep:  ",igam,iproj,ijack);
                         }
                         
                         for(int k=0; k<3; k++)
@@ -114,7 +114,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
                             
                             if(mr_fw==0 and mr_bw==0)
                             {
-                                printf(" %lg \t",jG_g[k][igam][iproj][ijack][mr_bw][mr_fw]/Q[k]);
+                                printf("  %lg  ",jG_g[k][igam][iproj][ijack][mr_bw][mr_fw]/Q[k]);
                             }
                         }
                         if(mr_fw==0 and mr_bw==0) printf("\n");
@@ -130,7 +130,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
                     {
                         if(mr_fw==0 and mr_bw==0)
                         {
-                            printf("iop[%d-%d] ijack[%d] - jpr_meslep_5x5: \n",iop1,iop2,ijack);
+                            printf("iop[%d-%d] ijack[%d] - jpr_meslep_5x5:  ",iop1,iop2,ijack);
                         }
                         
                         for(int k=0; k<3; k++)
@@ -146,7 +146,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
 
                             if(mr_fw==0 and mr_bw==0)
                             {
-                                printf("\t %lg ",jG_op[k][iop1][iop2][ijack][0][0]/Q[k]);
+                                printf("  %lg  ",jG_op[k][iop1][iop2][ijack][0][0]/Q[k]);
                             }
                         }
                         if(mr_fw==0 and mr_bw==0) printf("\n");
