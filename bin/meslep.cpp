@@ -26,12 +26,9 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
         for(int igam=0;igam<16;igam++)
             for(int iproj=0;iproj<16;iproj++)
             {
-                // In the LO mesloop the external leptonic propagator is fully amputated 
+                // In the LO mesloop the external leptonic propagator is fully amputated
                 mesloop[LO][ijack][igam][iproj] = (GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*Proj[iG[iproj]]).trace()/12.0;
                 mesloop[EM][ijack][igam][iproj] = (L[ijack][EM]*GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*Proj[iG[iproj]]).trace()/12.0;
-                
-                //                    if(i==1 and igam==0 and iproj==0) printf("ijack[%d]  L=(%lg,%lg)\n",ijack,L[ijack][i](0,0).real(),L[ijack][i](0,0).imag());
-                //                    if(i==1) printf("igam[%d] iproj[%d] ijack[%d]  (%lg,%lg) \n",igam,iproj,ijack,mesloop[EM][ijack][igam][iproj].real(),mesloop[EM][ijack][igam][iproj].imag());
             }
     
     return mesloop;
@@ -72,6 +69,9 @@ void build_meslep(const vvvprop_t &S1,const vvvprop_t &S2, const vvprop_t &L, va
                             cout<<"----------------------------"<<endl;
                             cout<<"S1 "<<S1[ijack][LO][mr_fw](0,0)<<" S1em "<<S1[ijack][EM][mr_fw](0,0)<<endl;
                             cout<<"S2 "<<S2[ijack][LO][mr_bw](0,0)<<" S2em "<<S2[ijack][EM][mr_bw](0,0)<<endl;
+                            cout<<"mesloop QCD "<<mesloop[LO][ijack][igam][iproj]<<endl;
+                            cout<<"mesloop EM "<<mesloop[EM][ijack][igam][iproj]<<endl;
+                            cout<<"meslep QCD "<<make_meslep(S1[ijack][LO][mr_fw],S2[ijack][LO][mr_bw],mesloop[LO][ijack][igam][iproj],igam)(0,0)<<endl;
                             cout<<"meslep IN "<<make_meslep(S1[ijack][EM][mr_fw],S2[ijack][LO][mr_bw],mesloop[EM][ijack][igam][iproj],igam)(0,0)<<endl;
                             cout<<"meslep OUT "<<make_meslep(S1[ijack][LO][mr_fw],S2[ijack][EM][mr_bw],mesloop[EM][ijack][igam][iproj],igam)(0,0)<<endl;
                         }
