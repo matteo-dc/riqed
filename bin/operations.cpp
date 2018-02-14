@@ -1065,9 +1065,8 @@ void oper_t::compute_Z4f()
                     int ibil2=ibil_of_iop[iop1][1];
                     
                     if(iop1==0 and iop2==0) cout<<"----- check -----"<<endl;
-                    
-                    cout<<"jG_0_4f "<<0.5*(jG_0_4f[ibilmom][ibil1][ijack][0][0]+jG_0_4f[ibilmom][ibil2][ijack][0][0])<<"  jpr_meslep_0 "<<jpr_meslep_0[ibilmom][iop1][iop2][ijack][0][0]<<endl;
-                    cout<<endl;
+                    cout<<iop1<<"-"<<iop2<<" ";
+                    cout<<" jG_0_4f "<<0.5*(jG_0_4f[ibilmom][ibil1][ijack][0][0]+jG_0_4f[ibilmom][ibil2][ijack][0][0])<<"  jpr_meslep_0 "<<jpr_meslep_0[ibilmom][iop1][iop2][ijack][0][0]<<endl;
                 }
         
     }// close mom loop
