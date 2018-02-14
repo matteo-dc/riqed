@@ -1033,24 +1033,30 @@ void oper_t::compute_Z4f()
                     for(int iop1=0;iop1<nbil;iop1++)
                         for(int iop2=0;iop2<nbil;iop2++)
                         {
-                            //                        jZ_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])/jG_0[ibilmom][ibil][ijack][mr_fw][mr_bw];
+                            int ibil1=ibil_of_iop[iop1][0];
+                            int ibil2=ibil_of_iop[iop1][1];
+                            
+                            jZ_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])/jG_0_4f[ibilmom][ibil1][ijack][mr_fw][mr_bw];
                             
                             jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = - jpr_meslep_em[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw]/jpr_meslep_0[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw];
                             
                             if(iop1==iop2)
                             {
-                                int ibil1=ibil_of_iop[iop1][0];
-                                int ibil2=ibil_of_iop[iop1][1];
-                                
                                 jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] += - (jG_em_4f[ibilmom][ibil1][ijack][mr_fw][mr_bw] + jG_em_4f[ibilmom][ibil2][ijack][mr_fw][mr_bw])/(jG_0_4f[ibilmom][ibil1][ijack][mr_fw][mr_bw] + jG_0_4f[ibilmom][ibil2][ijack][mr_fw][mr_bw]) + 0.5*(q1*q1*jZq_em[imom1][ijack][mr_fw]/jZq[imom1][ijack][mr_fw] + q2*q2*jZq_em[imom2][ijack][mr_bw]/jZq[imom2][ijack][mr_bw]);
                             }
                             
                             if(mr_bw==0 and mr_fw==0)
                             {
                                 if(iop1==0 and iop2==0) cout<<"ibilmom "<<ibilmom<<" ijack "<<ijack<<endl;
+                                if(iop1==0 and iop2==0) cout<<"----- check -----"<<endl;
+                                
+                                cout<<"jG_0_4f "<<jG_0_4f[ibilmom][ibil1][ijack][0][0]+jG_0_4f[ibilmom][ibil2][ijack][0][0]<<"  jpr_meslep_0 "<<jpr_meslep_0[ibilmom][iop1][iop2][0][mr_fw][0]<<endl;
+                                cout<<endl;
                                 cout<<jZ_em_4f[ibilmom][iop1][iop2][ijack][0][0]<<" \t";
                                 if(iop2==nbil-1) cout<<endl;
                                 if(iop1==nbil-1 and iop2==nbil-1) cout<<endl;
+                                
+                                
                             }
                         }
         
@@ -1736,6 +1742,8 @@ oper_t oper_t::average_equiv_moms()
                         (out.jZ)[tag][ibil][ijack][mr1][mr2]=0.0;
                         (out.jZ_em)[tag][ibil][ijack][mr1][mr2]=0.0;
                     }
+    
+    
     
     // average over the equivalent momenta
     for(int tag=0;tag<neq_lin_moms;tag++)
