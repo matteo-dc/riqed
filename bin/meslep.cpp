@@ -15,16 +15,6 @@ namespace meslep
 }
 
 
-//build_meslep()
-
-prop_t make_meslep(const prop_t &prop1, const prop_t &prop2, const dcompl &lloop, const int igam)
-{
-    using namespace meslep;
-    
-    return prop1*GAMMA[iG[igam]]*(GAMMA[0]+g5_sign[igam]*GAMMA[5])*GAMMA[5]*prop2.adjoint()*GAMMA[5]*lloop;
-}
-
-
 vvvvdcompl_t build_mesloop(const vvprop_t &L)
 {
     vvvvdcompl_t mesloop(vvvdcompl_t(vvdcompl_t(vdcompl_t(0.0,16),16),njacks),2); // nGamma*nProj=16*16=256 for LO and EM
@@ -39,12 +29,21 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
                 {
                     mesloop[i][ijack][igam][iproj] = (L[ijack][i]*GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*Proj[iG[iproj]]).trace()/12.0;
                     
-//                    if(i==1 and igam==0 and iproj==0) printf("ijack[%d]  L=(%lg,%lg)\n",ijack,L[ijack][i](0,0).real(),L[ijack][i](0,0).imag());
-//                    if(i==1) printf("igam[%d] iproj[%d] ijack[%d]  (%lg,%lg) \n",igam,iproj,ijack,mesloop[EM][ijack][igam][iproj].real(),mesloop[EM][ijack][igam][iproj].imag());
+                    //                    if(i==1 and igam==0 and iproj==0) printf("ijack[%d]  L=(%lg,%lg)\n",ijack,L[ijack][i](0,0).real(),L[ijack][i](0,0).imag());
+                    //                    if(i==1) printf("igam[%d] iproj[%d] ijack[%d]  (%lg,%lg) \n",igam,iproj,ijack,mesloop[EM][ijack][igam][iproj].real(),mesloop[EM][ijack][igam][iproj].imag());
                 }
     
     return mesloop;
 }
+
+
+prop_t make_meslep(const prop_t &prop1, const prop_t &prop2, const dcompl &lloop, const int igam)
+{
+    using namespace meslep;
+    
+    return prop1*GAMMA[iG[igam]]*(GAMMA[0]+g5_sign[igam]*GAMMA[5])*GAMMA[5]*prop2.adjoint()*GAMMA[5]*lloop;
+}
+
 
 void build_meslep(const vvvprop_t &S1,const vvvprop_t &S2, const vvprop_t &L, valarray<jmeslep_t> &jmeslep)
 {
