@@ -25,13 +25,14 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
     for(int ijack=0;ijack<njacks;ijack++)
         for(int igam=0;igam<16;igam++)
             for(int iproj=0;iproj<16;iproj++)
-                for(int i=0; i<2; i++) // i: LO/EM
-                {
-                    mesloop[i][ijack][igam][iproj] = (L[ijack][i]*GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*Proj[iG[iproj]]).trace()/12.0;
-                    
-                    //                    if(i==1 and igam==0 and iproj==0) printf("ijack[%d]  L=(%lg,%lg)\n",ijack,L[ijack][i](0,0).real(),L[ijack][i](0,0).imag());
-                    //                    if(i==1) printf("igam[%d] iproj[%d] ijack[%d]  (%lg,%lg) \n",igam,iproj,ijack,mesloop[EM][ijack][igam][iproj].real(),mesloop[EM][ijack][igam][iproj].imag());
-                }
+            {
+                // In the LO mesloop the external leptonic propagator is fully amputated 
+                mesloop[LO][ijack][igam][iproj] = (GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*Proj[iG[iproj]]).trace()/12.0;
+                mesloop[EM][ijack][igam][iproj] = (L[ijack][EM]*GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*Proj[iG[iproj]]).trace()/12.0;
+                
+                //                    if(i==1 and igam==0 and iproj==0) printf("ijack[%d]  L=(%lg,%lg)\n",ijack,L[ijack][i](0,0).real(),L[ijack][i](0,0).imag());
+                //                    if(i==1) printf("igam[%d] iproj[%d] ijack[%d]  (%lg,%lg) \n",igam,iproj,ijack,mesloop[EM][ijack][igam][iproj].real(),mesloop[EM][ijack][igam][iproj].imag());
+            }
     
     return mesloop;
 }
