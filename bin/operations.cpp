@@ -1048,17 +1048,27 @@ void oper_t::compute_Z4f()
                             if(mr_bw==0 and mr_fw==0)
                             {
                                 if(iop1==0 and iop2==0) cout<<"ibilmom "<<ibilmom<<" ijack "<<ijack<<endl;
-                                if(iop1==0 and iop2==0) cout<<"----- check -----"<<endl;
                                 
-                                cout<<"jG_0_4f "<<jG_0_4f[ibilmom][ibil1][ijack][0][0]+jG_0_4f[ibilmom][ibil2][ijack][0][0]<<"  jpr_meslep_0 "<<jpr_meslep_0[ibilmom][iop1][iop2][0][mr_fw][0]<<endl;
-                                cout<<endl;
                                 cout<<jZ_em_4f[ibilmom][iop1][iop2][ijack][0][0]<<" \t";
                                 if(iop2==nbil-1) cout<<endl;
                                 if(iop1==nbil-1 and iop2==nbil-1) cout<<endl;
                                 
-                                
                             }
                         }
+#pragma omp parallel for collapse(3)
+        for(int iop1=0;iop1<nbil;iop1++)
+            for(int iop2=0;iop2<nbil;iop2++)
+                for(int ijack=0;ijack<njacks;ijack++)
+                    
+                {
+                    int ibil1=ibil_of_iop[iop1][0];
+                    int ibil2=ibil_of_iop[iop1][1];
+                    
+                    if(iop1==0 and iop2==0) cout<<"----- check -----"<<endl;
+                    
+                    cout<<"jG_0_4f "<<0.5*(jG_0_4f[ibilmom][ibil1][ijack][0][0]+jG_0_4f[ibilmom][ibil2][ijack][0][0])<<"  jpr_meslep_0 "<<jpr_meslep_0[ibilmom][iop1][iop2][ijack][0][0]<<endl;
+                    cout<<endl;
+                }
         
     }// close mom loop
 
