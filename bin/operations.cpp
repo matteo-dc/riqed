@@ -868,8 +868,8 @@ void oper_t::compute_meslep()
         jprop_t jS2_em(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
         
         // definition of jackknifed vertices
-        valarray<jvert_t> jVert_LO_EM_P(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),20),_nmr),_nmr),njacks),4);  // size=4 > {LO,self+tadpole,P(fw),P(bw)}
-        valarray<jvert_t> jVert_LO_and_EM(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),20),_nmr),_nmr),njacks),2);
+        valarray<jvert_t> jVert_LO_EM_P_4f(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),20),_nmr),_nmr),njacks),4);  // size=4 > {LO,self+tadpole,P(fw),P(bw)}
+        valarray<jvert_t> jVert_LO_and_EM_4f(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),20),_nmr),_nmr),njacks),2);
         
         // definition of jackknifed meslep ("in" & "out" diagrams)
         valarray<jmeslep_t> jmeslep_QCD_IN_OUT(jmeslep_t(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),16),_nmr),_nmr),njacks),3);
@@ -905,7 +905,7 @@ void oper_t::compute_meslep()
                 
                 ta=high_resolution_clock::now();
                 
-                build_vert_4f(S1,S2,jVert_LO_EM_P,q1,q2);
+                build_vert_4f(S1,S2,jVert_LO_EM_P_4f,q1,q2);
                 
                 tb=high_resolution_clock::now();
                 t_span3 += (duration_cast<duration<double>>(tb-ta)).count();
@@ -935,10 +935,10 @@ void oper_t::compute_meslep()
         jS2_self_tad=(read2)?jackknife(jS2_self_tad):jS1_self_tad;
         jS2_P=(read2)?jackknife(jS2_P):jS1_P;
         
-        jVert_LO_EM_P[LO]=jackknife(jVert_LO_EM_P[LO]);
-        jVert_LO_EM_P[EM]=jackknife(jVert_LO_EM_P[EM]);
-        jVert_LO_EM_P[2]=jackknife(jVert_LO_EM_P[2]); // fw
-        jVert_LO_EM_P[3]=jackknife(jVert_LO_EM_P[3]); // bw
+        jVert_LO_EM_P_4f[LO]=jackknife(jVert_LO_EM_P_4f[LO]);
+        jVert_LO_EM_P_4f[EM]=jackknife(jVert_LO_EM_P_4f[EM]);
+        jVert_LO_EM_P_4f[2]=jackknife(jVert_LO_EM_P_4f[2]); // fw
+        jVert_LO_EM_P_4f[3]=jackknife(jVert_LO_EM_P_4f[3]); // bw
         
         jmeslep_QCD_IN_OUT[QCD]=jackknife(jmeslep_QCD_IN_OUT[QCD]);
         jmeslep_QCD_IN_OUT[IN]=jackknife(jmeslep_QCD_IN_OUT[IN]);
@@ -968,9 +968,9 @@ void oper_t::compute_meslep()
                         int r_bw = mr_bw%nr;
                         int m_bw = (mr_bw-r_bw)/nr;
                         
-                        jVert_LO_and_EM[LO][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P[LO][ijack][mr_fw][mr_bw][igam];
+                        jVert_LO_and_EM_4f[LO][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P_4f[LO][ijack][mr_fw][mr_bw][igam];
                         
-                        jVert_LO_and_EM[EM][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P[EM][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_fw][m_fw]*jVert_LO_EM_P[2][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_bw][m_bw]*jVert_LO_EM_P[3][ijack][mr_fw][mr_bw][igam];
+                        jVert_LO_and_EM_4f[EM][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P_4f[EM][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_fw][m_fw]*jVert_LO_EM_P_4f[2][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_bw][m_bw]*jVert_LO_EM_P_4f[3][ijack][mr_fw][mr_bw][igam];
                     }
 
         cout<<"- Inverting propagators"<<endl;
@@ -986,11 +986,11 @@ void oper_t::compute_meslep()
         
         cout<<"- Computing bilinears"<<endl;
         
-        // compute the projected green function (S,V,P,A,T)
-        vvvvvd_t jG_LO_and_EM = compute_pr_bil_4f(jS1_inv_LO_and_EM,jVert_LO_and_EM,jS2_inv_LO_and_EM,q1,q2);
+        // compute the projected green function (S,V,P,A,T,Ttilde)
+        vvvvvd_t jG_LO_and_EM_4f = compute_pr_bil_4f(jS1_inv_LO_and_EM,jVert_LO_and_EM_4f,jS2_inv_LO_and_EM,q1,q2);
         
-        jG_0_4f[ibilmom] = jG_LO_and_EM[LO];
-        jG_em_4f[ibilmom] = jG_LO_and_EM[EM];
+        jG_0_4f[ibilmom] = jG_LO_and_EM_4f[LO];
+        jG_em_4f[ibilmom] = jG_LO_and_EM_4f[EM];
         
         cout<<"- Computing projected meslep"<<endl;
         
