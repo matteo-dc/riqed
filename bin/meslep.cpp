@@ -27,8 +27,13 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
             for(int iproj=0;iproj<16;iproj++)
             {
                 // In the LO mesloop the external leptonic propagator is fully amputated
-                mesloop[LO][ijack][igam][iproj] = (GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*Proj[iG[iproj]]).trace()/12.0;
-                mesloop[EM][ijack][igam][iproj] = (L[ijack][EM]*GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*Proj[iG[iproj]]).trace()/12.0;
+//                mesloop[LO][ijack][igam][iproj] = (GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*Proj[iG[iproj]]).trace()/12.0;
+//                mesloop[EM][ijack][igam][iproj] = (L[ijack][EM]*GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*Proj[iG[iproj]]).trace()/12.0;
+                
+                // TEST
+                mesloop[LO][ijack][igam][iproj] = (GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*GAMMA[iG[iproj]].adjoint()).trace()/12.0;
+                mesloop[EM][ijack][igam][iproj] = (L[ijack][EM]*GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*GAMMA[iG[iproj]].adjoint()).trace()/12.0;
+
             }
     
     return mesloop;
