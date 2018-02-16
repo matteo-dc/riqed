@@ -27,8 +27,8 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
             for(int iproj=0;iproj<16;iproj++)
             {
                 // In the LO mesloop the external leptonic propagator is fully amputated
-                mesloop[LO][ijack][igam][iproj] = (GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*Proj[iG[iproj]]).trace()/12.0;
-                mesloop[EM][ijack][igam][iproj] = (L[ijack][EM]*GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*Proj[iG[iproj]]).trace()/12.0;
+                mesloop[LO][ijack][igam][iproj] = (GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*GAMMA[iG[iproj]].adjoint()).trace()/12.0;
+                mesloop[EM][ijack][igam][iproj] = (L[ijack][EM]*GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*GAMMA[iG[iproj]].adjoint()).trace()/12.0;
             }
     
     return mesloop;
@@ -109,7 +109,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
                         {
                             jLambda_QCD_IN_OUT[k][ijack][mr_fw][mr_bw][igam][iproj] = Q[k]*jprop1_inv[LO][ijack][mr_fw]*jmeslep[k][ijack][mr_fw][mr_bw][igam][iproj]*GAMMA[5]*jprop2_inv[LO][ijack][mr_bw].adjoint()*GAMMA[5];
                             
-                            jG_g[k][igam][iproj][ijack][mr_fw][mr_bw] = (jLambda_QCD_IN_OUT[k][ijack][mr_fw][mr_bw][igam][iproj]*(GAMMA[0]+g5_sign[iproj]*GAMMA[5]).adjoint()*Proj[iG[iproj]]).trace().real()/12.0/2.0;
+                            jG_g[k][igam][iproj][ijack][mr_fw][mr_bw] = (jLambda_QCD_IN_OUT[k][ijack][mr_fw][mr_bw][igam][iproj]*(GAMMA[iG[iproj]]*(GAMMA[0]+g5_sign[iproj]*GAMMA[5])).adjoint()).trace().real()/12.0/2.0;
                             // the factor 2.0 is to normalize the projector with (1+-g5)
                             
                             if(mr_fw==0 and mr_bw==0)
@@ -141,7 +141,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
                             for(auto &ig : igam)
                                 for(auto &ip : iproj)
                                 {
-                                    jG_op[k][iop1][iop2][ijack][mr_fw][mr_bw] += jG_g[k][ig][ip][ijack][mr_fw][mr_bw];
+                                    jG_op[k][iop1][iop2][ijack][mr_fw][mr_bw] += jG_g[k][ig][ip][ijack][mr_fw][mr_bw]/iproj.size();
                                 }
 
                             if(mr_fw==0 and mr_bw==0)
