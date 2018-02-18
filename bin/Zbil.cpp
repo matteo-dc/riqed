@@ -51,7 +51,7 @@ vvvvvd_t compute_pr_bil_4f( vvvprop_t &jprop1_inv,  valarray<jvert_t> &jVert,  v
     // add electric charge of the quarks when one amputates with the EM corrected propagators
     const double Q[4]={1.0,1.0,q1*q1,q2*q2};
     
-    valarray<jvert_t> jLambda(vvvvprop_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),20),nmr),nmr),njacks),4);
+    valarray<jvert_t> jLambda(vvvvprop_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),22),nmr),nmr),njacks),4);
     
     valarray<jproj_t> jG(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nbil+1),4);
     valarray<jproj_t> jG_LO_and_EM(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nbil+1),2);
