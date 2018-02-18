@@ -96,7 +96,7 @@ vprop_t create_projectors_4f()
     vector<double> NL={1.0,4.0,4.0,4.0,4.0,1.0,4.0,4.0,4.0,4.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0}; // normalize sum over Lorentz indices
     
     for(int igam=0;igam<22;igam++)
-        P[igam]=GAMMA[igam].adjoint()/NL[igam];
+        P[igam]=GAMMA_4f[igam].adjoint()/NL[igam];
     
     return P;
 }
