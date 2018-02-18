@@ -92,7 +92,7 @@ vprop_t create_projectors()
 
 vprop_t create_projectors_4f()
 {
-    vprop_t P(prop_t::Zero(),20);
+    vprop_t P(prop_t::Zero(),22);
     vector<double> NL={1.0,4.0,4.0,4.0,4.0,1.0,4.0,4.0,4.0,4.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0}; // normalize sum over Lorentz indices
     
     for(int igam=0;igam<22;igam++)
