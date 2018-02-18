@@ -59,7 +59,7 @@ void build_vert_4f(const vvvprop_t &S1,const vvvprop_t &S2,valarray<jvert_t> &jV
     for(int ijack=0;ijack<njacks;ijack++)
         for(int mr_fw=0;mr_fw<nmr;mr_fw++)
             for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-                for(int igam=0;igam<20;igam++)
+                for(int igam=0;igam<22;igam++)
                 {
                     int r_fw = mr_fw % nr;
                     int r_bw = mr_bw % nr;

@@ -62,12 +62,13 @@ vprop_t make_gamma()
 vprop_t make_gamma_4f()
 {
     int NGamma=16;
+    int NGamma4f=16+6;
     
     vprop_t gam=make_gamma();
-    vprop_t gam_4f(NGamma+4);
+    vprop_t gam_4f(NGamma4f);
     
-    for(int i=0;i<16;i++) gam_4f[i]=gam[i];
-    for(int i=16;i<20;i++) gam_4f[i]=gam[i-6]*gam[5];
+    for(int i=0;i<NGamma;i++) gam_4f[i]=gam[i];
+    for(int i=NGamma;i<NGamma4f;i++) gam_4f[i]=gam[i-6]*gam[5];
     
     return gam_4f;
 }
@@ -94,7 +95,7 @@ vprop_t create_projectors_4f()
     vprop_t P(prop_t::Zero(),20);
     vector<double> NL={1.0,4.0,4.0,4.0,4.0,1.0,4.0,4.0,4.0,4.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0}; // normalize sum over Lorentz indices
     
-    for(int igam=0;igam<20;igam++)
+    for(int igam=0;igam<22;igam++)
         P[igam]=GAMMA[igam].adjoint()/NL[igam];
     
     return P;

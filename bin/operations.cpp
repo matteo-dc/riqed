@@ -867,9 +867,9 @@ void oper_t::compute_meslep()
         jprop_t jS2_P(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
         jprop_t jS2_em(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
         
-        // definition of jackknifed vertices
-        valarray<jvert_t> jVert_LO_EM_P_4f(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),20),_nmr),_nmr),njacks),4);  // size=4 > {LO,self+tadpole,P(fw),P(bw)}
-        valarray<jvert_t> jVert_LO_and_EM_4f(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),20),_nmr),_nmr),njacks),2);
+        // definition of jackknifed vertices (22=16+6)
+        valarray<jvert_t> jVert_LO_EM_P_4f(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),22),_nmr),_nmr),njacks),4);  // size=4 > {LO,self+tadpole,P(fw),P(bw)}
+        valarray<jvert_t> jVert_LO_and_EM_4f(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),22),_nmr),_nmr),njacks),2);
         
         // definition of jackknifed meslep ("in" & "out" diagrams)
         valarray<jmeslep_t> jmeslep_QCD_IN_OUT(jmeslep_t(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),16),_nmr),_nmr),njacks),3);
@@ -961,7 +961,7 @@ void oper_t::compute_meslep()
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mr_fw=0;mr_fw<nmr;mr_fw++)
                 for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-                    for(int igam=0;igam<20;igam++)
+                    for(int igam=0;igam<22;igam++)
                     {
                         int r_fw = mr_fw%nr;
                         int m_fw = (mr_fw-r_fw)/nr;
