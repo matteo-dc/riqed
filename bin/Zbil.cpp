@@ -69,8 +69,10 @@ vvvvvd_t compute_pr_bil_4f( vvvprop_t &jprop1_inv,  valarray<jvert_t> &jVert,  v
                         if(igam>0 and igam<5)    jG[k][1][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*Proj_4f[igam]).trace().real()/12.0;
                         if(igam==5)              jG[k][2][ijack][mr_fw][mr_bw] =(jLambda[k][ijack][mr_fw][mr_bw][5]*Proj_4f[5]).trace().real()/12.0;
                         if(igam>5 and igam<10)   jG[k][3][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*Proj_4f[igam]).trace().real()/12.0;
-                        if(igam>=10 and igam<16) jG[k][4][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*Proj_4f[igam]).trace().real()/12.0;
-                        if(igam>=16 and igam<22) jG[k][5][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*Proj_4f[igam]).trace().real()/12.0;
+//                        if(igam>=10 and igam<16) jG[k][4][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*Proj_4f[igam]).trace().real()/12.0;
+//                        if(igam>=16 and igam<22) jG[k][5][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*Proj_4f[igam]).trace().real()/12.0;
+                        if(igam>=10 and igam<13)
+                            jG[k][4][ijack][mr_fw][mr_bw]+=((jLambda[k][ijack][mr_fw][mr_bw][igam]+jLambda[k][ijack][mr_fw][mr_bw][igam+6])*(Proj_4f[igam]+Proj_4f[igam+6])).trace().real()/12.0;
 
                     }
     
