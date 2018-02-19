@@ -1026,7 +1026,7 @@ void oper_t::compute_Z4f()
         const int imom2=bilmoms[ibilmom][2]; // p2
         
         //compute Z's according to 'riqed.pdf', one for each momentum
-#pragma omp parallel for collapse(4)
+#pragma omp parallel for collapse(5)
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
                 for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
