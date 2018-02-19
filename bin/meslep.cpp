@@ -13,7 +13,7 @@ namespace meslep
 //    const vector<vector<size_t>> iG_of_iop = {{0,1,2,3},{4,5,6,7},{8},{9},{10,11,12}};
     const vector<vector<size_t>> iG_of_iop = {{0,1,2,3},{4,5,6,7},{8},{9},{10,11,12,13,14,15}};
     
-    const vector<int> norm = {4,4,1,1,12};
+    const vector<int> norm_factor = {4,4,1,1,12};
     
 }
 
@@ -148,7 +148,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
                             for(auto &ig : igam)
                                 for(auto &ip : iproj)
                                 {
-                                    jG_op[k][iop1][iop2][ijack][mr_fw][mr_bw] += jG_g[k][ig][ip][ijack][mr_fw][mr_bw]/norm[iop2];
+                                    jG_op[k][iop1][iop2][ijack][mr_fw][mr_bw] += jG_g[k][ig][ip][ijack][mr_fw][mr_bw]/norm_factor[iop2];
                                 }
 
                             if(mr_fw==0 and mr_bw==0)
