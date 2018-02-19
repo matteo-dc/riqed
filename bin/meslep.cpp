@@ -7,12 +7,11 @@
 namespace meslep
 {
     const vector<size_t>         iG            ={1,2,3,4,1,2,3,4,0,0,10,11,12,13,14,15};
-    const vector<int>            g5_sign       ={ -1,-1,-1,-1,  +1,+1,+1,+1,  -1,  +1 , +1,+1,+1,+1,+1,+1};
-//    const vector<vector<size_t>> iG_of_iop     ={{ 1, 2, 3, 4},{ 1, 2, 3, 4},{ 0},{ 0},{10,11,12,13,14,15}};
-//    const vector<int>            g5_sign_of_iop={-1,            +1,           -1,  +1 , +1};
-    const vector<vector<size_t>> iG_of_iop = {{0,1,2,3},{4,5,6,7},{8},{9},{10,11,12}};
-  //    const vector<vector<size_t>> iG_of_iop = {{0,1,2,3},{4,5,6,7},{8},{9},{10,11,12,13,14,15}};
-  //  const vector<vector<size_t>> iG_of_iop = {{0,1,2,3},{4,5,6,7},{8},{9},{13,14,15}};
+    const vector<int>            g5_sign       ={ -1,-1,-1,-1,  +1,+1,+1,+1,  -1,  +1,  +1,+1,+1,+1,+1,+1};
+    const vector<int>            g5L_sign      ={ -1,-1,-1,-1,  -1,-1,-1,-1,  +1,  +1,  -1,-1,-1,-1,-1,-1};
+
+//    const vector<vector<size_t>> iG_of_iop = {{0,1,2,3},{4,5,6,7},{8},{9},{10,11,12}};
+    const vector<vector<size_t>> iG_of_iop = {{0,1,2,3},{4,5,6,7},{8},{9},{10,11,12,13,14,15}};
     
 }
 
@@ -28,9 +27,13 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
         for(int igam=0;igam<16;igam++)
             for(int iproj=0;iproj<16;iproj++)
             {
+                prop_t op=GAMMA[iG[igam]]*(GAMMA[0]+g5L_sign[igam]*GAMMA[5]);
+                prop_t pr=(GAMMA[iG[iproj]]*(GAMMA[0]+g5L_sign[iproj]*GAMMA[5])).adjoint()/2.0;
+                prop_t pF=GAMMA[5]*L[ijack][EM].adjoint()*GAMMA[5];
+                
                 // In the LO mesloop the external leptonic propagator is fully amputated
-                mesloop[LO][ijack][igam][iproj] = (GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*GAMMA[iG[iproj]].adjoint()).trace()/12.0;
-                mesloop[EM][ijack][igam][iproj] = (L[ijack][EM]*GAMMA[iG[igam]]*(GAMMA[0]-GAMMA[5])*GAMMA[iG[iproj]].adjoint()).trace()/12.0;
+                mesloop[LO][ijack][igam][iproj] = (op*pr).trace()/12.0;
+                mesloop[EM][ijack][igam][iproj] = (op*pF*pr).trace()/12.0;
             }
     
     return mesloop;
