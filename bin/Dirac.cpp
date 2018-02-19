@@ -33,7 +33,7 @@ vprop_t make_gamma()
     col[4]={2,3,0,1};
     real_part[4]={-1,-1,-1,-1};
     im_part[4]={0,0,0,0};
-    //gamma5
+    //gamma5 = gamma4*gamma1*gamma2*gamma3
     col[5]={0,1,2,3};
     real_part[5]={1,1,-1,-1};
     im_part[5]={0,0,0,0};
