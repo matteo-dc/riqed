@@ -2,21 +2,7 @@
 #include "aliases.hpp"
 #include "Dirac.hpp"
 #include <iostream>
-
-
-namespace meslep
-{
-    const vector<size_t>         iG            ={1,2,3,4,1,2,3,4,0,0,10,11,12,13,14,15};
-    const vector<int>            g5_sign       ={ -1,-1,-1,-1,  +1,+1,+1,+1,  -1,  +1,  +1,+1,+1,+1,+1,+1};
-    const vector<int>            g5L_sign      ={ -1,-1,-1,-1,  -1,-1,-1,-1,  +1,  +1,  +1,+1,+1,+1,+1,+1};
-
-//    const vector<vector<size_t>> iG_of_iop = {{0,1,2,3},{4,5,6,7},{8},{9},{10,11,12}};
-    const vector<vector<size_t>> iG_of_iop = {{0,1,2,3},{4,5,6,7},{8},{9},{10,11,12,13,14,15}};
-    
-    const vector<int> norm_factor = {4,4,1,1,12};
-    
-}
-
+#include "meslep.hpp"
 
 vvvvdcompl_t build_mesloop(const vvprop_t &L)
 {
