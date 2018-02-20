@@ -25,7 +25,7 @@
 #include "fit.hpp"
 
 ORDER ord;
-IN_OR_OUT in_out;
+MESLEP_TYPES meslep_t;
 
 //// mom lists
 //vector<coords_t> mom_list;

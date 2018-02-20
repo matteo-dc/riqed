@@ -134,8 +134,11 @@ typedef enum {
     QCD = 0,
     IN = 1,
     OUT = 2,
-} IN_OR_OUT;
+    M11 = 3,
+    M12 = 4,
+    M22 = 5
+} MESLEP_TYPES;
 
 extern ORDER ord;
-extern IN_OR_OUT in_out;
+extern MESLEP_TYPES meslep_t;
 #endif
