@@ -903,12 +903,12 @@ void oper_t::compute_meslep()
                 tb=high_resolution_clock::now();
                 t_span2 += (duration_cast<duration<double>>(tb-ta)).count();
                 
-                ta=high_resolution_clock::now();
-                
-                build_vert_4f(S1,S2,jVert_LO_EM_P_4f,q1,q2);
-                
-                tb=high_resolution_clock::now();
-                t_span3 += (duration_cast<duration<double>>(tb-ta)).count();
+//                ta=high_resolution_clock::now();
+//                
+//                build_vert_4f(S1,S2,jVert_LO_EM_P_4f,q1,q2);
+//                
+//                tb=high_resolution_clock::now();
+//                t_span3 += (duration_cast<duration<double>>(tb-ta)).count();
                 
                 ta=high_resolution_clock::now();
                 
