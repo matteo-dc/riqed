@@ -224,7 +224,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     ifstream jpr_meslep_0_data(path_print+"jpr_meslep_0");
     ifstream jpr_meslep_em_data(path_print+"jpr_meslep_em");
     ifstream jpr_meslep_nasty_data(path_print+"jpr_meslep_nasty");
-    if(jZq_data.good() and jZq_em_data.good() and jG_0_data.good() and jG_em_data.good() and jG_0_4f_data.good() and jG_em_4f_data.good() and jpr_meslep_0_data.good() and jpr_meslep_em_data.good()) and jpr_meslep_nasty_data.good())
+    if(jZq_data.good() and jZq_em_data.good() and jG_0_data.good() and jG_em_data.good() and jG_0_4f_data.good() and jG_em_4f_data.good() and jpr_meslep_0_data.good() and jpr_meslep_em_data.good() and jpr_meslep_nasty_data.good())
     {
         cout<<"Reading data from files"<<endl<<endl;
 
