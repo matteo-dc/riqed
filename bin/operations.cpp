@@ -264,7 +264,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     }
     
     compute_Zbil();
-    if(compute_4f) compute_Z4f();
+//    if(compute_4f) compute_Z4f();
     
 }
 
@@ -935,10 +935,10 @@ void oper_t::compute_meslep()
         jS2_self_tad=(read2)?jackknife(jS2_self_tad):jS1_self_tad;
         jS2_P=(read2)?jackknife(jS2_P):jS1_P;
         
-        jVert_LO_EM_P_4f[LO]=jackknife(jVert_LO_EM_P_4f[LO]);
-        jVert_LO_EM_P_4f[EM]=jackknife(jVert_LO_EM_P_4f[EM]);
-        jVert_LO_EM_P_4f[2]=jackknife(jVert_LO_EM_P_4f[2]); // fw
-        jVert_LO_EM_P_4f[3]=jackknife(jVert_LO_EM_P_4f[3]); // bw
+//        jVert_LO_EM_P_4f[LO]=jackknife(jVert_LO_EM_P_4f[LO]);
+//        jVert_LO_EM_P_4f[EM]=jackknife(jVert_LO_EM_P_4f[EM]);
+//        jVert_LO_EM_P_4f[2]=jackknife(jVert_LO_EM_P_4f[2]); // fw
+//        jVert_LO_EM_P_4f[3]=jackknife(jVert_LO_EM_P_4f[3]); // bw
         
         jmeslep_QCD_IN_OUT[QCD]=jackknife(jmeslep_QCD_IN_OUT[QCD]);
         jmeslep_QCD_IN_OUT[IN]=jackknife(jmeslep_QCD_IN_OUT[IN]);
@@ -957,21 +957,21 @@ void oper_t::compute_meslep()
                     (read2)?jS2_em[ijack][mr]=jS2_self_tad[ijack][mr] + deltam_cr[ijack][m][m]*jS2_P[ijack][mr]:jS2_em[ijack][mr]=jS1_em[ijack][mr];
                 }
         
-#pragma omp parallel for collapse (4)
-        for(int ijack=0;ijack<njacks;ijack++)
-            for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-                for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-                    for(int igam=0;igam<22;igam++)
-                    {
-                        int r_fw = mr_fw%nr;
-                        int m_fw = (mr_fw-r_fw)/nr;
-                        int r_bw = mr_bw%nr;
-                        int m_bw = (mr_bw-r_bw)/nr;
-                        
-                        jVert_LO_and_EM_4f[LO][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P_4f[LO][ijack][mr_fw][mr_bw][igam];
-                        
-                        jVert_LO_and_EM_4f[EM][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P_4f[EM][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_fw][m_fw]*jVert_LO_EM_P_4f[2][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_bw][m_bw]*jVert_LO_EM_P_4f[3][ijack][mr_fw][mr_bw][igam];
-                    }
+//#pragma omp parallel for collapse (4)
+//        for(int ijack=0;ijack<njacks;ijack++)
+//            for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+//                for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+//                    for(int igam=0;igam<22;igam++)
+//                    {
+//                        int r_fw = mr_fw%nr;
+//                        int m_fw = (mr_fw-r_fw)/nr;
+//                        int r_bw = mr_bw%nr;
+//                        int m_bw = (mr_bw-r_bw)/nr;
+//                        
+//                        jVert_LO_and_EM_4f[LO][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P_4f[LO][ijack][mr_fw][mr_bw][igam];
+//                        
+//                        jVert_LO_and_EM_4f[EM][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P_4f[EM][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_fw][m_fw]*jVert_LO_EM_P_4f[2][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_bw][m_bw]*jVert_LO_EM_P_4f[3][ijack][mr_fw][mr_bw][igam];
+//                    }
 
         cout<<"- Inverting propagators"<<endl;
         
@@ -984,13 +984,13 @@ void oper_t::compute_meslep()
         jS2_inv_LO_and_EM[LO] = (read2)?invert_jprop(jS2_0):jS1_inv_LO_and_EM[LO];
         jS2_inv_LO_and_EM[EM] = (read2)?jS2_inv_LO_and_EM[LO]*jS2_em*jS2_inv_LO_and_EM[LO]:jS1_inv_LO_and_EM[EM];
         
-        cout<<"- Computing bilinears"<<endl;
-        
-        // compute the projected green function (S,V,P,A,T,Ttilde)
-        vvvvvd_t jG_LO_and_EM_4f = compute_pr_bil_4f(jS1_inv_LO_and_EM,jVert_LO_and_EM_4f,jS2_inv_LO_and_EM,q1,q2);
-        
-        jG_0_4f[ibilmom] = jG_LO_and_EM_4f[LO];
-        jG_em_4f[ibilmom] = jG_LO_and_EM_4f[EM];
+//        cout<<"- Computing bilinears"<<endl;
+//        
+//        // compute the projected green function (S,V,P,A,T,Ttilde)
+//        vvvvvd_t jG_LO_and_EM_4f = compute_pr_bil_4f(jS1_inv_LO_and_EM,jVert_LO_and_EM_4f,jS2_inv_LO_and_EM,q1,q2);
+//        
+//        jG_0_4f[ibilmom] = jG_LO_and_EM_4f[LO];
+//        jG_em_4f[ibilmom] = jG_LO_and_EM_4f[EM];
         
         cout<<"- Computing projected meslep"<<endl;
         
@@ -1012,67 +1012,67 @@ void oper_t::compute_meslep()
     print_vec_bin(jpr_meslep_em,path_print+"jpr_meslep_em");
 }
 
-void oper_t::compute_Z4f()
-{
-    vector<vector<int>> ibil_of_iop = {{0,2},{0,2},{1,3},{1,3},{4,5}};
-    
-    //these are the charges in the lagrangian
-    const double q1=-1.0/3.0; //!< charge of the quark1
-    const double q2=+2.0/3.0; //!< charge of the quark2
-    
-    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
-    {
-        const int imom1=bilmoms[ibilmom][1]; // p1
-        const int imom2=bilmoms[ibilmom][2]; // p2
-        
-        //compute Z's according to 'riqed.pdf', one for each momentum
-#pragma omp parallel for collapse(5)
-        for(int ijack=0;ijack<njacks;ijack++)
-            for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
-                for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
-                    for(int iop1=0;iop1<nbil;iop1++)
-                        for(int iop2=0;iop2<nbil;iop2++)
-                        {
-                            int ibil1=ibil_of_iop[iop1][0];
-                            int ibil2=ibil_of_iop[iop1][1];
-                            
-                            jZ_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])/jG_0_4f[ibilmom][ibil1][ijack][mr_fw][mr_bw];
-                            
-                            jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = - jpr_meslep_em[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw]/jpr_meslep_0[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw];
-                            
-                            if(iop1==iop2)
-                            {
-                                jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] += - (jG_em_4f[ibilmom][ibil1][ijack][mr_fw][mr_bw] + jG_em_4f[ibilmom][ibil2][ijack][mr_fw][mr_bw])/(jG_0_4f[ibilmom][ibil1][ijack][mr_fw][mr_bw] + jG_0_4f[ibilmom][ibil2][ijack][mr_fw][mr_bw]) + 0.5*(q1*q1*jZq_em[imom1][ijack][mr_fw]/jZq[imom1][ijack][mr_fw] + q2*q2*jZq_em[imom2][ijack][mr_bw]/jZq[imom2][ijack][mr_bw]);
-                            }
-                            
-                            if(mr_bw==0 and mr_fw==0)
-                            {
-                                if(iop1==0 and iop2==0) cout<<"ibilmom "<<ibilmom<<" ijack "<<ijack<<endl;
-                                
-                                cout<<jZ_em_4f[ibilmom][iop1][iop2][ijack][0][0]<<" \t";
-                                if(iop2==nbil-1) cout<<endl;
-                                if(iop1==nbil-1 and iop2==nbil-1) cout<<endl;
-                                
-                            }
-                        }
-#pragma omp parallel for collapse(3)
-        for(int iop1=0;iop1<nbil;iop1++)
-            for(int iop2=0;iop2<nbil;iop2++)
-                for(int ijack=0;ijack<njacks;ijack++)
-                    
-                {
-                    int ibil1=ibil_of_iop[iop1][0];
-                    int ibil2=ibil_of_iop[iop1][1];
-                    
-                    if(iop1==0 and iop2==0) cout<<"----- check -----"<<endl;
-                    cout<<iop1<<"-"<<iop2<<" ";
-                    cout<<" jG_0_4f "<<"0.5*("<<jG_0_4f[ibilmom][ibil1][ijack][0][0]<<"+"<<jG_0_4f[ibilmom][ibil2][ijack][0][0]<<")"<<"  jpr_meslep_0 "<<jpr_meslep_0[ibilmom][iop1][iop2][ijack][0][0]<<endl;
-                }
-        
-    }// close mom loop
-
-}
-
+//void oper_t::compute_Z4f()
+//{
+//    vector<vector<int>> ibil_of_iop = {{0,2},{0,2},{1,3},{1,3},{4,5}};
+//    
+//    //these are the charges in the lagrangian
+//    const double q1=-1.0/3.0; //!< charge of the quark1
+//    const double q2=+2.0/3.0; //!< charge of the quark2
+//    
+//    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
+//    {
+//        const int imom1=bilmoms[ibilmom][1]; // p1
+//        const int imom2=bilmoms[ibilmom][2]; // p2
+//        
+//        //compute Z's according to 'riqed.pdf', one for each momentum
+//#pragma omp parallel for collapse(5)
+//        for(int ijack=0;ijack<njacks;ijack++)
+//            for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
+//                for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
+//                    for(int iop1=0;iop1<nbil;iop1++)
+//                        for(int iop2=0;iop2<nbil;iop2++)
+//                        {
+//                            int ibil1=ibil_of_iop[iop1][0];
+//                            int ibil2=ibil_of_iop[iop1][1];
+//                            
+//                            jZ_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])/jG_0_4f[ibilmom][ibil1][ijack][mr_fw][mr_bw];
+//                            
+//                            jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = - jpr_meslep_em[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw]/jpr_meslep_0[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw];
+//                            
+//                            if(iop1==iop2)
+//                            {
+//                                jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] += - (jG_em_4f[ibilmom][ibil1][ijack][mr_fw][mr_bw] + jG_em_4f[ibilmom][ibil2][ijack][mr_fw][mr_bw])/(jG_0_4f[ibilmom][ibil1][ijack][mr_fw][mr_bw] + jG_0_4f[ibilmom][ibil2][ijack][mr_fw][mr_bw]) + 0.5*(q1*q1*jZq_em[imom1][ijack][mr_fw]/jZq[imom1][ijack][mr_fw] + q2*q2*jZq_em[imom2][ijack][mr_bw]/jZq[imom2][ijack][mr_bw]);
+//                            }
+//                            
+//                            if(mr_bw==0 and mr_fw==0)
+//                            {
+//                                if(iop1==0 and iop2==0) cout<<"ibilmom "<<ibilmom<<" ijack "<<ijack<<endl;
+//                                
+//                                cout<<jZ_em_4f[ibilmom][iop1][iop2][ijack][0][0]<<" \t";
+//                                if(iop2==nbil-1) cout<<endl;
+//                                if(iop1==nbil-1 and iop2==nbil-1) cout<<endl;
+//                                
+//                            }
+//                        }
+//#pragma omp parallel for collapse(3)
+//        for(int iop1=0;iop1<nbil;iop1++)
+//            for(int iop2=0;iop2<nbil;iop2++)
+//                for(int ijack=0;ijack<njacks;ijack++)
+//                    
+//                {
+//                    int ibil1=ibil_of_iop[iop1][0];
+//                    int ibil2=ibil_of_iop[iop1][1];
+//                    
+//                    if(iop1==0 and iop2==0) cout<<"----- check -----"<<endl;
+//                    cout<<iop1<<"-"<<iop2<<" ";
+//                    cout<<" jG_0_4f "<<"0.5*("<<jG_0_4f[ibilmom][ibil1][ijack][0][0]<<"+"<<jG_0_4f[ibilmom][ibil2][ijack][0][0]<<")"<<"  jpr_meslep_0 "<<jpr_meslep_0[ibilmom][iop1][iop2][ijack][0][0]<<endl;
+//                }
+//        
+//    }// close mom loop
+//
+//}
+//
 
 
 
@@ -1751,8 +1751,18 @@ oper_t oper_t::average_equiv_moms()
                         (out.jZ)[tag][ibil][ijack][mr1][mr2]=0.0;
                         (out.jZ_em)[tag][ibil][ijack][mr1][mr2]=0.0;
                     }
-    
-    
+#pragma omp parallel for collapse(6)
+    for(int tag=0;tag<neq_bil_moms;tag++)
+        for(int iop1=0;iop1<5;iop1++)
+            for(int iop2=0;iop2<5;iop2++)
+                for(int ijack=0;ijack<njacks;ijack++)
+                    for(int mr1=0; mr1<_nmr; mr1++)
+                        for(int mr2=0; mr2<_nmr; mr2++)
+                        {
+                            (out.jpr_meslep_0)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
+                            (out.jpr_meslep_em)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
+                        }
+
     
     // average over the equivalent momenta
     for(int tag=0;tag<neq_lin_moms;tag++)
@@ -1781,6 +1791,22 @@ oper_t oper_t::average_equiv_moms()
                                 (out.jZ)[tag][ibil][ijack][mr1][mr2]+=jZ[imom][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
                                 (out.jZ_em)[tag][ibil][ijack][mr1][mr2]+=jZ_em[imom][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
                             }
+            }
+        }
+    for(int tag=0;tag<neq_bil_moms;tag++)
+        for(int imom=0;imom<_bilmoms;imom++)
+        {
+            if(tag_bil_vector[imom]==tag)
+            {
+                for(int iop1=0;iop1<5;iop1++)
+                    for(int iop2=0;iop2<5;iop2++)
+                        for(int ijack=0;ijack<njacks;ijack++)
+                            for(int mr1=0; mr1<_nmr; mr1++)
+                                for(int mr2=0; mr2<_nmr; mr2++)
+                                {
+                                    (out.jpr_meslep_0)[tag][iop1][iop2][ijack][mr1][mr2]+=jpr_meslep_0[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
+                                    (out.jpr_meslep_em)[tag][iop1][iop2][ijack][mr1][mr2]+=jpr_meslep_em[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
+                                }
             }
         }
     
@@ -1996,6 +2022,9 @@ void oper_t::plot(const string suffix)
     
     Zbil_tup Zbil_ave_err = ave_err(in.jZ);
     Zbil_tup Zbil_em_ave_err = ave_err(in.jZ_em);
+    
+    Zmeslep_tup meslep_ave_err = ave_err(in.jpr_meslep_0);
+    Zmeslep_tup meslep_em_ave_err = ave_err(in.jpr_meslep_em);
    
     vvd_t Zq_ave = get<0>(Zq_ave_err);        //[imom][mr]
     vvd_t Zq_em_ave = get<0>(Zq_em_ave_err);
@@ -2009,10 +2038,17 @@ void oper_t::plot(const string suffix)
     vvvvd_t Z_err = get<1>(Zbil_ave_err);    //[imom][ibil][mr1][mr2]
     vvvvd_t Z_em_err = get<1>(Zbil_em_ave_err);
     
+    vvvvvd_t meslep_ave=get<0>(meslep_ave_err);  //[imom][iop1][iop2][mr1][mr2];
+    vvvvvd_t meslep_em_ave=get<0>(meslep_em_ave_err);
+    
+    vvvvvd_t meslep_err=get<1>(meslep_ave_err);  //[imom][iop1][iop2][mr1][mr2];
+    vvvvvd_t meslep_em_err=get<1>(meslep_em_ave_err);
+    
     vector<string> bil={"S","A","P","V","T"};
     
     ofstream Zq_data, Zq_em_data;
     vector<ofstream> Zbil_data(nbil), Zbil_em_data(nbil);
+    vector<ofstream> Zmeslep_data(nbil*nbil), Zmeslep_em_data(nbil*nbil);
     
     Zq_data.open(path_to_ens+"plots/Zq"+(suffix!=""?("_"+suffix):string(""))+".txt");
     Zq_em_data.open(path_to_ens+"plots/Zq_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
@@ -2056,6 +2092,26 @@ void oper_t::plot(const string suffix)
             
             Zbil_data[ibil]<<p2t[imomk]<<"\t"<<Z_ave[imom][ibil][0][0]<<"\t"<<Z_err[imom][ibil][0][0]<<endl;
             Zbil_em_data[ibil]<<p2t[imomk]<<"\t"<<Z_em_ave[imom][ibil][0][0]<<"\t"<<Z_em_err[imom][ibil][0][0]<<endl;
+        }
+    }
+    
+    for(int i=0;i<nbil*nbil;i++)
+    {
+        int iop2=i%nbil;
+        int iop1=(i-iop2)/nbil;
+        
+        Zmeslep_data[i].open(path_to_ens+"plots/meslep_"+to_string(iop1)+"_"+to_string(iop2)+(suffix!=""?("_"+suffix):string(""))+".txt");
+        Zmeslep_em_data[i].open(path_to_ens+"plots/meslep_"+to_string(iop1)+"_"+to_string(iop2)+"_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
+        
+        for(int imom=0; imom<in._bilmoms; imom++)
+        {
+            //            int imomq = in.bilmoms[imom][0];
+            //            cout<<"imomq: "<<imomq<<endl;
+            //            int imomk = in.linmoms[imomq][0];
+            int imomk = imom;   // NB: it works only for RIMOM!
+            
+            Zmeslep_data[i]<<p2t[imomk]<<"\t"<<meslep_ave[imom][iop1][iop2][0][0]<<"\t"<<meslep_err[imom][iop1][iop2][0][0]<<endl;
+            Zmeslep_em_data[i]<<p2t[imomk]<<"\t"<<meslep_em_ave[imom][iop1][iop2][0][0]<<"\t"<<meslep_em_err[imom][iop1][iop2][0][0]<<endl;
         }
     }
 }
