@@ -135,8 +135,10 @@ typedef enum {
     IN = 1,
     OUT = 2,
     M11 = 3,
-    M12 = 4,
-    M22 = 5
+    M22 = 4,
+    M12 = 5,
+    P11 = 6,
+    P22 = 7
 } MESLEP_TYPES;
 
 extern ORDER ord;
