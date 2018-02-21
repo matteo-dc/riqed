@@ -446,6 +446,26 @@ void oper_t::allocate()
         }
     }
     
+    for(auto &iop1 : jpr_meslep_nasty)
+    {
+        iop1.resize(nbil);
+        for(auto &iop2 : iop1)
+        {
+            iop2.resize(nbil);
+            for(auto &ijack : iop2)
+            {
+                ijack.resize(njacks);
+                for(auto &mr1 : ijack)
+                {
+                    mr1.resize(_nmr);
+                    for(auto &mr2 : mr1)
+                        mr2.resize(_nmr);
+                }
+            }
+        }
+    }
+
+    
     for(auto &iop1 : jZ_4f)
     {
         iop1.resize(nbil);
