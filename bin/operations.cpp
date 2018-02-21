@@ -867,12 +867,12 @@ void oper_t::compute_meslep()
         jprop_t jS2_P(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
         jprop_t jS2_em(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
         
-        // definition of jackknifed vertices (22=16+6)
-        valarray<jvert_t> jVert_LO_EM_P_4f(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),22),_nmr),_nmr),njacks),4);  // size=4 > {LO,self+tadpole,P(fw),P(bw)}
-        valarray<jvert_t> jVert_LO_and_EM_4f(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),22),_nmr),_nmr),njacks),2);
+//        // definition of jackknifed vertices (22=16+6)
+//        valarray<jvert_t> jVert_LO_EM_P_4f(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),22),_nmr),_nmr),njacks),4);  // size=4 > {LO,self+tadpole,P(fw),P(bw)}
+//        valarray<jvert_t> jVert_LO_and_EM_4f(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),22),_nmr),_nmr),njacks),2);
         
         // definition of jackknifed meslep ("in" & "out" diagrams)
-        valarray<jmeslep_t> jmeslep_QCD_IN_OUT(jmeslep_t(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),16),_nmr),_nmr),njacks),3);
+        valarray<jmeslep_t> jmeslep(jmeslep_t(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),16),_nmr),_nmr),njacks),8);
         
         cout<<"- Building vertices"<<endl;
         
@@ -912,7 +912,7 @@ void oper_t::compute_meslep()
                 
                 ta=high_resolution_clock::now();
                 
-                build_meslep(S1,S2,L,jmeslep_QCD_IN_OUT);
+                build_meslep(S1,S2,L,jmeslep);
                 
                 tb=high_resolution_clock::now();
                 t_span4 += (duration_cast<duration<double>>(tb-ta)).count();
@@ -940,12 +940,9 @@ void oper_t::compute_meslep()
 //        jVert_LO_EM_P_4f[2]=jackknife(jVert_LO_EM_P_4f[2]); // fw
 //        jVert_LO_EM_P_4f[3]=jackknife(jVert_LO_EM_P_4f[3]); // bw
         
-        jmeslep_QCD_IN_OUT[QCD]=jackknife(jmeslep_QCD_IN_OUT[QCD]);
-        jmeslep_QCD_IN_OUT[IN]=jackknife(jmeslep_QCD_IN_OUT[IN]);
-        jmeslep_QCD_IN_OUT[OUT]=jackknife(jmeslep_QCD_IN_OUT[OUT]);
+        for(int i=0;i<8;i++) jmeslep[i]=jackknife(jmeslep[i]);
         
-        
-        // build the complete electromagnetic correction
+        // build the complete electromagnetic correction to the propagator
 #pragma omp parallel for collapse(3)
         for(int ijack=0;ijack<njacks;ijack++)
             for(int m=0;m<nm;m++)
@@ -956,6 +953,24 @@ void oper_t::compute_meslep()
                     jS1_em[ijack][mr]=jS1_self_tad[ijack][mr] + deltam_cr[ijack][m][m]*jS1_P[ijack][mr];
                     (read2)?jS2_em[ijack][mr]=jS2_self_tad[ijack][mr] + deltam_cr[ijack][m][m]*jS2_P[ijack][mr]:jS2_em[ijack][mr]=jS1_em[ijack][mr];
                 }
+        
+        // build the complete electromagnetic correction to the vertex
+#pragma omp parallel for collapse (5)
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+                for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+                    for(int igam=0;igam<16;igam++)
+                        for(int iproj=0;iproj<16;iproj++)
+                        {
+                            int r_fw = mr_fw%nr;
+                            int m_fw = (mr_fw-r_fw)/nr;
+                            int r_bw = mr_bw%nr;
+                            int m_bw = (mr_bw-r_bw)/nr;
+                            
+                            jmeslep[M11][ijack][mr_fw][mr_bw][igam][iproj] += deltam_cr[ijack][m_fw][m_fw]*jmeslep[P11][ijack][mr_fw][mr_bw][igam][iproj];
+                            jmeslep[M22][ijack][mr_fw][mr_bw][igam][iproj] += deltam_cr[ijack][m_bw][m_bw]*jmeslep[P22][ijack][mr_fw][mr_bw][igam][iproj];
+                        }
+        
         
 //#pragma omp parallel for collapse (4)
 //        for(int ijack=0;ijack<njacks;ijack++)
@@ -994,10 +1009,11 @@ void oper_t::compute_meslep()
         
         cout<<"- Computing projected meslep"<<endl;
         
-        jvproj_meslep_t jpr_meslep_QCD_IN_OUT = compute_pr_meslep(jS1_inv_LO_and_EM,jmeslep_QCD_IN_OUT,jS2_inv_LO_and_EM,q1,q2,ql);
+        jvproj_meslep_t jpr_meslep = compute_pr_meslep(jS1_inv_LO_and_EM,jmeslep,jS2_inv_LO_and_EM,q1,q2,ql);
         
-        jpr_meslep_0[ibilmom] = jpr_meslep_QCD_IN_OUT[QCD];
-        jpr_meslep_em[ibilmom] = jpr_meslep_QCD_IN_OUT[IN] + jpr_meslep_QCD_IN_OUT[OUT];
+        jpr_meslep_0[ibilmom] = jpr_meslep[QCD];
+        jpr_meslep_em[ibilmom] = jpr_meslep[M11] + jpr_meslep[M22] + jpr_meslep[M12] + jpr_meslep[6] + jpr_meslep[7];
+        jpr_meslep_nasty[ibilmom] = jpr_meslep[IN] + jpr_meslep[OUT];
 
         high_resolution_clock::time_point t1=high_resolution_clock::now();
         duration<double> t_span = duration_cast<duration<double>>(t1-t0);
@@ -1010,6 +1026,7 @@ void oper_t::compute_meslep()
     print_vec_bin(jG_em_4f,path_print+"jG_em_4f");
     print_vec_bin(jpr_meslep_0,path_print+"jpr_meslep_0");
     print_vec_bin(jpr_meslep_em,path_print+"jpr_meslep_em");
+    print_vec_bin(jpr_meslep_nasty,path_print+"jpr_meslep_nasty");
 }
 
 //void oper_t::compute_Z4f()
@@ -1761,6 +1778,7 @@ oper_t oper_t::average_equiv_moms()
                         {
                             (out.jpr_meslep_0)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
                             (out.jpr_meslep_em)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
+                            (out.jpr_meslep_nasty)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
                         }
 
     
@@ -1806,6 +1824,7 @@ oper_t oper_t::average_equiv_moms()
                                 {
                                     (out.jpr_meslep_0)[tag][iop1][iop2][ijack][mr1][mr2]+=jpr_meslep_0[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
                                     (out.jpr_meslep_em)[tag][iop1][iop2][ijack][mr1][mr2]+=jpr_meslep_em[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
+                                    (out.jpr_meslep_nasty)[tag][iop1][iop2][ijack][mr1][mr2]+=jpr_meslep_nasty[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
                                 }
             }
         }
@@ -2025,6 +2044,7 @@ void oper_t::plot(const string suffix)
     
     Zmeslep_tup meslep_ave_err = ave_err(in.jpr_meslep_0);
     Zmeslep_tup meslep_em_ave_err = ave_err(in.jpr_meslep_em);
+    Zmeslep_tup meslep_nasty_ave_err = ave_err(in.jpr_meslep_nasty);
    
     vvd_t Zq_ave = get<0>(Zq_ave_err);        //[imom][mr]
     vvd_t Zq_em_ave = get<0>(Zq_em_ave_err);
@@ -2040,15 +2060,17 @@ void oper_t::plot(const string suffix)
     
     vvvvvd_t meslep_ave=get<0>(meslep_ave_err);  //[imom][iop1][iop2][mr1][mr2];
     vvvvvd_t meslep_em_ave=get<0>(meslep_em_ave_err);
+    vvvvvd_t meslep_nasty_ave=get<0>(meslep_nasty_ave_err);
     
     vvvvvd_t meslep_err=get<1>(meslep_ave_err);  //[imom][iop1][iop2][mr1][mr2];
     vvvvvd_t meslep_em_err=get<1>(meslep_em_ave_err);
-    
+    vvvvvd_t meslep_nasty_err=get<1>(meslep_nasty_ave_err);
+ 
     vector<string> bil={"S","A","P","V","T"};
     
     ofstream Zq_data, Zq_em_data;
     vector<ofstream> Zbil_data(nbil), Zbil_em_data(nbil);
-    vector<ofstream> Zmeslep_data(nbil*nbil), Zmeslep_em_data(nbil*nbil);
+    vector<ofstream> Zmeslep_data(nbil*nbil), Zmeslep_em_data(nbil*nbil), Zmeslep_nasty_data(nbil*nbil);
     
     Zq_data.open(path_to_ens+"plots/Zq"+(suffix!=""?("_"+suffix):string(""))+".txt");
     Zq_em_data.open(path_to_ens+"plots/Zq_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
@@ -2102,6 +2124,7 @@ void oper_t::plot(const string suffix)
         
         Zmeslep_data[i].open(path_to_ens+"plots/meslep_"+to_string(iop1)+"_"+to_string(iop2)+(suffix!=""?("_"+suffix):string(""))+".txt");
         Zmeslep_em_data[i].open(path_to_ens+"plots/meslep_"+to_string(iop1)+"_"+to_string(iop2)+"_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
+        Zmeslep_nasty_data[i].open(path_to_ens+"plots/meslep_"+to_string(iop1)+"_"+to_string(iop2)+"_NASTY"+(suffix!=""?("_"+suffix):string(""))+".txt");
         
         for(int imom=0; imom<in._bilmoms; imom++)
         {
@@ -2112,6 +2135,7 @@ void oper_t::plot(const string suffix)
             
             Zmeslep_data[i]<<p2t[imomk]<<"\t"<<meslep_ave[imom][iop1][iop2][0][0]<<"\t"<<meslep_err[imom][iop1][iop2][0][0]<<endl;
             Zmeslep_em_data[i]<<p2t[imomk]<<"\t"<<meslep_em_ave[imom][iop1][iop2][0][0]<<"\t"<<meslep_em_err[imom][iop1][iop2][0][0]<<endl;
+            Zmeslep_nasty_data[i]<<p2t[imomk]<<"\t"<<meslep_nasty_ave[imom][iop1][iop2][0][0]<<"\t"<<meslep_nasty_err[imom][iop1][iop2][0][0]<<endl;
         }
     }
 }

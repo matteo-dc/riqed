@@ -114,7 +114,7 @@ struct oper_t
     vector<jproj_t> jG_0_4f, jG_em_4f;
     
     // definition of projected meslep
-    vector<jproj_meslep_t> jpr_meslep_0, jpr_meslep_em;
+    vector<jproj_meslep_t> jpr_meslep_0, jpr_meslep_em, jpr_meslep_nasty;
     
     // compute projected bils
     void compute_bil();
