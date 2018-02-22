@@ -126,7 +126,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
 //                            printf("igam[%d-%d] ijack[%d] - jpr_meslep:  ",igam,iproj,ijack);
 //                        }
                         
-                        for(int k=0; k<6; k++)
+                        for(int k=0; k<8; k++)
                         {
                             jLambda[k][ijack][mr_fw][mr_bw][igam][iproj] = Q[k]*jprop1_inv[i1[k]][ijack][mr_fw]*jmeslep[iv[k]][ijack][mr_fw][mr_bw][igam][iproj]*GAMMA[5]*jprop2_inv[i2[k]][ijack][mr_bw].adjoint()*GAMMA[5];
                             
@@ -154,7 +154,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
 //                            printf("iop[%d-%d] ijack[%d] - jpr_meslep_5x5:  ",iop1,iop2,ijack);
 //                        }
                         
-                        for(int k=0; k<6; k++)
+                        for(int k=0; k<8; k++)
                         {
                             vector<size_t> igam = iG_of_iop[iop1];
                             vector<size_t> iproj = iG_of_iop[iop2];
