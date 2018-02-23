@@ -92,7 +92,7 @@ void oper_t::compute_eff_mass()
     
     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
         for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-            jP5P5_00[mr_fw][mr_bw]=get_contraction("",mr_fw,"0",mr_bw,"0","P5P5","RE","EVEN",conf_id,path_to_ens);
+            jP5P5_00[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_fw,"0",mr_bw,"0","P5P5","RE","EVEN",conf_id,path_to_ens);
     
     //   cout<<"**********DEBUG: P5P5 correlator  *************"<<endl;
     //   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -202,7 +202,7 @@ void oper_t::compute_eff_mass_sea()
     
     for(int r1=0;r1<nr;r1++)
         for(int r2=0;r2<nr;r2++)
-            jP5P5_00[r1][r2]=get_contraction("sea",r1,"0",r2,"0","P5P5","RE","EVEN",conf_id,path_to_ens);
+            jP5P5_00[r1][r2]=get_contraction("sea",out_hadr,r1,"0",r2,"0","P5P5","RE","EVEN",conf_id,path_to_ens);
     
     //   cout<<"**********DEBUG: P5P5 correlator  *************"<<endl;
     //   for(int mr_fw=0;mr_fw<nmr;mr_fw++)

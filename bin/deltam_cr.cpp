@@ -47,14 +47,14 @@ void oper_t::compute_deltam_cr()
         for(int mr_bw=0;mr_bw<nmr;mr_bw++)
         {
             //load corrections
-            jV0P5_LL[mr_fw][mr_bw]=get_contraction("",mr_bw,"F",mr_fw,"F","V0P5","IM","ODD",conf_id,path_to_ens);
-            jV0P5_0M[mr_fw][mr_bw]=get_contraction("",mr_bw,"0",mr_fw,"FF","V0P5","IM","ODD",conf_id,path_to_ens);
-            jV0P5_M0[mr_fw][mr_bw]=get_contraction("",mr_bw,"FF",mr_fw,"0","V0P5","IM","ODD",conf_id,path_to_ens);
-            jV0P5_0T[mr_fw][mr_bw]=get_contraction("",mr_bw,"0",mr_fw,"T","V0P5","IM","ODD",conf_id,path_to_ens);
-            jV0P5_T0[mr_fw][mr_bw]=get_contraction("",mr_bw,"T",mr_fw,"0","V0P5","IM","ODD",conf_id,path_to_ens);
+            jV0P5_LL[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"F",mr_fw,"F","V0P5","IM","ODD",conf_id,path_to_ens);
+            jV0P5_0M[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"FF","V0P5","IM","ODD",conf_id,path_to_ens);
+            jV0P5_M0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"FF",mr_fw,"0","V0P5","IM","ODD",conf_id,path_to_ens);
+            jV0P5_0T[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"T","V0P5","IM","ODD",conf_id,path_to_ens);
+            jV0P5_T0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"T",mr_fw,"0","V0P5","IM","ODD",conf_id,path_to_ens);
             //load the derivative wrt counterterm
-            jV0P5_0P[mr_fw][mr_bw]=get_contraction("",mr_bw,"0",mr_fw,"P","V0P5","RE","ODD",conf_id,path_to_ens);
-            jV0P5_P0[mr_fw][mr_bw]=get_contraction("",mr_bw,"P",mr_fw,"0","V0P5","RE","ODD",conf_id,path_to_ens);
+            jV0P5_0P[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"P","V0P5","RE","ODD",conf_id,path_to_ens);
+            jV0P5_P0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"P",mr_fw,"0","V0P5","RE","ODD",conf_id,path_to_ens);
         }
     
     //average over r
