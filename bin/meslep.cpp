@@ -108,8 +108,8 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
     //  A11: LO operator amputated with the em correction to the inverse propagator of q1
     //  A22: LO operator amputated with the em correction to the inverse propagator of q2
 
-    double Q[8]={1.0,ql*q1,ql*q2,q1*q1,q2*q2,q1*q2,q1*q1,q2*q2}; // charge factors
-//    double Q[8]={1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0}; // charge factors
+//    double Q[8]={1.0,ql*q1,ql*q2,q1*q1,q2*q2,q1*q2,q1*q1,q2*q2}; // charge factors
+    double Q[8]={1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0}; // charge factors
     const int i1[8]={LO,LO,LO,LO,LO,LO,EM,LO};
     const int iv[8]={QCD,IN,OUT,M11,M22,M12,QCD,QCD};
     const int i2[8]={LO,LO,LO,LO,LO,LO,LO,EM};
