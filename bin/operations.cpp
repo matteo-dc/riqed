@@ -630,7 +630,7 @@ void oper_t::compute_prop()
                 for(int ijack=0;ijack<njacks;ijack++)
                 {
                     int mr = r + nr*m;
-                    jS_em[ijack][mr] = jS_self_tad[ijack][mr] + deltam_cr[ijack][m][m]*jS_P[ijack][mr];
+                    jS_em[ijack][mr] = jS_self_tad[ijack][mr] ;//+ deltam_cr[ijack][m][m]*jS_P[ijack][mr];
                 }
         
         // invert propagator
