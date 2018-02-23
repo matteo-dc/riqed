@@ -3,6 +3,6 @@
 
 //string path_to_contr(int i_conf, const int mr1, const string &T1, const int mr2, const string &T2);
 
-vvd_t get_contraction(const string &suffix, const int mr1, const string &T1, const int mr2, const string &T2, const string &ID, const string &reim, const string &parity, const int* conf_id, const string &string_path);
+vvd_t get_contraction(const string &suffix, const string &out, const int mr1, const string &T1, const int mr2, const string &T2, const string &ID, const string &reim, const string &parity, const int* conf_id, const string &string_path);
 
 #endif
