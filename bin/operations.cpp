@@ -1034,7 +1034,7 @@ void oper_t::compute_meslep()
             for(int mr_fw=0;mr_fw<nmr;mr_fw++)
                 for(int iop1=0;iop1<nbil;iop1++)
                 {
-                    jpr_meslep_em[imeslepmom][iop1][iop1][ijack][mr_fw][mr_fw] = jZq[imeslepmom][ijack][mr_fw] - jpr_meslep_em[imeslepmom][iop1][iop1][ijack][mr_fw][mr_fw];
+                    jpr_meslep_em[imeslepmom][iop1][iop1][ijack][mr_fw][mr_fw] = jZq_em[imeslepmom][ijack][mr_fw] - jpr_meslep_em[imeslepmom][iop1][iop1][ijack][mr_fw][mr_fw];
                 }
         
         ////////////////////////////////////////////////////////////
