@@ -1026,6 +1026,18 @@ void oper_t::compute_meslep()
         jpr_meslep_0[imeslepmom] = jpr_meslep[QCD];
         jpr_meslep_em[imeslepmom] = jpr_meslep[M11] + jpr_meslep[M22] + jpr_meslep[M12] - jpr_meslep[6] - jpr_meslep[7];
         jpr_meslep_nasty[imeslepmom] = jpr_meslep[IN] + jpr_meslep[OUT];
+        
+        ////////////////////////////////////////////////////////////
+
+#pragma omp parallel for collapse(3)
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+                for(int iop1=0;iop1<nbil;iop1++)
+                {
+                    jpr_meslep_em[imeslepmom][iop1][iop1][ijack][mr_fw][mr_fw] = jZq[imeslepmom][ijack][mr_fw] - jpr_meslep_em[imeslepmom][iop1][iop1][ijack][mr_fw][mr_fw];
+                }
+        
+        ////////////////////////////////////////////////////////////
 
         high_resolution_clock::time_point t1=high_resolution_clock::now();
         duration<double> t_span = duration_cast<duration<double>>(t1-t0);
