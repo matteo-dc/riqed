@@ -1025,7 +1025,7 @@ void oper_t::compute_meslep()
         
         jpr_meslep_0[imeslepmom] = jpr_meslep[QCD];
         jpr_meslep_em[imeslepmom] = jpr_meslep[M11] + jpr_meslep[M22] + jpr_meslep[M12] - jpr_meslep[6] - jpr_meslep[7];
-        jpr_meslep_nasty[imeslepmom] = jpr_meslep[IN] + jpr_meslep[OUT];
+        jpr_meslep_nasty[imeslepmom] = jpr_meslep[IN];// + jpr_meslep[OUT];
         
         ////////////////////////////////////////////////////////////
 
