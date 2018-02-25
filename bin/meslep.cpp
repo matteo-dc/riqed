@@ -4,6 +4,8 @@
 #include <iostream>
 #include "meslep.hpp"
 
+double V=size[0]*size[1]*size[2]*size[3];
+
 vvvvdcompl_t build_mesloop(const vvprop_t &L)
 {
     vvvvdcompl_t mesloop(vvvdcompl_t(vvdcompl_t(vdcompl_t(0.0,16),16),njacks),2); // nGamma*nProj=16*16=256 for LO and EM
@@ -21,7 +23,8 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
                 
                 // In the LO mesloop the external leptonic propagator is fully amputated
                 mesloop[LO][ijack][igam][iproj] = (op*pr).trace()/12.0;
-                mesloop[EM][ijack][igam][iproj] = (op*pF*pr).trace()/12.0;
+                // Multiplying for V to compensate the 1/V deriving from fft
+                mesloop[EM][ijack][igam][iproj] = V*(op*pF*pr).trace()/12.0;
             }
     
     return mesloop;
@@ -108,7 +111,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
     //  A11: LO operator amputated with the em correction to the inverse propagator of q1
     //  A22: LO operator amputated with the em correction to the inverse propagator of q2
 
-#warning putting charges to zero
+#warning putting charges to 1
 //    double Q[8]={1.0,ql*q1,ql*q2,q1*q1,q2*q2,q1*q2,q1*q1,q2*q2}; // charge factors
     double Q[8]={1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0}; // charge factors
     const int i1[8]={LO,LO,LO,LO,LO,LO,EM,LO};
