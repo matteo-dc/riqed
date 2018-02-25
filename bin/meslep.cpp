@@ -4,13 +4,13 @@
 #include <iostream>
 #include "meslep.hpp"
 
-double V=size[0]*size[1]*size[2]*size[3];
-
 vvvvdcompl_t build_mesloop(const vvprop_t &L)
 {
     vvvvdcompl_t mesloop(vvvdcompl_t(vvdcompl_t(vdcompl_t(0.0,16),16),njacks),2); // nGamma*nProj=16*16=256 for LO and EM
     
     using namespace meslep;
+    
+    double V=size[0]*size[1]*size[2]*size[3];
     
 #pragma omp parallel for collapse (3)
     for(int ijack=0;ijack<njacks;ijack++)
