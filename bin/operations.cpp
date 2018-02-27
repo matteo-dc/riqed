@@ -257,7 +257,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     }
     
     compute_Zbil();
-//    if(compute_4f) compute_Z4f();
+    if(compute_4f) compute_Z4f();
     
 }
 
@@ -782,21 +782,6 @@ void oper_t::compute_bil()
         jS2_inv_LO_and_EM[LO] = (read2)?invert_jprop(jS2_0):jS1_inv_LO_and_EM[LO];
         jS2_inv_LO_and_EM[EM] = (read2)?jS2_inv_LO_and_EM[LO]*jS2_em*jS2_inv_LO_and_EM[LO]:jS1_inv_LO_and_EM[EM];
         
-//        cout<<"- Computing Zq"<<endl;
-//        
-//        // compute Zq relative to imom1 and eventually to imom2
-//        vvvd_t jZq1_LO_and_EM = compute_jZq(jS1_inv_LO_and_EM,imom1);
-//        vvvd_t jZq2_LO_and_EM = (read2)?compute_jZq(jS2_inv_LO_and_EM,imom2):jZq1_LO_and_EM;
-//        
-//        jZq[imom1] = jZq1_LO_and_EM[LO];
-//        jZq_em[imom1] = - jZq1_LO_and_EM[EM];
-//        
-//        if(read2)
-//        {
-//            jZq[imom2] = jZq2_LO_and_EM[LO];
-//            jZq_em[imom2] = - jZq2_LO_and_EM[EM];
-//        }
-        
         cout<<"- Computing bilinears"<<endl;
         
         // compute the projected green function (S,V,P,A,T)
@@ -834,8 +819,7 @@ void oper_t::compute_Zbil()
                     {
                         jZ[ibilmom][ibil][ijack][mr_fw][mr_bw] = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])/jG_0[ibilmom][ibil][ijack][mr_fw][mr_bw];
                         
-                        jZ_em[ibilmom][ibil][ijack][mr_fw][mr_bw] = - jG_em[ibilmom][ibil][ijack][mr_fw][mr_bw]/jG_0[ibilmom][ibil][ijack][mr_fw][mr_bw] ;
-                        //+ 0.5*(jZq_em[imom1][ijack][mr_fw]/jZq[imom1][ijack][mr_fw] + jZq_em[imom2][ijack][mr_bw]/jZq[imom2][ijack][mr_bw]);
+                        jZ_em[ibilmom][ibil][ijack][mr_fw][mr_bw] = - jG_em[ibilmom][ibil][ijack][mr_fw][mr_bw]/jG_0[ibilmom][ibil][ijack][mr_fw][mr_bw] + 0.5*(jZq_em[imom1][ijack][mr_fw]/jZq[imom1][ijack][mr_fw] + jZq_em[imom2][ijack][mr_bw]/jZq[imom2][ijack][mr_bw]);
                     }
         
     }// close mom loop
@@ -880,16 +864,12 @@ void oper_t::compute_meslep()
         jprop_t jS2_P(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
         jprop_t jS2_em(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
         
-//        // definition of jackknifed vertices (22=16+6)
-//        valarray<jvert_t> jVert_LO_EM_P_4f(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),22),_nmr),_nmr),njacks),4);  // size=4 > {LO,self+tadpole,P(fw),P(bw)}
-//        valarray<jvert_t> jVert_LO_and_EM_4f(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),22),_nmr),_nmr),njacks),2);
-        
         // definition of jackknifed meslep ("in" & "out" diagrams)
         valarray<jmeslep_t> jmeslep(jmeslep_t(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),16),_nmr),_nmr),njacks),8);
         
         cout<<"- Building vertices"<<endl;
         
-        double t_span1=0.0, t_span2=0.0, t_span3=0.0, t_span4=0.0;
+        double t_span1=0.0, t_span2=0.0, t_span4=0.0;
         
         for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
             for(int ihit=0;ihit<nhits;ihit++)
@@ -916,13 +896,6 @@ void oper_t::compute_meslep()
                 tb=high_resolution_clock::now();
                 t_span2 += (duration_cast<duration<double>>(tb-ta)).count();
                 
-//                ta=high_resolution_clock::now();
-//                
-//                build_vert_4f(S1,S2,jVert_LO_EM_P_4f,q1,q2);
-//                
-//                tb=high_resolution_clock::now();
-//                t_span3 += (duration_cast<duration<double>>(tb-ta)).count();
-                
                 ta=high_resolution_clock::now();
                 
                 build_meslep(S1,S2,L,jmeslep);
@@ -933,7 +906,6 @@ void oper_t::compute_meslep()
             }
         cout<<"\t read: "<<t_span1<<" s"<<endl;
         cout<<"\t build prop: "<<t_span2<<" s"<<endl;
-//        cout<<"\t build vert: "<<t_span3<<" s"<<endl;
         cout<<"\t build meslep: "<<t_span4<<" s"<<endl;
         
         
@@ -947,11 +919,6 @@ void oper_t::compute_meslep()
         jS2_0=(read2)?jackknife(jS2_0):jS1_0;
         jS2_self_tad=(read2)?jackknife(jS2_self_tad):jS1_self_tad;
         jS2_P=(read2)?jackknife(jS2_P):jS1_P;
-        
-//        jVert_LO_EM_P_4f[LO]=jackknife(jVert_LO_EM_P_4f[LO]);
-//        jVert_LO_EM_P_4f[EM]=jackknife(jVert_LO_EM_P_4f[EM]);
-//        jVert_LO_EM_P_4f[2]=jackknife(jVert_LO_EM_P_4f[2]); // fw
-//        jVert_LO_EM_P_4f[3]=jackknife(jVert_LO_EM_P_4f[3]); // bw
         
         for(int i=0;i<8;i++) jmeslep[i]=jackknife(jmeslep[i]);
         
@@ -983,22 +950,6 @@ void oper_t::compute_meslep()
                             jmeslep[M11][ijack][mr_fw][mr_bw][igam][iproj] += deltam_cr[ijack][m_fw][m_fw]*jmeslep[P11][ijack][mr_fw][mr_bw][igam][iproj];
                             jmeslep[M22][ijack][mr_fw][mr_bw][igam][iproj] += deltam_cr[ijack][m_bw][m_bw]*jmeslep[P22][ijack][mr_fw][mr_bw][igam][iproj];
                         }
-        
-//#pragma omp parallel for collapse (4)
-//        for(int ijack=0;ijack<njacks;ijack++)
-//            for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-//                for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-//                    for(int igam=0;igam<22;igam++)
-//                    {
-//                        int r_fw = mr_fw%nr;
-//                        int m_fw = (mr_fw-r_fw)/nr;
-//                        int r_bw = mr_bw%nr;
-//                        int m_bw = (mr_bw-r_bw)/nr;
-//                        
-//                        jVert_LO_and_EM_4f[LO][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P_4f[LO][ijack][mr_fw][mr_bw][igam];
-//                        
-//                        jVert_LO_and_EM_4f[EM][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P_4f[EM][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_fw][m_fw]*jVert_LO_EM_P_4f[2][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_bw][m_bw]*jVert_LO_EM_P_4f[3][ijack][mr_fw][mr_bw][igam];
-//                    }
 
         cout<<"- Inverting propagators"<<endl;
         
@@ -1011,21 +962,13 @@ void oper_t::compute_meslep()
         jS2_inv_LO_and_EM[LO] = (read2)?invert_jprop(jS2_0):jS1_inv_LO_and_EM[LO];
         jS2_inv_LO_and_EM[EM] = (read2)?jS2_inv_LO_and_EM[LO]*jS2_em*jS2_inv_LO_and_EM[LO]:jS1_inv_LO_and_EM[EM];
         
-//        cout<<"- Computing bilinears"<<endl;
-//        
-//        // compute the projected green function (S,V,P,A,T,Ttilde)
-//        vvvvvd_t jG_LO_and_EM_4f = compute_pr_bil_4f(jS1_inv_LO_and_EM,jVert_LO_and_EM_4f,jS2_inv_LO_and_EM,q1,q2);
-//        
-//        jG_0_4f[ibilmom] = jG_LO_and_EM_4f[LO];
-//        jG_em_4f[ibilmom] = jG_LO_and_EM_4f[EM];
-        
         cout<<"- Computing projected meslep"<<endl;
         
         jvproj_meslep_t jpr_meslep = compute_pr_meslep(jS1_inv_LO_and_EM,jmeslep,jS2_inv_LO_and_EM,q1,q2,ql);
         
         jpr_meslep_0[imeslepmom] = jpr_meslep[QCD];
         jpr_meslep_em[imeslepmom] = jpr_meslep[M11] + jpr_meslep[M22] + jpr_meslep[M12] - jpr_meslep[6] - jpr_meslep[7];
-        jpr_meslep_nasty[imeslepmom] = jpr_meslep[IN];// + jpr_meslep[OUT];
+        jpr_meslep_nasty[imeslepmom] = jpr_meslep[IN] + jpr_meslep[OUT];
         
         ////////////////////////////////////////////////////////////
 //
@@ -1053,39 +996,42 @@ void oper_t::compute_meslep()
     print_vec_bin(jpr_meslep_nasty,path_print+"jpr_meslep_nasty");
 }
 
-//void oper_t::compute_Z4f()
-//{
+void oper_t::compute_Z4f()
+{
 //    vector<vector<int>> ibil_of_iop = {{0,2},{0,2},{1,3},{1,3},{4,5}};
-//    
-//    //these are the charges in the lagrangian
-//    const double q1=-1.0/3.0; //!< charge of the quark1
-//    const double q2=+2.0/3.0; //!< charge of the quark2
-//    
-//    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
-//    {
-//        const int imom1=bilmoms[ibilmom][1]; // p1
-//        const int imom2=bilmoms[ibilmom][2]; // p2
-//        
-//        //compute Z's according to 'riqed.pdf', one for each momentum
-//#pragma omp parallel for collapse(5)
-//        for(int ijack=0;ijack<njacks;ijack++)
-//            for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
-//                for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
-//                    for(int iop1=0;iop1<nbil;iop1++)
-//                        for(int iop2=0;iop2<nbil;iop2++)
-//                        {
+    
+#warning putting charges to 1
+    //these are the charges in the lagrangian
+//    const double q1=+2.0/3.0; //!< charge of the quark1
+//    const double q2=-1.0/3.0; //!< charge of the quark2
+    const double q1=1.0;
+    const double q2=1.0;
+    
+    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
+    {
+        const int imom1=bilmoms[ibilmom][1]; // p1
+        const int imom2=bilmoms[ibilmom][2]; // p2
+        
+        //compute Z's according to 'riqed.pdf', one for each momentum
+#pragma omp parallel for collapse(5)
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
+                for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
+                    for(int iop1=0;iop1<nbil;iop1++)
+                        for(int iop2=0;iop2<nbil;iop2++)
+                        {
 //                            int ibil1=ibil_of_iop[iop1][0];
 //                            int ibil2=ibil_of_iop[iop1][1];
-//                            
-//                            jZ_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])/jG_0_4f[ibilmom][ibil1][ijack][mr_fw][mr_bw];
-//                            
-//                            jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = - jpr_meslep_em[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw]/jpr_meslep_0[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw];
-//                            
-//                            if(iop1==iop2)
-//                            {
-//                                jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] += - (jG_em_4f[ibilmom][ibil1][ijack][mr_fw][mr_bw] + jG_em_4f[ibilmom][ibil2][ijack][mr_fw][mr_bw])/(jG_0_4f[ibilmom][ibil1][ijack][mr_fw][mr_bw] + jG_0_4f[ibilmom][ibil2][ijack][mr_fw][mr_bw]) + 0.5*(q1*q1*jZq_em[imom1][ijack][mr_fw]/jZq[imom1][ijack][mr_fw] + q2*q2*jZq_em[imom2][ijack][mr_bw]/jZq[imom2][ijack][mr_bw]);
-//                            }
-//                            
+                            
+                            jZ_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])/jpr_meslep_0[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw];
+                            
+                            jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = - (jpr_meslep_em[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw]+jpr_meslep_nasty[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw])/jpr_meslep_0[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw];
+                            
+                            if(iop1==iop2)
+                            {
+                                jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] += 0.5*(q1*q1*jZq_em[imom1][ijack][mr_fw]/jZq[imom1][ijack][mr_fw] + q2*q2*jZq_em[imom2][ijack][mr_bw]/jZq[imom2][ijack][mr_bw]);
+                            }
+                            
 //                            if(mr_bw==0 and mr_fw==0)
 //                            {
 //                                if(iop1==0 and iop2==0) cout<<"ibilmom "<<ibilmom<<" ijack "<<ijack<<endl;
@@ -1095,7 +1041,7 @@ void oper_t::compute_meslep()
 //                                if(iop1==nbil-1 and iop2==nbil-1) cout<<endl;
 //                                
 //                            }
-//                        }
+                        }
 //#pragma omp parallel for collapse(3)
 //        for(int iop1=0;iop1<nbil;iop1++)
 //            for(int iop2=0;iop2<nbil;iop2++)
@@ -1109,11 +1055,11 @@ void oper_t::compute_meslep()
 //                    cout<<iop1<<"-"<<iop2<<" ";
 //                    cout<<" jG_0_4f "<<"0.5*("<<jG_0_4f[ibilmom][ibil1][ijack][0][0]<<"+"<<jG_0_4f[ibilmom][ibil2][ijack][0][0]<<")"<<"  jpr_meslep_0 "<<jpr_meslep_0[ibilmom][iop1][iop2][ijack][0][0]<<endl;
 //                }
-//        
-//    }// close mom loop
-//
-//}
-//
+        
+    }// close mom loop
+
+}
+
 
 oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
 {
@@ -1210,6 +1156,8 @@ oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
                                 (out.jpr_meslep_em)[imeslepmom][iop1][iop2][ijack][mA][mB] += jpr_meslep_em[imeslepmom][iop1][iop2][ijack][r+_nr*mA][r+_nr*mB]/_nr;;
                                 (out.jpr_meslep_nasty)[imeslepmom][iop1][iop2][ijack][mA][mB] += jpr_meslep_nasty[imeslepmom][iop1][iop2][ijack][r+_nr*mA][r+_nr*mB]/_nr;;
                             }
+    
+    out.compute_Z4f();
     
     return out;
 }
@@ -1462,6 +1410,8 @@ oper_t oper_t::chiral_extr()
             }
     }
     
+    out.compute_Z4f();
+    
     return out;
 }
 
@@ -1497,9 +1447,10 @@ oper_t oper_t::subtract()
     
     out.compute_Zbil();
     
+    // 4f!!
+    
     return out;
 }
-
 
 oper_t chiral_sea_extr(voper_t in)
 {
@@ -1628,6 +1579,8 @@ oper_t chiral_sea_extr(voper_t in)
     
     out.compute_Zbil();
     
+    // 4f!!
+    
     return out;
 }
 
@@ -1656,6 +1609,8 @@ oper_t theta_average( voper_t in)
                 out.jZ[ibilmom][ibil][ijack][0][0] = 0.5*(in[0].jZ[ibilmom][ibil][ijack][0][0] + in[1].jZ[ibilmom][ibil][ijack][0][0]);
                 out.jZ_em[ibilmom][ibil][ijack][0][0] = 0.5*(in[0].jZ[ibilmom][ibil][ijack][0][0] + in[1].jZ[ibilmom][ibil][ijack][0][0]);
             }
+    
+    //4f!
     
     return out;
 }
@@ -1701,8 +1656,9 @@ oper_t oper_t::evolve(const int b)
                         (out.jZ)[ibilmom][ibil][ijack][mr1][mr2] = jZ[ibilmom][ibil][ijack][mr1][mr2]/cO[ibil];
                         (out.jZ_em)[ibilmom][ibil][ijack][mr1][mr2] = jZ_em[ibilmom][ibil][ijack][mr1][mr2]/cO[ibil];
                     }
-        
     }
+    
+    //4f!
     
     return out;
 }
@@ -1897,6 +1853,9 @@ oper_t oper_t::average_equiv_moms()
                             (out.jpr_meslep_0)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
                             (out.jpr_meslep_em)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
                             (out.jpr_meslep_nasty)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
+                            
+                            (out.jZ_4f)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
+                            (out.jZ_em_4f)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
                         }
 
     
@@ -1943,6 +1902,9 @@ oper_t oper_t::average_equiv_moms()
                                     (out.jpr_meslep_0)[tag][iop1][iop2][ijack][mr1][mr2]+=jpr_meslep_0[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
                                     (out.jpr_meslep_em)[tag][iop1][iop2][ijack][mr1][mr2]+=jpr_meslep_em[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
                                     (out.jpr_meslep_nasty)[tag][iop1][iop2][ijack][mr1][mr2]+=jpr_meslep_nasty[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
+                                    
+                                    (out.jZ_4f)[tag][iop1][iop2][ijack][mr1][mr2]+=jZ_4f[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
+                                    (out.jZ_em_4f)[tag][iop1][iop2][ijack][mr1][mr2]+=jZ_em_4f[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
                                 }
             }
         }
@@ -2141,10 +2103,6 @@ voper_t a2p2_extr(voper_t in /*, const int LO_or_EM*/)  // M1 method
             
             cout<<endl;
             
-            
-            
-           
-            
         } // close LO_or_EM loop
     }// close beta loop
     return out;
@@ -2163,6 +2121,9 @@ void oper_t::plot(const string suffix)
     Zmeslep_tup meslep_ave_err = ave_err(in.jpr_meslep_0);
     Zmeslep_tup meslep_em_ave_err = ave_err(in.jpr_meslep_em);
     Zmeslep_tup meslep_nasty_ave_err = ave_err(in.jpr_meslep_nasty);
+    
+    Z4f_tup Z_4f_ave_err = ave_err(in.jZ_4f);
+    Z4f_tup Z_em_4f_ave_err = ave_err(in.jZ_em_4f);
    
     vvd_t Zq_ave = get<0>(Zq_ave_err);        //[imom][mr]
     vvd_t Zq_em_ave = get<0>(Zq_em_ave_err);
@@ -2183,12 +2144,19 @@ void oper_t::plot(const string suffix)
     vvvvvd_t meslep_err=get<1>(meslep_ave_err);  //[imom][iop1][iop2][mr1][mr2];
     vvvvvd_t meslep_em_err=get<1>(meslep_em_ave_err);
     vvvvvd_t meslep_nasty_err=get<1>(meslep_nasty_ave_err);
+    
+    vvvvvd_t Z_4f_ave=get<0>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
+    vvvvvd_t Z_em_4f_ave=get<0>(Z_em_4f_ave_err);
+    
+    vvvvvd_t Z_4f_err=get<1>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
+    vvvvvd_t Z_em_4f_err=get<1>(Z_em_4f_ave_err);
  
     vector<string> bil={"S","A","P","V","T"};
     
     ofstream Zq_data, Zq_em_data;
     vector<ofstream> Zbil_data(nbil), Zbil_em_data(nbil);
     vector<ofstream> Zmeslep_data(nbil*nbil), Zmeslep_em_data(nbil*nbil), Zmeslep_nasty_data(nbil*nbil);
+    vector<ofstream> Z_4f_data(nbil*nbil), Z_em_4f_data(nbil*nbil);
     
     Zq_data.open(path_to_ens+"plots/Zq"+(suffix!=""?("_"+suffix):string(""))+".txt");
     Zq_em_data.open(path_to_ens+"plots/Zq_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
@@ -2256,4 +2224,25 @@ void oper_t::plot(const string suffix)
             Zmeslep_nasty_data[i]<<p2t[imomk]<<"\t"<<meslep_nasty_ave[imom][iop1][iop2][0][0]<<"\t"<<meslep_nasty_err[imom][iop1][iop2][0][0]<<endl;
         }
     }
+    
+    for(int i=0;i<nbil*nbil;i++)
+    {
+        int iop2=i%nbil;
+        int iop1=(i-iop2)/nbil;
+        
+        Z_4f_data[i].open(path_to_ens+"plots/Z4f_"+to_string(iop1)+"_"+to_string(iop2)+(suffix!=""?("_"+suffix):string(""))+".txt");
+        Z_em_4f_data[i].open(path_to_ens+"plots/Z4f_"+to_string(iop1)+"_"+to_string(iop2)+"_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
+        
+        for(int imom=0; imom<in._bilmoms; imom++)
+        {
+            //            int imomq = in.bilmoms[imom][0];
+            //            cout<<"imomq: "<<imomq<<endl;
+            //            int imomk = in.linmoms[imomq][0];
+            int imomk = imom;   // NB: it works only for RIMOM!
+            
+            Z_4f_data[i]<<p2t[imomk]<<"\t"<<Z_4f_ave[imom][iop1][iop2][0][0]<<"\t"<<Z_4f_err[imom][iop1][iop2][0][0]<<endl;
+            Z_em_4f_data[i]<<p2t[imomk]<<"\t"<<Z_em_4f_ave[imom][iop1][iop2][0][0]<<"\t"<<Z_em_4f_err[imom][iop1][iop2][0][0]<<endl;
+        }
+    }
+
 }
