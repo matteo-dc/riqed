@@ -87,5 +87,6 @@ using jZ4f_t = jproj_meslep_t;
 using Zbil_tup=tuple<vvvvd_t,vvvvd_t>;
 using Zq_tup=tuple<vvd_t,vvd_t>;
 using Zmeslep_tup=tuple<vvvvvd_t,vvvvvd_t>;
+using Z4f_tup=Zmeslep_tup;
 
 #endif
