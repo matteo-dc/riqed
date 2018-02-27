@@ -1000,12 +1000,12 @@ void oper_t::compute_Z4f()
 {
 //    vector<vector<int>> ibil_of_iop = {{0,2},{0,2},{1,3},{1,3},{4,5}};
     
-#warning putting charges to 1
+//#warning putting charges to 1
     //these are the charges in the lagrangian
-//    const double q1=+2.0/3.0; //!< charge of the quark1
-//    const double q2=-1.0/3.0; //!< charge of the quark2
-    const double q1=1.0;
-    const double q2=1.0;
+    const double q1=+2.0/3.0; //!< charge of the quark1
+    const double q2=-1.0/3.0; //!< charge of the quark2
+//    const double q1=1.0;
+//    const double q2=1.0;
     
     for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
     {
