@@ -1025,7 +1025,7 @@ void oper_t::compute_Z4f()
                             
                             jZ_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])/jpr_meslep_0[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw];
                             
-                            jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = - (jpr_meslep_em[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw]+jpr_meslep_nasty[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw])/jpr_meslep_0[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw];
+                            jZ_em_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = - (jpr_meslep_em[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw]+jpr_meslep_nasty[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw])/*/jpr_meslep_0[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw]*/;
                             
                             if(iop1==iop2)
                             {
