@@ -70,6 +70,9 @@ using vXd_t=valarray<VectorXd>;
 using vvXd_t=valarray<vXd_t>;
 using vvvXd_t=valarray<vvXd_t>;
 
+//valarray of Eigen Matrix (5x5)
+using O4f_t=Matrix<double,5,5>;
+
 //useful notation
 using jZ_t=vvd_t;
 using jZbil_t=vvvvd_t;
@@ -80,10 +83,6 @@ using jproj_meslep_t = vvvvvd_t;
 using jZ4f_t = jproj_meslep_t;
 
 //tuple
-//using Zq_tuple=tuple<vector<jZ_t>,vector<jZ_t>,string>;
-//using G_tuple=tuple<vector<jproj_t>,vector<jproj_t>,string>;
-//using Zbil_tuple=tuple<vector<jZbil_t>,vector<jZbil_t>,string>;
-
 using Zbil_tup=tuple<vvvvd_t,vvvvd_t>;
 using Zq_tup=tuple<vvd_t,vvd_t>;
 using Zmeslep_tup=tuple<vvvvvd_t,vvvvvd_t>;
