@@ -35,7 +35,7 @@ prop_t make_meslep(const prop_t &prop1, const prop_t &prop2, const dcompl &lloop
 {
     using namespace meslep;
     
-    return prop1*GAMMA[iG[igam]]*(GAMMA[0]+g5_sign[igam]*GAMMA[5])*GAMMA[5]*prop2.adjoint()*GAMMA[5]*lloop;
+    return GAMMA[5]*prop2.adjoint()*GAMMA[5]*GAMMA[iG[igam]]*(GAMMA[0]+g5_sign[igam]*GAMMA[5])*prop1*lloop;
 }
 
 
@@ -87,9 +87,6 @@ void build_meslep(const vvvprop_t &S1,const vvvprop_t &S2, const vvprop_t &L, va
 //                            cout<<"meslep OUT "<<make_meslep(S1[ijack][LO][mr_fw],S2[ijack][EM][mr_bw],mesloop[EM][ijack][igam][iproj],igam)(0,0)<<endl;
 //                        }
                     }
-    
-
-    
 }
 
 jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jmeslep, vvvprop_t  &jprop2_inv, const double q1, const double q2, const double ql)
@@ -133,7 +130,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
                         
                         for(int k=0; k<8; k++)
                         {
-                            jLambda[k][ijack][mr_fw][mr_bw][igam][iproj] = Q[k]*jprop1_inv[i1[k]][ijack][mr_fw]*jmeslep[iv[k]][ijack][mr_fw][mr_bw][igam][iproj]*GAMMA[5]*jprop2_inv[i2[k]][ijack][mr_bw].adjoint()*GAMMA[5];
+                            jLambda[k][ijack][mr_fw][mr_bw][igam][iproj] = Q[k]*GAMMA[5]*jprop2_inv[i2[k]][ijack][mr_bw].adjoint()*GAMMA[5]*jmeslep[iv[k]][ijack][mr_fw][mr_bw][igam][iproj]*jprop1_inv[i1[k]][ijack][mr_fw];
                             
                             jG_g[k][igam][iproj][ijack][mr_fw][mr_bw] = (jLambda[k][ijack][mr_fw][mr_bw][igam][iproj]*(GAMMA[iG[iproj]]*(GAMMA[0]+g5_sign[iproj]*GAMMA[5])).adjoint()).trace().real()/12.0/2.0;
                             // the factor 2.0 is to normalize the projector with (1+-g5)
