@@ -26,7 +26,7 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
                 // In the LO mesloop the external leptonic propagator is fully amputated
                 mesloop[LO][ijack][igam][iproj] = (op*pr).trace()/12.0;
                 // Multiplying for V to compensate the 1/V deriving from fft
-                mesloop[EM][ijack][igam][iproj] = V*(op*pF*miss*pr).trace()/12.0;
+                mesloop[EM][ijack][igam][iproj] = V*(op*miss*pF*pr).trace()/12.0;
             }
     
     return mesloop;
