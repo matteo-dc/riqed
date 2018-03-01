@@ -37,10 +37,10 @@ vvvvvd_t compute_pr_bil( vvvprop_t &jpropOUT_inv,  valarray<jvert_t> &jVert,  vv
     jG_LO_and_EM[LO] = jG[0];
     jG_LO_and_EM[EM] = jG[1]-jG[2]-jG[3];  // jG_em = -jG_1+jG_a+jG_b;
     
-    cout<<"____"<<endl;
+    printf("____\n");
     for(int k=0; k<4;k++)
-        cout<<(jLambda[k][0][0][0][0]*Proj[5]).trace().real()/12.0<<endl;
-    cout<<"____"<<endl;
+        printf("%lg \n",(jLambda[k][0][0][0][0]*Proj[5]).trace().real()/12.0);
+    printf("____\n");
     
     return jG_LO_and_EM;
 }
