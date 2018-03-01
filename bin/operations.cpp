@@ -892,6 +892,7 @@ void oper_t::compute_meslep()
                 
                 S1=rotate(S1);
                 S2=(read2)?rotate(S2):S1;
+                L=rotate(L);
                 
                 high_resolution_clock::time_point tb=high_resolution_clock::now();
                 t_span1 += (duration_cast<duration<double>>(tb-ta)).count();
