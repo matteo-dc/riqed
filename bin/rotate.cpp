@@ -47,7 +47,7 @@ vvprop_t rotate(vvprop_t &S)
     for(int t=0;t<_ntypes;t++)
         for(int ijack=0;ijack<_njacks;ijack++)
             {
-                int r = 1;
+                int r = 0;
                 
                 prop_t rot=(GAMMA[0]+I*(double)(2*r-1)*GAMMA[5])/sqrt(2);
                 
