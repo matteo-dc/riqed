@@ -3,7 +3,10 @@
 
 #include "aliases.hpp"
 
-// rotate from physical to twisted basis
+// rotate quark from physical to twisted basis
 vvvprop_t rotate(vvvprop_t &S);
+// rotate lepton from physical to twisted basis
+vvprop_t rotate(vvprop_t &S);
+
 
 #endif
