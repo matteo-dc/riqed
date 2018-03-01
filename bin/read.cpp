@@ -396,7 +396,7 @@ vvprop_t read_lprop_mom(FILE* input[],const vector<string> v_path,const int i_in
         //create all the propagators in a given conf and a given mom
         L[ijack][t] = read_prop(input[icombo],v_path[icombo],imom);
         
-        if(t==EM) L[ijack][EM]=L[ijack][EM]*L[ijack][LO];
+        if(t==EM) L[ijack][EM]=L[ijack][LO]*L[ijack][EM];
     }
     
     return L;
