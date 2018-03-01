@@ -26,6 +26,7 @@ bin_PROGRAMS=main
 main_SOURCES  =	 main.cpp \
 		 read_input.cpp  \
 		 read.cpp \
+		 rotate.cpp \
 		 operations.cpp \
 		 vertices.cpp \
 		 contractions.cpp \

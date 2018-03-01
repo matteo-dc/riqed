@@ -19,6 +19,7 @@
 #include "ave_err.hpp"
 #include "meslep.hpp"
 #include <chrono>
+#include "rotate.hpp"
 
 #define EXTERN_OPER
 
@@ -614,7 +615,9 @@ void oper_t::compute_prop()
         for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
             for(int ihit=0;ihit<nhits;ihit++)
             {
-                const vvvprop_t S=read_qprop_mom(input,v_path,i_in_clust,ihit,ilinmom);
+                vvvprop_t S=read_qprop_mom(input,v_path,i_in_clust,ihit,ilinmom);
+                S=rotate(S);
+                
                 build_prop(S,jS_0,jS_self_tad,jS_P);
             }
         
@@ -699,8 +702,11 @@ void oper_t::compute_bil()
                 
                 high_resolution_clock::time_point ta=high_resolution_clock::now();
                 
-                const vvvprop_t S1=read_qprop_mom(input,v_path,i_in_clust,ihit,mom1);
-                const vvvprop_t S2=(read2)?read_qprop_mom(input,v_path,i_in_clust,ihit,mom2):S1;
+                vvvprop_t S1=read_qprop_mom(input,v_path,i_in_clust,ihit,mom1);
+                vvvprop_t S2=(read2)?read_qprop_mom(input,v_path,i_in_clust,ihit,mom2):S1;
+                
+                S1=rotate(S1);
+                S2=(read2)?rotate(S2):S1;
                 
                 high_resolution_clock::time_point tb=high_resolution_clock::now();
                 t_span1 += (duration_cast<duration<double>>(tb-ta)).count();
@@ -880,9 +886,12 @@ void oper_t::compute_meslep()
                 
                 high_resolution_clock::time_point ta=high_resolution_clock::now();
                 
-                const vvvprop_t S1=read_qprop_mom(input_q,v_path_q,i_in_clust,ihit,mom1);
-                const vvvprop_t S2=(read2)?read_qprop_mom(input_q,v_path_q,i_in_clust,ihit,mom2):S1;
-                const vvprop_t L=read_lprop_mom(input_l,v_path_l,i_in_clust,ihit,momlep);
+                vvvprop_t S1=read_qprop_mom(input_q,v_path_q,i_in_clust,ihit,mom1);
+                vvvprop_t S2=(read2)?read_qprop_mom(input_q,v_path_q,i_in_clust,ihit,mom2):S1;
+                vvprop_t L=read_lprop_mom(input_l,v_path_l,i_in_clust,ihit,momlep);
+                
+                S1=rotate(S1);
+                S2=(read2)?rotate(S2):S1;
                 
                 high_resolution_clock::time_point tb=high_resolution_clock::now();
                 t_span1 += (duration_cast<duration<double>>(tb-ta)).count();
