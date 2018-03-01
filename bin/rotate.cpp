@@ -22,7 +22,7 @@ vvvprop_t rotate(vvvprop_t &S)
                         
                         int mr = r + nr*m;
                         
-                        S_rotated[ijack][t][mr] = rot*S[ijack][t][mr]*rot.adjoint();
+                        S_rotated[ijack][t][mr] = rot*S[ijack][t][mr]*rot;
                     }
     
     return S_rotated;
