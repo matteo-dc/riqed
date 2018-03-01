@@ -32,11 +32,15 @@ vvvvvd_t compute_pr_bil( vvvprop_t &jpropOUT_inv,  valarray<jvert_t> &jVert,  vv
                         if(igam==5) jG[k][2][ijack][mr_fw][mr_bw]=(jLambda[k][ijack][mr_fw][mr_bw][5]*Proj[5]).trace().real()/12.0;
                         if(igam>5 and igam<10) jG[k][3][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*Proj[igam]).trace().real()/12.0;
                         if(igam>=10 and igam<16) jG[k][4][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*Proj[igam]).trace().real()/12.0;
-                        
                     }
     
     jG_LO_and_EM[LO] = jG[0];
     jG_LO_and_EM[EM] = jG[1]-jG[2]-jG[3];  // jG_em = -jG_1+jG_a+jG_b;
+    
+    cout<<"____"<<endl;
+    for(int k=0; k<4;k++)
+        cout<<(jLambda[k][0][0][0][0]*Proj[5]).trace().real()/12.0<<endl;
+    cout<<"____"<<endl;
     
     return jG_LO_and_EM;
 }
