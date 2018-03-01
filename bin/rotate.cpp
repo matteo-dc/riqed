@@ -23,7 +23,7 @@ vvvprop_t rotate(vvvprop_t &S)
             {
                 int r = mr%nr;
                 
-                prop_t rot=(GAMMA[0]+I*(double)(2*r-1)*GAMMA[5])/sqrt(2);
+                prop_t rot=(GAMMA[0]-I*(double)(2*r-1)*GAMMA[5])/sqrt(2);
                 
                 S_rotated[ijack][t][mr] = rot*S[ijack][t][mr]*rot;
             }
