@@ -9,7 +9,7 @@
 prop_t make_vertex(const prop_t &prop1, const prop_t &prop2, const int mu)
 {
 //    return prop1*GAMMA[mu]*GAMMA[5]*prop2.adjoint()*GAMMA[5];
-    return GAMMA[5]*prop2.adjoint()*GAMMA[5]*GAMMA[mu]*prop1;
+    return prop1*GAMMA[mu]*GAMMA[5]*prop2.adjoint()*GAMMA[5];
 }
 
 ////calculate the vertex function in a given configuration for the given equal momenta (for 4fermions)

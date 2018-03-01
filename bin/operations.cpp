@@ -831,8 +831,8 @@ void oper_t::compute_meslep()
     
     //these are the charges in the lagrangian
     const double ql=-1.0;     //!< the program simulates positive muon *antiparticle*
-    const double q1=-1.0/3.0; //!< charge of the quark1 (down)
-    const double q2=+2.0/3.0; //!< charge of the quark2 (up)
+    const double qIN=+2.0/3.0; //!< charge of the quark1 (down)
+    const double qOUT=-1.0/3.0; //!< charge of the quark2 (up)
     
     // array of input files to be read in a given conf
     FILE* input_q[combo];
@@ -964,7 +964,7 @@ void oper_t::compute_meslep()
         
         cout<<"- Computing projected meslep"<<endl;
         
-        jvproj_meslep_t jpr_meslep = compute_pr_meslep(jS1_inv_LO_and_EM,jmeslep,jS2_inv_LO_and_EM,q1,q2,ql);
+        jvproj_meslep_t jpr_meslep = compute_pr_meslep(jS1_inv_LO_and_EM,jmeslep,jS2_inv_LO_and_EM,qIN,qOUT,ql);
         
         jpr_meslep_0[imeslepmom] = jpr_meslep[QCD];
         jpr_meslep_em[imeslepmom] = jpr_meslep[M11] + jpr_meslep[M22] + jpr_meslep[M12] - jpr_meslep[6] - jpr_meslep[7];
@@ -1001,10 +1001,10 @@ void oper_t::compute_Z4f()
     
 //#warning putting charges to 1
     //these are the charges in the lagrangian
-    const double q1=-1.0/3.0; //!< charge of the quark1
-    const double q2=+2.0/3.0; //!< charge of the quark2
-//    const double q1=1.0;
-//    const double q2=1.0;
+    const double qIN=+2.0/3.0; //!< charge of the quark (in)
+    const double qOUT=-1.0/3.0; //!< charge of the quark (out)
+//    const double qIN=1.0;
+//    const double qOUT=1.0;
     
     for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
     {
@@ -1030,7 +1030,7 @@ void oper_t::compute_Z4f()
                     
                     O4f_t Z4f_0 = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])*G4f_0_inv;
                     
-                    O4f_t Z4f_em = 0.5*(q1*q1*jZq_em[imom1][ijack][mr_fw]/jZq[imom1][ijack][mr_fw] + q2*q2*jZq_em[imom2][ijack][mr_bw]/jZq[imom2][ijack][mr_bw])*Z4f_0 - Z4f_0*G4f_em*G4f_0_inv;
+                    O4f_t Z4f_em = 0.5*(qIN*qIN*jZq_em[imom1][ijack][mr_fw]/jZq[imom1][ijack][mr_fw] + qOUT*qOUT*jZq_em[imom2][ijack][mr_bw]/jZq[imom2][ijack][mr_bw])*Z4f_0 - Z4f_0*G4f_em*G4f_0_inv;
                     
                     for(int iop1=0;iop1<nbil;iop1++)
                         for(int iop2=0;iop2<nbil;iop2++)

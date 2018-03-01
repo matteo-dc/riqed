@@ -6,7 +6,7 @@
 
 
 //project the amputated green function
-vvvvvd_t compute_pr_bil( vvvprop_t &jprop1_inv,  valarray<jvert_t> &jVert,  vvvprop_t  &jprop2_inv)
+vvvvvd_t compute_pr_bil( vvvprop_t &jpropOUT_inv,  valarray<jvert_t> &jVert,  vvvprop_t  &jpropIN_inv)
 {
    
     const int i1[4]={LO,LO,EM,LO};
@@ -25,7 +25,7 @@ vvvvvd_t compute_pr_bil( vvvprop_t &jprop1_inv,  valarray<jvert_t> &jVert,  vvvp
                 for(int igam=0;igam<16;igam++)
                     for(int k=0;k<4;k++)
                     {
-                        jLambda[k][ijack][mr_fw][mr_bw][igam] = GAMMA[5]*(jprop2_inv[i2[k]][ijack][mr_bw]).adjoint()*GAMMA[5]*jVert[iv[k]][ijack][mr_fw][mr_bw][igam]*jprop1_inv[i1[k]][ijack][mr_fw];
+                        jLambda[k][ijack][mr_fw][mr_bw][igam] = jpropOUT_inv[i1[k]][ijack][mr_fw]*jVert[iv[k]][ijack][mr_fw][mr_bw][igam]*GAMMA[5]*(jpropIN_inv[i2[k]][ijack][mr_bw]).adjoint()*GAMMA[5];
                         
                         if(igam==0) jG[k][0][ijack][mr_fw][mr_bw]=(jLambda[k][ijack][mr_fw][mr_bw][0]*Proj[0]).trace().real()/12.0;
                         if(igam>0 and igam<5) jG[k][1][ijack][mr_fw][mr_bw]+=(jLambda[k][ijack][mr_fw][mr_bw][igam]*Proj[igam]).trace().real()/12.0;

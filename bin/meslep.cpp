@@ -31,15 +31,15 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
 }
 
 
-prop_t make_meslep(const prop_t &prop1, const prop_t &prop2, const dcompl &lloop, const int igam)
+prop_t make_meslep(const prop_t &propOUT, const prop_t &propIN, const dcompl &lloop, const int igam)
 {
     using namespace meslep;
     
-    return GAMMA[5]*prop2.adjoint()*GAMMA[5]*GAMMA[iG[igam]]*(GAMMA[0]+g5_sign[igam]*GAMMA[5])*prop1*lloop;
+    return propOUT*GAMMA[iG[igam]]*(GAMMA[0]+g5_sign[igam]*GAMMA[5])*GAMMA[5]*propIN.adjoint()*GAMMA[5]*lloop;
 }
 
 
-void build_meslep(const vvvprop_t &S1,const vvvprop_t &S2, const vvprop_t &L, valarray<jmeslep_t> &jmeslep)
+void build_meslep(const vvvprop_t &SOUT,const vvvprop_t &SIN, const vvprop_t &L, valarray<jmeslep_t> &jmeslep)
 {
     using namespace meslep;
     
@@ -52,26 +52,26 @@ void build_meslep(const vvvprop_t &S1,const vvvprop_t &S2, const vvprop_t &L, va
                 for(int igam=0;igam<16;igam++)
                     for(int iproj=0;iproj<16;iproj++)
                     {
-                        jmeslep[QCD][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(S1[ijack][LO][mr_fw],S2[ijack][LO][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
+                        jmeslep[QCD][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(SOUT[ijack][LO][mr_fw],SIN[ijack][LO][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
                         
-                        jmeslep[IN][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(S1[ijack][EM][mr_fw],S2[ijack][LO][mr_bw],mesloop[EM][ijack][igam][iproj],igam);
+                        jmeslep[OUT][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(SOUT[ijack][EM][mr_fw],SIN[ijack][LO][mr_bw],mesloop[EM][ijack][igam][iproj],igam);
                         
-                        jmeslep[OUT][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(S1[ijack][LO][mr_fw],S2[ijack][EM][mr_bw],mesloop[EM][ijack][igam][iproj],igam);
+                        jmeslep[IN][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(SOUT[ijack][LO][mr_fw],SIN[ijack][EM][mr_bw],mesloop[EM][ijack][igam][iproj],igam);
                         
-                        jmeslep[M11][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(S1[ijack][2][mr_fw] + S1[ijack][3][mr_fw],S2[ijack][LO][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
+                        jmeslep[M11][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(SOUT[ijack][2][mr_fw] + SOUT[ijack][3][mr_fw],SIN[ijack][LO][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
                         
-                        jmeslep[M22][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(S1[ijack][LO][mr_fw],S2[ijack][2][mr_bw] + S2[ijack][3][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
+                        jmeslep[M22][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(SOUT[ijack][LO][mr_fw],SIN[ijack][2][mr_bw] + SIN[ijack][3][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
                         
-                        jmeslep[M12][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(S1[ijack][EM][mr_fw],S2[ijack][EM][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
+                        jmeslep[M12][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(SOUT[ijack][EM][mr_fw],SIN[ijack][EM][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
                         
                         int r_fw = mr_fw % nr;
                         int r_bw = mr_bw % nr;
                         
-                        if(r_fw==0) jmeslep[P11][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(+1.0*S1[ijack][4][mr_fw],S2[ijack][0][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
-                        if(r_fw==1) jmeslep[P11][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(-1.0*S1[ijack][4][mr_fw],S2[ijack][0][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
+                        if(r_fw==0) jmeslep[P11][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(+1.0*SOUT[ijack][4][mr_fw],SIN[ijack][0][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
+                        if(r_fw==1) jmeslep[P11][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(-1.0*SOUT[ijack][4][mr_fw],SIN[ijack][0][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
                         
-                        if(r_bw==0) jmeslep[P22][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(S1[ijack][0][mr_fw],+1.0*S2[ijack][4][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
-                        if(r_bw==1) jmeslep[P22][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(S1[ijack][0][mr_fw],-1.0*S2[ijack][4][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
+                        if(r_bw==0) jmeslep[P22][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(SOUT[ijack][0][mr_fw],+1.0*SIN[ijack][4][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
+                        if(r_bw==1) jmeslep[P22][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(SOUT[ijack][0][mr_fw],-1.0*SIN[ijack][4][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
                         
 //                        if(mr_bw==0 and mr_fw==0)
 //                        {
@@ -89,7 +89,7 @@ void build_meslep(const vvvprop_t &S1,const vvvprop_t &S2, const vvprop_t &L, va
                     }
 }
 
-jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jmeslep, vvvprop_t  &jprop2_inv, const double q1, const double q2, const double ql)
+jvproj_meslep_t compute_pr_meslep(vvvprop_t &jpropOUT_inv, valarray<jmeslep_t> &jmeslep, vvvprop_t  &jpropIN_inv, const double qIN, const double qOUT, const double ql)
 {
     using namespace meslep;
 
@@ -109,7 +109,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
     //  A22: LO operator amputated with the em correction to the inverse propagator of q2
 
 //#warning putting charges to 1
-    double Q[8]={1.0,ql*q1,ql*q2,q1*q1,q2*q2,q1*q2,q1*q1,q2*q2}; // charge factors
+    double Q[8]={1.0,ql*qIN,ql*qOUT,qIN*qIN,qOUT*qOUT,qIN*qOUT,qIN*qIN,qOUT*qOUT}; // charge factors
 //    double Q[8]={1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0}; // charge factors
     const int i1[8]={LO,LO,LO,LO,LO,LO,EM,LO};
     const int iv[8]={QCD,IN,OUT,M11,M22,M12,QCD,QCD};
@@ -130,7 +130,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jm
                         
                         for(int k=0; k<8; k++)
                         {
-                            jLambda[k][ijack][mr_fw][mr_bw][igam][iproj] = Q[k]*GAMMA[5]*jprop2_inv[i2[k]][ijack][mr_bw].adjoint()*GAMMA[5]*jmeslep[iv[k]][ijack][mr_fw][mr_bw][igam][iproj]*jprop1_inv[i1[k]][ijack][mr_fw];
+                            jLambda[k][ijack][mr_fw][mr_bw][igam][iproj] = Q[k]*jpropOUT_inv[i1[k]][ijack][mr_fw]*jmeslep[iv[k]][ijack][mr_fw][mr_bw][igam][iproj]*GAMMA[5]*jpropIN_inv[i2[k]][ijack][mr_bw].adjoint()*GAMMA[5];
                             
                             jG_g[k][igam][iproj][ijack][mr_fw][mr_bw] = (jLambda[k][ijack][mr_fw][mr_bw][igam][iproj]*(GAMMA[iG[iproj]]*(GAMMA[0]+g5_sign[iproj]*GAMMA[5])).adjoint()).trace().real()/12.0/2.0;
                             // the factor 2.0 is to normalize the projector with (1+-g5)
