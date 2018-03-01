@@ -831,8 +831,8 @@ void oper_t::compute_meslep()
     
     //these are the charges in the lagrangian
     const double ql=-1.0;     //!< the program simulates positive muon *antiparticle*
-    const double q1=+2.0/3.0; //!< charge of the quark1 (up)
-    const double q2=-1.0/3.0; //!< charge of the quark2 (down)
+    const double q1=-1.0/3.0; //!< charge of the quark1 (down)
+    const double q2=+2.0/3.0; //!< charge of the quark2 (up)
     
     // array of input files to be read in a given conf
     FILE* input_q[combo];
@@ -1001,8 +1001,8 @@ void oper_t::compute_Z4f()
     
 //#warning putting charges to 1
     //these are the charges in the lagrangian
-    const double q1=+2.0/3.0; //!< charge of the quark1
-    const double q2=-1.0/3.0; //!< charge of the quark2
+    const double q1=-1.0/3.0; //!< charge of the quark1
+    const double q2=+2.0/3.0; //!< charge of the quark2
 //    const double q1=1.0;
 //    const double q2=1.0;
     
