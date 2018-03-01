@@ -382,7 +382,7 @@ vvprop_t read_lprop_mom(FILE* input[],const vector<string> v_path,const int i_in
 {
     vvprop_t L(vprop_t(prop_t::Zero(),ntypes_lep),njacks);
     
-#pragma omp parallel for
+//#pragma omp parallel for
     for(int ilin=0;ilin<ntypes_lep*njacks;ilin++)
     {
         int k=ilin;
@@ -395,6 +395,8 @@ vvprop_t read_lprop_mom(FILE* input[],const vector<string> v_path,const int i_in
         
         //create all the propagators in a given conf and a given mom
         L[ijack][t] = read_prop(input[icombo],v_path[icombo],imom);
+        
+        if(t==EM) L[ijack][EM]=L[ijack][EM]*L[ijack][LO];
     }
     
     return L;
