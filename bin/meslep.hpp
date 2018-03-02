@@ -11,7 +11,7 @@ namespace meslep
     const vector<vector<size_t>> iG_of_iop = {{0,1,2,3},{4,5,6,7},{8},{9},{10,11,12,13,14,15}};
     
     const vector<int> proj_norm = {4,4,1,1,24};
-    const vector<int> proj_norm = {1,1,1,1,2};
+    const vector<int> op_norm = {1,1,1,1,2};
 }
 
 void build_meslep(const vvvprop_t &S1,const vvvprop_t &S2, const vvprop_t &L, valarray<jmeslep_t> &jmeslep);
