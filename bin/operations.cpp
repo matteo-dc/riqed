@@ -64,6 +64,7 @@ void oper_t::set_moms()
 //    moms=_linmoms;
     
     print_vec(p2_tilde,path_print+"p2_tilde.txt");
+    print_vec(p2,path_print+"p2.txt");
 }
 
 void oper_t::set_ri_mom_moms()
