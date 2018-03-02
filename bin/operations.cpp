@@ -2145,7 +2145,8 @@ void oper_t::plot(const string suffix)
     vvvvvd_t Z_4f_err=get<1>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
     vvvvvd_t Z_em_4f_err=get<1>(Z_em_4f_ave_err);
  
-    vector<string> bil={"S","A","P","V","T"};
+    // this choice is relative to the twisted basis
+    vector<string> bil={"S","V","P","A","T"};
     
     ofstream Zq_data, Zq_em_data;
     vector<ofstream> Zbil_data(nbil), Zbil_em_data(nbil);
