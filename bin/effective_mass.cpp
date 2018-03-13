@@ -281,7 +281,7 @@ void oper_t::compute_eff_mass_sea()
     
     
     ofstream outfile;
-    outfile.open(path_to_ens+"eff_mass_array", ios::out | ios::binary);
+    outfile.open(path_to_ens+"eff_mass_sea_array", ios::out | ios::binary);
     
     if (outfile.is_open())
     {
