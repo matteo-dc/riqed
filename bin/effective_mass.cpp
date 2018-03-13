@@ -202,8 +202,10 @@ void oper_t::compute_eff_mass_sea()
     
     for(int r1=0;r1<nr;r1++)
         for(int r2=0;r2<nr;r2++)
+	  {
+	    cout<<"r1 "<<r1<<" r2 "<<r2<<endl;
             jP5P5_00[r1][r2]=get_contraction("sea",out_hadr,r1,"0",r2,"0","P5P5","RE","EVEN",conf_id,path_to_ens);
-    
+	  }
     //   cout<<"**********DEBUG: P5P5 correlator  *************"<<endl;
     //   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
     //     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
