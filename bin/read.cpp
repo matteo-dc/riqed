@@ -123,7 +123,7 @@ vvvd_t oper_t::read_eff_mass(const string name)
     return eff_mass_tmp;
 }
 
-// read effective mass
+// read effective sea mass
 vvvd_t oper_t::read_eff_mass_sea(const string name)
 {
     vvvd_t eff_mass_sea_tmp(vvd_t(vd_t(0.0,nr),nr),njacks);
