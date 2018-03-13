@@ -200,8 +200,9 @@ void oper_t::compute_eff_mass_sea()
     // define jackknife V0P5 correlators
     vvvvd_t jP5P5_00(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nr),nr);
     
-    cout<<"r1 "<<r1<<" r2 "<<r2<<" nr "<<nr<<endl;
-    jP5P5_00[r1][r2]=get_contraction("sea",out_hadr,r1,"0",r2,"0","P5P5","RE","EVEN",conf_id,path_to_ens);
+    for(int r1=0;r1<nr;r1++)
+        for(int r2=0;r2<nr;r2++)
+            jP5P5_00[r1][r2]=get_contraction("sea",out_hadr,r1,"0",r2,"0","P5P5","RE","EVEN",conf_id,path_to_ens);
 	  
     //   cout<<"**********DEBUG: P5P5 correlator  *************"<<endl;
     //   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -267,7 +268,7 @@ void oper_t::compute_eff_mass_sea()
     vvvvd_t jeff_mass(vvvd_t(vvd_t(vd_t(0.0,coord.size()),njacks),nr),nr);
     
     for(int r1=0;r1<nr;r1++)
-        for(int r2=0;r2<nr;r1++)
+        for(int r2=0;r2<nr;r2++)
             jeff_mass[r1][r2] = polyfit(coord, 1, mass_err[r1][r2], M_eff[r1][r2], t_min, t_max);
     
     vvvd_t eff_mass_tmp(vvd_t(vd_t(0.0,nr),nr),njacks);
@@ -286,7 +287,7 @@ void oper_t::compute_eff_mass_sea()
     {
         for(int ijack=0;ijack<njacks;ijack++)
             for(int r1=0;r1<nr;r1++)
-                for(int r2=0;r2<nr;r1++)
+                for(int r2=0;r2<nr;r2++)
                 {
                     outfile.write((char*) &eff_mass_tmp[ijack][r1][r2],sizeof(double));
                 }
