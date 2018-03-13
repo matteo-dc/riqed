@@ -114,7 +114,7 @@ vvvd_t oper_t::read_eff_mass(const string name)
                 int rd=fread(&temp,sizeof(double),1,input_effmass);
                 if(rd!=1)
                 {
-                    cerr<<"Unable to read from \"eff_mass_array\" mr_fw: "<<mr_fw<<", mr_bw: "<<mr_bw<<", ijack: "<<ijack<<endl;
+                    cerr<<"Unable to read from \""<<name<<"\" mr_fw: "<<mr_fw<<", mr_bw: "<<mr_bw<<", ijack: "<<ijack<<endl;
                     exit(1);
                 }
                 eff_mass_tmp[ijack][mr_fw][mr_bw]=temp; //store
@@ -149,7 +149,7 @@ vvvd_t oper_t::read_eff_mass_sea(const string name)
                 int rd=fread(&temp,sizeof(double),1,input_effmass_sea);
                 if(rd!=1)
                 {
-                    cerr<<"Unable to read from \"eff_mass_sea_array\" mr_fw: "<<r1<<", mr_bw: "<<r2<<", ijack: "<<ijack<<endl;
+                    cerr<<"Unable to read from \""<<name<<"\" mr_fw: "<<r1<<", mr_bw: "<<r2<<", ijack: "<<ijack<<endl;
                     exit(1);
                 }
                 eff_mass_sea_tmp[ijack][r1][r2]=temp; //store
