@@ -9,7 +9,7 @@
 #define DEFAULT_DOUBLE_VAL 1.2345
 
 // define global variables
-int nconfs, njacks, nr, ntypes, nhits, Nf, Nc, UseSigma1, UseEffMass, nbeta, ntheta, compute_4f;
+int nconfs, njacks, nr, ntypes, nhits, Nf, Nc, UseSigma1, UseEffMass, nbeta, ntheta, compute_4f,only_basic;
 int clust_size, nbil, combo, combo_lep, ntypes_lep;
 vector<double> beta;
 vector<int> nm_Sea;
@@ -70,6 +70,7 @@ TK_glb_t get_TK_glb(FILE *fin)
     if(strcasecmp(tok,compute_meslep_tag)==0) return COMPUTE_MESLEP_TK;
     if(strcasecmp(tok,out_hadr_tag)==0) return OUT_HADR_TK;
     if(strcasecmp(tok,out_lep_tag)==0) return OUT_LEP_TK;
+    if(strcasecmp(tok,only_basic_tag)==0) return ONLY_BASIC_TK;
 
     return VALUE_GLB_TK;
 }
@@ -249,6 +250,7 @@ void read_input_glb(const char path[])
     compute_4f=DEFAULT_INT_VAL;
     out_hadr=DEFAULT_STR_VAL;
     out_lep=DEFAULT_STR_VAL;
+    only_basic=DEFAULT_INT_VAL;
     
 //    for(auto &bl : beta_label) bl=DEFAULT_STR_VAL;
 //    //        for(auto &l : L) l=DEFAULT_INT_VAL;
@@ -366,6 +368,9 @@ void read_input_glb(const char path[])
             case OUT_LEP_TK:
                 get_value_glb(fin,out_lep);
                 break;
+            case ONLY_BASIC_TK:
+                get_value_glb(fin,only_basic);
+                break;
                 
             case FEOF_GLB_TK:
                 break;
@@ -400,6 +405,7 @@ void read_input_glb(const char path[])
     check_int_par(compute_4f,compute_meslep_tag);
     check_str_par(out_hadr,out_hadr_tag);
     check_str_par(out_lep,out_lep_tag);
+    check_int_par(only_basic,only_basic_tag);
     
     fclose(fin);
     
@@ -431,7 +437,10 @@ void read_input_glb(const char path[])
         for(int m=0; m<nm_Sea[b]; m++)
             printf("%s%d ",beta_label[b].c_str(),SeaMasses_label[b][m]);
         printf("\n");
-    }    
+    }
+    
+    if(only_basic)
+        printf(" Computing only basic quantities. \n");
     
     // define global variables from input
     clust_size=nconfs/njacks;

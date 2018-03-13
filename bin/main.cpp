@@ -96,29 +96,33 @@ int main()
                  ave[b][th][m] = basic[b][th][m].average_equiv_moms();
                  ave[b][th][m].plot("ave");
                 
-                /*  average r  */
+                if(only_basic==0)
+                {
+                    /*  average r  */
+                    
+                    rave[b][th][m] = basic[b][th][m].average_r();
+                    rave[b][th][m].plot("rave");
+                    rave_ave[b][th][m] = rave[b][th][m].average_equiv_moms();
+                    rave_ave[b][th][m].plot("rave_ave");
+                    
+                    /*  valence chiral extr  */
+                    
+                    rave_chir[b][th][m] = rave[b][th][m].chiral_extr();
+                    rave_chir[b][th][m].plot("rave_chir");
+                    rave_chir_ave[b][th][m] = rave_chir[b][th][m].average_equiv_moms();
+                    rave_chir_ave[b][th][m].plot("rave_chir_ave");
+                    
+                    /*  O(a2g2) subtraction  */
+                    
+                    rave_chir_sub[b][th][m] = rave_chir[b][th][m].subtract();
+                    rave_chir_sub[b][th][m].plot("rave_chir_sub");
+                    rave_chir_sub_ave[b][th][m] = rave_chir_sub[b][th][m].average_equiv_moms();
+                    rave_chir_sub_ave[b][th][m].plot("rave_chir_sub_ave");
+                }
                 
-                rave[b][th][m] = basic[b][th][m].average_r();
-                rave[b][th][m].plot("rave");
-                rave_ave[b][th][m] = rave[b][th][m].average_equiv_moms();
-                rave_ave[b][th][m].plot("rave_ave");
-                
-                /*  valence chiral extr  */
-                
-                rave_chir[b][th][m] = rave[b][th][m].chiral_extr();
-                rave_chir[b][th][m].plot("rave_chir");
-                rave_chir_ave[b][th][m] = rave_chir[b][th][m].average_equiv_moms();
-                rave_chir_ave[b][th][m].plot("rave_chir_ave");
-                
-                /*  O(a2g2) subtraction  */
-                
-                rave_chir_sub[b][th][m] = rave_chir[b][th][m].subtract();
-                rave_chir_sub[b][th][m].plot("rave_chir_sub");
-                rave_chir_sub_ave[b][th][m] = rave_chir_sub[b][th][m].average_equiv_moms();
-                rave_chir_sub_ave[b][th][m].plot("rave_chir_sub_ave");
             } //close nm_sea
             
-            if(nm_Sea[b]>1)
+            if(nm_Sea[b]>1 and only_basic==0)
             {
                 /*  sea chiral extr  */
                 
@@ -129,7 +133,7 @@ int main()
             }
         } //close ntheta
         
-        if(ntheta>1)
+        if(ntheta>1 and only_basic==0)
         {
             /*  theta average  */
             
@@ -147,7 +151,7 @@ int main()
         }
     } //close nbeta
     
-    if(nbeta>1)
+    if(nbeta>1 and only_basic==0)
     {
         /*  a2p2->0 extrapolation  */
         

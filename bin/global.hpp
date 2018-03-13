@@ -123,6 +123,8 @@ extern string out_hadr;
 extern string out_lep;
 // types of lepton propagators
 extern int ntypes_lep;
+// create only basic
+extern int only_basic;
 
 typedef enum {  
     LO = 0,
