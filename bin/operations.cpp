@@ -215,7 +215,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     
     deltam_cr=read_deltam_cr(path_to_ens+"deltam_cr_array");
     if(UseEffMass) eff_mass=read_eff_mass(path_to_ens+"eff_mass_array");
-    if(UseEffMass and _nm_Sea>1) eff_mass_sea=read_eff_mass_sea(path_to_ens+"eff_mass_sea_array");
+    if(UseEffMass and _nm_Sea>0) eff_mass_sea=read_eff_mass_sea(path_to_ens+"eff_mass_sea_array");
 
     ifstream jZq_data(path_print+"jZq");
     ifstream jZq_em_data(path_print+"jZq_em");
