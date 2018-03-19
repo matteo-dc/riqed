@@ -65,16 +65,21 @@ void oper_t::compute_deltam_cr()
                 for(int t=0;t<T/2+1;t++)
                     for(int r=0;r<nr;r++)
                     {
-                        int cr_even = (r+1)%2 + (r%2);
-                        int cr_odd = (r+1)%2 - (r%2);
+                        int r1=r;
+                        int r2=(r+1)%2;
                         
-                        jV0P5_LL_ave[m_fw][m_bw][ijack][t] += jV0P5_LL[r+nr*m_fw][r+nr*m_bw][ijack][t]*cr_odd/nr;
-                        jV0P5_0M_ave[m_fw][m_bw][ijack][t] += jV0P5_0M[r+nr*m_fw][r+nr*m_bw][ijack][t]*cr_odd/nr;
-                        jV0P5_M0_ave[m_fw][m_bw][ijack][t] += jV0P5_M0[r+nr*m_fw][r+nr*m_bw][ijack][t]*cr_odd/nr;
-                        jV0P5_0T_ave[m_fw][m_bw][ijack][t] += jV0P5_0T[r+nr*m_fw][r+nr*m_bw][ijack][t]*cr_odd/nr;
-                        jV0P5_T0_ave[m_fw][m_bw][ijack][t] += jV0P5_T0[r+nr*m_fw][r+nr*m_bw][ijack][t]*cr_odd/nr;
-                        jV0P5_0P_ave[m_fw][m_bw][ijack][t] += jV0P5_0P[r+nr*m_fw][r+nr*m_bw][ijack][t]*cr_even/nr;
-                        jV0P5_P0_ave[m_fw][m_bw][ijack][t] += jV0P5_P0[r+nr*m_fw][r+nr*m_bw][ijack][t]*cr_even/nr;
+                        int cr_even = r2 + r1;
+                        int cr_odd = r2 - r1;
+                        
+                        // we consider correlators with same r (opposite r's become same r's due to the dagger) because in Nf=4 analysis
+                        // we are not at maximal twist and the leading order m_cr wouldn't be zero otherwise.
+                        jV0P5_LL_ave[m_fw][m_bw][ijack][t] += jV0P5_LL[r1+nr*m_fw][r2+nr*m_bw][ijack][t]*cr_odd/nr;
+                        jV0P5_0M_ave[m_fw][m_bw][ijack][t] += jV0P5_0M[r1+nr*m_fw][r2+nr*m_bw][ijack][t]*cr_odd/nr;
+                        jV0P5_M0_ave[m_fw][m_bw][ijack][t] += jV0P5_M0[r1+nr*m_fw][r2+nr*m_bw][ijack][t]*cr_odd/nr;
+                        jV0P5_0T_ave[m_fw][m_bw][ijack][t] += jV0P5_0T[r1+nr*m_fw][r2+nr*m_bw][ijack][t]*cr_odd/nr;
+                        jV0P5_T0_ave[m_fw][m_bw][ijack][t] += jV0P5_T0[r1+nr*m_fw][r2+nr*m_bw][ijack][t]*cr_odd/nr;
+                        jV0P5_0P_ave[m_fw][m_bw][ijack][t] += jV0P5_0P[r1+nr*m_fw][r2+nr*m_bw][ijack][t]*cr_even/nr;
+                        jV0P5_P0_ave[m_fw][m_bw][ijack][t] += jV0P5_P0[r1+nr*m_fw][r2+nr*m_bw][ijack][t]*cr_even/nr;
                     }
     
 #pragma omp parallel for collapse(4)
