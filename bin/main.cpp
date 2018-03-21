@@ -131,6 +131,11 @@ int main()
                 rave_chir_sub_sea_ave[b][th] = rave_chir_sub_sea[b][th].average_equiv_moms();
                 rave_chir_sub_sea_ave[b][th].plot(theta_label[th]+"/rave_chir_sub_sea_ave");
             }
+            else if(only_basic==0)
+            {
+                rave_chir_sub_sea[b][th] = rave_chir_sub[b][th][0];
+                rave_chir_sub_sea_ave[b][th] = rave_chir_sub_sea[b][th].average_equiv_moms();
+            }
         } //close ntheta
         
         if(ntheta>1 and only_basic==0)
