@@ -61,8 +61,8 @@ struct oper_t
     int moms;
     
     // deltam_cr
-    vvvd_t deltam_cr;
-    vvvd_t read_deltam_cr(const string name);
+    vvvvd_t deltam_cr;
+    vvvvd_t read_deltam_cr(const string name);
     void compute_deltam_cr();
     
     // effective valence mass

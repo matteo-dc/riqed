@@ -162,9 +162,9 @@ vvvd_t oper_t::read_eff_mass_sea(const string name)
 
 
 // read deltam_cr
-vvvd_t oper_t::read_deltam_cr(const string name)
+vvvvd_t oper_t::read_deltam_cr(const string name)
 {
-    vvvd_t deltam_cr(vvd_t(vd_t(0.0,nm),nm),njacks);
+    vvvvd_t deltam_cr(vvvd_t(vvd_t(vd_t(0.0,nr),nm),nm),njacks);
     
     FILE* input_deltam;
     input_deltam = fopen(name.c_str(),"rb");
@@ -181,18 +181,19 @@ vvvd_t oper_t::read_deltam_cr(const string name)
     for(int ijack=0;ijack<njacks;ijack++)
         for(int m_fw=0;m_fw<nm;m_fw++)
             for(int m_bw=0;m_bw<nm;m_bw++)
-            {
-                double temp;
-                
-                int rd=fread(&temp,sizeof(double),1,input_deltam);
-                if(rd!=1)
+                for(int r=0;r<nr;r++)
                 {
-                    cerr<<"Unable to read from \"deltam_cr_array\" mr_fw: "<<m_fw<<", mr_bw: "<<m_bw<<", ijack: "<<ijack<<endl;
-                    exit(1);
+                    double temp;
+                    
+                    int rd=fread(&temp,sizeof(double),1,input_deltam);
+                    if(rd!=1)
+                    {
+                        cerr<<"Unable to read from \"deltam_cr_array\" m_fw: "<<m_fw<<", m_bw: "<<m_bw<<", r: "<<r<<", ijack: "<<ijack<<endl;
+                        exit(1);
+                    }
+                    deltam_cr[ijack][m_fw][m_bw][r]=temp; //store
+                    printf("ijack: %d \t m1: %d \t m2: %d \t r: %d \t deltam_cr: %lg \n",ijack,m_fw,m_bw,r,deltam_cr[ijack][m_fw][m_bw][r]);
                 }
-                deltam_cr[ijack][m_fw][m_bw]=temp; //store
-                printf("ijack: %d \t m1: %d \t m2: %d \t  deltam_cr: %lg \n",ijack,m_fw,m_bw,deltam_cr[ijack][m_fw][m_bw]);
-            }
     return deltam_cr;
 }
 

@@ -564,7 +564,7 @@ void oper_t::compute_prop()
                     for(int ijack=0;ijack<njacks;ijack++)
                     {
                         int mr = r + nr*m;
-                        jS_em[ijack][mr] = jS_self_tad[ijack][mr] + deltam_cr[ijack][m][m]*jS_P[ijack][mr];
+                        jS_em[ijack][mr] = jS_self_tad[ijack][mr] + deltam_cr[ijack][m][m][r]*jS_P[ijack][mr];
                     }
             
             // invert propagator
@@ -700,8 +700,8 @@ void oper_t::compute_bil()
                     {
                         int mr = r + nr*m;
                         
-                        jS1_em[ijack][mr]=jS1_self_tad[ijack][mr] + deltam_cr[ijack][m][m]*jS1_P[ijack][mr];
-                        (read2)?jS2_em[ijack][mr]=jS2_self_tad[ijack][mr] + deltam_cr[ijack][m][m]*jS2_P[ijack][mr]:jS2_em[ijack][mr]=jS1_em[ijack][mr];
+                        jS1_em[ijack][mr]=jS1_self_tad[ijack][mr] + deltam_cr[ijack][m][m][r]*jS1_P[ijack][mr];
+                        (read2)?jS2_em[ijack][mr]=jS2_self_tad[ijack][mr] + deltam_cr[ijack][m][m][r]*jS2_P[ijack][mr]:jS2_em[ijack][mr]=jS1_em[ijack][mr];
                     }
             
 #pragma omp parallel for collapse (4)
@@ -717,7 +717,7 @@ void oper_t::compute_bil()
                             
                             jVert_LO_and_EM[LO][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P[LO][ijack][mr_fw][mr_bw][igam];
                             
-                            jVert_LO_and_EM[EM][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P[EM][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_fw][m_fw]*jVert_LO_EM_P[2][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_bw][m_bw]*jVert_LO_EM_P[3][ijack][mr_fw][mr_bw][igam];
+                            jVert_LO_and_EM[EM][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P[EM][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_fw][m_fw][r_fw]*jVert_LO_EM_P[2][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_bw][m_bw][r_bw]*jVert_LO_EM_P[3][ijack][mr_fw][mr_bw][igam];
                         }
             
             
@@ -903,8 +903,8 @@ void oper_t::compute_meslep()
                     {
                         int mr = r + nr*m;
                         
-                        jS1_em[ijack][mr]=jS1_self_tad[ijack][mr] + deltam_cr[ijack][m][m]*jS1_P[ijack][mr];
-                        (read2)?jS2_em[ijack][mr]=jS2_self_tad[ijack][mr] + deltam_cr[ijack][m][m]*jS2_P[ijack][mr]:jS2_em[ijack][mr]=jS1_em[ijack][mr];
+                        jS1_em[ijack][mr]=jS1_self_tad[ijack][mr] + deltam_cr[ijack][m][m][r]*jS1_P[ijack][mr];
+                        (read2)?jS2_em[ijack][mr]=jS2_self_tad[ijack][mr] + deltam_cr[ijack][m][m][r]*jS2_P[ijack][mr]:jS2_em[ijack][mr]=jS1_em[ijack][mr];
                     }
             
             // build the complete electromagnetic correction to the vertex
@@ -920,8 +920,8 @@ void oper_t::compute_meslep()
                                 int r_bw = mr_bw%nr;
                                 int m_bw = (mr_bw-r_bw)/nr;
                                 
-                                jmeslep[M11][ijack][mr_fw][mr_bw][igam][iproj] += deltam_cr[ijack][m_fw][m_fw]*jmeslep[P11][ijack][mr_fw][mr_bw][igam][iproj];
-                                jmeslep[M22][ijack][mr_fw][mr_bw][igam][iproj] += deltam_cr[ijack][m_bw][m_bw]*jmeslep[P22][ijack][mr_fw][mr_bw][igam][iproj];
+                                jmeslep[M11][ijack][mr_fw][mr_bw][igam][iproj] += deltam_cr[ijack][m_fw][m_fw][r_fw]*jmeslep[P11][ijack][mr_fw][mr_bw][igam][iproj];
+                                jmeslep[M22][ijack][mr_fw][mr_bw][igam][iproj] += deltam_cr[ijack][m_bw][m_bw][r_bw]*jmeslep[P22][ijack][mr_fw][mr_bw][igam][iproj];
                             }
             
             cout<<"- Inverting propagators"<<endl;
