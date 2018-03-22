@@ -88,8 +88,11 @@ void oper_t::compute_deltam_cr()
                     for(int t=0;t<T/2+1;t++)
                         for(int r=0; r<1; r++)
                         {
-                            int r1=r;
-                            int r2=(r+1)%2;
+//                            int r1=r;
+//                            int r2=(r+1)%2;
+                            
+                            int r1=(r+1)%2;
+                            int r2=r;
     
                             jV0P5_LL_ave[m_fw][m_bw][ijack][t] = jV0P5_LL[r1+nr*m_fw][r1+nr*m_bw][ijack][t];
                             jV0P5_0M_ave[m_fw][m_bw][ijack][t] = jV0P5_0M[r1+nr*m_fw][r1+nr*m_bw][ijack][t];
