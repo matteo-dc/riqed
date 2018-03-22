@@ -18,7 +18,7 @@ vvvvvd_t compute_pr_bil( vvvprop_t &jpropOUT_inv,  valarray<jvert_t> &jVert,  vv
     valarray<jproj_t> jG(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nbil),4);
     valarray<jproj_t> jG_LO_and_EM(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nbil),2);
     
-//#pragma omp parallel for collapse(5)
+#pragma omp parallel for collapse(5)
     for(int ijack=0;ijack<njacks;ijack++)
         for(int mr_fw=0;mr_fw<nmr;mr_fw++)
             for(int mr_bw=0;mr_bw<nmr;mr_bw++)

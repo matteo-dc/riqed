@@ -115,46 +115,27 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jpropOUT_inv, valarray<jmeslep_t> &
     const int i2[8]={LO,LO,LO,LO,LO,LO,LO,EM};
     
 //    cout<<"---------  projected meslep 16x16 (QCD,IN,OUT) without charges  ----------"<<endl;
-#pragma omp parallel for collapse(5)
+#pragma omp parallel for collapse(6)
     for(int ijack=0;ijack<njacks;ijack++)
         for(int mr_fw=0;mr_fw<nmr;mr_fw++)
             for(int mr_bw=0;mr_bw<nmr;mr_bw++)
                 for(int igam=0;igam<16;igam++)
                     for(int iproj=0;iproj<16;iproj++)
-                    {
-//                        if(mr_fw==0 and mr_bw==0)
-//                        {
-//                            printf("igam[%d-%d] ijack[%d] - jpr_meslep:  ",igam,iproj,ijack);
-//                        }
-                        
                         for(int k=0; k<8; k++)
                         {
                             jLambda[k][ijack][mr_fw][mr_bw][igam][iproj] = Q[k]*jpropOUT_inv[i1[k]][ijack][mr_fw]*jmeslep[iv[k]][ijack][mr_fw][mr_bw][igam][iproj]*GAMMA[5]*jpropIN_inv[i2[k]][ijack][mr_bw].adjoint()*GAMMA[5];
                             
                             jG_g[k][igam][iproj][ijack][mr_fw][mr_bw] = (jLambda[k][ijack][mr_fw][mr_bw][igam][iproj]*(GAMMA[iG[iproj]]*(GAMMA[0]+g5_sign[iproj]*GAMMA[5])).adjoint()).trace().real()/12.0/2.0;
                             // the factor 2.0 is to normalize the projector with (1+-g5)
-                            
-//                            if(mr_fw==0 and mr_bw==0)
-//                            {
-//                                printf("  %lg  ",jG_g[k][igam][iproj][ijack][mr_bw][mr_fw]/Q[k]);
-//                            }
                         }
-//                        if(mr_fw==0 and mr_bw==0) printf("\n");
-                    }
     
 //    cout<<"---------  projected meslep 5x5 (QCD,IN,OUT) without charges  ----------"<<endl;
-#pragma omp parallel for collapse(5)
+#pragma omp parallel for collapse(6)
     for(int ijack=0;ijack<njacks;ijack++)
         for(int mr_fw=0;mr_fw<nmr;mr_fw++)
             for(int mr_bw=0;mr_bw<nmr;mr_bw++)
                 for(int iop1=0;iop1<nbil;iop1++)
                     for(int iop2=0;iop2<nbil;iop2++)
-                    {
-//                        if(mr_fw==0 and mr_bw==0)
-//                        {
-//                            printf("iop[%d-%d] ijack[%d] - jpr_meslep_5x5:  ",iop1,iop2,ijack);
-//                        }
-                        
                         for(int k=0; k<8; k++)
                         {
                             vector<size_t> igam = iG_of_iop[iop1];
@@ -165,14 +146,7 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jpropOUT_inv, valarray<jmeslep_t> &
                                 {
                                     jG_op[k][iop1][iop2][ijack][mr_fw][mr_bw] += jG_g[k][ig][ip][ijack][mr_fw][mr_bw]*op_norm[iop1]/proj_norm[iop2];
                                 }
-
-//                            if(mr_fw==0 and mr_bw==0)
-//                            {
-//                                printf("  %lg  ",jG_op[k][iop1][iop2][ijack][0][0]/Q[k]);
-//                            }
                         }
-//                        if(mr_fw==0 and mr_bw==0) printf("\n");
-                    }
     
     return jG_op;
 }
