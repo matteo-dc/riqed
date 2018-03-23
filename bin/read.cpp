@@ -194,7 +194,7 @@ vvvvd_t oper_t::read_deltam(const string name)
                    
                     deltam[ijack][m_fw][m_bw][r]=temp; //store
                     
-                    printf("ijack: %d \t m1: %d \t m2: %d \t r: %d \t %s: %lg \n",ijack,m_fw,m_bw,r,name.c_str(),deltam_cr[ijack][m_fw][m_bw][r]);
+                    printf("ijack: %d \t m1: %d \t m2: %d \t r: %d \t %s: %lg \n",ijack,m_fw,m_bw,r,name.c_str(),deltam[ijack][m_fw][m_bw][r]);
                 }
     return deltam;
 }
