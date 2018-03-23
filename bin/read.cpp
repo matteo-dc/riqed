@@ -161,22 +161,22 @@ vvvd_t oper_t::read_eff_mass_sea(const string name)
 }
 
 
-// read deltam_cr
-vvvvd_t oper_t::read_deltam_cr(const string name)
+// read deltamu and deltamcr
+vvvvd_t oper_t::read_deltam(const string name)
 {
-    vvvvd_t deltam_cr(vvvd_t(vvd_t(vd_t(0.0,nr),nm),nm),njacks);
+    vvvvd_t deltam(vvvd_t(vvd_t(vd_t(0.0,nr),nm),nm),njacks);
     
     FILE* input_deltam;
     input_deltam = fopen(name.c_str(),"rb");
     
      if(input_deltam == NULL)
      {
-         cout<<"Computing deltam_cr"<<endl<<endl;
-         compute_deltam_cr();
+         cout<<"Computing "<<name<<endl<<endl;
+         compute_deltam();
          input_deltam = fopen(name.c_str(),"rb");
      }
     
-    cout<<"Reading deltam_cr"<<endl<<endl;
+    cout<<"Reading "<<name<<endl<<endl;
     
     for(int ijack=0;ijack<njacks;ijack++)
         for(int m_fw=0;m_fw<nm;m_fw++)
@@ -188,13 +188,15 @@ vvvvd_t oper_t::read_deltam_cr(const string name)
                     int rd=fread(&temp,sizeof(double),1,input_deltam);
                     if(rd!=1)
                     {
-                        cerr<<"Unable to read from \"deltam_cr_array\" m_fw: "<<m_fw<<", m_bw: "<<m_bw<<", r: "<<r<<", ijack: "<<ijack<<endl;
+                        cerr<<"Unable to read from \""<<name<<"\" m_fw: "<<m_fw<<", m_bw: "<<m_bw<<", r: "<<r<<", ijack: "<<ijack<<endl;
                         exit(1);
                     }
-                    deltam_cr[ijack][m_fw][m_bw][r]=temp; //store
-                    printf("ijack: %d \t m1: %d \t m2: %d \t r: %d \t deltam_cr: %lg \n",ijack,m_fw,m_bw,r,deltam_cr[ijack][m_fw][m_bw][r]);
+                   
+                    deltam[ijack][m_fw][m_bw][r]=temp; //store
+                    
+                    printf("ijack: %d \t m1: %d \t m2: %d \t r: %d \t %s: %lg \n",ijack,m_fw,m_bw,r,name.c_str(),deltam_cr[ijack][m_fw][m_bw][r]);
                 }
-    return deltam_cr;
+    return deltam;
 }
 
 // returns the linearized spin color index
