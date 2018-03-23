@@ -27,24 +27,6 @@
 ORDER ord;
 MESLEP_TYPES meslep_t;
 
-//// mom lists
-//vector<coords_t> mom_list;
-//vector<p_t> p, p_tilde;
-//vector<double> p2, p2_tilde;
-//vector<double> p4, p4_tilde;
-//vector<bool> filt_moms;
-
-// list of N(p)
-//vector<int> Np;
-
-// effective mass
-//vvvd_t eff_mass;
-
-// deltam_cr
-//vvvd_t deltam_cr;
-
-//using namespace std;
-
 int main()
 {
     omp_set_nested(1);
