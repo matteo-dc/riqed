@@ -9,7 +9,7 @@
 
 
 //compute delta m_cr
-void oper_t::compute_deltam_cr()
+void oper_t::compute_deltam()
 {
     // array of the configurations
     int conf_id[nconfs];
