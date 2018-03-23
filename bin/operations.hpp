@@ -60,16 +60,12 @@ struct oper_t
     // number of momenta
     int moms;
     
-    // deltamu
+    // deltamu and deltamcr
     vvvvd_t deltamu;
-    vvvvd_t read_deltamu(const string name);
-    void compute_deltamu();
-
-    // deltam_cr
     vvvvd_t deltam_cr;
-    vvvvd_t read_deltam_cr(const string name);
-    void compute_deltam_cr();
-
+    vvvvd_t read_deltam(const string name);
+    void compute_deltam();
+    
     // effective valence mass
     vvvd_t eff_mass;
     vvvd_t read_eff_mass(const string name);
