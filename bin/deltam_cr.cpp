@@ -173,7 +173,7 @@ void oper_t::compute_deltam()
                         // solving with Kramer
                         double a=jV0P5_0M[mr_fw][mr_bw][ijack][t]+jV0P5_0T[mr_fw][mr_bw][ijack][t],
                         b=jV0P5_0S[mr_fw][mr_bw][ijack][t],
-                        c=jV0P5_0P[mr_fw][mr_bw][ijack][t],
+                        c=-jV0P5_0P[mr_fw][mr_bw][ijack][t],
                         d=jP5P5_0M[mr_fw][mr_bw][ijack][t]+jP5P5_0T[mr_fw][mr_bw][ijack][t],
                         e=jP5P5_0S[mr_fw][mr_bw][ijack][t],
                         f=jP5P5_0P[mr_fw][mr_bw][ijack][t];
