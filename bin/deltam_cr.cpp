@@ -176,7 +176,7 @@ void oper_t::compute_deltam()
                         c=-jV0P5_0P[mr_fw][mr_bw][ijack][t],
                         d=jP5P5_0M[mr_fw][mr_bw][ijack][t]+jP5P5_0T[mr_fw][mr_bw][ijack][t],
                         e=jP5P5_0S[mr_fw][mr_bw][ijack][t],
-                        f=jP5P5_0P[mr_fw][mr_bw][ijack][t];
+                        f=-jP5P5_0P[mr_fw][mr_bw][ijack][t];
                         
                         double den = b*f-c*e;
                         double deltamu  = (-a*f+c*d)/den;
