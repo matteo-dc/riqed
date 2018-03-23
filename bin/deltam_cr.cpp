@@ -80,12 +80,12 @@ void oper_t::compute_deltam()
                 jV0P5_0M[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"FF","V0P5","IM","UNK",conf_id,path_to_ens);
                 jV0P5_0T[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"T","V0P5","IM","UNK",conf_id,path_to_ens);
                 jV0P5_0P[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"P","V0P5","RE","UNK",conf_id,path_to_ens);
-                jV0P5_0S[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"S","V0P5","RE","UNK",conf_id,path_to_ens);
+                jV0P5_0S[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"S","V0P5","IM","UNK",conf_id,path_to_ens);
 
                 //load P5P5 corrections
-//                jP5P5_LL[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"F",mr_fw,"F","P5P5","IM","UNK",conf_id,path_to_ens);
-                jP5P5_0M[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"FF","P5P5","IM","UNK",conf_id,path_to_ens);
-                jP5P5_0T[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"T","P5P5","IM","UNK",conf_id,path_to_ens);
+//                jP5P5_LL[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"F",mr_fw,"F","P5P5","RE","UNK",conf_id,path_to_ens);
+                jP5P5_0M[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"FF","P5P5","RE","UNK",conf_id,path_to_ens);
+                jP5P5_0T[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"T","P5P5","RE","UNK",conf_id,path_to_ens);
                 jP5P5_0P[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"P","P5P5","RE","UNK",conf_id,path_to_ens);
                 jP5P5_0S[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"S","P5P5","RE","UNK",conf_id,path_to_ens);
             }
