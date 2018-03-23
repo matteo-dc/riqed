@@ -35,7 +35,7 @@ string path_to_contr(const string &suffix, const string &out, const string &stri
         
         sprintf(path,"%s%s/%04d/mes_contr_M%s_R%d_%s_M%s_R%d_%s",string_path.c_str(),out.c_str(),i_conf,suffix.c_str(),r1,T1.c_str(),suffix.c_str(),r2,T2.c_str());
     }
-        
+    
     return path;
 }
 
