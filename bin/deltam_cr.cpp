@@ -172,15 +172,15 @@ void oper_t::compute_deltam()
                         
                         // solving with Kramer
                         double a=jV0P5_0M[mr_fw][mr_bw][ijack][t]+jV0P5_0T[mr_fw][mr_bw][ijack][t],
-                        b=jV0P5_0S[mr_fw][mr_bw][ijack][t],
+                        b=-jV0P5_0S[mr_fw][mr_bw][ijack][t],
                         c=jV0P5_0P[mr_fw][mr_bw][ijack][t],
                         d=jP5P5_0M[mr_fw][mr_bw][ijack][t]+jP5P5_0T[mr_fw][mr_bw][ijack][t],
-                        e=jP5P5_0S[mr_fw][mr_bw][ijack][t],
+                        e=-jP5P5_0S[mr_fw][mr_bw][ijack][t],
                         f=-jP5P5_0P[mr_fw][mr_bw][ijack][t];
                         
                         double den = b*f-c*e;
                         double deltamu  = (-a*f+c*d)/den;
-                        double deltamcr = (-a*b+e*d)/den;
+                        double deltamcr = (-b*d+a*e)/den;
                         
                         v_deltamu [m_fw][m_bw][r][ijack][t] = deltamu;
                         v_deltamcr[m_fw][m_bw][r][ijack][t] = deltamcr;
