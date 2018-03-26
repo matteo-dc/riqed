@@ -178,9 +178,9 @@ void oper_t::compute_deltam()
                         //   P5P5:  d + e*deltamu + f*deltamcr = 0
                         double a = jV0P5_0M[mr_fw][mr_bw][ijack][t]+jV0P5_0T[mr_fw][mr_bw][ijack][t];
                         double b = coeff_S*jV0P5_0S[mr_fw][mr_bw][ijack][t];
-                        double c = -coeff_P[r]*jV0P5_0P[mr_fw][mr_bw][ijack][t],
-                        double d = jP5P5_0M[mr_fw][mr_bw][ijack][t]+jP5P5_0T[mr_fw][mr_bw][ijack][t],
-                        double e = coeff_S*jP5P5_0S[mr_fw][mr_bw][ijack][t],
+                        double c = -coeff_P[r]*jV0P5_0P[mr_fw][mr_bw][ijack][t];
+                        double d = jP5P5_0M[mr_fw][mr_bw][ijack][t]+jP5P5_0T[mr_fw][mr_bw][ijack][t];
+                        double e = coeff_S*jP5P5_0S[mr_fw][mr_bw][ijack][t];
                         double f = coeff_P[r]*jP5P5_0P[mr_fw][mr_bw][ijack][t];
                         
                         double den = b*f-c*e;
