@@ -190,7 +190,7 @@ void oper_t::compute_deltam()
                         v_deltamu [m_fw][m_bw][r][ijack][t] = deltamu;
                         v_deltamcr[m_fw][m_bw][r][ijack][t] = deltamcr;
                         
-                        printf("r: %d m_fw: %d m_bw: %d ijack: %d t: %d deltamu: %lg deltamcr: %lg\n",r,m_fw,m_bw,ijack,t,deltamu,deltamcr);
+//                        printf("r: %d m_fw: %d m_bw: %d ijack: %d t: %d deltamu: %lg deltamcr: %lg\n",r,m_fw,m_bw,ijack,t,deltamu,deltamcr);
                         
                         mean_value_mu[m_fw][m_bw][r][t]  += deltamu/njacks;
                         mean_value_mcr[m_fw][m_bw][r][t] += deltamcr/njacks;
