@@ -129,7 +129,8 @@ extern int only_basic;
 typedef enum {  
     LO = 0,
     EM = 1,
-    P = 2
+    P = 2,
+    S = 3
 } ORDER;
 
 typedef enum {
@@ -140,7 +141,9 @@ typedef enum {
     M22 = 4,
     M12 = 5,
     P11 = 6,
-    P22 = 7
+    P22 = 7,
+    S11 = 8,
+    S22 = 9
 } MESLEP_TYPES;
 
 extern ORDER ord;
