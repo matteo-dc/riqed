@@ -76,14 +76,14 @@ void oper_t::compute_deltam()
                 int mr_bw = r_bw+nr*m_bw;
                 
                 //load V0P5 corrections
-//                jV0P5_LL[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"F",mr_fw,"F","V0P5","IM","UNK",conf_id,path_to_ens);
+                jV0P5_LL[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"F",mr_fw,"F","V0P5","IM","UNK",conf_id,path_to_ens);
                 jV0P5_0M[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"FF","V0P5","IM","UNK",conf_id,path_to_ens);
                 jV0P5_0T[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"T","V0P5","IM","UNK",conf_id,path_to_ens);
                 jV0P5_0P[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"P","V0P5","RE","UNK",conf_id,path_to_ens);
                 jV0P5_0S[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"S","V0P5","IM","UNK",conf_id,path_to_ens);
 
                 //load P5P5 corrections
-//                jP5P5_LL[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"F",mr_fw,"F","P5P5","RE","UNK",conf_id,path_to_ens);
+                jP5P5_LL[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"F",mr_fw,"F","P5P5","RE","UNK",conf_id,path_to_ens);
                 jP5P5_0M[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"FF","P5P5","RE","UNK",conf_id,path_to_ens);
                 jP5P5_0T[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"T","P5P5","RE","UNK",conf_id,path_to_ens);
                 jP5P5_0P[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"P","P5P5","IM","UNK",conf_id,path_to_ens);
@@ -176,10 +176,10 @@ void oper_t::compute_deltam()
                         // Solving with Kramer:
                         //   V0P5:  a + b*deltamu + c*deltamcr = 0
                         //   P5P5:  d + e*deltamu + f*deltamcr = 0
-                        double a = jV0P5_0M[mr_fw][mr_bw][ijack][t]+jV0P5_0T[mr_fw][mr_bw][ijack][t];
+                        double a = 0.5*jV0P5_LL[mr_fw][mr_bw][ijack][t]+jV0P5_0M[mr_fw][mr_bw][ijack][t]+jV0P5_0T[mr_fw][mr_bw][ijack][t];
                         double b = coeff_S*jV0P5_0S[mr_fw][mr_bw][ijack][t];
                         double c = -coeff_P[r]*jV0P5_0P[mr_fw][mr_bw][ijack][t];
-                        double d = jP5P5_0M[mr_fw][mr_bw][ijack][t]+jP5P5_0T[mr_fw][mr_bw][ijack][t];
+                        double d = 0.5*jP5P5_LL[mr_fw][mr_bw][ijack][t]+jP5P5_0M[mr_fw][mr_bw][ijack][t]+jP5P5_0T[mr_fw][mr_bw][ijack][t];
                         double e = coeff_S*jP5P5_0S[mr_fw][mr_bw][ijack][t];
                         double f = coeff_P[r]*jP5P5_0P[mr_fw][mr_bw][ijack][t];
                         
