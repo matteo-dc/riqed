@@ -119,8 +119,17 @@ vvvd_t oper_t::read_eff_mass(const string name)
                     exit(1);
                 }
                 eff_mass_tmp[ijack][mr_fw][mr_bw]=temp; //store
-                printf("ijack: %d \t r1: %d \t r2: %d \t  eff_mass: %lg \n",ijack,mr_fw,mr_bw,eff_mass_tmp[ijack][mr_fw][mr_bw]);
             }
+    
+    vvd_t eff_mass_ave=get<0>(ave_err(eff_mass_tmp));
+    vvd_t eff_mass_err=get<1>(ave_err(eff_mass_tmp));
+    
+    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+        for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+            {
+                printf("mr1: %d \t mr2: %d \t %lg +- %lg\n",mr_fw,mr_bw,eff_mass_ave[mr_fw][mr_bw],eff_mass_err[mr_fw][mr_bw]);
+            }
+    printf("\n");
     
     return eff_mass_tmp;
 }
@@ -155,9 +164,18 @@ vvvd_t oper_t::read_eff_mass_sea(const string name)
                     exit(1);
                 }
                 eff_mass_sea_tmp[ijack][r1][r2]=temp; //store
-                printf("ijack: %d \t r1: %d \t r2: %d \t  eff_mass_sea: %lg \n",ijack,r1,r2,eff_mass_sea_tmp[ijack][r1][r2]);
             }
     
+    vvd_t eff_mass_sea_ave=get<0>(ave_err(eff_mass_sea_tmp));
+    vvd_t eff_mass_sea_err=get<1>(ave_err(eff_mass_sea_tmp));
+    
+    for(int r1=0;r1<nr;r1++)
+        for(int r2=0;r2<nr;r2++)
+        {
+            printf("r1: %d \t r2: %d \t %lg +- %lg\n",r1,r2,eff_mass_sea_ave[r1][r2],eff_mass_sea_err[r1][r2]);
+        }
+    printf("\n");
+
     return eff_mass_sea_tmp;
 }
 
@@ -199,11 +217,10 @@ vvvvd_t oper_t::read_deltam(const string path, const string name)
     vvvd_t deltam_ave=get<0>(ave_err(deltam));
     vvvd_t deltam_err=get<1>(ave_err(deltam));
    
-    printf(" %s\n",name.c_str());
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
             for(int r=0;r<nr;r++)
-                printf("\t m1: %d \t m2: %d \t r: %d \t %lg +- %lg\n",m_fw,m_bw,r,deltam_ave[m_fw][m_bw][r],deltam_err[m_fw][m_bw][r]);
+                printf("m1: %d \t m2: %d \t r: %d \t %lg +- %lg\n",m_fw,m_bw,r,deltam_ave[m_fw][m_bw][r],deltam_err[m_fw][m_bw][r]);
     printf("\n");
 
     return deltam;
