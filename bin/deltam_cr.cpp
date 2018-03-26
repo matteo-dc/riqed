@@ -239,10 +239,10 @@ void oper_t::compute_deltam()
     
     if (outfile_mc.is_open() and outfile_mu.is_open())
     {
-        for(int ijack=0;ijack<njacks;ijack++)
-            for(int m_fw=0;m_fw<nm;m_fw++)
-                for(int m_bw=0;m_bw<nm;m_bw++)
-                    for(int r=0;r<nr;r++)
+        for(int m_fw=0;m_fw<nm;m_fw++)
+            for(int m_bw=0;m_bw<nm;m_bw++)
+                for(int r=0;r<nr;r++)
+                    for(int ijack=0;ijack<njacks;ijack++)
                     {
                         outfile_mc.write((char*) &deltam_cr[ijack][m_fw][m_bw][r],sizeof(double));
                         outfile_mu.write((char*) &deltamu[ijack][m_fw][m_bw][r],sizeof(double));
