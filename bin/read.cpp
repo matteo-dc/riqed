@@ -9,6 +9,7 @@
 #include <omp.h>
 #include "operations.hpp"
 #include "read.hpp"
+#include "ave_err.hpp"
 
 
 // read input mom file
@@ -162,26 +163,26 @@ vvvd_t oper_t::read_eff_mass_sea(const string name)
 
 
 // read deltamu and deltamcr
-vvvvd_t oper_t::read_deltam(const string name)
+vvvvd_t oper_t::read_deltam(const string path, const string name)
 {
     vvvvd_t deltam(vvvd_t(vvd_t(vd_t(0.0,nr),nm),nm),njacks);
     
     FILE* input_deltam;
-    input_deltam = fopen(name.c_str(),"rb");
+    input_deltam = fopen((path+name).c_str(),"rb");
     
      if(input_deltam == NULL)
      {
          cout<<"Computing "<<name<<endl<<endl;
          compute_deltam();
-         input_deltam = fopen(name.c_str(),"rb");
+         input_deltam = fopen((path+name).c_str(),"rb");
      }
     
     cout<<"Reading "<<name<<endl<<endl;
     
-    for(int ijack=0;ijack<njacks;ijack++)
-        for(int m_fw=0;m_fw<nm;m_fw++)
-            for(int m_bw=0;m_bw<nm;m_bw++)
-                for(int r=0;r<nr;r++)
+    for(int m_fw=0;m_fw<nm;m_fw++)
+        for(int m_bw=0;m_bw<nm;m_bw++)
+            for(int r=0;r<nr;r++)
+                for(int ijack=0;ijack<njacks;ijack++)
                 {
                     double temp;
                     
@@ -191,11 +192,20 @@ vvvvd_t oper_t::read_deltam(const string name)
                         cerr<<"Unable to read from \""<<name<<"\" m_fw: "<<m_fw<<", m_bw: "<<m_bw<<", r: "<<r<<", ijack: "<<ijack<<endl;
                         exit(1);
                     }
-                   
-                    deltam[ijack][m_fw][m_bw][r]=temp; //store
                     
-                    printf("ijack: %d \t m1: %d \t m2: %d \t r: %d \t %s: %lg \n",ijack,m_fw,m_bw,r,name.c_str(),deltam[ijack][m_fw][m_bw][r]);
+                    deltam[ijack][m_fw][m_bw][r]=temp; //store
                 }
+    
+    vvvd_t deltam_ave=get<0>(ave_err(deltam));
+    vvvd_t deltam_err=get<1>(ave_err(deltam));
+   
+    printf(" %s\n",name.c_str());
+    for(int m_fw=0;m_fw<nm;m_fw++)
+        for(int m_bw=0;m_bw<nm;m_bw++)
+            for(int r=0;r<nr;r++)
+                printf("\t m1: %d \t m2: %d \t r: %d \t %lg +- %lg\n",m_fw,m_bw,r,deltam_ave[m_fw][m_bw][r],deltam_err[m_fw][m_bw][r]);
+    printf("\n");
+
     return deltam;
 }
 
