@@ -158,6 +158,9 @@ void oper_t::compute_deltam()
     vvvvd_t mean_value_mu(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), sqr_mean_value_mu(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), error_mu(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm);
     vvvvd_t mean_value_mcr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), sqr_mean_value_mcr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), error_mcr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm);
     
+    double coeff_P[2]={-1.0,1.0};
+    double coeff_S=-1.0;
+    
 #warning taking only the insertions on the forward propagator
 #pragma omp parallel for collapse(4)
     for(int m_fw=0;m_fw<nm;m_fw++)
@@ -170,13 +173,15 @@ void oper_t::compute_deltam()
                         int mr_fw = r+nr*m_fw;
                         int mr_bw = r+nr*m_bw;
                         
-                        // solving with Kramer
-                        double a=jV0P5_0M[mr_fw][mr_bw][ijack][t]+jV0P5_0T[mr_fw][mr_bw][ijack][t],
-                        b=-jV0P5_0S[mr_fw][mr_bw][ijack][t],
-                        c=jV0P5_0P[mr_fw][mr_bw][ijack][t],
-                        d=jP5P5_0M[mr_fw][mr_bw][ijack][t]+jP5P5_0T[mr_fw][mr_bw][ijack][t],
-                        e=-jP5P5_0S[mr_fw][mr_bw][ijack][t],
-                        f=-jP5P5_0P[mr_fw][mr_bw][ijack][t];
+                        // Solving with Kramer:
+                        //   V0P5:  a + b*deltamu + c*deltamcr = 0
+                        //   P5P5:  d + e*deltamu + f*deltamcr = 0
+                        double a = jV0P5_0M[mr_fw][mr_bw][ijack][t]+jV0P5_0T[mr_fw][mr_bw][ijack][t];
+                        double b = coeff_S*jV0P5_0S[mr_fw][mr_bw][ijack][t];
+                        double c = -coeff_P[r]*jV0P5_0P[mr_fw][mr_bw][ijack][t],
+                        double d = jP5P5_0M[mr_fw][mr_bw][ijack][t]+jP5P5_0T[mr_fw][mr_bw][ijack][t],
+                        double e = coeff_S*jP5P5_0S[mr_fw][mr_bw][ijack][t],
+                        double f = coeff_P[r]*jP5P5_0P[mr_fw][mr_bw][ijack][t];
                         
                         double den = b*f-c*e;
                         double deltamu  = (-a*f+c*d)/den;
