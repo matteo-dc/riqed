@@ -158,7 +158,7 @@ void oper_t::compute_deltam()
     vvvvd_t mean_value_mu(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), sqr_mean_value_mu(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), error_mu(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm);
     vvvvd_t mean_value_mcr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), sqr_mean_value_mcr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), error_mcr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm);
     
-    double coeff_P[2]={-1.0,1.0};
+    double coeff_P[2]={1.0,-1.0};
     double coeff_S=-1.0;
     
 #warning taking only the insertions on the forward propagator
