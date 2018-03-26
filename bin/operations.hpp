@@ -63,7 +63,7 @@ struct oper_t
     // deltamu and deltamcr
     vvvvd_t deltamu;
     vvvvd_t deltam_cr;
-    vvvvd_t read_deltam(const string name);
+    vvvvd_t read_deltam(const string path, const string name);
     void compute_deltam();
     
     // effective valence mass
