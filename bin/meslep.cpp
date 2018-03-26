@@ -72,6 +72,10 @@ void build_meslep(const vvvprop_t &SOUT,const vvvprop_t &SIN, const vvprop_t &L,
                         if(r_bw==0) jmeslep[P22][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(SOUT[ijack][0][mr_fw],+1.0*SIN[ijack][4][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
                         if(r_bw==1) jmeslep[P22][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(SOUT[ijack][0][mr_fw],-1.0*SIN[ijack][4][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
                         
+                         jmeslep[S11][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(-1.0*SOUT[ijack][5][mr_fw],SIN[ijack][0][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
+                        
+                        jmeslep[S22][ijack][mr_fw][mr_bw][igam][iproj] += make_meslep(SOUT[ijack][0][mr_fw],-1.0*SIN[ijack][5][mr_bw],mesloop[LO][ijack][igam][iproj],igam);
+                        
 //                        if(mr_bw==0 and mr_fw==0)
 //                        {
 //                            cout<<"----------------------------"<<endl;
