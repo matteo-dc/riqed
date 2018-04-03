@@ -43,23 +43,23 @@ string path_to_contr(const string &suffix, const string &out, const string &stri
 //get the contraction from file
 vvd_t get_contraction(const string &suffix, const string &out, const int mr1, const string &T1, const int mr2, const string &T2, const string &ID, const string &reim, const string &parity, const int* conf_id , const string &string_path)
 {
-    
     int T=size[0];
     
-//    // array of the configurations
-//    int conf_id[nconfs];
-//    for(int iconf=0;iconf<nconfs;iconf++)
-//        conf_id[iconf]=conf_init+iconf*conf_step;
+    vd_t data_real(0.0,T);
+    vd_t data_imag(0.0,T);
     
-    vd_t data_V0P5_real(0.0,T);
-    vd_t data_V0P5_imag(0.0,T);
-    vd_t data_P5P5_real(0.0,T);
-    vd_t data_P5P5_imag(0.0,T);
+    vvd_t jcorr_real(vd_t(0.0,T),njacks);
+    vvd_t jcorr_imag(vd_t(0.0,T),njacks);
     
-    vvd_t jP5P5_real(vd_t(0.0,T),njacks);
-    vvd_t jP5P5_imag(vd_t(0.0,T),njacks);
-    vvd_t jV0P5_real(vd_t(0.0,T),njacks);
-    vvd_t jV0P5_imag(vd_t(0.0,T),njacks);
+//    vd_t data_V0P5_real(0.0,T);
+//    vd_t data_V0P5_imag(0.0,T);
+//    vd_t data_P5P5_real(0.0,T);
+//    vd_t data_P5P5_imag(0.0,T);
+//    
+//    vvd_t jP5P5_real(vd_t(0.0,T),njacks);
+//    vvd_t jP5P5_imag(vd_t(0.0,T),njacks);
+//    vvd_t jV0P5_real(vd_t(0.0,T),njacks);
+//    vvd_t jV0P5_imag(vd_t(0.0,T),njacks);
     
     //int clust_size=nconfs/njacks;
     
@@ -73,9 +73,7 @@ vvd_t get_contraction(const string &suffix, const string &out, const int mr1, co
         int ijack=iconf/clust_size;
         
         ifstream infile;
-        
         string path=path_to_contr(suffix,out,string_path,conf_id[iconf],mr1,T1,mr2,T2);
-//        cout<<"opening: "<<path<<endl;
         infile.open(path);
         
         if(!infile.good())
@@ -84,52 +82,72 @@ vvd_t get_contraction(const string &suffix, const string &out, const int mr1, co
             exit(1);
         }
         
-        //DEBUG
-        // cout<<"  Reading contraction from "<<path_to_contr(conf_id[iconf],mr1,T1,mr2,T2)<<endl;
-        //DEBUG
+        size_t pos;
+        string line;
         
-        infile.ignore(256,'5');
-        
-        for(int t=0; t<T; t++)
+        while(infile.good())
         {
-            infile>>data_V0P5_real[t];
-            infile>>data_V0P5_imag[t];
+            getline(infile,line); // get line from file
+            pos=line.find(ID); // search
+            if(pos!=string::npos) // string::npos is returned if string is not found
+            {
+                for(int t=0; t<T; t++)
+                {
+                    infile>>data_real[t];
+                    infile>>data_imag[t];
+                }
+            }
         }
         
-        infile.ignore(256,'5');
-        infile.ignore(256,'5');
+//        if(ID=="P5P5")
+//        {
+//            infile.ignore(256,'5');
+//            
+//            
+//        }
+//        infile.ignore(256,'5');
+//        infile.ignore(256,'5');
+//        
+//        for(int t=0; t<T; t++)
+//        {
+//            infile>>data_P5P5_real[t];
+//            infile>>data_P5P5_imag[t];
+//        }
         
-        for(int t=0; t<T; t++)
-        {
-            infile>>data_P5P5_real[t];
-            infile>>data_P5P5_imag[t];
-        }
-        
-        for(int t=0; t<T; t++) jV0P5_real[ijack][t]+=data_V0P5_real[t];
-        for(int t=0; t<T; t++) jV0P5_imag[ijack][t]+=data_V0P5_imag[t];
-        for(int t=0; t<T; t++) jP5P5_real[ijack][t]+=data_P5P5_real[t];
-        for(int t=0; t<T; t++) jP5P5_imag[ijack][t]+=data_P5P5_imag[t];
+        for(int t=0; t<T; t++) jcorr_real[ijack][t]+=data_real[t];
+        for(int t=0; t<T; t++) jcorr_imag[ijack][t]+=data_imag[t];
+
+//        for(int t=0; t<T; t++) jV0P5_real[ijack][t]+=data_V0P5_real[t];
+//        for(int t=0; t<T; t++) jV0P5_imag[ijack][t]+=data_V0P5_imag[t];
+//        for(int t=0; t<T; t++) jP5P5_real[ijack][t]+=data_P5P5_real[t];
+//        for(int t=0; t<T; t++) jP5P5_imag[ijack][t]+=data_P5P5_imag[t];
         
         infile.close();
     }
-        
-    jV0P5_real=jackknife(jV0P5_real,T);
-    jV0P5_imag=jackknife(jV0P5_imag,T);
-    jP5P5_real=jackknife(jP5P5_real,T);
-    jP5P5_imag=jackknife(jP5P5_imag,T);
+    
+    jcorr_real=jackknife(jcorr_real,T);
+    jcorr_imag=jackknife(jcorr_imag,T);
+    
+//    jV0P5_real=jackknife(jV0P5_real,T);
+//    jV0P5_imag=jackknife(jV0P5_imag,T);
+//    jP5P5_real=jackknife(jP5P5_real,T);
+//    jP5P5_imag=jackknife(jP5P5_imag,T);
     
     vvd_t jvec(vd_t(0.0,T),njacks);
+
+    if(reim=="RE") jvec=jcorr_real;
+    if(reim=="IM") jvec=jcorr_imag;
     
-    if(ID=="P5P5" and reim=="RE") jvec=jP5P5_real;
-    if(ID=="P5P5" and reim=="IM") jvec=jP5P5_imag;
-    if(ID=="V0P5" and reim=="RE") jvec=jV0P5_real;
-    if(ID=="V0P5" and reim=="IM") jvec=jV0P5_imag;
+//    if(ID=="P5P5" and reim=="RE") jvec=jP5P5_real;
+//    if(ID=="P5P5" and reim=="IM") jvec=jP5P5_imag;
+//    if(ID=="V0P5" and reim=="RE") jvec=jV0P5_real;
+//    if(ID=="V0P5" and reim=="IM") jvec=jV0P5_imag;
     
     double par;
     
-    if(parity=="EVEN") par=1.0;
-    if(parity=="ODD") par=-1.0;
-    if(parity=="UNK") par=0.0;
+    if(parity=="EVEN") par=+1.0;
+    if(parity=="ODD")  par=-1.0;
+    if(parity=="UNK")  par=+0.0;
     
     vvd_t jvec_sym(vd_t(0.0,T),njacks);
     vvd_t jvec_par(vd_t(0.0,T/2+1),njacks);
