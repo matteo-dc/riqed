@@ -133,6 +133,53 @@ vvvd_t oper_t::read_eff_mass(const string name)
     return eff_mass_tmp;
 }
 
+// read effective mass time dependent
+vvvvd_t oper_t::read_eff_mass_time(const string name)
+{
+    int T=size[0];
+    vvvvd_t eff_mass_time_tmp(vvvd_t(vvd_t(vd_t(0.0,T/2),nmr),nmr),njacks);
+    
+    FILE* input_effmass_time;
+    input_effmass_time = fopen(name.c_str(),"rb");
+    
+    if(input_effmass_time == NULL)
+    {
+        cout<<"Cannot read eff_mass_array_time."<<endl<<endl;
+        exit(1);
+    }
+    
+    cout<<"Reading eff_mass_array_time"<<endl<<endl;
+    
+    for(int ijack=0;ijack<njacks;ijack++)
+        for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+            for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+                for(int t=0;t<T/2;t++)
+                {
+                    double temp;
+                    
+                    int rd=fread(&temp,sizeof(double),1,input_effmass_time);
+                    if(rd!=1)
+                    {
+                        cerr<<"Unable to read from \""<<name<<"\" mr_fw: "<<mr_fw<<", mr_bw: "<<mr_bw<<", ijack: "<<ijack<<", t: "<<t<<endl;
+                        exit(1);
+                    }
+                    eff_mass_time_tmp[mr_fw][mr_bw][ijack][t]=temp; //store
+                }
+    
+//    vvd_t eff_mass_ave=get<0>(ave_err(eff_mass_tmp));
+//    vvd_t eff_mass_err=get<1>(ave_err(eff_mass_tmp));
+//    
+//    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+//        for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+//        {
+//            printf("mr1: %d \t mr2: %d \t %lg +- %lg\n",mr_fw,mr_bw,eff_mass_ave[mr_fw][mr_bw],eff_mass_err[mr_fw][mr_bw]);
+//        }
+//    printf("\n");
+    
+    return eff_mass_time_tmp;
+}
+
+
 // read effective sea mass
 vvvd_t oper_t::read_eff_mass_sea(const string name)
 {
