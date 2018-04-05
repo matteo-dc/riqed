@@ -245,6 +245,7 @@ void oper_t::compute_eff_mass()
     // define jackknife V0P5 correlators
     vvvvd_t jP5P5_00(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
     
+#pragma omp parallel for collapse(2)
     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
         for(int mr_bw=0;mr_bw<nmr;mr_bw++)
             jP5P5_00[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_fw,"0",mr_bw,"0","P5P5","RE","EVEN",conf_id,path_to_ens);
