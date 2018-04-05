@@ -6,6 +6,8 @@
 #include <iostream>
 #include <omp.h>
 #include "operations.hpp"
+#include "deltam_cr.hpp"
+#include "tools.hpp"
 
 
 //compute delta m_cr
@@ -19,27 +21,47 @@ void oper_t::compute_deltam()
     int T=size[0];
     
     //define jackknife V0P5 correlators
+    vvvvd_t jV0P5_LO(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    
     vvvvd_t jV0P5_LL(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
     vvvvd_t jV0P5_0M(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-//    vvvvd_t jV0P5_M0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    vvvvd_t jV0P5_M0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
     vvvvd_t jV0P5_0T(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-//    vvvvd_t jV0P5_T0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-    vvvvd_t jV0P5_0P(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-//    vvvvd_t jV0P5_P0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-    vvvvd_t jV0P5_0S(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-    //    vvvvd_t jV0P5_S0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    vvvvd_t jV0P5_T0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
     
+    vvvvd_t jV0P5_QED(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    
+    vvvvd_t jV0P5_0P(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    vvvvd_t jV0P5_P0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    
+    vvvvd_t jV0P5_P(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    
+    vvvvd_t jV0P5_0S(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    vvvvd_t jV0P5_S0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    
+    vvvvd_t jV0P5_S(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+
     //define jackknife P5P5 correlators
+    vvvvd_t jP5P5_LO(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    
     vvvvd_t jP5P5_LL(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
     vvvvd_t jP5P5_0M(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-//    vvvvd_t jP5P5_M0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    vvvvd_t jP5P5_M0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
     vvvvd_t jP5P5_0T(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-//    vvvvd_t jP5P5_T0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-    vvvvd_t jP5P5_0P(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-//    vvvvd_t jP5P5_P0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-    vvvvd_t jP5P5_0S(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
-    //    vvvvd_t jP5P5_S0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    vvvvd_t jP5P5_T0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
     
+    vvvvd_t jP5P5_QED(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    
+    vvvvd_t jP5P5_0P(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    vvvvd_t jP5P5_P0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    
+    vvvvd_t jP5P5_P(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    
+    vvvvd_t jP5P5_0S(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    vvvvd_t jP5P5_S0(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+    
+    vvvvd_t jP5P5_S(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
+
 //    //define jackknife V0P5 correlators with a unique r dependence
 //    vvvvvd_t jV0P5_LL_ave(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nr),nm),nm);
 //    vvvvvd_t jV0P5_0M_ave(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nr),nm),nm);
@@ -75,12 +97,27 @@ void oper_t::compute_deltam()
                 int mr_fw = r_fw+nr*m_fw;
                 int mr_bw = r_bw+nr*m_bw;
                 
+                //load V0P5 correlator
+                jV0P5_LO[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"0","V0P5","IM","UNK",conf_id,path_to_ens);
+                
                 //load V0P5 corrections
                 jV0P5_LL[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"F",mr_fw,"F","V0P5","IM","UNK",conf_id,path_to_ens);
                 jV0P5_0M[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"FF","V0P5","IM","UNK",conf_id,path_to_ens);
                 jV0P5_0T[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"T","V0P5","IM","UNK",conf_id,path_to_ens);
                 jV0P5_0P[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"P","V0P5","RE","UNK",conf_id,path_to_ens);
                 jV0P5_0S[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"S","V0P5","IM","UNK",conf_id,path_to_ens);
+                jV0P5_M0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"FF",mr_fw,"0","V0P5","IM","UNK",conf_id,path_to_ens);
+                jV0P5_T0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"T",mr_fw,"0","V0P5","IM","UNK",conf_id,path_to_ens);
+                jV0P5_P0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"P",mr_fw,"0","V0P5","RE","UNK",conf_id,path_to_ens);
+                jV0P5_S0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"S",mr_fw,"0","V0P5","IM","UNK",conf_id,path_to_ens);
+                
+                //collect V0P5 corrections
+                jV0P5_QED = jV0P5_LL + jV0P5_0M + jV0P5_0T + jV0P5_M0 + jV0P5_T0;
+                jV0P5_P = jV0P5_0P - jV0P5_P0;
+                jV0P5_S = jV0P5_0S + jV0P5_S0;
+
+                //load P5P5 correlator
+                jP5P5_LO[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"0","P5P5","RE","UNK",conf_id,path_to_ens);
 
                 //load P5P5 corrections
                 jP5P5_LL[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"F",mr_fw,"F","P5P5","RE","UNK",conf_id,path_to_ens);
@@ -88,6 +125,15 @@ void oper_t::compute_deltam()
                 jP5P5_0T[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"T","P5P5","RE","UNK",conf_id,path_to_ens);
                 jP5P5_0P[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"P","P5P5","IM","UNK",conf_id,path_to_ens);
                 jP5P5_0S[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"S","P5P5","RE","UNK",conf_id,path_to_ens);
+                jP5P5_M0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"FF",mr_fw,"0","P5P5","RE","UNK",conf_id,path_to_ens);
+                jP5P5_T0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"T",mr_fw,"0","P5P5","RE","UNK",conf_id,path_to_ens);
+                jP5P5_P0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"P",mr_fw,"0","P5P5","IM","UNK",conf_id,path_to_ens);
+                jP5P5_S0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"S",mr_fw,"0","P5P5","RE","UNK",conf_id,path_to_ens);
+                
+                //collect P5P5 corrections
+                jP5P5_QED = jP5P5_LL + jP5P5_0M + jP5P5_0T + jP5P5_M0 + jP5P5_T0;
+                jP5P5_P = jP5P5_0P - jP5P5_P0;
+                jP5P5_S = jP5P5_0S + jP5P5_S0;
             }
     
 //    //average over r
@@ -165,7 +211,7 @@ void oper_t::compute_deltam()
 #pragma omp parallel for collapse(4)
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
-            for(int t=0;t<T/2+1;t++)
+            for(int t=0;t<T/2/*+1*/;t++)
                 for(int r=0;r<nr;r++)
                 {
                     for(int ijack=0;ijack<njacks;ijack++)
@@ -174,14 +220,18 @@ void oper_t::compute_deltam()
                         int mr_bw = r+nr*m_bw;
                         
                         // Solving with Kramer:
-                        //   V0P5:  a + b*deltamu + c*deltamcr = 0
-                        //   P5P5:  d + e*deltamu + f*deltamcr = 0
-                        double a = 0.5*jV0P5_LL[mr_fw][mr_bw][ijack][t]+jV0P5_0M[mr_fw][mr_bw][ijack][t]+jV0P5_0T[mr_fw][mr_bw][ijack][t];
-                        double b = coeff_S*jV0P5_0S[mr_fw][mr_bw][ijack][t];
-                        double c = -coeff_P[r]*jV0P5_0P[mr_fw][mr_bw][ijack][t];
-                        double d = 0.5*jP5P5_LL[mr_fw][mr_bw][ijack][t]+jP5P5_0M[mr_fw][mr_bw][ijack][t]+jP5P5_0T[mr_fw][mr_bw][ijack][t];
-                        double e = coeff_S*jP5P5_0S[mr_fw][mr_bw][ijack][t];
-                        double f = coeff_P[r]*jP5P5_0P[mr_fw][mr_bw][ijack][t];
+                        //   delta(V0P5):  a + b*deltamu + c*deltamcr + (correction to denominator) = 0
+                        //   delta(slope[P5P5]):  d + e*deltamu + f*deltamcr = 0
+                        
+                        double a = symmetric_derivative(jV0P5_QED[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] -
+                                   symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_QED[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t];
+                        double b = coeff_S*(symmetric_derivative(jV0P5_S[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] -
+                                            symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_S[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]);
+                        double c = coeff_P[r]*(symmetric_derivative(jV0P5_P[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_P[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]);
+                        
+                        double d = effective_slope(jP5P5_QED[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
+                        double e = coeff_S*effective_slope(jP5P5_S[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
+                        double f = coeff_P[r]*effective_slope(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
                         
                         double den = b*f-c*e;
                         double deltamu  = (-a*f+c*d)/den;
