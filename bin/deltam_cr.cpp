@@ -238,21 +238,21 @@ void oper_t::compute_deltam()
     double coeff_P[2]={1.0,-1.0};
     double coeff_S=-1.0;
     
-    //DEBUG
-    for(int m_fw=0;m_fw<1;m_fw++)
-        for(int m_bw=0;m_bw<1;m_bw++)
-            for(int r=0;r<nr;r++)
-                for(int ijack=0;ijack<njacks;ijack++)
-                    for(int t=0;t<T/2/*+1*/;t++)
-                    {
-                        int mr_fw = r+nr*m_fw;
-                        int mr_bw = r+nr*m_bw;
-                        
-                        cout<<"mfw: "<<m_fw<<" mbw: "<<m_bw<<" r: "<<r<<" ijack: "<<ijack<<" t: "<<t<<" slope: ";
-                        cout<<effective_slope(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t]<<endl;
-                    }
-    exit(1);
-    //////DEBUG
+//    //DEBUG
+//    for(int m_fw=0;m_fw<1;m_fw++)
+//        for(int m_bw=0;m_bw<1;m_bw++)
+//            for(int r=0;r<nr;r++)
+//                for(int ijack=0;ijack<njacks;ijack++)
+//                    for(int t=0;t<T/2/*+1*/;t++)
+//                    {
+//                        int mr_fw = r+nr*m_fw;
+//                        int mr_bw = r+nr*m_bw;
+//                        
+//                        cout<<"mfw: "<<m_fw<<" mbw: "<<m_bw<<" r: "<<r<<" ijack: "<<ijack<<" t: "<<t<<" slope: ";
+//                        cout<<effective_slope(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t]<<endl;
+//                    }
+//    exit(1);
+//    //////DEBUG
     
 #warning taking only the insertions on the forward propagator
 #pragma omp parallel for collapse(4)
