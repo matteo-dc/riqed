@@ -249,14 +249,6 @@ void oper_t::compute_eff_mass()
         for(int mr_bw=0;mr_bw<nmr;mr_bw++)
             jP5P5_00[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_fw,"0",mr_bw,"0","P5P5","RE","EVEN",conf_id,path_to_ens);
     
-    //   cout<<"**********DEBUG: P5P5 correlator  *************"<<endl;
-    //   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    //     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-    //       for(int ijack=0;ijack<njacks;ijack++)
-    //   	for(int t=0;t<T/2-1;t++)
-    //   	  cout<<mr_fw<<" "<<mr_bw<<" ijack "<<ijack<<" t "<<t<<"\t"<< jP5P5_00[mr_fw][mr_bw][ijack][t]/jP5P5_00[mr_fw][mr_bw][ijack][t+1]<<endl;
-    //   cout<<"**********DEBUG********************************"<<endl;
-    
     // define effective mass array
     vvvvd_t M_eff(vvvd_t(vvd_t(vd_t(T/2),njacks),nmr),nmr);
     
@@ -267,20 +259,7 @@ void oper_t::compute_eff_mass()
                 for(int t=0;t<T/2;t++)
                     M_eff[mr_fw][mr_bw][ijack][t] = solve_Newton (jP5P5_00[mr_fw][mr_bw],ijack,t,T);
     
-    //  cout<<"**********DEBUG*************"<<endl;
-    //  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    //    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-    //      for(int ijack=0;ijack<njacks;ijack++)
-    //  	for(int t=0;t<T/2;t++)
-    //  	  cout<<mr_fw<<" "<<mr_bw<<" ijack "<<ijack<<" t "<<t<<"\t"<<M_eff[mr_fw][mr_bw][ijack][t]<<endl;
-    //  cout<<"**********DEBUG*************"<<endl;
-    
-    // cout<<"**********DEBUG*************"<<endl;
-    // for(double i=0;i<10;i+=0.1){ cout<<i+1<<"\t"<<f_mass(22,T,i,jP5P5_00[0][0][0][22]/jP5P5_00[0][0][0][23])<<endl;}
-    // cout<<"**********DEBUG*************"<<endl;
-    
-    
-    vvvd_t mass_ave(vvd_t(vd_t(0.0,T/2),nmr),nmr), sqr_mass_ave(vvd_t(vd_t(0.0,T/2),nmr),nmr), mass_err(vvd_t(vd_t(0.0,T/2),nmr),nmr);
+       vvvd_t mass_ave(vvd_t(vd_t(0.0,T/2),nmr),nmr), sqr_mass_ave(vvd_t(vd_t(0.0,T/2),nmr),nmr), mass_err(vvd_t(vd_t(0.0,T/2),nmr),nmr);
     
 #pragma omp parallel for collapse(3)
     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -294,10 +273,6 @@ void oper_t::compute_eff_mass()
                 }
                 
                 mass_err[mr_fw][mr_bw][t]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_mass_ave[mr_fw][mr_bw][t]-mass_ave[mr_fw][mr_bw][t]*mass_ave[mr_fw][mr_bw][t]));
-                
-                //	  cout<<"**********DEBUG*************"<<endl;
-                //	  cout<<mr_fw<<" "<<mr_bw<<" "<<" t  "<<t<<"  "<<mass_ave[mr_fw][mr_bw][t]<<"  +/-  "<< mass_err[mr_fw][mr_bw][t] <<endl;
-
             }
     
     //t-range for the fit
@@ -340,6 +315,23 @@ void oper_t::compute_eff_mass()
         outfile.close();
     }
     else cerr<<"Unable to create the output file \"eff_mass_array\" "<<endl;
+    
+    ofstream outfile_time;
+    outfile_time.open(path_to_ens+"eff_mass_array_time", ios::out | ios::binary);
+    
+    if (outfile_time.is_open())
+    {
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+                for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+                    for(int t=0;t<T/2;t++)
+                    {
+                        outfile_time.write((char*) &M_eff[mr_fw][mr_bw][ijack][t],sizeof(double));
+                    }
+        
+        outfile_time.close();
+    }
+    else cerr<<"Unable to create the output file \"eff_mass_array_time\" "<<endl;
 }
 
 // compute effective sea mass
@@ -359,14 +351,6 @@ void oper_t::compute_eff_mass_sea()
       for(int r2=0; r2<nr; r2++)
 	jP5P5_00[r1][r2]=get_contraction("sea",out_hadr,r1,"0",r2,"0","P5P5","RE","EVEN",conf_id,path_to_ens);
 	  
-    //   cout<<"**********DEBUG: P5P5 correlator  *************"<<endl;
-    //   for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    //     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-    //       for(int ijack=0;ijack<njacks;ijack++)
-    //   	for(int t=0;t<T/2-1;t++)
-    //   	  cout<<mr_fw<<" "<<mr_bw<<" ijack "<<ijack<<" t "<<t<<"\t"<< jP5P5_00[mr_fw][mr_bw][ijack][t]/jP5P5_00[mr_fw][mr_bw][ijack][t+1]<<endl;
-    //   cout<<"**********DEBUG********************************"<<endl;
-    
     // define effective mass array
     vvvvd_t M_eff(vvvd_t(vvd_t(vd_t(T/2),njacks),nr),nr);
     
@@ -376,19 +360,6 @@ void oper_t::compute_eff_mass_sea()
             for(int ijack=0; ijack<njacks;ijack++)
                 for(int t=0;t<T/2;t++)
                     M_eff[r1][r2][ijack][t] = solve_Newton (jP5P5_00[r1][r2],ijack,t,T);
-    
-    //  cout<<"**********DEBUG*************"<<endl;
-    //  for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-    //    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-    //      for(int ijack=0;ijack<njacks;ijack++)
-    //  	for(int t=0;t<T/2;t++)
-    //  	  cout<<mr_fw<<" "<<mr_bw<<" ijack "<<ijack<<" t "<<t<<"\t"<<M_eff[mr_fw][mr_bw][ijack][t]<<endl;
-    //  cout<<"**********DEBUG*************"<<endl;
-    
-    // cout<<"**********DEBUG*************"<<endl;
-    // for(double i=0;i<10;i+=0.1){ cout<<i+1<<"\t"<<f_mass(22,T,i,jP5P5_00[0][0][0][22]/jP5P5_00[0][0][0][23])<<endl;}
-    // cout<<"**********DEBUG*************"<<endl;
-    
     
     vvvd_t mass_ave(vvd_t(vd_t(0.0,T/2),nr),nr), sqr_mass_ave(vvd_t(vd_t(0.0,T/2),nr),nr), mass_err(vvd_t(vd_t(0.0,T/2),nr),nr);
     
@@ -404,10 +375,6 @@ void oper_t::compute_eff_mass_sea()
                 }
                 
                 mass_err[r1][r2][t]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_mass_ave[r1][r2][t]-mass_ave[r1][r2][t]*mass_ave[r1][r2][t]));
-                
-                //	  cout<<"**********DEBUG*************"<<endl;
-                //	  cout<<mr_fw<<" "<<mr_bw<<" "<<" t  "<<t<<"  "<<mass_ave[mr_fw][mr_bw][t]<<"  +/-  "<< mass_err[mr_fw][mr_bw][t] <<endl;
-                
             }
     
     //t-range for the fit
@@ -452,5 +419,23 @@ void oper_t::compute_eff_mass_sea()
     else cerr<<"Unable to create the output file \"eff_mass_sea_array\" "<<endl;
 }
 
+double per_two_pts_corr_with_ins_ratio_fun(const double &M,const double &TH,const double &t)
+{return (t-TH)*tanh(M*(t-TH));}
 
+vd_t oper_t::effective_slope(vd_t data, vd_t M, int TH)
+{
+    int dt=1;
+    vd_t out(0.0,data.size()-dt);
+    
+    for(size_t t=0;t<data.size()-dt;t++)
+    {
+        double num = data[t+dt]-data[t];
+        double den = per_two_pts_corr_with_ins_ratio_fun(M[t],(double)TH,(double)(t+dt)) -
+                     per_two_pts_corr_with_ins_ratio_fun(M[t],(double)TH,(double)(t));
+        
+        out[t]=num/den;
+    }
+        
+    return out;
+}
 
