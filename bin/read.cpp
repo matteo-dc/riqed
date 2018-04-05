@@ -137,7 +137,7 @@ vvvd_t oper_t::read_eff_mass(const string name)
 vvvvd_t oper_t::read_eff_mass_time(const string name)
 {
     int T=size[0];
-    vvvvd_t eff_mass_time_tmp(vvvd_t(vvd_t(vd_t(0.0,T/2),nmr),nmr),njacks);
+    vvvvd_t eff_mass_time_tmp(vvvd_t(vvd_t(vd_t(0.0,T/2),ijack),nmr),nmr);
     
     FILE* input_effmass_time;
     input_effmass_time = fopen(name.c_str(),"rb");
