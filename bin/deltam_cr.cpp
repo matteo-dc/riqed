@@ -272,13 +272,12 @@ void oper_t::compute_deltam()
                         
                         double a = symmetric_derivative(jV0P5_QED[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] -
                                    symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_QED[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t];
-                        double b = coeff_S*(symmetric_derivative(jV0P5_S[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] -
-                                            symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_S[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]);
-                        double c = - coeff_P[r]*(symmetric_derivative(jV0P5_P[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_P[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]);
+                        double b = coeff_S*(symmetric_derivative(jV0P5_S[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_S[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]);
+                        double c = coeff_P[r]*(symmetric_derivative(jV0P5_P[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_P[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]);
                         
                         double d = effective_slope(jP5P5_QED[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
                         double e = coeff_S*effective_slope(jP5P5_S[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
-                        double f = - coeff_P[r]*effective_slope(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
+                        double f = coeff_P[r]*effective_slope(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
                         
                         double den = b*f-c*e;
                         double deltamu  = (-a*f+c*d)/den;
