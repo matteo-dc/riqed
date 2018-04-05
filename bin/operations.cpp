@@ -213,10 +213,12 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     
     allocate();
     
-    deltam_cr = read_deltam(path_to_ens,"deltam_cr_array");
-    deltamu   = read_deltam(path_to_ens,"deltamu_array");
+    compute_mPCAC("");
+    compute_mPCAC("sea");
     if(UseEffMass) eff_mass=read_eff_mass(path_to_ens+"eff_mass_array");
     if(UseEffMass and _nm_Sea>0) eff_mass_sea=read_eff_mass_sea(path_to_ens+"eff_mass_sea_array");
+    deltam_cr = read_deltam(path_to_ens,"deltam_cr_array");
+    deltamu   = read_deltam(path_to_ens,"deltamu_array");
     
     switch(get_scheme())
     {

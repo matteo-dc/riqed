@@ -60,6 +60,9 @@ struct oper_t
     // number of momenta
     int moms;
     
+    // mPCAC
+    void compute_mPCAC(const string &suffix);
+    
     // deltamu and deltamcr
     vvvvd_t deltamu;
     vvvvd_t deltam_cr;
@@ -68,6 +71,7 @@ struct oper_t
     
     // effective valence mass
     vvvd_t eff_mass;
+    vvvvd_t eff_mass_time_dependent;
     vvvd_t read_eff_mass(const string name);
     void compute_eff_mass();
     
@@ -75,7 +79,6 @@ struct oper_t
     vvvd_t eff_mass_sea;
     vvvd_t read_eff_mass_sea(const string name);
     void compute_eff_mass_sea();
-
 
     // compute the basic RC estimators
     void create_basic(const int b, const int th, const int msea);
