@@ -31,8 +31,8 @@ main_SOURCES  =	 main.cpp \
 		 vertices.cpp \
 		 contractions.cpp \
 		 fit.cpp \
+                 effective_mass.cpp \
 		 deltam_cr.cpp \
-		 effective_mass.cpp \
 		 jack.cpp \
 		 Dirac.cpp \
                  print.cpp \
