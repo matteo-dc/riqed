@@ -218,7 +218,7 @@ void oper_t::compute_deltam()
                         int mr_bw = r+nr*m_bw;
                         
                         cout<<"mfw: "<<m_fw<<" mbw: "<<m_bw<<" r: "<<r<<" ijack: "<<ijack<<" t: "<<t<<" slope: ";
-                        cout<<effective_slope(jP5P5_QED[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t]<<endl;
+                        cout<<effective_slope(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t]<<endl;
                     }
     exit(1);
     //////DEBUG
