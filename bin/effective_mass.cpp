@@ -215,7 +215,21 @@ void oper_t::compute_mPCAC(const string &suffix)
     }
 
     cout<<endl;
-
+    ofstream outfile;
+    outfile.open(path_to_ens+"mPCAC", ios::out | ios::binary);
+    
+    if (outfile.is_open())
+    {
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int m_fw=0;m_fw<_nm;m_fw++)
+                for(int m_bw=0;m_bw<_nm;m_bw++)
+                {
+                    outfile.write((char*) &mPCAC_symm[ijack][m_fw][m_bw],sizeof(double));
+                }
+        
+        outfile.close();
+    }
+    else cerr<<"Unable to create the output file \"mPCAC\" "<<endl;
 }
 
 // compute effective mass

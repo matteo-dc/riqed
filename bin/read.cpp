@@ -88,7 +88,6 @@ double read_plaquette(const string &path)
     return plaquette;
 }
 
-
 // read effective mass
 vvvd_t oper_t::read_eff_mass(const string name)
 {
