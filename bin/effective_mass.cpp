@@ -118,11 +118,12 @@ void oper_t::compute_mPCAC(const string &suffix)
     vvvd_t mPCAC_corr_err(vvd_t(vd_t(0.0,T/2+1),_nm),_nm);
     vvvd_t mPCAC_corr_symm_err(vvd_t(vd_t(0.0,T/2+1),_nm),_nm);
 
+#pragma omp parallel for collapse(2)
     for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
         for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
         {
             jP5P5_00[mr_fw][mr_bw]=get_contraction(suffix,out_hadr,mr_fw,"0",mr_bw,"0","P5P5","RE","EVEN",conf_id,path_to_ens);
-            jV0P5_00[mr_fw][mr_bw]=get_contraction(suffix,out_hadr,mr_fw,"0",mr_bw,"0","V0P5","RE","ODD",conf_id,path_to_ens);
+            jV0P5_00[mr_fw][mr_bw]=get_contraction(suffix,out_hadr,mr_fw,"0",mr_bw,"0","V0P5","IM","ODD",conf_id,path_to_ens);
         }
     
     //average over r
