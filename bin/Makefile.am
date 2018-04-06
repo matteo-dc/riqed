@@ -29,6 +29,7 @@ main_SOURCES  =	 main.cpp \
 		 rotate.cpp \
 		 operations.cpp \
 		 vertices.cpp \
+		 tools.cpp \
 		 contractions.cpp \
 		 fit.cpp \
                  effective_mass.cpp \
