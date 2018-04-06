@@ -82,6 +82,8 @@ double solve_Newton (vvd_t C, int ijack, int t, const int T)
 // compute mPCAC
 void oper_t::compute_mPCAC(const string &suffix)
 {
+    cout<<"Computing mPCAC "<<suffix<<endl<<endl;
+    
     int _nmr=0, _nm=0;
     if(suffix.compare("")==0)
     {
