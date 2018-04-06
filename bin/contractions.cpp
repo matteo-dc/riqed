@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iomanip>
 #include "contractions.hpp"
+#include "tools.hpp"
 
 
 // to string with precision
@@ -139,12 +140,7 @@ vvd_t get_contraction(const string &suffix, const string &out, const int m_fw, c
     vvd_t jcorr_par(vd_t(0.0,T/2+1),njacks);
     
     for(int ijack=0;ijack<njacks;ijack++)
-    {
-        for(int t=0;t<T;t++)
-            jcorr_sym[ijack][(T-t)%T]=jcorr[ijack][t];
-        for(int t=0;t<T/2+1;t++)
-            jcorr_par[ijack][t]=(jcorr[ijack][t]+tpar*jcorr_sym[ijack][t])/(1+abs(tpar));
-    }
+        jcorr_par[ijack]=symmetrize(jcorr[ijack],tpar);
     
 //    if(abs(tpar))  return jcorr_par;  //dimension T/2+1
 //    else           return jcorr;      //dimension T
