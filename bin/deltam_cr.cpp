@@ -243,6 +243,26 @@ void oper_t::compute_deltam()
 //    exit(1);
 //    //////DEBUG
     
+    vd_t A(T/2),B(T/2),C(T/2),D(T/2),E(T/2),F(T/2);
+    
+#pragma omp parallel for collapse(4)
+    for(int m_fw=0;m_fw<nm;m_fw++)
+        for(int m_bw=0;m_bw<nm;m_bw++)
+            for(int ijack=0;ijack<njacks;ijack++)
+                for(int r=0;r<nr;r++)
+                {
+                    int mr_fw = r+nr*m_fw;
+                    int mr_bw = r+nr*m_bw;
+                    
+                    A = symmetrize(symmetric_derivative(jV0P5_QED[mr_fw][mr_bw][ijack])/jP5P5_LO[mr_fw][mr_bw][ijack] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])*jP5P5_QED[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]);
+                    B = symmetrize(symmetric_derivative(jV0P5_S[mr_fw][mr_bw][ijack])/jP5P5_LO[mr_fw][mr_bw][ijack] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])*jP5P5_S[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]);
+                    C = symmetrize(symmetric_derivative(jV0P5_P[mr_fw][mr_bw][ijack])/jP5P5_LO[mr_fw][mr_bw][ijack] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])*jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]);
+                    
+                    D = symmetrize(effective_slope(jP5P5_QED[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2));
+                    E = symmetrize(effective_slope(jP5P5_S[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2));
+                    F = symmetrize(effective_slope(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2));
+                }
+    
 #pragma omp parallel for collapse(4)
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
@@ -251,21 +271,17 @@ void oper_t::compute_deltam()
                 {
                     for(int ijack=0;ijack<njacks;ijack++)
                     {
-                        int mr_fw = r+nr*m_fw;
-                        int mr_bw = r+nr*m_bw;
-                        
                         // Solving with Kramer:
-                        //   delta(V0P5):  a + b*deltamu + c*deltamcr + (correction to denominator) = 0
-                        //   delta(slope[P5P5]):  d + e*deltamu + f*deltamcr = 0
+                        //   delta(mPCAC):                  a + b*deltamu + c*deltamcr + (correction to denominator) = 0
+                        //   delta(slope[P5P5_ins/P5P5]):   d + e*deltamu + f*deltamcr = 0
                         
-                        double a = symmetric_derivative(jV0P5_QED[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] -
-                                   symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_QED[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t];
-                        double b = symmetric_derivative(jV0P5_S[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_S[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t];
-                        double c = symmetric_derivative(jV0P5_P[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_P[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t];
+                        double a = A[t];
+                        double b = B[t];
+                        double c = C[t];
                         
-                        double d = effective_slope(jP5P5_QED[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
-                        double e = effective_slope(jP5P5_S[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
-                        double f = effective_slope(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
+                        double d = D[t];
+                        double e = E[t];
+                        double f = F[t];
                         
                         double den = b*f-c*e;
                         double deltamu  = (-a*f+c*d)/den;
