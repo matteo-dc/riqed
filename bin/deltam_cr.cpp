@@ -248,7 +248,7 @@ void oper_t::compute_deltam()
     //   delta(mPCAC):                  a + b*deltamu + c*deltamcr + (correction to denominator) = 0
     //   delta(slope[P5P5_ins/P5P5]):   d + e*deltamu + f*deltamcr = 0
     
-#pragma omp parallel for collapse(4)
+//#pragma omp parallel for collapse(4)
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
             for(int ijack=0;ijack<njacks;ijack++)
