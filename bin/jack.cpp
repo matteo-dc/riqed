@@ -14,8 +14,9 @@ jprop_t clusterize(jprop_t &jS,vvprop_t &S)
 }
 
 // jackknife double
-vvd_t jackknife(vvd_t &jd, const int size)
+vvd_t jackknife(vvd_t &jd)
 {
+    size_t size=jd[0].size();
     vd_t jSum(0.0,size);
     
     for(size_t j=0;j<jd.size();j++) jSum+= jd[j];

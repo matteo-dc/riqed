@@ -5,7 +5,7 @@
 
 jprop_t clusterize(jprop_t &jS,vvprop_t &S);
 
-vvd_t jackknife(vvd_t &jd, const int size);
+vvd_t jackknife(vvd_t &jd);
 
 jprop_t jackknife(jprop_t &jS);
 
