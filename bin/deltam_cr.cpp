@@ -126,38 +126,37 @@ void oper_t::compute_deltam()
             jP5P5_S0[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_S ,_LO,"P5P5",RE,UNK,conf_id,path_to_ens);
         }
     
-#pragma omp parallel for collapse (4)
+#pragma omp parallel for collapse (3)
     for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
         for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
             for (int ijack=0; ijack<njacks; ijack++)
-                for(int t=0;t<T/2+1;t++)
-                {
-                    //collect V0P5 corrections
-                    jV0P5_QED[mr_fw][mr_bw][ijack][t] = jV0P5_LL[mr_fw][mr_bw][ijack][t] +
-                                                        jV0P5_0M[mr_fw][mr_bw][ijack][t] +
-                                                        jV0P5_0T[mr_fw][mr_bw][ijack][t] +
-                                                        jV0P5_M0[mr_fw][mr_bw][ijack][t] +
-                                                        jV0P5_T0[mr_fw][mr_bw][ijack][t];
-                    
-                    jV0P5_P[mr_fw][mr_bw][ijack][t]   = jV0P5_0P[mr_fw][mr_bw][ijack][t] +
-                                                        jV0P5_P0[mr_fw][mr_bw][ijack][t];
-                    
-                    jV0P5_S[mr_fw][mr_bw][ijack][t]   = jV0P5_0S[mr_fw][mr_bw][ijack][t] +
-                                                        jV0P5_S0[mr_fw][mr_bw][ijack][t];
-                    
-                    //collect P5P5 corrections
-                    jP5P5_QED[mr_fw][mr_bw][ijack][t] = jP5P5_LL[mr_fw][mr_bw][ijack][t] +
-                                                        jP5P5_0M[mr_fw][mr_bw][ijack][t] +
-                                                        jP5P5_0T[mr_fw][mr_bw][ijack][t] +
-                                                        jP5P5_M0[mr_fw][mr_bw][ijack][t] +
-                                                        jP5P5_T0[mr_fw][mr_bw][ijack][t];
-                    
-                    jP5P5_P[mr_fw][mr_bw][ijack][t]   = jP5P5_0P[mr_fw][mr_bw][ijack][t] +
-                                                        jP5P5_P0[mr_fw][mr_bw][ijack][t];
-                    
-                    jP5P5_S[mr_fw][mr_bw][ijack][t]   = jP5P5_0S[mr_fw][mr_bw][ijack][t] +
-                                                        jP5P5_S0[mr_fw][mr_bw][ijack][t];
-                }
+            {
+                //collect V0P5 corrections
+                jV0P5_QED[mr_fw][mr_bw][ijack] = jV0P5_LL[mr_fw][mr_bw][ijack] +
+                                                 jV0P5_0M[mr_fw][mr_bw][ijack] +
+                                                 jV0P5_0T[mr_fw][mr_bw][ijack] +
+                                                 jV0P5_M0[mr_fw][mr_bw][ijack] +
+                                                 jV0P5_T0[mr_fw][mr_bw][ijack];
+                
+                jV0P5_P[mr_fw][mr_bw][ijack]   = jV0P5_0P[mr_fw][mr_bw][ijack] +
+                                                 jV0P5_P0[mr_fw][mr_bw][ijack];
+                
+                jV0P5_S[mr_fw][mr_bw][ijack]   = jV0P5_0S[mr_fw][mr_bw][ijack] +
+                                                 jV0P5_S0[mr_fw][mr_bw][ijack];
+                
+                //collect P5P5 corrections
+                jP5P5_QED[mr_fw][mr_bw][ijack] = jP5P5_LL[mr_fw][mr_bw][ijack] +
+                                                 jP5P5_0M[mr_fw][mr_bw][ijack] +
+                                                 jP5P5_0T[mr_fw][mr_bw][ijack] +
+                                                 jP5P5_M0[mr_fw][mr_bw][ijack] +
+                                                 jP5P5_T0[mr_fw][mr_bw][ijack];
+                
+                jP5P5_P[mr_fw][mr_bw][ijack]   = jP5P5_0P[mr_fw][mr_bw][ijack] +
+                                                 jP5P5_P0[mr_fw][mr_bw][ijack];
+                
+                jP5P5_S[mr_fw][mr_bw][ijack]   = jP5P5_0S[mr_fw][mr_bw][ijack] +
+                                                 jP5P5_S0[mr_fw][mr_bw][ijack];
+            }
     
 //    //average over r
 //#pragma omp parallel for collapse(4)
