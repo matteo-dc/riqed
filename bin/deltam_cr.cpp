@@ -152,7 +152,7 @@ void oper_t::compute_deltam()
                                                         jP5P5_M0[mr_fw][mr_bw][ijack][t] +
                                                         jP5P5_T0[mr_fw][mr_bw][ijack][t];
                     
-                    jP5P5_P[mr_fw][mr_bw][ijack][t]   = jP5P5_0P[mr_fw][mr_bw][ijack][t] -
+                    jP5P5_P[mr_fw][mr_bw][ijack][t]   = jP5P5_0P[mr_fw][mr_bw][ijack][t] +
                                                         jP5P5_P0[mr_fw][mr_bw][ijack][t];
                     
                     jP5P5_S[mr_fw][mr_bw][ijack][t]   = jP5P5_0S[mr_fw][mr_bw][ijack][t] +
