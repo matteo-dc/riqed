@@ -260,7 +260,7 @@ void oper_t::compute_deltam()
                     
                     D = effective_slope(symmetrize(jP5P5_QED[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]),eff_mass_time[mr_fw][mr_bw][ijack],T/2);
                     E = effective_slope(symmetrize(jP5P5_S[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]),eff_mass_time[mr_fw][mr_bw][ijack],T/2);
-                    F = effective_slope(symmetrize(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]),eff_mass_time[mr_fw][mr_bw][ijack],T/2));
+                    F = effective_slope(symmetrize(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]),eff_mass_time[mr_fw][mr_bw][ijack],T/2);
                 }
     
 #pragma omp parallel for collapse(4)
