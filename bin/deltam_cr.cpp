@@ -257,13 +257,13 @@ void oper_t::compute_deltam()
                     int mr_fw = r+nr*m_fw;
                     int mr_bw = r+nr*m_bw;
                     
-                    A = symmetrize(symmetric_derivative(jV0P5_QED[mr_fw][mr_bw][ijack])/jP5P5_LO[mr_fw][mr_bw][ijack] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])*jP5P5_QED[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]);
-                    B = symmetrize(symmetric_derivative(jV0P5_S[mr_fw][mr_bw][ijack])/jP5P5_LO[mr_fw][mr_bw][ijack] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])*jP5P5_S[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]);
-                    C = symmetrize(symmetric_derivative(jV0P5_P[mr_fw][mr_bw][ijack])/jP5P5_LO[mr_fw][mr_bw][ijack] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])*jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]);
+                    A = symmetrize(symmetric_derivative(jV0P5_QED[mr_fw][mr_bw][ijack])/jP5P5_LO[mr_fw][mr_bw][ijack] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])*jP5P5_QED[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],0);
+                    B = symmetrize(symmetric_derivative(jV0P5_S[mr_fw][mr_bw][ijack])/jP5P5_LO[mr_fw][mr_bw][ijack] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])*jP5P5_S[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],0);
+                    C = symmetrize(symmetric_derivative(jV0P5_P[mr_fw][mr_bw][ijack])/jP5P5_LO[mr_fw][mr_bw][ijack] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])*jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],0);
                     
-                    D = effective_slope(symmetrize(jP5P5_QED[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]),eff_mass_time[mr_fw][mr_bw][ijack],T/2);
-                    E = effective_slope(symmetrize(jP5P5_S[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]),eff_mass_time[mr_fw][mr_bw][ijack],T/2);
-                    F = effective_slope(symmetrize(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]),eff_mass_time[mr_fw][mr_bw][ijack],T/2);
+                    D = effective_slope(symmetrize(jP5P5_QED[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],0),eff_mass_time[mr_fw][mr_bw][ijack],T/2);
+                    E = effective_slope(symmetrize(jP5P5_S[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],0),eff_mass_time[mr_fw][mr_bw][ijack],T/2);
+                    F = effective_slope(symmetrize(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],0),eff_mass_time[mr_fw][mr_bw][ijack],T/2);
                     
                     vd_t den = B*F-C*E;
                     vd_t deltamu = (-A*F+C*D)/den;
