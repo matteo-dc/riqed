@@ -268,7 +268,7 @@ void oper_t::compute_eff_mass()
                 }
     
     // define effective mass array
-    vvvvd_t M_eff(vvvd_t(vvd_t(vd_t(T/2),njacks),nmr),nmr);
+    vvvvd_t M_eff(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
     
 #pragma omp parallel for collapse(4)
     for(int mr_fw=0;mr_fw<nmr;mr_fw++)
@@ -446,7 +446,7 @@ double per_two_pts_corr_with_ins_ratio_fun(const double &M,const double &TH,cons
 vd_t oper_t::effective_slope(vd_t data, vd_t M, int TH)
 {
     int dt=1;
-    vd_t out(0.0,data.size()-dt);
+    vd_t out(0.0,data.size());
     
     cout<<"DEBUG_____"<<endl;
     cout<<"data size: "<<data.size()<<endl;
@@ -462,6 +462,7 @@ vd_t oper_t::effective_slope(vd_t data, vd_t M, int TH)
         
         out[t]=num/den;
     }
+    out[data.size()-dt]=0.0;
         
     return out;
 }
