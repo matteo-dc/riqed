@@ -448,6 +448,12 @@ vd_t oper_t::effective_slope(vd_t data, vd_t M, int TH)
     int dt=1;
     vd_t out(0.0,data.size()-dt);
     
+    cout<<"DEBUG_____"<<endl;
+    cout<<"data size: "<<data.size()<<endl;
+    cout<<"M size: "<<M.size()<<endl;
+    cout<<"out size: "<<out.size()<<endl;
+
+    
     for(size_t t=0;t<data.size()-dt;t++)
     {
         double num = data[t+dt]-data[t];
