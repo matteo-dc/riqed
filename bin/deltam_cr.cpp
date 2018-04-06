@@ -242,7 +242,7 @@ void oper_t::compute_deltam()
 //    exit(1);
 //    //////DEBUG
     
-    vd_t A(T/2),B(T/2),C(T/2),D(T/2),E(T/2),F(T/2);
+    vd_t A(T/2+1),B(T/2+1),C(T/2+1),D(T/2+1),E(T/2+1),F(T/2+1);
     
     // Solving with Kramer:
     //   delta(mPCAC):                  a + b*deltamu + c*deltamcr + (correction to denominator) = 0
