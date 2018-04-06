@@ -142,8 +142,8 @@ vvd_t get_contraction(const string &suffix, const string &out, const int m_fw, c
     for(int ijack=0;ijack<njacks;ijack++)
         jcorr_par[ijack]=symmetrize(jcorr[ijack],tpar);
     
-//    if(abs(tpar))  return jcorr_par;  //dimension T/2+1
-//    else           return jcorr;      //dimension T
+    if(abs(tpar))  return jcorr_par;  //dimension T/2+1
+    else           return jcorr;      //dimension T
 
     return jcorr_par; //dimension T/2+1
 }
