@@ -140,13 +140,14 @@ void oper_t::compute_mPCAC(const string &suffix)
                 for(int t=0;t<T/2+1;t++)
                     for(int r_fw=0;r_fw<nr;r_fw++)
                     {
-                        int r_bw=r_fw; //same r
+                        int r_bw=(r_fw+1)%nr;
                         
                         int cr_evn = r_bw + r_fw;
                         int cr_odd = r_bw - r_fw;
                         
-                        jP5P5_00_ave[m_fw][m_bw][ijack][t] += jP5P5_00[r_fw+nr*m_fw][r_bw+nr*m_bw][ijack][t]*cr_evn/nr;
-                        jV0P5_00_ave[m_fw][m_bw][ijack][t] += jV0P5_00[r_fw+nr*m_fw][r_bw+nr*m_bw][ijack][t]*cr_odd/nr;
+                        // taking the same r
+                        jP5P5_00_ave[m_fw][m_bw][ijack][t] += jP5P5_00[r_fw+nr*m_fw][r_fw+nr*m_bw][ijack][t]*cr_evn/nr;
+                        jV0P5_00_ave[m_fw][m_bw][ijack][t] += jV0P5_00[r_fw+nr*m_fw][r_fw+nr*m_bw][ijack][t]*cr_odd/nr;
                     }
 
     //define mPCAC with forward and symmetric derivative
