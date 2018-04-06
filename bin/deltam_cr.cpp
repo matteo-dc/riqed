@@ -227,9 +227,6 @@ void oper_t::compute_deltam()
     vvvvd_t mean_value_mu(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), sqr_mean_value_mu(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), error_mu(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm);
     vvvvd_t mean_value_mcr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), sqr_mean_value_mcr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), error_mcr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm);
     
-    double coeff_P[2]={1.0,-1.0};
-    double coeff_S=-1.0;
-    
 //    //DEBUG
 //    for(int m_fw=0;m_fw<1;m_fw++)
 //        for(int m_bw=0;m_bw<1;m_bw++)
@@ -263,12 +260,12 @@ void oper_t::compute_deltam()
                         
                         double a = symmetric_derivative(jV0P5_QED[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] -
                                    symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_QED[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t];
-                        double b = coeff_S*(symmetric_derivative(jV0P5_S[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_S[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]);
-                        double c = coeff_P[r]*(symmetric_derivative(jV0P5_P[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_P[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]);
+                        double b = symmetric_derivative(jV0P5_S[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_S[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t];
+                        double c = symmetric_derivative(jV0P5_P[mr_fw][mr_bw][ijack])[t]/jP5P5_LO[mr_fw][mr_bw][ijack][t] - symmetric_derivative(jV0P5_LO[mr_fw][mr_bw][ijack])[t]*jP5P5_P[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t]/jP5P5_LO[mr_fw][mr_bw][ijack][t];
                         
                         double d = effective_slope(jP5P5_QED[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
-                        double e = coeff_S*effective_slope(jP5P5_S[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
-                        double f = coeff_P[r]*effective_slope(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
+                        double e = effective_slope(jP5P5_S[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
+                        double f = effective_slope(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack],eff_mass_time[mr_fw][mr_bw][ijack],T/2)[t];
                         
                         double den = b*f-c*e;
                         double deltamu  = (-a*f+c*d)/den;
