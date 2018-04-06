@@ -84,7 +84,7 @@ void oper_t::compute_deltam()
 //    vvvvvd_t num_deltam_cr_corr(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nr),nm),nm);
 //    vvvvvd_t den_deltam_cr_corr(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nr),nm),nm);
     
-    vvvvvd_t v_deltamcr(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nr),nm),nm);
+    vvvvvd_t v_deltamc(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nr),nm),nm);
     vvvvvd_t v_deltamu(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nr),nm),nm);
     
     // load correlators
@@ -225,7 +225,7 @@ void oper_t::compute_deltam()
 //                    }
     
     vvvvd_t mean_value_mu(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), sqr_mean_value_mu(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), error_mu(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm);
-    vvvvd_t mean_value_mcr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), sqr_mean_value_mcr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), error_mcr(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm);
+    vvvvd_t mean_value_mc(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), sqr_mean_value_mc(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm), error_mc(vvvd_t(vvd_t(vd_t(0.0,T/2+1),nr),nm),nm);
     
 //    //DEBUG
 //    for(int m_fw=0;m_fw<1;m_fw++)
@@ -245,6 +245,10 @@ void oper_t::compute_deltam()
     
     vd_t A(T/2),B(T/2),C(T/2),D(T/2),E(T/2),F(T/2);
     
+    // Solving with Kramer:
+    //   delta(mPCAC):                  a + b*deltamu + c*deltamcr + (correction to denominator) = 0
+    //   delta(slope[P5P5_ins/P5P5]):   d + e*deltamu + f*deltamcr = 0
+    
 #pragma omp parallel for collapse(4)
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
@@ -261,6 +265,13 @@ void oper_t::compute_deltam()
                     D = effective_slope(symmetrize(jP5P5_QED[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]),eff_mass_time[mr_fw][mr_bw][ijack],T/2);
                     E = effective_slope(symmetrize(jP5P5_S[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]),eff_mass_time[mr_fw][mr_bw][ijack],T/2);
                     F = effective_slope(symmetrize(jP5P5_P[mr_fw][mr_bw][ijack]/jP5P5_LO[mr_fw][mr_bw][ijack]),eff_mass_time[mr_fw][mr_bw][ijack],T/2);
+                    
+                    vd_t den = B*F-C*E;
+                    vd_t deltamu = (-A*F+C*D)/den;
+                    vd_t deltamc = (-B*D+A*E)/den;
+                    
+                    v_deltamu[m_fw][m_bw][r][ijack] = deltamu;
+                    v_deltamc[m_fw][m_bw][r][ijack] = deltamc;
                 }
     
 #pragma omp parallel for collapse(4)
@@ -271,36 +282,15 @@ void oper_t::compute_deltam()
                 {
                     for(int ijack=0;ijack<njacks;ijack++)
                     {
-                        // Solving with Kramer:
-                        //   delta(mPCAC):                  a + b*deltamu + c*deltamcr + (correction to denominator) = 0
-                        //   delta(slope[P5P5_ins/P5P5]):   d + e*deltamu + f*deltamcr = 0
+                        mean_value_mu[m_fw][m_bw][r][t] += v_deltamu[m_fw][m_bw][r][ijack][t]/njacks;
+                        mean_value_mc[m_fw][m_bw][r][t] += v_deltamc[m_fw][m_bw][r][ijack][t]/njacks;
                         
-                        double a = A[t];
-                        double b = B[t];
-                        double c = C[t];
-                        
-                        double d = D[t];
-                        double e = E[t];
-                        double f = F[t];
-                        
-                        double den = b*f-c*e;
-                        double deltamu  = (-a*f+c*d)/den;
-                        double deltamcr = (-b*d+a*e)/den;
-                        
-                        v_deltamu [m_fw][m_bw][r][ijack][t] = deltamu;
-                        v_deltamcr[m_fw][m_bw][r][ijack][t] = deltamcr;
-                        
-//                        printf("r: %d m_fw: %d m_bw: %d ijack: %d t: %d deltamu: %lg deltamcr: %lg\n",r,m_fw,m_bw,ijack,t,deltamu,deltamcr);
-                        
-                        mean_value_mu[m_fw][m_bw][r][t]  += deltamu/njacks;
-                        mean_value_mcr[m_fw][m_bw][r][t] += deltamcr/njacks;
-                        
-                        sqr_mean_value_mu[m_fw][m_bw][r][t]  += deltamu*deltamu/njacks;
-                        sqr_mean_value_mcr[m_fw][m_bw][r][t] += deltamcr*deltamcr/njacks;
+                        sqr_mean_value_mu[m_fw][m_bw][r][t] += v_deltamu[m_fw][m_bw][r][ijack][t]*v_deltamu[m_fw][m_bw][r][ijack][t]/njacks;
+                        sqr_mean_value_mc[m_fw][m_bw][r][t] += v_deltamc[m_fw][m_bw][r][ijack][t]*v_deltamc[m_fw][m_bw][r][ijack][t]/njacks;
                     }
                     
                     error_mu[m_fw][m_bw][r][t] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_mean_value_mu[m_fw][m_bw][r][t]-mean_value_mu[m_fw][m_bw][r][t]*mean_value_mu[m_fw][m_bw][r][t]));
-                    error_mcr[m_fw][m_bw][r][t] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_mean_value_mcr[m_fw][m_bw][r][t]-mean_value_mcr[m_fw][m_bw][r][t]*mean_value_mcr[m_fw][m_bw][r][t]));
+                    error_mc[m_fw][m_bw][r][t] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_mean_value_mc[m_fw][m_bw][r][t]-mean_value_mc[m_fw][m_bw][r][t]*mean_value_mc[m_fw][m_bw][r][t]));
                 }
     
     vvd_t coord(vd_t(0.0,T/2+1),1);
@@ -309,18 +299,18 @@ void oper_t::compute_deltam()
         coord[0][j] = 1.0;  //fit a costante
     }
     
-    vvvvvd_t jdeltamcr(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,coord.size()),njacks),nr),nm),nm);
+    vvvvvd_t jdeltamc(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,coord.size()),njacks),nr),nm),nm);
     vvvvvd_t jdeltamu(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,coord.size()),njacks),nr),nm),nm);
     
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
             for(int r=0;r<nr;r++)
             {
-                jdeltamcr[m_fw][m_bw][r] = polyfit(coord, 1, error_mcr[m_fw][m_bw][r], v_deltamcr[m_fw][m_bw][r], delta_tmin, delta_tmax);
-                jdeltamu[m_fw][m_bw][r]  = polyfit(coord, 1, error_mu[m_fw][m_bw][r], v_deltamu[m_fw][m_bw][r], delta_tmin, delta_tmax);
+                jdeltamc[m_fw][m_bw][r] = polyfit(coord, 1, error_mc[m_fw][m_bw][r], v_deltamc[m_fw][m_bw][r], delta_tmin, delta_tmax);
+                jdeltamu[m_fw][m_bw][r] = polyfit(coord, 1, error_mu[m_fw][m_bw][r], v_deltamu[m_fw][m_bw][r], delta_tmin, delta_tmax);
             }
     
-    vvvvd_t deltam_cr(vvvd_t(vvd_t(vd_t(0.0,nr),nm),nm),njacks);
+    vvvvd_t deltamc(vvvd_t(vvd_t(vd_t(0.0,nr),nm),nm),njacks);
     vvvvd_t deltamu(vvvd_t(vvd_t(vd_t(0.0,nr),nm),nm),njacks);
     
 #pragma omp parallel for collapse(4)
@@ -329,7 +319,7 @@ void oper_t::compute_deltam()
             for(int m_bw=0;m_bw<nm;m_bw++)
                 for(int r=0;r<nr;r++)
                 {
-                    deltam_cr[ijack][m_fw][m_bw][r]=jdeltamcr[m_fw][m_bw][r][ijack][0];
+                    deltamc[ijack][m_fw][m_bw][r]=jdeltamc[m_fw][m_bw][r][ijack][0];
                     deltamu[ijack][m_fw][m_bw][r]=jdeltamu[m_fw][m_bw][r][ijack][0];
                 }
     
@@ -344,7 +334,7 @@ void oper_t::compute_deltam()
                 for(int r=0;r<nr;r++)
                     for(int ijack=0;ijack<njacks;ijack++)
                     {
-                        outfile_mc.write((char*) &deltam_cr[ijack][m_fw][m_bw][r],sizeof(double));
+                        outfile_mc.write((char*) &deltamc[ijack][m_fw][m_bw][r],sizeof(double));
                         outfile_mu.write((char*) &deltamu[ijack][m_fw][m_bw][r],sizeof(double));
                     }
         
