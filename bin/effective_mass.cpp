@@ -101,7 +101,7 @@ void oper_t::compute_mPCAC(const string &suffix)
     
     int T=size[0];
     
-    // define jackknife V0P5 correlators
+    // define jackknife correlators
     vvvvd_t jP5P5_00(vvvd_t(vvd_t(vd_t(T/2+1),njacks),_nmr),_nmr);
     vvvvd_t jV0P5_00(vvvd_t(vvd_t(vd_t(T/2+1),njacks),_nmr),_nmr);
     
@@ -118,32 +118,38 @@ void oper_t::compute_mPCAC(const string &suffix)
     vvvd_t mPCAC_corr_err(vvd_t(vd_t(0.0,T/2+1),_nm),_nm);
     vvvd_t mPCAC_corr_symm_err(vvd_t(vd_t(0.0,T/2+1),_nm),_nm);
 
-#pragma omp parallel for collapse(2)
-    for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
-        for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
-        {
-            jP5P5_00[mr_fw][mr_bw]=get_contraction(suffix,out_hadr,mr_fw,"0",mr_bw,"0","P5P5","RE","EVEN",conf_id,path_to_ens);
-            jV0P5_00[mr_fw][mr_bw]=get_contraction(suffix,out_hadr,mr_fw,"0",mr_bw,"0","V0P5","IM","ODD",conf_id,path_to_ens);
-        }
+    // load correlators
+#pragma omp parallel for collapse (4)
+    for(int m_fw=0;m_fw<_nm;m_fw++)
+        for(int m_bw=0;m_bw<_nm;m_bw++)
+            for(int r_fw=0;r_fw<nr;r_fw++)
+                for(int r_bw=0;r_bw<nr;r_bw++)
+                {
+                    int mr_fw = r_fw+nr*m_fw;
+                    int mr_bw = r_bw+nr*m_bw;
+                    
+                    jP5P5_00[mr_fw][mr_bw]=get_contraction(suffix,out_hadr,m_fw,m_bw,r_fw,r_bw,_LO,_LO,"P5P5",RE,EVN,conf_id ,path_to_ens);
+                    jV0P5_00[mr_fw][mr_bw]=get_contraction(suffix,out_hadr,m_fw,m_bw,r_fw,r_bw,_LO,_LO,"V0P5",IM,ODD,conf_id,path_to_ens);
+                }
     
-    //average over r
+    //average over r (applying r-parity)
 #pragma omp parallel for collapse(4)
     for(int m_fw=0;m_fw<_nm;m_fw++)
         for(int m_bw=0;m_bw<_nm;m_bw++)
             for (int ijack=0; ijack<njacks; ijack++)
                 for(int t=0;t<T/2+1;t++)
-                    for(int r=0;r<nr;r++)
+                    for(int r_fw=0;r_fw<nr;r_fw++)
                     {
-                        int r1=r;
-                        int r2=(r+1)%2;
+                        int r_bw=r_fw; //same r
                         
-                        int cr_even = r2 + r1;
-                        int cr_odd = r2 - r1;
+                        int cr_evn = r_bw + r_fw;
+                        int cr_odd = r_bw - r_fw;
                         
-                        jV0P5_00_ave[m_fw][m_bw][ijack][t] += jV0P5_00[r1+nr*m_fw][r1+nr*m_bw][ijack][t]*cr_odd/nr;
-                        jP5P5_00_ave[m_fw][m_bw][ijack][t] += jP5P5_00[r1+nr*m_fw][r1+nr*m_bw][ijack][t]*cr_even/nr;
+                        jP5P5_00_ave[m_fw][m_bw][ijack][t] += jP5P5_00[r_fw+nr*m_fw][r_bw+nr*m_bw][ijack][t]*cr_evn/nr;
+                        jV0P5_00_ave[m_fw][m_bw][ijack][t] += jV0P5_00[r_fw+nr*m_fw][r_bw+nr*m_bw][ijack][t]*cr_odd/nr;
                     }
 
+    //define mPCAC with forward and symmetric derivative
 #pragma omp parallel for collapse(4)
     for(int m_fw=0;m_fw<_nm;m_fw++)
         for(int m_bw=0;m_bw<_nm;m_bw++)
@@ -232,7 +238,7 @@ void oper_t::compute_mPCAC(const string &suffix)
     else cerr<<"Unable to create the output file \"mPCAC\" "<<endl;
 }
 
-// compute effective mass
+// compute effective meson mass
 void oper_t::compute_eff_mass()
 {
     // array of the configurations
@@ -242,13 +248,21 @@ void oper_t::compute_eff_mass()
     
     int T=size[0];
     
-    // define jackknife V0P5 correlators
+    // define jackknife P5P5 correlators
     vvvvd_t jP5P5_00(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nmr),nmr);
     
-#pragma omp parallel for collapse(2)
-    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-        for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-            jP5P5_00[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_fw,"0",mr_bw,"0","P5P5","RE","EVEN",conf_id,path_to_ens);
+    // load correlators
+#pragma omp parallel for collapse (4)
+    for(int m_fw=0;m_fw<nm;m_fw++)
+        for(int m_bw=0;m_bw<nm;m_bw++)
+            for(int r_fw=0;r_fw<nr;r_fw++)
+                for(int r_bw=0;r_bw<nr;r_bw++)
+                {
+                    int mr_fw = r_fw+nr*m_fw;
+                    int mr_bw = r_bw+nr*m_bw;
+                    
+                    jP5P5_00[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_LO,_LO,"P5P5",RE,EVN,conf_id,path_to_ens);
+                }
     
     // define effective mass array
     vvvvd_t M_eff(vvvd_t(vvd_t(vd_t(T/2),njacks),nmr),nmr);
@@ -348,9 +362,12 @@ void oper_t::compute_eff_mass_sea()
     // define jackknife V0P5 correlators
     vvvvd_t jP5P5_00(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nr),nr);
     
-    for(int r1=0; r1<nr; r1++)
-      for(int r2=0; r2<nr; r2++)
-	jP5P5_00[r1][r2]=get_contraction("sea",out_hadr,r1,"0",r2,"0","P5P5","RE","EVEN",conf_id,path_to_ens);
+    // load correlators
+    for(int r_fw=0;r_fw<nr;r_fw++)
+        for(int r_bw=0;r_bw<nr;r_bw++)
+        {
+            jP5P5_00[r_fw][r_bw]=get_contraction("sea",out_hadr,0,0,r_fw,r_bw,_LO,_LO,"P5P5",RE,EVN,conf_id,path_to_ens);
+        }
 	  
     // define effective mass array
     vvvvd_t M_eff(vvvd_t(vvd_t(vd_t(T/2),njacks),nr),nr);

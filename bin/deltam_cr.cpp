@@ -87,85 +87,77 @@ void oper_t::compute_deltam()
     vvvvvd_t v_deltamcr(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nr),nm),nm);
     vvvvvd_t v_deltamu(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nr),nm),nm);
     
-#pragma omp parallel for collapse (3)
-    for(int m_fw=0;m_fw<nm;m_fw++)
-        for(int m_bw=0;m_bw<nm;m_bw++)
-            for(int r_fw=0;r_fw<nr;r_fw++)
-            {
-                int r_bw = r_fw; // same r
-                
-                int mr_fw = r_fw+nr*m_fw;
-                int mr_bw = r_bw+nr*m_bw;
-                
-                //load V0P5 correlator
-                jV0P5_LO[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"0","V0P5","IM","UNK",conf_id,path_to_ens);
-                
-                //load V0P5 corrections
-                jV0P5_LL[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"F",mr_fw,"F","V0P5","IM","UNK",conf_id,path_to_ens);
-                jV0P5_0M[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"FF","V0P5","IM","UNK",conf_id,path_to_ens);
-                jV0P5_0T[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"T","V0P5","IM","UNK",conf_id,path_to_ens);
-                jV0P5_0P[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"P","V0P5","RE","UNK",conf_id,path_to_ens);
-                jV0P5_0S[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"S","V0P5","IM","UNK",conf_id,path_to_ens);
-                jV0P5_M0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"FF",mr_fw,"0","V0P5","IM","UNK",conf_id,path_to_ens);
-                jV0P5_T0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"T",mr_fw,"0","V0P5","IM","UNK",conf_id,path_to_ens);
-                jV0P5_P0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"P",mr_fw,"0","V0P5","RE","UNK",conf_id,path_to_ens);
-                jV0P5_S0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"S",mr_fw,"0","V0P5","IM","UNK",conf_id,path_to_ens);
-                
-                //load P5P5 correlator
-                jP5P5_LO[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"0","P5P5","RE","UNK",conf_id,path_to_ens);
-
-                //load P5P5 corrections
-                jP5P5_LL[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"F",mr_fw,"F","P5P5","RE","UNK",conf_id,path_to_ens);
-                jP5P5_0M[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"FF","P5P5","RE","UNK",conf_id,path_to_ens);
-                jP5P5_0T[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"T","P5P5","RE","UNK",conf_id,path_to_ens);
-                jP5P5_0P[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"P","P5P5","IM","UNK",conf_id,path_to_ens);
-                jP5P5_0S[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"0",mr_fw,"S","P5P5","RE","UNK",conf_id,path_to_ens);
-                jP5P5_M0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"FF",mr_fw,"0","P5P5","RE","UNK",conf_id,path_to_ens);
-                jP5P5_T0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"T",mr_fw,"0","P5P5","RE","UNK",conf_id,path_to_ens);
-                jP5P5_P0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"P",mr_fw,"0","P5P5","IM","UNK",conf_id,path_to_ens);
-                jP5P5_S0[mr_fw][mr_bw]=get_contraction("",out_hadr,mr_bw,"S",mr_fw,"0","P5P5","RE","UNK",conf_id,path_to_ens);
-                
-            }
+    // load correlators
+#pragma omp parallel for collapse (2)
+    for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
+        for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
+        {
+            int r_fw = mr_fw%nr;
+            int m_fw = (mr_fw-r_fw)/nr;
+            int r_bw = mr_bw%nr;
+            int m_bw = (mr_bw-r_bw)/nr;
+            
+            //load V0P5 correlator
+            jV0P5_LO[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_LO,_LO,"V0P5",IM,UNK,conf_id,path_to_ens);
+            
+            //load V0P5 corrections
+            jV0P5_LL[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_F ,_F ,"V0P5",IM,UNK,conf_id,path_to_ens);
+            jV0P5_0M[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_LO,_FF,"V0P5",IM,UNK,conf_id,path_to_ens);
+            jV0P5_0T[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_LO,_T ,"V0P5",IM,UNK,conf_id,path_to_ens);
+            jV0P5_0P[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_LO,_P ,"V0P5",IM,UNK,conf_id,path_to_ens);
+            jV0P5_0S[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_LO,_S ,"V0P5",IM,UNK,conf_id,path_to_ens);
+            jV0P5_M0[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_FF,_LO,"V0P5",IM,UNK,conf_id,path_to_ens);
+            jV0P5_T0[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_T ,_LO,"V0P5",IM,UNK,conf_id,path_to_ens);
+            jV0P5_P0[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_P ,_LO,"V0P5",IM,UNK,conf_id,path_to_ens);
+            jV0P5_S0[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_S ,_LO,"V0P5",IM,UNK,conf_id,path_to_ens);
+            
+            //load P5P5 correlator
+            jP5P5_LO[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_LO,_LO,"P5P5",RE,UNK,conf_id,path_to_ens);
+            
+            //load P5P5 corrections
+            jP5P5_LL[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_F ,_F ,"P5P5",RE,UNK,conf_id,path_to_ens);
+            jP5P5_0M[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_LO,_FF,"P5P5",RE,UNK,conf_id,path_to_ens);
+            jP5P5_0T[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_LO,_T ,"P5P5",RE,UNK,conf_id,path_to_ens);
+            jP5P5_0P[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_LO,_P ,"P5P5",RE,UNK,conf_id,path_to_ens);
+            jP5P5_0S[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_LO,_S ,"P5P5",RE,UNK,conf_id,path_to_ens);
+            jP5P5_M0[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_FF,_LO,"P5P5",RE,UNK,conf_id,path_to_ens);
+            jP5P5_T0[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_T ,_LO,"P5P5",RE,UNK,conf_id,path_to_ens);
+            jP5P5_P0[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_P ,_LO,"P5P5",RE,UNK,conf_id,path_to_ens);
+            jP5P5_S0[mr_fw][mr_bw]=get_contraction("",out_hadr,m_fw,m_bw,r_fw,r_bw,_S ,_LO,"P5P5",RE,UNK,conf_id,path_to_ens);
+        }
     
-#pragma omp parallel for collapse (5)
-    for(int m_fw=0;m_fw<nm;m_fw++)
-        for(int m_bw=0;m_bw<nm;m_bw++)
-            for(int r_fw=0;r_fw<nr;r_fw++)
-                for (int ijack=0; ijack<njacks; ijack++)
-                    for(int t=0;t<T/2+1;t++)
-                    {
-                        int r_bw = r_fw; // same r
-                        
-                        int mr_fw = r_fw+nr*m_fw;
-                        int mr_bw = r_bw+nr*m_bw;
-                        
-                        //collect V0P5 corrections
-                        jV0P5_QED[mr_fw][mr_bw][ijack][t] = jV0P5_LL[mr_fw][mr_bw][ijack][t] +
-                                                            jV0P5_0M[mr_fw][mr_bw][ijack][t] +
-                                                            jV0P5_0T[mr_fw][mr_bw][ijack][t] +
-                                                            jV0P5_M0[mr_fw][mr_bw][ijack][t] +
-                                                            jV0P5_T0[mr_fw][mr_bw][ijack][t];
-                        
-                        jV0P5_P[mr_fw][mr_bw][ijack][t]   = jV0P5_0P[mr_fw][mr_bw][ijack][t] -
-                                                            jV0P5_P0[mr_fw][mr_bw][ijack][t];
-                        
-                        jV0P5_S[mr_fw][mr_bw][ijack][t]   = jV0P5_0S[mr_fw][mr_bw][ijack][t] +
-                                                            jV0P5_S0[mr_fw][mr_bw][ijack][t];
-                        
-                        //collect P5P5 corrections
-                        jP5P5_QED[mr_fw][mr_bw][ijack][t] = jP5P5_LL[mr_fw][mr_bw][ijack][t] +
-                                                            jP5P5_0M[mr_fw][mr_bw][ijack][t] +
-                                                            jP5P5_0T[mr_fw][mr_bw][ijack][t] +
-                                                            jP5P5_M0[mr_fw][mr_bw][ijack][t] +
-                                                            jP5P5_T0[mr_fw][mr_bw][ijack][t];
-                        
-                        jP5P5_P[mr_fw][mr_bw][ijack][t]   = jP5P5_0P[mr_fw][mr_bw][ijack][t] -
-                                                            jP5P5_P0[mr_fw][mr_bw][ijack][t];
-                        
-                        jP5P5_S[mr_fw][mr_bw][ijack][t]   = jP5P5_0S[mr_fw][mr_bw][ijack][t] +
-                                                            jP5P5_S0[mr_fw][mr_bw][ijack][t];
-                    }
-
+#pragma omp parallel for collapse (4)
+    for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
+        for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
+            for (int ijack=0; ijack<njacks; ijack++)
+                for(int t=0;t<T/2+1;t++)
+                {
+                    //collect V0P5 corrections
+                    jV0P5_QED[mr_fw][mr_bw][ijack][t] = jV0P5_LL[mr_fw][mr_bw][ijack][t] +
+                                                        jV0P5_0M[mr_fw][mr_bw][ijack][t] +
+                                                        jV0P5_0T[mr_fw][mr_bw][ijack][t] +
+                                                        jV0P5_M0[mr_fw][mr_bw][ijack][t] +
+                                                        jV0P5_T0[mr_fw][mr_bw][ijack][t];
+                    
+                    jV0P5_P[mr_fw][mr_bw][ijack][t]   = jV0P5_0P[mr_fw][mr_bw][ijack][t] +
+                                                        jV0P5_P0[mr_fw][mr_bw][ijack][t];
+                    
+                    jV0P5_S[mr_fw][mr_bw][ijack][t]   = jV0P5_0S[mr_fw][mr_bw][ijack][t] +
+                                                        jV0P5_S0[mr_fw][mr_bw][ijack][t];
+                    
+                    //collect P5P5 corrections
+                    jP5P5_QED[mr_fw][mr_bw][ijack][t] = jP5P5_LL[mr_fw][mr_bw][ijack][t] +
+                                                        jP5P5_0M[mr_fw][mr_bw][ijack][t] +
+                                                        jP5P5_0T[mr_fw][mr_bw][ijack][t] +
+                                                        jP5P5_M0[mr_fw][mr_bw][ijack][t] +
+                                                        jP5P5_T0[mr_fw][mr_bw][ijack][t];
+                    
+                    jP5P5_P[mr_fw][mr_bw][ijack][t]   = jP5P5_0P[mr_fw][mr_bw][ijack][t] -
+                                                        jP5P5_P0[mr_fw][mr_bw][ijack][t];
+                    
+                    jP5P5_S[mr_fw][mr_bw][ijack][t]   = jP5P5_0S[mr_fw][mr_bw][ijack][t] +
+                                                        jP5P5_S0[mr_fw][mr_bw][ijack][t];
+                }
     
 //    //average over r
 //#pragma omp parallel for collapse(4)
@@ -254,7 +246,6 @@ void oper_t::compute_deltam()
 //    exit(1);
 //    //////DEBUG
     
-#warning taking only the insertions on the forward propagator
 #pragma omp parallel for collapse(4)
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
