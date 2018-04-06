@@ -4,8 +4,6 @@
 #include <iostream>
 #include <vector>
 #include <stdio.h>
-#include "effective_mass.hpp"
-#include "deltam_cr.hpp"
 #include <omp.h>
 #include "operations.hpp"
 #include "read.hpp"
