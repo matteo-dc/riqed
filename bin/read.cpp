@@ -8,6 +8,7 @@
 #include "operations.hpp"
 #include "read.hpp"
 #include "ave_err.hpp"
+#include "contractions.hpp"
 
 
 // read input mom file
@@ -286,17 +287,6 @@ string path_to_conf(const string &string_path, const string &out, int i_conf,con
 // opens all the files and return a vector with all the string paths
 vector<string> oper_t::setup_read_qprop(FILE* input[])
 {
-    // complete path to conf
-//    string string_path;
-//    if(strcmp(action.c_str(),"Iwa")==0)
-//    {
-////        string_path = path_ensemble_str+action+"_b"+to_string_with_precision(beta,2)+"_L"+to_string(size[1])+"T"+to_string(size[0])+"_k"+to_string_with_precision(kappa,6)+"_mu"+to_string_with_precision(mu_sea,4)+"/";
-//    }
-//    if(strcmp(action.c_str(),"Sym")==0)
-//    {
-////        string_path = path_ensemble_str+to_string_with_precision(beta,2)+"_"+to_string(size[1])+"_"+to_string_with_precision(mu_sea,4)+"/";
-//    }
-    
     // array of the configurations
     int conf_id[nconfs];
     for(int iconf=0;iconf<nconfs;iconf++)
@@ -387,9 +377,8 @@ vector<string> oper_t::setup_read_lprop(FILE* input[])
 }
 
 
-
 //read a propagator file
-prop_t read_prop(FILE* input, const string &path, const int imom)
+prop_t read_prop(FILE* input, const string &path, const int imom, const dcompl fact)
 {
     prop_t out(prop_t::Zero());
     
@@ -416,7 +405,7 @@ prop_t read_prop(FILE* input, const string &path, const int imom)
                         cerr<<"Unable to read from "<<path<<" id_so: "<<id_so<<", ic_so: "<<ic_so<<", id_si: "<<id_si<<", ic_si:"<<ic_si<<endl;
                         exit(1);
                     }
-                    out(isc(id_si,ic_si),isc(id_so,ic_so))=dcompl(temp[0],temp[1]); //store
+                    out(isc(id_si,ic_si),isc(id_so,ic_so))=fact*dcompl(temp[0],temp[1]); //store
                 }
     
     return out;
@@ -445,10 +434,7 @@ vvvprop_t read_qprop_mom(FILE* input[],const vector<string> v_path,const int i_i
         int icombo = r + nr*m + nr*nm*t + nr*nm*ntypes*ihit + nr*nm*ntypes*nhits*iconf;
         
         //create all the propagators in a given conf and a given mom
-        S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom);
-        
-        if(t==4) S[ijack][t][mr]*=dcompl(0.0,1.0);      // i*(pseudoscalar insertion)
-        //if(t==5) S[ijack][t][mr]*=dcompl(1.0,0.0);    // (minus sign?)
+        S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom,coeff_to_read(k,r));
     }
     
     return S;
@@ -459,7 +445,7 @@ vvprop_t read_lprop_mom(FILE* input[],const vector<string> v_path,const int i_in
 {
     vvprop_t L(vprop_t(prop_t::Zero(),ntypes_lep),njacks);
     
-//#pragma omp parallel for
+#pragma omp parallel for
     for(int ilin=0;ilin<ntypes_lep*njacks;ilin++)
     {
         int k=ilin;
@@ -471,7 +457,7 @@ vvprop_t read_lprop_mom(FILE* input[],const vector<string> v_path,const int i_in
         int icombo = t + ntypes_lep*ihit + ntypes_lep*nhits*iconf;
         
         //create all the propagators in a given conf and a given mom
-        L[ijack][t] = read_prop(input[icombo],v_path[icombo],imom);
+        L[ijack][t] = read_prop(input[icombo],v_path[icombo],imom,1.0);
     }
     
     return L;
@@ -482,22 +468,14 @@ vvprop_t read_lprop_mom(FILE* input[],const vector<string> v_path,const int i_in
 //read file
 void read_internal(double &t,ifstream& infile)
 {
-//    infile.read((char*) &t,sizeof(double));
     infile>>t;
 }
-//template <class T>
 void read_internal(VectorXd &V, ifstream& infile)
 {
     for(int i=0; i<V.size();i++) read_internal(V(i),infile);
 }
 
-////read file binary
-//void read_internal_bin(double &t,ifstream& infile)
-//{
-//    infile.read((char*) &t,sizeof(double));
-////    infile>>t;
-//}
-//template <class T>
+//read file binary
 void read_internal_bin(VectorXd &V, ifstream& infile)
 {
     for(int i=0; i<V.size();i++) read_internal(V(i),infile);
