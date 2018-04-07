@@ -223,9 +223,12 @@ void oper_t::compute_mPCAC(const string &suffix)
         cout<<"mPCAC_symm["<<mass<<"] = "<<get<0>(ave_err(mPCAC_symm))[m][m]<<" "<<get<1>(ave_err(mPCAC_symm))[m][m]<<endl;
     }
 
+    string suffix_new=suffix;
+    if(suffix.compare("sea")==0) suffix_new="_"+suffix;
+    
     cout<<endl;
     ofstream outfile;
-    outfile.open(path_to_ens+"mPCAC", ios::out | ios::binary);
+    outfile.open(path_to_ens+"mPCAC"+suffix_new, ios::out | ios::binary);
     
     if (outfile.is_open())
     {
@@ -238,7 +241,7 @@ void oper_t::compute_mPCAC(const string &suffix)
         
         outfile.close();
     }
-    else cerr<<"Unable to create the output file \"mPCAC\" "<<endl;
+    else cerr<<"Unable to create the output file \"mPCAC"<<suffix<<"\" "<<endl;
 }
 
 // compute effective meson mass
