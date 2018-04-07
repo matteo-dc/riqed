@@ -87,7 +87,7 @@ vvd_t get_contraction(const string &suffix, const string &out, const int m_fw, c
     
     for(int iconf=0;iconf<nconfs;iconf++)
     {
-        if(iconf==0) printf("%s  %s-%s",ID.c_str(),Tbw.c_str(),Tfw.c_str());
+        if(iconf==0) printf("%s  %s-%s\n",ID.c_str(),Tbw.c_str(),Tfw.c_str());
         //printf("\t conf = %d/%d\n",iconf+1,nconfs);
         
         int ijack=iconf/clust_size;
