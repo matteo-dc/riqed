@@ -9,7 +9,7 @@
 #define DEFAULT_DOUBLE_VAL 1.2345
 
 // define global variables
-int nconfs, njacks, nr, ntypes, nhits, Nf, Nc, UseSigma1, UseEffMass, nbeta, ntheta, compute_4f,only_basic;
+int nconfs, njacks, nr, ntypes, nhits, Nf, Nc, UseSigma1, UseEffMass, nbeta, ntheta, compute_4f,only_basic, compute_mpcac;
 int clust_size, nbil, combo, combo_lep, ntypes_lep;
 vector<double> beta;
 vector<int> nm_Sea;
@@ -71,6 +71,7 @@ TK_glb_t get_TK_glb(FILE *fin)
     if(strcasecmp(tok,out_hadr_tag)==0) return OUT_HADR_TK;
     if(strcasecmp(tok,out_lep_tag)==0) return OUT_LEP_TK;
     if(strcasecmp(tok,only_basic_tag)==0) return ONLY_BASIC_TK;
+    if(strcasecmp(tok,compute_mpcac_tag)==0) return COMPUTE_MPCAC_TK;
 
     return VALUE_GLB_TK;
 }
@@ -251,6 +252,7 @@ void read_input_glb(const char path[])
     out_hadr=DEFAULT_STR_VAL;
     out_lep=DEFAULT_STR_VAL;
     only_basic=DEFAULT_INT_VAL;
+    compute_mpcac=DEFAULT_INT_VAL;
     
 //    for(auto &bl : beta_label) bl=DEFAULT_STR_VAL;
 //    //        for(auto &l : L) l=DEFAULT_INT_VAL;
@@ -371,6 +373,9 @@ void read_input_glb(const char path[])
             case ONLY_BASIC_TK:
                 get_value_glb(fin,only_basic);
                 break;
+            case COMPUTE_MPCAC_TK:
+                get_value_glb(fin,compute_mpcac);
+                break;
                 
             case FEOF_GLB_TK:
                 break;
@@ -406,6 +411,7 @@ void read_input_glb(const char path[])
     check_str_par(out_hadr,out_hadr_tag);
     check_str_par(out_lep,out_lep_tag);
     check_int_par(only_basic,only_basic_tag);
+    check_int_par(compute_mpcac,compute_mpcac_tag);
     
     fclose(fin);
     
