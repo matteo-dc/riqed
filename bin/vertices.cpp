@@ -1,6 +1,7 @@
 #include "aliases.hpp"
 #include "global.hpp"
 #include "Dirac.hpp"
+#include "contractions.hpp"
 #include <omp.h>
 
 //calculate the vertex function in a given configuration for the given equal momenta
@@ -18,36 +19,34 @@ void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,valarray<jvert_t> &jVert
             for(int mr_bw=0;mr_bw<nmr;mr_bw++)
                 for(int igam=0;igam<16;igam++)
                 {
-                    int r_fw = mr_fw % nr;
-                    int r_bw = mr_bw % nr;
-                    
                     // LO
                     jVert_LO_EM_P_S[LO][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(S1[ijack][0][mr_fw], S2[ijack][0][mr_bw],igam);
+                        make_vertex(S1[ijack][_LO][mr_fw], S2[ijack][_LO][mr_bw],igam);
                     
                     // EM: Self + Tadpole + Exchange
                     jVert_LO_EM_P_S[EM][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(S1[ijack][0][mr_fw],S2[ijack][2][mr_bw],igam) +
-                        make_vertex(S1[ijack][0][mr_fw],S2[ijack][3][mr_bw],igam) +
-                        make_vertex(S1[ijack][2][mr_fw],S2[ijack][0][mr_bw],igam) +
-                        make_vertex(S1[ijack][3][mr_fw],S2[ijack][0][mr_bw],igam) +
-                        make_vertex(S1[ijack][1][mr_fw],S1[ijack][1][mr_bw],igam) ;
+                        make_vertex(S1[ijack][_LO][mr_fw],S2[ijack][_FF][mr_bw],igam) +
+                        make_vertex(S1[ijack][_LO][mr_fw],S2[ijack][_T ][mr_bw],igam) +
+                        make_vertex(S1[ijack][_FF][mr_fw],S2[ijack][_LO][mr_bw],igam) +
+                        make_vertex(S1[ijack][_T ][mr_fw],S2[ijack][_LO][mr_bw],igam) +
+                        make_vertex(S1[ijack][_F ][mr_fw],S1[ijack][_F ][mr_bw],igam) ;
                     
-                    // P (fw)
-                    if(r_fw==0) jVert_LO_EM_P_S[2][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(+1.0*S1[ijack][4][mr_fw],S2[ijack][0][mr_bw],igam);
-                    if(r_fw==1) jVert_LO_EM_P_S[2][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(-1.0*S1[ijack][4][mr_fw],S2[ijack][0][mr_bw],igam);
-                    // P (bw)
-                    if(r_bw==0) jVert_LO_EM_P_S[3][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(S1[ijack][0][mr_fw],+1.0*S2[ijack][4][mr_bw],igam);
-                    if(r_bw==1) jVert_LO_EM_P_S[3][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(S1[ijack][0][mr_fw],-1.0*S2[ijack][4][mr_bw],igam);
+                    // Pfw
+                    jVert_LO_EM_P_S[Pfw][ijack][mr_fw][mr_bw][igam] +=
+                        make_vertex(S1[ijack][_P ][mr_fw],S2[ijack][_LO][mr_bw],igam);
                     
-                    // S
-                    jVert_LO_EM_P_S[4][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(-1.0*S1[ijack][5][mr_fw],S2[ijack][0][mr_bw],igam) +
-                        make_vertex(S1[ijack][0][mr_fw],-1.0*S2[ijack][5][mr_bw],igam);
+                    // Pbw
+                    jVert_LO_EM_P_S[Pbw][ijack][mr_fw][mr_bw][igam] +=
+                        make_vertex(S1[ijack][_LO][mr_fw],S2[ijack][_P ][mr_bw],igam);
+                    
+                    // Sfw
+                    jVert_LO_EM_P_S[Sfw][ijack][mr_fw][mr_bw][igam] +=
+                    make_vertex(S1[ijack][_S ][mr_fw],S2[ijack][_LO][mr_bw],igam);
+                    
+                    // Sbw
+                    jVert_LO_EM_P_S[Sbw][ijack][mr_fw][mr_bw][igam] +=
+                    make_vertex(S1[ijack][_LO][mr_fw],S2[ijack][_S ][mr_bw],igam);
+
                 }
     
 }
