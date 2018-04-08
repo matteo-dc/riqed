@@ -792,18 +792,18 @@ void oper_t::compute_Zbil()
 
 void oper_t::compute_meslep()
 {
-    ifstream jG_0_4f_data(path_print+"jG_0_4f");
-    ifstream jG_em_4f_data(path_print+"jG_em_4f");
+//    ifstream jG_0_4f_data(path_print+"jG_0_4f");
+//    ifstream jG_em_4f_data(path_print+"jG_em_4f");
     ifstream jpr_meslep_0_data(path_print+"jpr_meslep_0");
     ifstream jpr_meslep_em_data(path_print+"jpr_meslep_em");
     ifstream jpr_meslep_nasty_data(path_print+"jpr_meslep_nasty");
     
-    if(jG_0_4f_data.good() and jG_em_4f_data.good() and jpr_meslep_0_data.good() and jpr_meslep_em_data.good() and jpr_meslep_nasty_data.good())
+    if(/*jG_0_4f_data.good() and jG_em_4f_data.good() and*/ jpr_meslep_0_data.good() and jpr_meslep_em_data.good() and jpr_meslep_nasty_data.good())
     {
         cout<<"Reading meslep from files"<<endl<<endl;
         
-        read_vec_bin(jG_0_4f,path_print+"jG_0_4f");
-        read_vec_bin(jG_em_4f,path_print+"jG_em_4f");
+//        read_vec_bin(jG_0_4f,path_print+"jG_0_4f");
+//        read_vec_bin(jG_em_4f,path_print+"jG_em_4f");
         read_vec_bin(jpr_meslep_0,path_print+"jpr_meslep_0");
         read_vec_bin(jpr_meslep_em,path_print+"jpr_meslep_em");
         read_vec_bin(jpr_meslep_nasty,path_print+"jpr_meslep_nasty");
