@@ -125,6 +125,9 @@ extern string out_lep;
 extern int ntypes_lep;
 // create only basic
 extern int only_basic;
+// compute mPCAC
+extern int compute_mpcac;
+
 
 typedef enum {  
     LO = 0,
