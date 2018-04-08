@@ -41,10 +41,10 @@ dcompl coeff_to_read(const size_t ikind,const size_t r)
     if(ikind>=nmax)
     {printf("cannot ask for coeff of kind %zu, maximum is %zu",ikind,nmax); exit(1);}
     
-    if(ikind==5) //P
+    if(ikind==4) //P
         return dcompl(0,tau3[r]);
     else
-        if(ikind==4) //S
+        if(ikind==5) //S
             return -1.0;
         else //others
             return 1.0;
