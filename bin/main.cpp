@@ -26,6 +26,7 @@
 
 ORDER ord;
 MESLEP_TYPES meslep_t;
+VERTEX_TYPES vertex_t;
 
 int main()
 {
