@@ -20,6 +20,7 @@
 #include "meslep.hpp"
 #include <chrono>
 #include "rotate.hpp"
+#include "contractions.hpp"
 
 #define EXTERN_OPER
 
@@ -493,22 +494,15 @@ void build_prop(const vvvprop_t &prop, jprop_t &jS_0,jprop_t &jS_self_tad,jprop_
             {
                 int mr = r + nr*m;
                 
-                S_LO_EM_P_S[LO][ijack][mr] = prop[ijack][0][mr];  // Leading order
-            
-                // Electromagnetic correction:  S_em = S_self + S_tad -+ deltam_cr*S_P - deltamu*S_S
-
-                S_LO_EM_P_S[EM][ijack][mr] = prop[ijack][2][mr] + prop[ijack][3][mr];  // self energy + tadpole
+                S_LO_EM_P_S[LO][ijack][mr] = prop[ijack][_LO][mr];  // Leading order
+                S_LO_EM_P_S[EM][ijack][mr] = prop[ijack][_FF][mr] + prop[ijack][_T][mr];  // self energy + tadpole
+                S_LO_EM_P_S[P][ijack][mr]  = prop[ijack][_P][mr]; // P insertion
+                S_LO_EM_P_S[S][ijack][mr]  = prop[ijack][_S][mr]; // S insertion
                 
-                // here the tau3 matrix elements are explicit: diag(tau3)=(+1,-1)
-                if(r==0) S_LO_EM_P_S[P][ijack][mr] = +1.0*prop[ijack][4][mr];
-                if(r==1) S_LO_EM_P_S[P][ijack][mr] = -1.0*prop[ijack][4][mr];
-                
-                S_LO_EM_P_S[S][ijack][mr] = prop[ijack][5][mr];
-                
-                jS_0[ijack][mr] += S_LO_EM_P_S[LO][ijack][mr];
-                jS_self_tad[ijack][mr] += S_LO_EM_P_S[EM][ijack][mr];
-                jS_P[ijack][mr] += S_LO_EM_P_S[P][ijack][mr];
-                jS_S[ijack][mr] += S_LO_EM_P_S[S][ijack][mr];
+                jS_0[ijack][mr]         += S_LO_EM_P_S[LO][ijack][mr];
+                jS_self_tad[ijack][mr]  += S_LO_EM_P_S[EM][ijack][mr];
+                jS_P[ijack][mr]         += S_LO_EM_P_S[P ][ijack][mr];
+                jS_S[ijack][mr]         += S_LO_EM_P_S[S ][ijack][mr];
             }
 }
 
@@ -555,10 +549,10 @@ void oper_t::compute_prop()
                 }
             
             // jackknife average
-            jS_0 = jackknife(jS_0);
+            jS_0        = jackknife(jS_0);
             jS_self_tad = jackknife(jS_self_tad);
-            jS_P = jackknife(jS_P);
-            jS_S = jackknife(jS_S);
+            jS_P        = jackknife(jS_P);
+            jS_S        = jackknife(jS_S);
             
             // build the complete electromagnetic correction
 #pragma omp parallel for collapse(3)
@@ -567,7 +561,9 @@ void oper_t::compute_prop()
                     for(int ijack=0;ijack<njacks;ijack++)
                     {
                         int mr = r + nr*m;
-                        jS_em[ijack][mr] = jS_self_tad[ijack][mr] + deltam_cr[ijack][m][m][r]*jS_P[ijack][mr] - deltamu[ijack][m][m][r]*jS_S[ijack][mr];
+                        jS_em[ijack][mr] = jS_self_tad[ijack][mr] +
+                                           deltam_cr[ijack][m][m][r]*jS_P[ijack][mr] +
+                                           deltamu[ijack][m][m][r]  *jS_S[ijack][mr];
                     }
             
             // invert propagator
@@ -636,7 +632,8 @@ void oper_t::compute_bil()
             jprop_t jS2_em(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
             
             // definition of jackknifed vertices
-            valarray<jvert_t> jVert_LO_EM_P_S(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),_nmr),_nmr),njacks),5);  // size=5 > {LO,self+tadpole,P(fw),P(bw),S}
+            valarray<jvert_t> jVert_LO_EM_P_S(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),_nmr),_nmr),njacks),6);
+                              // size=6 > {LO,self+tadpole,Pfw,Pbw,Sfw,Sbw}
             valarray<jvert_t> jVert_LO_and_EM(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),_nmr),_nmr),njacks),2);
             
             cout<<"- Building vertices"<<endl;
@@ -684,21 +681,18 @@ void oper_t::compute_bil()
             cout<<"- Jackknife of propagators and vertices"<<endl;
             
             // jackknife averages
-            jS1_0=jackknife(jS1_0);
+            jS1_0        = jackknife(jS1_0);
             jS1_self_tad = jackknife(jS1_self_tad);
-            jS1_P=jackknife(jS1_P);
-            jS1_S=jackknife(jS1_S);
+            jS1_P        = jackknife(jS1_P);
+            jS1_S        = jackknife(jS1_S);
             
-            jS2_0=(read2)?jackknife(jS2_0):jS1_0;
-            jS2_self_tad=(read2)?jackknife(jS2_self_tad):jS1_self_tad;
-            jS2_P=(read2)?jackknife(jS2_P):jS1_P;
-            jS2_S=(read2)?jackknife(jS2_S):jS1_S;
+            jS2_0        = (read2)?jackknife(jS2_0):jS1_0;
+            jS2_self_tad = (read2)?jackknife(jS2_self_tad):jS1_self_tad;
+            jS2_P        = (read2)?jackknife(jS2_P):jS1_P;
+            jS2_S        = (read2)?jackknife(jS2_S):jS1_S;
             
-            jVert_LO_EM_P_S[LO]=jackknife(jVert_LO_EM_P_S[LO]);
-            jVert_LO_EM_P_S[EM]=jackknife(jVert_LO_EM_P_S[EM]);
-            jVert_LO_EM_P_S[2]=jackknife(jVert_LO_EM_P_S[2]); // P_fw
-            jVert_LO_EM_P_S[3]=jackknife(jVert_LO_EM_P_S[3]); // P_bw
-            jVert_LO_EM_P_S[4]=jackknife(jVert_LO_EM_P_S[4]); // S
+            for(int vkind=0; vkind<6; vkind++)
+                jVert_LO_EM_P_S[vkind] = jackknife(jVert_LO_EM_P_S[vkind]);
             
             // build the complete electromagnetic correction
 #pragma omp parallel for collapse(3)
@@ -708,9 +702,14 @@ void oper_t::compute_bil()
                     {
                         int mr = r + nr*m;
                         
-                        jS1_em[ijack][mr]=jS1_self_tad[ijack][mr] + deltam_cr[ijack][m][m][r]*jS1_P[ijack][mr] - deltamu[ijack][m][m][r]*jS1_S[ijack][mr];
+                        jS1_em[ijack][mr] = jS1_self_tad[ijack][mr] +
+                                            deltam_cr[ijack][m][m][r]*jS1_P[ijack][mr] +
+                                            deltamu[ijack][m][m][r]  *jS1_S[ijack][mr];
                         
-                        (read2)?jS2_em[ijack][mr]=jS2_self_tad[ijack][mr] + deltam_cr[ijack][m][m][r]*jS2_P[ijack][mr] - deltamu[ijack][m][m][r]*jS2_S[ijack][mr]:jS2_em[ijack][mr]=jS1_em[ijack][mr];
+                        (read2)?jS2_em[ijack][mr] = jS2_self_tad[ijack][mr] +
+                                                     deltam_cr[ijack][m][m][r]*jS2_P[ijack][mr] +
+                                                     deltamu[ijack][m][m][r]  *jS2_S[ijack][mr]
+                               :jS2_em[ijack][mr]=jS1_em[ijack][mr];
                     }
             
 #pragma omp parallel for collapse (4)
@@ -724,9 +723,15 @@ void oper_t::compute_bil()
                             int r_bw = mr_bw%nr;
                             int m_bw = (mr_bw-r_bw)/nr;
                             
-                            jVert_LO_and_EM[LO][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P_S[LO][ijack][mr_fw][mr_bw][igam];
+                            jVert_LO_and_EM[LO][ijack][mr_fw][mr_bw][igam] =
+                                jVert_LO_EM_P_S[LO][ijack][mr_fw][mr_bw][igam];
                             
-                            jVert_LO_and_EM[EM][ijack][mr_fw][mr_bw][igam] = jVert_LO_EM_P_S[EM][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_fw][m_fw][r_fw]*jVert_LO_EM_P_S[2][ijack][mr_fw][mr_bw][igam] + deltam_cr[ijack][m_bw][m_bw][r_bw]*jVert_LO_EM_P_S[3][ijack][mr_fw][mr_bw][igam] - deltamu[ijack][m_fw][m_fw][r_fw]*jVert_LO_EM_P_S[4][ijack][mr_fw][mr_bw][igam];
+                            jVert_LO_and_EM[EM][ijack][mr_fw][mr_bw][igam] =
+                                jVert_LO_EM_P_S[EM][ijack][mr_fw][mr_bw][igam] +
+                                deltam_cr[ijack][m_fw][m_fw][r_fw]*jVert_LO_EM_P_S[Pfw][ijack][mr_fw][mr_bw][igam] +
+                                deltam_cr[ijack][m_bw][m_bw][r_bw]*jVert_LO_EM_P_S[Pbw][ijack][mr_fw][mr_bw][igam] +
+                                deltamu[ijack][m_fw][m_fw][r_fw]*jVert_LO_EM_P_S[Sfw][ijack][mr_fw][mr_bw][igam] +
+                                deltamu[ijack][m_bw][m_bw][r_bw]*jVert_LO_EM_P_S[Sbw][ijack][mr_fw][mr_bw][igam];
                         }
             
             
@@ -808,9 +813,9 @@ void oper_t::compute_meslep()
         cout<<"Creating the vertices -- ";
         
         //these are the charges in the lagrangian
-        const double ql=-1.0;     //!< the program simulates positive muon *antiparticle*
-        const double qIN=+2.0/3.0; //!< charge of the quark1 (down)
-        const double qOUT=-1.0/3.0; //!< charge of the quark2 (up)
+        const double ql  = -1.0;     //!< the program simulates positive muon *antiparticle*
+        const double qIN = +2.0/3.0; //!< charge of the quark1 (down)
+        const double qOUT= -1.0/3.0; //!< charge of the quark2 (up)
         
         // array of input files to be read in a given conf
         FILE* input_q[combo];
@@ -845,7 +850,7 @@ void oper_t::compute_meslep()
             jprop_t jS2_em(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
             
             // definition of jackknifed meslep ("in" & "out" diagrams)
-            valarray<jmeslep_t> jmeslep(jmeslep_t(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),16),16),_nmr),_nmr),njacks),10);
+            valarray<jmeslep_t> jmeslep(jmeslep_t(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),meslep::nGamma),meslep::nOp),_nmr),_nmr),njacks),meslep::nmeslep);
             
             cout<<"- Building vertices"<<endl;
             
@@ -896,17 +901,18 @@ void oper_t::compute_meslep()
             cout<<"- Jackknife of propagators, vertices and meslep"<<endl;
             
             // jackknife averages
-            jS1_0=jackknife(jS1_0);
+            jS1_0        = jackknife(jS1_0);
             jS1_self_tad = jackknife(jS1_self_tad);
-            jS1_P=jackknife(jS1_P);
-            jS1_S=jackknife(jS1_S);
+            jS1_P        = jackknife(jS1_P);
+            jS1_S        = jackknife(jS1_S);
             
-            jS2_0=(read2)?jackknife(jS2_0):jS1_0;
-            jS2_self_tad=(read2)?jackknife(jS2_self_tad):jS1_self_tad;
-            jS2_P=(read2)?jackknife(jS2_P):jS1_P;
-            jS2_S=(read2)?jackknife(jS2_S):jS1_S;
+            jS2_0        = (read2)?jackknife(jS2_0):jS1_0;
+            jS2_self_tad = (read2)?jackknife(jS2_self_tad):jS1_self_tad;
+            jS2_P        = (read2)?jackknife(jS2_P):jS1_P;
+            jS2_S        = (read2)?jackknife(jS2_S):jS1_S;
             
-            for(int i=0;i<10;i++) jmeslep[i]=jackknife(jmeslep[i]);
+            for(int i=0;i<meslep::nmeslep;i++)
+                jmeslep[i]=jackknife(jmeslep[i]);
             
             // build the complete electromagnetic correction to the propagator
 #pragma omp parallel for collapse(3)
@@ -916,8 +922,14 @@ void oper_t::compute_meslep()
                     {
                         int mr = r + nr*m;
                         
-                        jS1_em[ijack][mr] = jS1_self_tad[ijack][mr] + deltam_cr[ijack][m][m][r]*jS1_P[ijack][mr] - deltamu[ijack][m][m][r]*jS1_S[ijack][mr];
-                        (read2)?jS2_em[ijack][mr]=jS2_self_tad[ijack][mr] + deltam_cr[ijack][m][m][r]*jS2_P[ijack][mr] - deltamu[ijack][m][m][r]*jS2_S[ijack][mr]:jS2_em[ijack][mr]=jS1_em[ijack][mr];
+                        jS1_em[ijack][mr] = jS1_self_tad[ijack][mr] +
+                                            deltam_cr[ijack][m][m][r]*jS1_P[ijack][mr] +
+                                            deltamu[ijack][m][m][r]  *jS1_S[ijack][mr];
+                        
+                        (read2)?jS2_em[ijack][mr] = jS2_self_tad[ijack][mr] +
+                                                    deltam_cr[ijack][m][m][r]*jS2_P[ijack][mr] +
+                                                    deltamu[ijack][m][m][r]  *jS2_S[ijack][mr]
+                               :jS2_em[ijack][mr]=jS1_em[ijack][mr];
                     }
             
             // build the complete electromagnetic correction to the vertex
@@ -925,16 +937,20 @@ void oper_t::compute_meslep()
             for(int ijack=0;ijack<njacks;ijack++)
                 for(int mr_fw=0;mr_fw<nmr;mr_fw++)
                     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-                        for(int igam=0;igam<16;igam++)
-                            for(int iproj=0;iproj<16;iproj++)
+                        for(int iop=0;iop<5;iop++)
+                            for(int iproj=0;iproj<11;iproj++)
                             {
                                 int r_fw = mr_fw%nr;
                                 int m_fw = (mr_fw-r_fw)/nr;
                                 int r_bw = mr_bw%nr;
                                 int m_bw = (mr_bw-r_bw)/nr;
                                 
-                                jmeslep[M11][ijack][mr_fw][mr_bw][igam][iproj] += deltam_cr[ijack][m_fw][m_fw][r_fw]*jmeslep[P11][ijack][mr_fw][mr_bw][igam][iproj] - deltamu[ijack][m_fw][m_fw][r_fw]*jmeslep[S11][ijack][mr_fw][mr_bw][igam][iproj];
-                                jmeslep[M22][ijack][mr_fw][mr_bw][igam][iproj] += deltam_cr[ijack][m_bw][m_bw][r_bw]*jmeslep[P22][ijack][mr_fw][mr_bw][igam][iproj] - deltamu[ijack][m_bw][m_bw][r_bw]*jmeslep[S22][ijack][mr_fw][mr_bw][igam][iproj];
+                                jmeslep[M11][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                    deltam_cr[ijack][m_fw][m_fw][r_fw]*jmeslep[P11][ijack][mr_fw][mr_bw][iop][iproj] +
+                                    deltamu[ijack][m_fw][m_fw][r_fw]  *jmeslep[S11][ijack][mr_fw][mr_bw][iop][iproj];
+                                jmeslep[M22][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                    deltam_cr[ijack][m_bw][m_bw][r_bw]*jmeslep[P22][ijack][mr_fw][mr_bw][iop][iproj] +
+                                    deltamu[ijack][m_bw][m_bw][r_bw]  *jmeslep[S22][ijack][mr_fw][mr_bw][iop][iproj];
                             }
             
             cout<<"- Inverting propagators"<<endl;
