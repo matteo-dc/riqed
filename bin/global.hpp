@@ -134,18 +134,26 @@ typedef enum {
 } ORDER;
 
 typedef enum {
-    QCD = 0,
-    IN = 1,
-    OUT = 2,
-    M11 = 3,
-    M22 = 4,
-    M12 = 5,
-    P11 = 6,
-    P22 = 7,
-    S11 = 8,
-    S22 = 9
+    QCD = 0,    //  operator in pure QCD
+    IN = 1,     //  photon exchange between quark q1 and charged lepton
+    OUT = 2,    //  photon exchange between quark q2 and charged lepton
+    M11 = 3,    //  em correction to the quark q1 propagator
+    M22 = 4,    //  em correction to the quark q2 propagator
+    M12 = 5,    //  photon exchanged between the two quarks
+    P11 = 6,    //  pseudoscalar insertion on the quark q1 propagator
+    P22 = 7,    //  pseudoscalar insertion on the quark q2 propagator
+    S11 = 8,    //  scalar insertion on the quark q1 propagator
+    S22 = 9     //  scalar insertion on the quark q2 propagator
 } MESLEP_TYPES;
+
+typedef enum {
+    Pfw = 2,
+    Pbw = 3,
+    Sfw = 4,
+    Sbw = 5
+} VERTEX_TYPES;
 
 extern ORDER ord;
 extern MESLEP_TYPES meslep_t;
+extern VERTEX_TYPES vertex_t;
 #endif
