@@ -434,7 +434,7 @@ vvvprop_t read_qprop_mom(FILE* input[],const vector<string> v_path,const int i_i
         int icombo = r + nr*m + nr*nm*t + nr*nm*ntypes*ihit + nr*nm*ntypes*nhits*iconf;
         
         //create all the propagators in a given conf and a given mom
-        S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom,coeff_to_read(k,r));
+        S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom,coeff_to_read(t,r));
     }
     
     return S;
