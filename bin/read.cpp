@@ -435,7 +435,7 @@ vvvprop_t read_qprop_mom(FILE* input[],const vector<string> v_path,const int i_i
         
         //create all the propagators in a given conf and a given mom
         S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom,coeff_to_read(t,r));
-        if(ijack==0 and m==0) printf("Reading prop ikind=%d (%s)\t r=%d \t coeff=(%lg,%lg)",t,kind_tag[t],r,coeff_to_read(t,r).real(),coeff_to_read(t,r).imag());xw
+        if(ijack==0 and m==0) printf("Reading prop ikind=%d (%s)\t r=%d \t coeff=(%lg,%lg)",t,kind_tag[t],r,coeff_to_read(t,r).real(),coeff_to_read(t,r).imag());
     }
     
     return S;
