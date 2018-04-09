@@ -485,7 +485,7 @@ void oper_t::allocate()
 
 void build_prop(const vvvprop_t &prop, jprop_t &jS_0,jprop_t &jS_self_tad,jprop_t &jS_P, jprop_t &jS_S)
 {
-    vvvprop_t S_LO_EM_P_S(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),4);
+//    vvvprop_t S_LO_EM_P_S(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),4);
     
 #pragma omp parallel for collapse(3)
     for(int m=0;m<nm;m++)
@@ -494,15 +494,21 @@ void build_prop(const vvvprop_t &prop, jprop_t &jS_0,jprop_t &jS_self_tad,jprop_
             {
                 int mr = r + nr*m;
                 
-                S_LO_EM_P_S[LO][ijack][mr] = prop[ijack][_LO][mr];  // Leading order
-                S_LO_EM_P_S[EM][ijack][mr] = prop[ijack][_FF][mr] + prop[ijack][_T][mr];  // self energy + tadpole
-                S_LO_EM_P_S[P][ijack][mr]  = prop[ijack][_P][mr]; // P insertion
-                S_LO_EM_P_S[S][ijack][mr]  = prop[ijack][_S][mr]; // S insertion
+//                S_LO_EM_P_S[LO][ijack][mr] = prop[ijack][_LO][mr];  // Leading order
+//                S_LO_EM_P_S[EM][ijack][mr] = prop[ijack][_FF][mr] + prop[ijack][_T][mr];  // self energy + tadpole
+//                S_LO_EM_P_S[P][ijack][mr]  = prop[ijack][_P][mr]; // P insertion
+//                S_LO_EM_P_S[S][ijack][mr]  = prop[ijack][_S][mr]; // S insertion
+//                
+//                jS_0[ijack][mr]         += S_LO_EM_P_S[LO][ijack][mr];
+//                jS_self_tad[ijack][mr]  += S_LO_EM_P_S[EM][ijack][mr];
+//                jS_P[ijack][mr]         += S_LO_EM_P_S[P ][ijack][mr];
+//                jS_S[ijack][mr]         += S_LO_EM_P_S[S ][ijack][mr];
                 
-                jS_0[ijack][mr]         += S_LO_EM_P_S[LO][ijack][mr];
-                jS_self_tad[ijack][mr]  += S_LO_EM_P_S[EM][ijack][mr];
-                jS_P[ijack][mr]         += S_LO_EM_P_S[P ][ijack][mr];
-                jS_S[ijack][mr]         += S_LO_EM_P_S[S ][ijack][mr];
+                jS_0[ijack][mr]         += prop[ijack][_LO][mr];  // Leading order
+                jS_self_tad[ijack][mr]  += prop[ijack][_FF][mr] + prop[ijack][_T][mr];  // self energy + tadpole
+                jS_P[ijack][mr]         += prop[ijack][_P][mr]; // P insertion
+                jS_S[ijack][mr]         += prop[ijack][_S][mr]; // S insertion
+
             }
 }
 
