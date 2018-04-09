@@ -493,17 +493,7 @@ void build_prop(const vvvprop_t &prop, jprop_t &jS_0,jprop_t &jS_self_tad,jprop_
             for(int ijack=0;ijack<njacks;ijack++)
             {
                 int mr = r + nr*m;
-                
-//                S_LO_EM_P_S[LO][ijack][mr] = prop[ijack][_LO][mr];  // Leading order
-//                S_LO_EM_P_S[EM][ijack][mr] = prop[ijack][_FF][mr] + prop[ijack][_T][mr];  // self energy + tadpole
-//                S_LO_EM_P_S[P][ijack][mr]  = prop[ijack][_P][mr]; // P insertion
-//                S_LO_EM_P_S[S][ijack][mr]  = prop[ijack][_S][mr]; // S insertion
-//                
-//                jS_0[ijack][mr]         += S_LO_EM_P_S[LO][ijack][mr];
-//                jS_self_tad[ijack][mr]  += S_LO_EM_P_S[EM][ijack][mr];
-//                jS_P[ijack][mr]         += S_LO_EM_P_S[P ][ijack][mr];
-//                jS_S[ijack][mr]         += S_LO_EM_P_S[S ][ijack][mr];
-                
+                                
                 jS_0[ijack][mr]         += prop[ijack][_LO][mr];  // Leading order
                 jS_self_tad[ijack][mr]  += prop[ijack][_FF][mr] + prop[ijack][_T][mr];  // self energy + tadpole
                 jS_P[ijack][mr]         += prop[ijack][_P][mr]; // P insertion
