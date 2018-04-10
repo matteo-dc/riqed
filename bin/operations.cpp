@@ -1820,8 +1820,8 @@ oper_t oper_t::average_equiv_moms()
                 for(int mr1=0; mr1<_nmr; mr1++)
                     for(int mr2=0; mr2<_nmr; mr2++)
                     {
-                        (out.jG_0)[ibilmom][ibil][ijack][mr_fw][mr_bw]=0.0;
-                        (out.jG_em)[ibilmom][ibil][ijack][mr_fw][mr_bw]=0.0;
+                        (out.jG_0)[tag][ibil][ijack][mr1][mr2]=0.0;
+                        (out.jG_em)[tag][ibil][ijack][mr1][mr2]=0.0;
                     }
 #pragma omp parallel for collapse(6)
     for(int tag=0;tag<neq_bil_moms;tag++)
