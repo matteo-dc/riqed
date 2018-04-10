@@ -485,19 +485,17 @@ void oper_t::allocate()
 
 void build_prop(const vvvprop_t &prop, jprop_t &jS_0,jprop_t &jS_self_tad,jprop_t &jS_P, jprop_t &jS_S)
 {
-//    vvvprop_t S_LO_EM_P_S(vvprop_t(vprop_t(prop_t::Zero(),nmr),njacks),4);
-    
-#pragma omp parallel for collapse(3)
+//#pragma omp parallel for collapse(3)
     for(int m=0;m<nm;m++)
         for(int r=0;r<nr;r++)
             for(int ijack=0;ijack<njacks;ijack++)
             {
                 int mr = r + nr*m;
                                 
-                jS_0[ijack][mr]         += prop[ijack][_LO][mr];  // Leading order
-                jS_self_tad[ijack][mr]  += prop[ijack][_FF][mr] + prop[ijack][_T][mr];  // self energy + tadpole
-                jS_P[ijack][mr]         += prop[ijack][_P][mr]; // P insertion
-                jS_S[ijack][mr]         += prop[ijack][_S][mr]; // S insertion
+                jS_0[ijack][mr]         += prop[ijack][0][mr];  // Leading order
+                jS_self_tad[ijack][mr]  += prop[ijack][2][mr] + prop[ijack][3][mr];  // self energy + tadpole
+                jS_P[ijack][mr]         += prop[ijack][4][mr]; // P insertion
+                jS_S[ijack][mr]         += prop[ijack][5][mr]; // S insertion
 
             }
 }
