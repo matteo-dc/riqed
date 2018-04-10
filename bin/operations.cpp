@@ -1787,19 +1787,23 @@ oper_t oper_t::average_equiv_moms()
     }
     
     for(int tag=0;tag<out._bilmoms;tag++)
+    {
+        count=0;
         for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
         {
             if(tag_bil_vector[ibilmom]==tag)
             {
+                count++;
                 // fill the new bilmoms
-                const int imom0=bilmoms[ibilmom][0]; // k
-                const int imom1=bilmoms[ibilmom][1]; // p1
-                const int imom2=bilmoms[ibilmom][2]; // p2
+                const int imom0=bilmoms[ibilmom][0]/count; // k
+                const int imom1=bilmoms[ibilmom][1]/count; // p1
+                const int imom2=bilmoms[ibilmom][2]/count; // p2
                 
                 out.bilmoms[tag] = {imom0,imom1,imom2};
 //                cout<<tag<<" {"<<imom0<<","<<imom1<<","<<imom2<<"}"<<endl;
             }
         }
+    }
     
 //    resize_output(out);
     out.allocate();
