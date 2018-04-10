@@ -1863,13 +1863,16 @@ oper_t oper_t::average_equiv_moms()
                             {
                                 (out.jG_0)[tag][ibil][ijack][mr1][mr2]+=jG_0[imom][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
                                 (out.jG_em)[tag][ibil][ijack][mr1][mr2]+=jG_em[imom][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
-                                //DEBUG
-                                cout<<(out.jG_0)[tag][ibil][ijack][mr1][mr2]<<endl;
                             }
             }
         }
 
     out.compute_Zbil();
+    
+    //DEBUG
+    for(int tag=0;tag<neq_bil_moms;tag++)
+        for(int ijack=0;ijack<njacks;ijack++)
+            cout<<(out.jZ)[tag][0][ijack][0][0]<<endl;
     
     for(int tag=0;tag<neq_bil_moms;tag++)
         for(int imom=0;imom<_bilmoms;imom++)
