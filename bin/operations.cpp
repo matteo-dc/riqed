@@ -1428,7 +1428,7 @@ oper_t oper_t::subtract()
     
     out.compute_Zbil();
     
-    // 4f!!
+#warning missing subtraction for 4f
     
     return out;
 }
@@ -1560,7 +1560,7 @@ oper_t chiral_sea_extr(voper_t in)
     
     out.compute_Zbil();
     
-    // 4f!!
+#warning missing sea extrapolation for 4f
     
     return out;
 }
@@ -1591,7 +1591,7 @@ oper_t theta_average( voper_t in)
                 out.jZ_em[ibilmom][ibil][ijack][0][0] = 0.5*(in[0].jZ[ibilmom][ibil][ijack][0][0] + in[1].jZ[ibilmom][ibil][ijack][0][0]);
             }
     
-    //4f!
+#warning missing theta average for 4f
     
     return out;
 }
@@ -1639,7 +1639,7 @@ oper_t oper_t::evolve(const int b)
                     }
     }
     
-    //4f!
+#warning missing evolution for 4f
     
     return out;
 }
@@ -1863,10 +1863,12 @@ oper_t oper_t::average_equiv_moms()
                             {
                                 (out.jG_0)[tag][ibil][ijack][mr1][mr2]+=jG_0[imom][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
                                 (out.jG_em)[tag][ibil][ijack][mr1][mr2]+=jG_em[imom][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
+                                //DEBUG
+                                cout<<(out.jG_0)[tag][ibil][ijack][mr1][mr2]<<endl;
                             }
             }
         }
-    
+
     out.compute_Zbil();
     
     for(int tag=0;tag<neq_bil_moms;tag++)
