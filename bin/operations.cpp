@@ -1717,7 +1717,7 @@ oper_t oper_t::average_equiv_moms()
             if(tag_lin_vector[imom]==tag)
             {
                 // fill the new linmoms and p2tilde
-                out.linmoms[tag] = {imom};
+                out.linmoms[tag] = {tag};
                 p2_tilde_eqmoms[tag] = p2_tilde[imom];
                 cout<<"{"<<tag<<"}"<<"  "<<out.linmoms[tag][0]<<endl;
             }
