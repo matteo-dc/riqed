@@ -1719,7 +1719,7 @@ oper_t oper_t::average_equiv_moms()
                 // fill the new linmoms and p2tilde
                 out.linmoms[tag] = {imom};
                 p2_tilde_eqmoms[tag] = p2_tilde[imom];
-//                cout<<"{"<<tag<<"}"<<endl;
+                cout<<"{"<<tag<<"}"<<endl;
             }
         }
     
@@ -1800,7 +1800,7 @@ oper_t oper_t::average_equiv_moms()
                 const int imom2=bilmoms[ibilmom][2]/count; // p2
                 
                 out.bilmoms[tag] = {imom0,imom1,imom2};
-//                cout<<tag<<" {"<<imom0<<","<<imom1<<","<<imom2<<"}"<<endl;
+                cout<<tag<<" {"<<imom0<<","<<imom1<<","<<imom2<<"}"<<endl;
             }
         }
     }
