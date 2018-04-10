@@ -416,7 +416,7 @@ vvvprop_t read_qprop_mom(FILE* input[],const vector<string> v_path,const int i_i
 {
     vvvprop_t S(vvprop_t(vprop_t(prop_t::Zero(),nmr),ntypes),njacks);
 
-#pragma omp parallel for
+//#pragma omp parallel for
     for(int ilin=0;ilin<nm*nr*ntypes*njacks;ilin++)
     {
         int k=ilin;
