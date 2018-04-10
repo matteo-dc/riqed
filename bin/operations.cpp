@@ -1872,7 +1872,7 @@ oper_t oper_t::average_equiv_moms()
     //DEBUG
     for(int tag=0;tag<neq_bil_moms;tag++)
         for(int ijack=0;ijack<njacks;ijack++)
-            cout<<sqrt(jZq[bilmoms[tag][1]][ijack][0]*jZq[bilmoms[ibilmom][2]][ijack][0])/jG_0[tag][0][ijack][0][0]<<endl;
+            cout<<sqrt(jZq[bilmoms[tag][1]][ijack][0]*jZq[bilmoms[tag][2]][ijack][0])/jG_0[tag][0][ijack][0][0]<<endl;
     
     
     
