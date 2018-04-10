@@ -1820,8 +1820,8 @@ oper_t oper_t::average_equiv_moms()
                 for(int mr1=0; mr1<_nmr; mr1++)
                     for(int mr2=0; mr2<_nmr; mr2++)
                     {
-                        (out.jZ)[tag][ibil][ijack][mr1][mr2]=0.0;
-                        (out.jZ_em)[tag][ibil][ijack][mr1][mr2]=0.0;
+                        (out.jG_0)[ibilmom][ibil][ijack][mr_fw][mr_bw]=0.0;
+                        (out.jG_em)[ibilmom][ibil][ijack][mr_fw][mr_bw]=0.0;
                     }
 #pragma omp parallel for collapse(6)
     for(int tag=0;tag<neq_bil_moms;tag++)
@@ -1834,9 +1834,6 @@ oper_t oper_t::average_equiv_moms()
                             (out.jpr_meslep_0)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
                             (out.jpr_meslep_em)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
                             (out.jpr_meslep_nasty)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
-                            
-                            (out.jZ_4f)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
-                            (out.jZ_em_4f)[tag][iop1][iop2][ijack][mr1][mr2]=0.0;
                         }
 
     
@@ -1864,11 +1861,14 @@ oper_t oper_t::average_equiv_moms()
                         for(int mr1=0; mr1<_nmr; mr1++)
                             for(int mr2=0; mr2<_nmr; mr2++)
                             {
-                                (out.jZ)[tag][ibil][ijack][mr1][mr2]+=jZ[imom][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
-                                (out.jZ_em)[tag][ibil][ijack][mr1][mr2]+=jZ_em[imom][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
+                                (out.jG_0)[tag][ibil][ijack][mr1][mr2]+=jG_0[imom][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
+                                (out.jG_em)[tag][ibil][ijack][mr1][mr2]+=jG_em[imom][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
                             }
             }
         }
+    
+    out.compute_Zbil();
+    
     for(int tag=0;tag<neq_bil_moms;tag++)
         for(int imom=0;imom<_bilmoms;imom++)
         {
@@ -1883,12 +1883,11 @@ oper_t oper_t::average_equiv_moms()
                                     (out.jpr_meslep_0)[tag][iop1][iop2][ijack][mr1][mr2]+=jpr_meslep_0[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
                                     (out.jpr_meslep_em)[tag][iop1][iop2][ijack][mr1][mr2]+=jpr_meslep_em[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
                                     (out.jpr_meslep_nasty)[tag][iop1][iop2][ijack][mr1][mr2]+=jpr_meslep_nasty[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
-                                    
-                                    (out.jZ_4f)[tag][iop1][iop2][ijack][mr1][mr2]+=jZ_4f[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
-                                    (out.jZ_em_4f)[tag][iop1][iop2][ijack][mr1][mr2]+=jZ_em_4f[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
                                 }
             }
         }
+    
+    out.compute_Z4f();
     
     return out;
 }
