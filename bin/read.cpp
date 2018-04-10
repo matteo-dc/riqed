@@ -378,7 +378,7 @@ vector<string> oper_t::setup_read_lprop(FILE* input[])
 
 
 //read a propagator file
-prop_t read_prop(FILE* input, const string &path, const int imom, const dcompl fact)
+prop_t read_prop(FILE* input, const string &path, const int imom)
 {
     prop_t out(prop_t::Zero());
     
@@ -405,7 +405,7 @@ prop_t read_prop(FILE* input, const string &path, const int imom, const dcompl f
                         cerr<<"Unable to read from "<<path<<" id_so: "<<id_so<<", ic_so: "<<ic_so<<", id_si: "<<id_si<<", ic_si:"<<ic_si<<endl;
                         exit(1);
                     }
-                    out(isc(id_si,ic_si),isc(id_so,ic_so))=fact*dcompl(temp[0],temp[1]); //store
+                    out(isc(id_si,ic_si),isc(id_so,ic_so))=dcompl(temp[0],temp[1]); //store
                 }
     
     return out;
@@ -434,7 +434,7 @@ vvvprop_t read_qprop_mom(FILE* input[],const vector<string> v_path,const int i_i
         int icombo = r + nr*m + nr*nm*t + nr*nm*ntypes*ihit + nr*nm*ntypes*nhits*iconf;
         
         //create all the propagators in a given conf and a given mom
-        S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom,coeff_to_read(t,r));
+        S[ijack][t][mr] = read_prop(input[icombo],v_path[icombo],imom);
     }
     
     return S;
@@ -457,7 +457,7 @@ vvprop_t read_lprop_mom(FILE* input[],const vector<string> v_path,const int i_in
         int icombo = t + ntypes_lep*ihit + ntypes_lep*nhits*iconf;
         
         //create all the propagators in a given conf and a given mom
-        L[ijack][t] = read_prop(input[icombo],v_path[icombo],imom,1.0);
+        L[ijack][t] = read_prop(input[icombo],v_path[icombo],imom);
     }
     
     return L;
