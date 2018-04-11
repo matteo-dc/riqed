@@ -940,11 +940,12 @@ void oper_t::compute_meslep()
                                 int m_bw = (mr_bw-r_bw)/nr;
                                 
                                 jmeslep[M11][ijack][mr_fw][mr_bw][iop][iproj] +=
-                                    deltam_cr[ijack][m_fw][m_fw][r_fw]*jmeslep[P11][ijack][mr_fw][mr_bw][iop][iproj] +
-                                    deltamu[ijack][m_fw][m_fw][r_fw]  *jmeslep[S11][ijack][mr_fw][mr_bw][iop][iproj];
+                                    deltam_cr[ijack][m_bw][m_bw][r_bw]*jmeslep[P11][ijack][mr_fw][mr_bw][iop][iproj] +
+                                    deltamu[ijack][m_bw][m_bw][r_bw]  *jmeslep[S11][ijack][mr_fw][mr_bw][iop][iproj];
                                 jmeslep[M22][ijack][mr_fw][mr_bw][iop][iproj] +=
-                                    deltam_cr[ijack][m_bw][m_bw][r_bw]*jmeslep[P22][ijack][mr_fw][mr_bw][iop][iproj] +
-                                    deltamu[ijack][m_bw][m_bw][r_bw]  *jmeslep[S22][ijack][mr_fw][mr_bw][iop][iproj];
+                                    deltam_cr[ijack][m_fw][m_fw][r_fw]*jmeslep[P22][ijack][mr_fw][mr_bw][iop][iproj] +
+                                    deltamu[ijack][m_fw][m_fw][r_fw]  *jmeslep[S22][ijack][mr_fw][mr_bw][iop][iproj];
+                                //N.B.: fw(bw) corresponds to OUT(IN)!
                             }
             
             cout<<"- Inverting propagators"<<endl;
