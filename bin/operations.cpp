@@ -808,8 +808,8 @@ void oper_t::compute_meslep()
         
         //these are the charges in the lagrangian
         const double ql  = -1.0;     //!< the program simulates positive muon *antiparticle*
-        const double qIN = +2.0/3.0; //!< charge of the quark1 (down)
-        const double qOUT= -1.0/3.0; //!< charge of the quark2 (up)
+        const double qIN = +2.0/3.0; //!< charge of the quark1 (up)
+        const double qOUT= -1.0/3.0; //!< charge of the quark2 (down)
         
         // array of input files to be read in a given conf
         FILE* input_q[combo];
@@ -985,8 +985,8 @@ void oper_t::compute_meslep()
         } // close mom loop
         cout<<endl<<endl;
         
-        print_vec_bin(jG_0_4f,path_print+"jG_0_4f");
-        print_vec_bin(jG_em_4f,path_print+"jG_em_4f");
+//        print_vec_bin(jG_0_4f,path_print+"jG_0_4f");
+//        print_vec_bin(jG_em_4f,path_print+"jG_em_4f");
         print_vec_bin(jpr_meslep_0,path_print+"jpr_meslep_0");
         print_vec_bin(jpr_meslep_em,path_print+"jpr_meslep_em");
         print_vec_bin(jpr_meslep_nasty,path_print+"jpr_meslep_nasty");
