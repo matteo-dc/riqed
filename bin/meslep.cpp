@@ -88,9 +88,9 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jpropOUT_inv, valarray<jmeslep_t> &
 //#warning putting charges to 1
 //    double Q[nprmeslep]={1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0}; // charge factors
     double Q[nprmeslep]={1.0,ql*qIN,ql*qOUT,qIN*qIN,qOUT*qOUT,qIN*qOUT,qIN*qIN,qOUT*qOUT}; // charge factors
-    const int i1[nprmeslep]={LO ,LO,LO ,LO ,LO ,LO ,EM ,LO };
-    const int iv[nprmeslep]={QCD,IN,OUT,M11,M22,M12,QCD,QCD};
-    const int i2[nprmeslep]={LO, LO,LO ,LO ,LO ,LO ,LO ,EM };
+    const int i1[nprmeslep]={LO ,LO,LO ,LO ,LO ,LO ,LO ,EM }; //propOUT
+    const int iv[nprmeslep]={QCD,IN,OUT,M11,M22,M12,QCD,QCD}; //meslep
+    const int i2[nprmeslep]={LO, LO,LO ,LO ,LO ,LO ,EM ,LO }; //propIN
     
     //    cout<<"---------  projected meslep 5x5 (QCD,IN,OUT) without charges  ----------"<<endl;
 #pragma omp parallel for collapse(6)
