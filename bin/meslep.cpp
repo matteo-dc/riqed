@@ -23,7 +23,6 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
                 
                 // In the LO mesloop the external leptonic propagator is fully amputated (must be 1 if igam==iproj)
                 mesloop[LO][ijack][igam][iproj] = (op*pr).trace()/12.0;
-                // Multiplying for V to compensate the 1/V deriving from fft
                 mesloop[EM][ijack][igam][iproj] = (op*pF*amp*pr).trace()/12.0;
             }
     
@@ -44,10 +43,10 @@ void build_meslep(const vvvprop_t &SOUT,const vvvprop_t &SIN, const vvprop_t &L,
     using namespace meslep;
     
     vvvvdcompl_t mesloop=build_mesloop(L);
-    
-    const int im1[nmeslep]={_LO,_F ,_LO,_FF,_LO,_F ,_P ,_LO,_S ,_LO};
-    const int im2[nmeslep]={_LO,_LO,_F ,_LO,_FF,_F ,_LO,_P ,_LO,_S };
-    const int imL[nmeslep]={_LO,_F ,_F ,_LO,_LO,_LO,_LO,_LO,_LO,_LO};
+    //       jmeslep_types={QCD, IN,OUT,M11,M22,M12,P11,P22,S11,S22};
+    const int im1[nmeslep]={_LO,_LO,_F ,_LO,_FF,_F ,_LO,_P ,_LO,_S }; //out
+    const int im2[nmeslep]={_LO,_F ,_LO,_FF,_LO,_F ,_P ,_LO,_S ,_LO}; //in
+    const int imL[nmeslep]={_LO,_F ,_F ,_LO,_LO,_LO,_LO,_LO,_LO,_LO}; //lepton
     
 #pragma omp parallel for collapse (6)
     for(int ijack=0;ijack<njacks;ijack++)
@@ -62,17 +61,18 @@ void build_meslep(const vvvprop_t &SOUT,const vvvprop_t &SIN, const vvprop_t &L,
                             for(auto &ig : igam)
                             {
                                 jmeslep[ikind][ijack][mr_fw][mr_bw][iop][iproj] +=
-                                make_meslep(SOUT[ijack][im1[ikind]][mr_fw],SIN[ijack][im2[ikind]][mr_bw],
-                                            mesloop[imL[ikind]][ijack][ig][iproj],iop,ig);
+                                    make_meslep(SOUT[ijack][im1[ikind]][mr_fw],SIN[ijack][im2[ikind]][mr_bw],
+                                                mesloop[imL[ikind]][ijack][ig][iproj],iop,ig);
                                 
                                 if(ikind==M11)
                                     jmeslep[M11][ijack][mr_fw][mr_bw][iop][iproj] +=
-                                        make_meslep(SOUT[ijack][_T ][mr_fw],SIN[ijack][_LO][mr_bw],
+                                        make_meslep(SOUT[ijack][_LO][mr_fw],SIN[ijack][_T ][mr_bw],
                                                     mesloop[_LO][ijack][ig][iproj],iop,ig);
                                 if(ikind==M22)
                                     jmeslep[M22][ijack][mr_fw][mr_bw][iop][iproj] +=
-                                        make_meslep(SOUT[ijack][_LO][mr_fw],SIN[ijack][_T ][mr_bw],
+                                        make_meslep(SOUT[ijack][_T ][mr_fw],SIN[ijack][_LO][mr_bw],
                                                     mesloop[_LO][ijack][ig][iproj],iop,ig);
+
                             }
                         }
     
