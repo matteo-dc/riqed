@@ -997,12 +997,12 @@ void oper_t::compute_meslep()
 void oper_t::compute_Z4f()
 {
     
-//#warning putting charges to 1
+#warning putting charges to 1
     //these are the charges in the lagrangian
-    const double qIN=+2.0/3.0; //!< charge of the quark (in)
-    const double qOUT=-1.0/3.0; //!< charge of the quark (out)
-//    const double qIN=1.0;
-//    const double qOUT=1.0;
+//    const double qIN=+2.0/3.0; //!< charge of the quark (in)
+//    const double qOUT=-1.0/3.0; //!< charge of the quark (out)
+    const double qIN=1.0;
+    const double qOUT=1.0;
     
     for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
     {
