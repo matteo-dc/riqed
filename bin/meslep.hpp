@@ -26,7 +26,7 @@ namespace meslep
     const vector<int> proj_norm = {4,4,1,1,24};
     const vector<int> op_norm = {1,1,1,1,2};
     
-    enum{_LO ,_F ,_FF ,_T ,_P ,_S };
+    enum{_LO=0 ,_F=1 ,_FF=2 ,_T=3 ,_P=4 ,_S=5 };
 }
 
 void build_meslep(const vvvprop_t &S1,const vvvprop_t &S2, const vvprop_t &L, valarray<jmeslep_t> &jmeslep);
