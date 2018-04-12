@@ -1028,7 +1028,8 @@ void oper_t::compute_Z4f()
                     
                     O4f_t Z4f_0 = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])*G4f_0_inv;
                     
-                    O4f_t Z4f_em = 0.5*(qOUT*qOUT*jZq_em[imom1][ijack][mr_fw]/jZq[imom1][ijack][mr_fw] + qIN*qIN*jZq_em[imom2][ijack][mr_bw]/jZq[imom2][ijack][mr_bw])*Z4f_0 - Z4f_0*G4f_em*G4f_0_inv;
+                    O4f_t Z4f_em = //Z4f_0*
+                    (0.5*(qOUT*qOUT*jZq_em[imom1][ijack][mr_fw]/jZq[imom1][ijack][mr_fw] + qIN*qIN*jZq_em[imom2][ijack][mr_bw]/jZq[imom2][ijack][mr_bw])*O4f_t::Identity() -G4f_em*G4f_0_inv);
                     
                     for(int iop1=0;iop1<nbil;iop1++)
                         for(int iop2=0;iop2<nbil;iop2++)
