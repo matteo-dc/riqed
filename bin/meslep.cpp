@@ -77,7 +77,7 @@ void build_meslep(const vvvprop_t &SOUT,const vvvprop_t &SIN, const vvprop_t &L,
                             
                             jmeslep[M22][ijack][mr_fw][mr_bw][iop][iproj] +=
                                 make_meslep(SOUT[ijack][_FF][mr_fw]+SOUT[ijack][_T][mr_fw],SIN[ijack][_LO][mr_bw],
-                                            mesloop[_F][ijack][ig][iproj],iop,ig);
+                                            mesloop[_LO][ijack][ig][iproj],iop,ig);
                             
                             jmeslep[M12][ijack][mr_fw][mr_bw][iop][iproj] +=
                                 make_meslep(SOUT[ijack][_F][mr_fw],SIN[ijack][_F][mr_bw],
