@@ -44,37 +44,66 @@ void build_meslep(const vvvprop_t &SOUT,const vvvprop_t &SIN, const vvprop_t &L,
     
     vvvvdcompl_t mesloop=build_mesloop(L);
     //       jmeslep_types={QCD, IN,OUT,M11,M22,M12,P11,P22,S11,S22};
-    const int im1[nmeslep]={_LO,_LO,_F ,_LO,_FF,_F ,_LO,_P ,_LO,_S }; //out
-    const int im2[nmeslep]={_LO,_F ,_LO,_FF,_LO,_F ,_P ,_LO,_S ,_LO}; //in
-    const int imL[nmeslep]={_LO,_F ,_F ,_LO,_LO,_LO,_LO,_LO,_LO,_LO}; //lepton
+//    const int im1[nmeslep]={_LO,_LO,_F ,_LO,_FF,_F ,_LO,_P ,_LO,_S }; //out
+//    const int im2[nmeslep]={_LO,_F ,_LO,_FF,_LO,_F ,_P ,_LO,_S ,_LO}; //in
+//    const int imL[nmeslep]={_LO,_F ,_F ,_LO,_LO,_LO,_LO,_LO,_LO,_LO}; //lepton
     
-#pragma omp parallel for collapse (6)
+#pragma omp parallel for collapse (5)
     for(int ijack=0;ijack<njacks;ijack++)
         for(int mr_fw=0;mr_fw<nmr;mr_fw++)
             for(int mr_bw=0;mr_bw<nmr;mr_bw++)
                 for(int iop=0;iop<5;iop++)
                     for(int iproj=0;iproj<11;iproj++)
-                        for(int ikind=0;ikind<nmeslep;ikind++)
+                    {
+                        vector<size_t> igam = iG_of_iop[iop];
+                        
+                        for(auto &ig : igam)
                         {
-                            vector<size_t> igam = iG_of_iop[iop];
-                            
-                            for(auto &ig : igam)
-                            {
-                                jmeslep[ikind][ijack][mr_fw][mr_bw][iop][iproj] +=
-                                    make_meslep(SOUT[ijack][im1[ikind]][mr_fw],SIN[ijack][im2[ikind]][mr_bw],
-                                                mesloop[imL[ikind]][ijack][ig][iproj],iop,ig);
-                                
-                                if(ikind==M11)
-                                    jmeslep[M11][ijack][mr_fw][mr_bw][iop][iproj] +=
-                                        make_meslep(SOUT[ijack][_LO][mr_fw],SIN[ijack][_T ][mr_bw],
-                                                    mesloop[_LO][ijack][ig][iproj],iop,ig);
-                                if(ikind==M22)
-                                    jmeslep[M22][ijack][mr_fw][mr_bw][iop][iproj] +=
-                                        make_meslep(SOUT[ijack][_T ][mr_fw],SIN[ijack][_LO][mr_bw],
-                                                    mesloop[_LO][ijack][ig][iproj],iop,ig);
+                            jmeslep[QCD][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                make_meslep(SOUT[ijack][_LO][mr_fw],SIN[ijack][_LO][mr_bw],
+                                            mesloop[_LO][ijack][ig][iproj],iop,ig);
 
-                            }
+                            jmeslep[IN][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                make_meslep(SOUT[ijack][_LO][mr_fw],SIN[ijack][_F][mr_bw],
+                                            mesloop[_F][ijack][ig][iproj],iop,ig);
+                            
+                            jmeslep[OUT][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                make_meslep(SOUT[ijack][_F][mr_fw],SIN[ijack][_LO][mr_bw],
+                                            mesloop[_F][ijack][ig][iproj],iop,ig);
+                            
+                            jmeslep[M11][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                make_meslep(SOUT[ijack][_LO][mr_fw],SIN[ijack][_FF][mr_bw]+SIN[ijack][_T][mr_bw],
+                                            mesloop[_LO][ijack][ig][iproj],iop,ig);
+                            
+                            jmeslep[M22][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                make_meslep(SOUT[ijack][_FF][mr_fw]+SOUT[ijack][_T][mr_fw],SIN[ijack][_LO][mr_bw],
+                                            mesloop[_F][ijack][ig][iproj],iop,ig);
+                            
+                            jmeslep[M12][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                make_meslep(SOUT[ijack][_F][mr_fw],SIN[ijack][_F][mr_bw],
+                                            mesloop[_LO][ijack][ig][iproj],iop,ig);
+                            
+                            jmeslep[P11][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                make_meslep(SOUT[ijack][_LO][mr_fw],SIN[ijack][_P][mr_bw],
+                                            mesloop[_LO][ijack][ig][iproj],iop,ig);
+                            
+                            jmeslep[P22][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                make_meslep(SOUT[ijack][_P][mr_fw],SIN[ijack][_LO][mr_bw],
+                                            mesloop[_LO][ijack][ig][iproj],iop,ig);
+                            
+                            jmeslep[S11][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                make_meslep(SOUT[ijack][_LO][mr_fw],SIN[ijack][_S][mr_bw],
+                                            mesloop[_LO][ijack][ig][iproj],iop,ig);
+                            
+                            jmeslep[S22][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                make_meslep(SOUT[ijack][_S][mr_fw],SIN[ijack][_LO][mr_bw],
+                                            mesloop[_LO][ijack][ig][iproj],iop,ig);
+                            
+//                            jmeslep[ikind][ijack][mr_fw][mr_bw][iop][iproj] +=
+//                            make_meslep(SOUT[ijack][im1[ikind]][mr_fw],SIN[ijack][im2[ikind]][mr_bw],
+//                                        mesloop[imL[ikind]][ijack][ig][iproj],iop,ig);
                         }
+                    }
     
 }
 
