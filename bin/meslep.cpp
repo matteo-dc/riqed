@@ -85,9 +85,9 @@ jvproj_meslep_t compute_pr_meslep(vvvprop_t &jpropOUT_inv, valarray<jmeslep_t> &
     jvproj_meslep_t jG_op(vvvvvd_t(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nOp),nOp),nprmeslep);    // 5*5=25
     // nprmeslep=8 : {QCD,IN,OUT,M11,M22,M12,A11,A22}
   
-#warning putting charges to 1
-    double Q[nprmeslep]={1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0}; // charge factors
-//    double Q[nprmeslep]={1.0,ql*qIN,ql*qOUT,qIN*qIN,qOUT*qOUT,qIN*qOUT,qIN*qIN,qOUT*qOUT}; // charge factors
+//#warning putting charges to 1
+//    double Q[nprmeslep]={1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0}; // charge factors
+    double Q[nprmeslep]={1.0,ql*qIN,ql*qOUT,qIN*qIN,qOUT*qOUT,qIN*qOUT,qIN*qIN,qOUT*qOUT}; // charge factors
     const int i1[nprmeslep]={LO ,LO,LO ,LO ,LO ,LO ,LO ,EM }; //propOUT_inv
     const int iv[nprmeslep]={QCD,IN,OUT,M11,M22,M12,QCD,QCD}; //meslep
     const int i2[nprmeslep]={LO, LO,LO ,LO ,LO ,LO ,EM ,LO }; //propIN_inv
