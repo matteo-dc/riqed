@@ -778,7 +778,7 @@ void oper_t::compute_Zbil()
                     {
                         jZ[ibilmom][ibil][ijack][mr_fw][mr_bw] = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])/jG_0[ibilmom][ibil][ijack][mr_fw][mr_bw];
                         
-                        jZ_em[ibilmom][ibil][ijack][mr_fw][mr_bw] = - jG_em[ibilmom][ibil][ijack][mr_fw][mr_bw]/jG_0[ibilmom][ibil][ijack][mr_fw][mr_bw] + 0.5*(jZq_em[imom1][ijack][mr_fw] + jZq_em[imom2][ijack][mr_bw]);
+                        jZ_em[ibilmom][ibil][ijack][mr_fw][mr_bw] = - jG_em[ibilmom][ibil][ijack][mr_fw][mr_bw] + 0.5*(jZq_em[imom1][ijack][mr_fw] + jZq_em[imom2][ijack][mr_bw]);
                     }
         
     }// close mom loop
@@ -1026,10 +1026,12 @@ void oper_t::compute_Z4f()
                     
                     O4f_t G4f_0_inv = G4f_0.inverse();
                     
+                    O4f_t G4f_em_rel = G4f_em*G4f_0_inv;
+                    
                     O4f_t Z4f_0 = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])*G4f_0_inv;
                     
                     O4f_t Z4f_em = //Z4f_0*
-                    (0.5*(qOUT*qOUT*jZq_em[imom1][ijack][mr_fw] + qIN*qIN*jZq_em[imom2][ijack][mr_bw])*O4f_t::Identity() -G4f_em*G4f_0_inv);
+                    (0.5*(qOUT*qOUT*jZq_em[imom1][ijack][mr_fw] + qIN*qIN*jZq_em[imom2][ijack][mr_bw])*O4f_t::Identity() -G4f_em_rel);
                     
                     for(int iop1=0;iop1<nbil;iop1++)
                         for(int iop2=0;iop2<nbil;iop2++)
