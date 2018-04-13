@@ -64,6 +64,7 @@ vvvd_t oper_t::compute_jZq(vvvprop_t &jS_inv,const int imom)
                 
                 jZq_0_real[ijack][mr]=-(I*A_0[ijack][mr].trace()).real()/12./V;
                 jZq_em_real[ijack][mr]=-(I*A_em[ijack][mr].trace()).real()/12./V;
+                jZq_em_real[ijack][mr]/=jZq_0_real[ijack][mr]; // computing the relative EM correction
             }
     }
     
