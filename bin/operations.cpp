@@ -194,11 +194,18 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     _SeaMasses_label=to_string(SeaMasses_label[b][msea]);
     _theta_label=theta_label[th];
     
-    path_to_beta = path_ensemble + _beta_label + "_b" + to_string_with_precision(_beta,2) + "/";
-    ensamble_name = _beta_label + _SeaMasses_label + _theta_label;
-    path_to_ens =  path_to_beta + ensamble_name + "/";
+    if(strcmp(analysis.c_str(),"inte"))
+    {
+        path_to_beta = path_ensemble + _beta_label + "_b" + to_string_with_precision(_beta,2) + "/";
+        ensemble_name = _beta_label + _SeaMasses_label + _theta_label;
+        path_to_ens =  path_to_beta + ensemble_name + "/";
+    }
+    else if(strcmp(analysis.c_str(),"free"))
+    {
+        path_to_ens = path_ensemble + ensemble_name;
+    }
     
-    read_input(path_to_ens,ensamble_name);
+    read_input(path_to_ens,ensemble_name);
     path_to_moms = path_to_ens + mom_path;
     
     path_print = path_to_ens+"print/";
