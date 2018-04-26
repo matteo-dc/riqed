@@ -47,7 +47,7 @@ int main(int narg,char **arg)
         strcpy(path_glb,path.c_str());
     }
     
-    cout<<"Reading global input"<<endl;
+    cout<<"Reading global input from \""<<path_glb<<"\"."<<endl;
     read_input_glb(path_glb);
     
     
