@@ -83,9 +83,11 @@ extern vector<vector<int>> SeaMasses_label;
 extern vector<double> ainv;
 // Lambda QCD
 extern double LambdaQCD;
-// path to ensemble
+// path to global ensembles folder
 extern string path_ensemble;
-
+// path to specific analysis folder
+extern vector<string> path_analysis;
+// path to the ensemble
 extern string path_to_ens;
 
 // use Sigma1 parameter
