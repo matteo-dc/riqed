@@ -427,6 +427,11 @@ void read_input_glb(const char path[])
     else if(strcmp(analysis.c_str(),"ratio")==0) path_analysis={"Rat","Nf4","free_matching"};
     else {cout<<"Choose the analysis: 'inte', 'free' or 'ratio'."<<endl; exit(0);}
     
+    if(strcmp(analysis.c_str(),"free")==0 and nr>1)
+    {
+        cout<<"Nr must be 1 in free theory. Setting Nr=1 instead of Nr="<<nr<<"."<<endl;
+        nr=1;
+    }
     // this is the path to the directory which contains 'print', 'plots', ecc.
     path_ensemble = path_ensemble+path_analysis[0]+"/";
     
