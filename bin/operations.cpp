@@ -227,8 +227,8 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     if(UseEffMass) eff_mass=read_eff_mass(path_to_ens+"eff_mass_array");
     if(UseEffMass) eff_mass_time=read_eff_mass_time(path_to_ens+"eff_mass_array_time");
     if(UseEffMass and _nm_Sea>0) eff_mass_sea=read_eff_mass_sea(path_to_ens+"eff_mass_sea_array");
-    deltam_cr = read_deltam(path_to_ens,"deltam_cr_array");
-    deltamu   = read_deltam(path_to_ens,"deltamu_array");
+    if(strcmp(analysis.c_str(),"inte")==0) deltam_cr = read_deltam(path_to_ens,"deltam_cr_array");
+    if(strcmp(analysis.c_str(),"inte")==0) deltamu   = read_deltam(path_to_ens,"deltamu_array");
     
     switch(get_scheme())
     {
