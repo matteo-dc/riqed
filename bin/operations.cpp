@@ -202,6 +202,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     }
     else if(strcmp(analysis.c_str(),"free")==0)
     {
+        ensemble_name = _beta_label + _SeaMasses_label + _theta_label;
         path_to_ens = path_ensemble + ensemble_name;
     }
     
