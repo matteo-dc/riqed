@@ -233,6 +233,7 @@ void read_input_glb(const char path[])
         fprintf(stderr,"Failed to open \"%s\"\n",path);
         exit(FAILED_OPEN);
     }
+    printf("\nReading from \"%s\"\n",path);
         
     action=DEFAULT_STR_VAL;
     scheme=DEFAULT_STR_VAL;
