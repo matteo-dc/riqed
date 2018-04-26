@@ -28,7 +28,7 @@ ORDER ord;
 MESLEP_TYPES meslep_t;
 VERTEX_TYPES vertex_t;
 
-int main()
+int main(int narg,char **arg)
 {
     omp_set_nested(1);
 #pragma omp parallel
@@ -39,6 +39,14 @@ int main()
     }
     
     char path_glb[128]="input_glb.txt";
+    
+    if (narg>2){cerr<<"Number of arguments not valid."<<endl;
+                exit(0);}
+    if (narg==2){
+        string path=arg[1];
+        strcpy(path_glb,path.c_str());
+    }
+    
     cout<<"Reading global input"<<endl;
     read_input_glb(path_glb);
     
