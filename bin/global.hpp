@@ -85,6 +85,8 @@ extern vector<double> ainv;
 extern double LambdaQCD;
 // path to global ensembles folder
 extern string path_ensemble;
+// analysis method
+extern string analysis;
 // path to specific analysis folder
 extern vector<string> path_analysis;
 // path to the ensemble
