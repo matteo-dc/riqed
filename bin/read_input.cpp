@@ -19,7 +19,8 @@ vector<double> ainv;
 int conf_init, conf_step, nm, neq, neq2, nmr, delta_tmin, delta_tmax;
 double kappa, mu_sea, plaquette, LambdaQCD, p2min, thresh;
 vector<double> mass_val;
-string mom_path, action, path_ensemble, scheme, BC, out_hadr, out_lep;
+string mom_path, action, path_ensemble, scheme, BC, out_hadr, out_lep, analysis;
+vector<string> path_analysis;
 vector<string> beta_label;  // beta_label[Nbeta]
 vector<string> theta_label;  // theta_label[Ntheta]
 
@@ -72,6 +73,7 @@ TK_glb_t get_TK_glb(FILE *fin)
     if(strcasecmp(tok,out_lep_tag)==0) return OUT_LEP_TK;
     if(strcasecmp(tok,only_basic_tag)==0) return ONLY_BASIC_TK;
     if(strcasecmp(tok,compute_mpcac_tag)==0) return COMPUTE_MPCAC_TK;
+    if(strcasecmp(tok,analysis_tag)==0) return ANALYSIS_TK;
 
     return VALUE_GLB_TK;
 }
@@ -253,6 +255,7 @@ void read_input_glb(const char path[])
     out_lep=DEFAULT_STR_VAL;
     only_basic=DEFAULT_INT_VAL;
     compute_mpcac=DEFAULT_INT_VAL;
+    analysis=DEFAULT_STR_VAL;
     
 //    for(auto &bl : beta_label) bl=DEFAULT_STR_VAL;
 //    //        for(auto &l : L) l=DEFAULT_INT_VAL;
@@ -376,6 +379,9 @@ void read_input_glb(const char path[])
             case COMPUTE_MPCAC_TK:
                 get_value_glb(fin,compute_mpcac);
                 break;
+            case ANALYSIS_TK:
+                get_value_glb(fin,analysis);
+                break;
                 
             case FEOF_GLB_TK:
                 break;
@@ -412,14 +418,23 @@ void read_input_glb(const char path[])
     check_str_par(out_lep,out_lep_tag);
     check_int_par(only_basic,only_basic_tag);
     check_int_par(compute_mpcac,compute_mpcac_tag);
+    check_str_par(analysis,analysis_tag);
     
     fclose(fin);
     
-    //print input parameters
+    if(strcmp(analysis.c_str(),"inte"))  path_analysis={"Nf4"};
+    if(strcmp(analysis.c_str(),"free"))  path_analysis={"free_matching"};
+    if(strcmp(analysis.c_str(),"ratio")) path_analysis={"Rat","Nf4","free_matching"};
     
+    // this is the path to the directory which contains 'print', 'plots', ecc.
+    path_ensemble = path_ensemble+path_analysis[0]+"/";
+    
+    //print input parameters
     printf("*------------------------------------------------------*\n");
     printf("|                Global configuration                  |\n");
     printf("*------------------------------------------------------*\n\n");
+    
+    printf(" %s = %s\n\n",analysis_tag,analysis.c_str());  //free, inte, ratio
     
     printf(" %s = %s\n",scheme_tag,scheme.c_str());
     printf("    with BC: %s \n\n",BC.c_str());
