@@ -44,7 +44,7 @@ struct oper_t
     double g2_tilde;
     
     // paths
-    string ensamble_name;
+    string ensemble_name;
     string path_to_ens;
     string path_to_beta;
     string path_to_moms;
