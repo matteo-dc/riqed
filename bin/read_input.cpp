@@ -423,8 +423,9 @@ void read_input_glb(const char path[])
     fclose(fin);
     
     if(strcmp(analysis.c_str(),"inte"))  path_analysis={"Nf4"};
-    if(strcmp(analysis.c_str(),"free"))  path_analysis={"free_matching"};
-    if(strcmp(analysis.c_str(),"ratio")) path_analysis={"Rat","Nf4","free_matching"};
+    else if(strcmp(analysis.c_str(),"free"))  path_analysis={"free_matching"};
+    else if(strcmp(analysis.c_str(),"ratio")) path_analysis={"Rat","Nf4","free_matching"};
+    else {cout<<"Choose the analysis: 'inte', 'free' or 'ratio'."<<endl; exit(0);}
     
     // this is the path to the directory which contains 'print', 'plots', ecc.
     path_ensemble = path_ensemble+path_analysis[0]+"/";
