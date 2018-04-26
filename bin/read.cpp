@@ -230,34 +230,39 @@ vvvvd_t oper_t::read_deltam(const string path, const string name)
 {
     vvvvd_t deltam(vvvd_t(vvd_t(vd_t(0.0,nr),nm),nm),njacks);
     
-    FILE* input_deltam;
-    input_deltam = fopen((path+name).c_str(),"rb");
-    
-     if(input_deltam == NULL)
-     {
-         cout<<"Computing "<<name<<endl<<endl;
-         compute_deltam();
-         input_deltam = fopen((path+name).c_str(),"rb");
-     }
-    
-    cout<<"Reading "<<name<<endl<<endl;
-    
-    for(int m_fw=0;m_fw<nm;m_fw++)
-        for(int m_bw=0;m_bw<nm;m_bw++)
-            for(int r=0;r<nr;r++)
-                for(int ijack=0;ijack<njacks;ijack++)
-                {
-                    double temp;
-                    
-                    int rd=fread(&temp,sizeof(double),1,input_deltam);
-                    if(rd!=1)
+#warning computing deltamcr only in interacting case
+    if(strcmp(analysis.c_str(),"inte")==0)
+    {
+        
+        FILE* input_deltam;
+        input_deltam = fopen((path+name).c_str(),"rb");
+        
+        if(input_deltam == NULL)
+        {
+            cout<<"Computing "<<name<<endl<<endl;
+            compute_deltam();
+            input_deltam = fopen((path+name).c_str(),"rb");
+        }
+        
+        cout<<"Reading "<<name<<endl<<endl;
+        
+        for(int m_fw=0;m_fw<nm;m_fw++)
+            for(int m_bw=0;m_bw<nm;m_bw++)
+                for(int r=0;r<nr;r++)
+                    for(int ijack=0;ijack<njacks;ijack++)
                     {
-                        cerr<<"Unable to read from \""<<name<<"\" m_fw: "<<m_fw<<", m_bw: "<<m_bw<<", r: "<<r<<", ijack: "<<ijack<<endl;
-                        exit(1);
+                        double temp;
+                        
+                        int rd=fread(&temp,sizeof(double),1,input_deltam);
+                        if(rd!=1)
+                        {
+                            cerr<<"Unable to read from \""<<name<<"\" m_fw: "<<m_fw<<", m_bw: "<<m_bw<<", r: "<<r<<", ijack: "<<ijack<<endl;
+                            exit(1);
+                        }
+                        
+                        deltam[ijack][m_fw][m_bw][r]=temp; //store
                     }
-                    
-                    deltam[ijack][m_fw][m_bw][r]=temp; //store
-                }
+    }
     
     vvvd_t deltam_ave=get<0>(ave_err(deltam));
     vvvd_t deltam_err=get<1>(ave_err(deltam));
