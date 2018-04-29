@@ -106,7 +106,6 @@ struct oper_t
     void ri_mom();
 
     void smom();
-
     
     // definition of jZq
     vector<jZ_t> jZq, jZq_em;
@@ -144,10 +143,6 @@ struct oper_t
     
     // compute Z4f
     void compute_Z4f();
-    
-    
-//  // step string
-//    string step;
     
     // average r
     oper_t average_r(/*const bool recompute_Zbil=false*/) ;
