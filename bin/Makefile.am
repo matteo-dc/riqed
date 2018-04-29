@@ -27,6 +27,7 @@ main_SOURCES  =	 main.cpp \
 		 read_input.cpp  \
 		 read.cpp \
 		 rotate.cpp \
+		 allocate.cpp \
 		 operations.cpp \
 		 vertices.cpp \
 		 tools.cpp \
