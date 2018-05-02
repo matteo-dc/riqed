@@ -253,9 +253,6 @@ void oper_t::create_basic(const int b, const int th, const int msea)
 //    compute_Zbil();
 //    if(compute_4f) compute_Z4f();
     
-#warning exiting after sigma computation
-    exit(0);
-    
 }
 
 //////////
