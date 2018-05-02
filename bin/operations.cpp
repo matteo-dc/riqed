@@ -317,7 +317,7 @@ oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
                     (out.sigma3_S)[ilinmom][ijack][m]  += sigma3_S[ilinmom][ijack][r+_nr*m]/_nr;
                 }
     
-//    out.compute_Zq();
+    out.compute_Zq();
     
     for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
     {
