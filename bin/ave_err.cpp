@@ -99,31 +99,26 @@ tuple<vvd_t,vvd_t> ave_err(vvvd_t jM)
 }
 
 // average deltam
-tuple<vvvd_t,vvvd_t> ave_err(vvvvd_t jdeltam)
+tuple<vd_t,vd_t> ave_err(vvd_t jdeltam)
 {
     int _njacks=njacks;
-    int _nm=(int)jdeltam[0].size();
-    int _nr=(int)jdeltam[0][0][0].size();
+    int _nmr=(int)jdeltam[0].size();
     
-    vvvd_t deltam_ave(vvd_t(vd_t(0.0,_nr),_nm),_nm);
-    vvvd_t sqr_deltam_ave(vvd_t(vd_t(0.0,_nr),_nm),_nm);
-    vvvd_t deltam_err(vvd_t(vd_t(0.0,_nr),_nm),_nm);
+    vd_t deltam_ave(0.0,_nmr);
+    vd_t sqr_deltam_ave(0.0,_nmr);
+    vd_t deltam_err(0.0,_nmr);
     
-    for(int mA=0;mA<_nm;mA++)
-        for(int mB=0;mB<_nm;mB++)
-            for(int r=0;r<_nr;r++)
-                for(int ijack=0;ijack<_njacks;ijack++)
-                {
-                    deltam_ave[mA][mB][r]+=jdeltam[ijack][mA][mB][r]/njacks;
-                    sqr_deltam_ave[mA][mB][r]+=jdeltam[ijack][mA][mB][r]*jdeltam[ijack][mA][mB][r]/njacks;
-                }
+    for(int mr=0;mr<_nmr;mr++)
+        for(int ijack=0;ijack<_njacks;ijack++)
+        {
+            deltam_ave[mr]+=jdeltam[ijack][mr]/njacks;
+            sqr_deltam_ave[mr]+=jdeltam[ijack][mr]*jdeltam[ijack][mr]/njacks;
+        }
     
-    for(int mA=0;mA<_nm;mA++)
-        for(int mB=0;mB<_nm;mB++)
-            for(int r=0;r<_nr;r++)
-                deltam_err[mA][mB][r]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_deltam_ave[mA][mB][r]-deltam_ave[mA][mB][r]*deltam_ave[mA][mB][r]));
+    for(int mr=0;mr<_nmr;mr++)
+        deltam_err[mr]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_deltam_ave[mr]-deltam_ave[mr]*deltam_ave[mr]));
     
-    tuple<vvvd_t,vvvd_t> tuple_ave_err(deltam_ave,deltam_err);
+    tuple<vd_t,vd_t> tuple_ave_err(deltam_ave,deltam_err);
     
     return tuple_ave_err;
 }

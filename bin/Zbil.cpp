@@ -200,21 +200,18 @@ void oper_t::compute_bil()
                 jVert_LO_EM_P_S[vkind] = jackknife(jVert_LO_EM_P_S[vkind]);
             
             // build the complete electromagnetic correction
-#pragma omp parallel for collapse(3)
+#pragma omp parallel for collapse(2)
             for(int ijack=0;ijack<njacks;ijack++)
-                for(int m=0;m<nm;m++)
-                    for(int r=0;r<nr;r++)
+                for(int mr=0;mr<nmr;mr++)
                     {
-                        int mr = r + nr*m;
-                        
                         jS1_EM[ijack][mr] = jS1_PH[ijack][mr] +
-                        deltam_cr[ijack][m][r]*jS1_P[ijack][mr] +
-                        deltamu[ijack][m][r]  *jS1_S[ijack][mr];
+                                            deltam_cr[ijack][mr]*jS1_P[ijack][mr] +
+                                            deltamu[ijack][mr]  *jS1_S[ijack][mr];
                         
                         (read2)?jS2_EM[ijack][mr] = jS2_PH[ijack][mr] +
-                        deltam_cr[ijack][m][r]*jS2_P[ijack][mr] +
-                        deltamu[ijack][m][r]  *jS2_S[ijack][mr]
-                        :jS2_EM[ijack][mr]=jS1_EM[ijack][mr];
+                                                    deltam_cr[ijack][mr]*jS2_P[ijack][mr] +
+                                                    deltamu[ijack][mr]  *jS2_S[ijack][mr]
+                               :jS2_EM[ijack][mr] = jS1_EM[ijack][mr];
                     }
             
 #pragma omp parallel for collapse (4)
@@ -223,20 +220,15 @@ void oper_t::compute_bil()
                     for(int mr_bw=0;mr_bw<nmr;mr_bw++)
                         for(int igam=0;igam<16;igam++)
                         {
-                            int r_fw = mr_fw%nr;
-                            int m_fw = (mr_fw-r_fw)/nr;
-                            int r_bw = mr_bw%nr;
-                            int m_bw = (mr_bw-r_bw)/nr;
-                            
                             jVert_LO_and_EM[LO][ijack][mr_fw][mr_bw][igam] =
                             jVert_LO_EM_P_S[LO][ijack][mr_fw][mr_bw][igam];
                             
                             jVert_LO_and_EM[EM][ijack][mr_fw][mr_bw][igam] =
-                            jVert_LO_EM_P_S[EM][ijack][mr_fw][mr_bw][igam] +
-                            deltam_cr[ijack][m_fw][r_fw]*jVert_LO_EM_P_S[Pfw][ijack][mr_fw][mr_bw][igam] +
-                            deltam_cr[ijack][m_bw][r_bw]*jVert_LO_EM_P_S[Pbw][ijack][mr_fw][mr_bw][igam] +
-                            deltamu[ijack][m_fw][r_fw]*jVert_LO_EM_P_S[Sfw][ijack][mr_fw][mr_bw][igam] +
-                            deltamu[ijack][m_bw][r_bw]*jVert_LO_EM_P_S[Sbw][ijack][mr_fw][mr_bw][igam];
+                                jVert_LO_EM_P_S[EM][ijack][mr_fw][mr_bw][igam] +
+                                deltam_cr[ijack][mr_fw]*jVert_LO_EM_P_S[Pfw][ijack][mr_fw][mr_bw][igam] +
+                                deltam_cr[ijack][mr_bw]*jVert_LO_EM_P_S[Pbw][ijack][mr_fw][mr_bw][igam] +
+                                deltamu[ijack][mr_fw]*jVert_LO_EM_P_S[Sfw][ijack][mr_fw][mr_bw][igam] +
+                                deltamu[ijack][mr_bw]*jVert_LO_EM_P_S[Sbw][ijack][mr_fw][mr_bw][igam];
                         }
             
             

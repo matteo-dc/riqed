@@ -247,13 +247,13 @@ void oper_t::compute_meslep()
                         int mr = r + nr*m;
                         
                         jS1_EM[ijack][mr] = jS1_PH[ijack][mr] +
-                        deltam_cr[ijack][m][r]*jS1_P[ijack][mr] +
-                        deltamu[ijack][m][r]  *jS1_S[ijack][mr];
+                                            deltam_cr[ijack][mr]*jS1_P[ijack][mr] +
+                                            deltamu[ijack][mr]  *jS1_S[ijack][mr];
                         
                         (read2)?jS2_EM[ijack][mr] = jS2_PH[ijack][mr] +
-                        deltam_cr[ijack][m][r]*jS2_P[ijack][mr] +
-                        deltamu[ijack][m][r]  *jS2_S[ijack][mr]
-                        :jS2_EM[ijack][mr]=jS1_EM[ijack][mr];
+                                                    deltam_cr[ijack][mr]*jS2_P[ijack][mr] +
+                                                    deltamu[ijack][mr]  *jS2_S[ijack][mr]
+                               :jS2_EM[ijack][mr] = jS1_EM[ijack][mr];
                     }
             
             // build the complete electromagnetic correction to the vertex
@@ -264,17 +264,12 @@ void oper_t::compute_meslep()
                         for(int iop=0;iop<5;iop++)
                             for(int iproj=0;iproj<11;iproj++)
                             {
-                                int r_fw = mr_fw%nr;
-                                int m_fw = (mr_fw-r_fw)/nr;
-                                int r_bw = mr_bw%nr;
-                                int m_bw = (mr_bw-r_bw)/nr;
-                                
                                 jmeslep[M11][ijack][mr_fw][mr_bw][iop][iproj] +=
-                                deltam_cr[ijack][m_bw][r_bw]*jmeslep[P11][ijack][mr_fw][mr_bw][iop][iproj] +
-                                deltamu[ijack][m_bw][r_bw]  *jmeslep[S11][ijack][mr_fw][mr_bw][iop][iproj];
+                                    deltam_cr[ijack][mr_bw]*jmeslep[P11][ijack][mr_fw][mr_bw][iop][iproj] +
+                                    deltamu[ijack][mr_bw]  *jmeslep[S11][ijack][mr_fw][mr_bw][iop][iproj];
                                 jmeslep[M22][ijack][mr_fw][mr_bw][iop][iproj] +=
-                                deltam_cr[ijack][m_fw][r_fw]*jmeslep[P22][ijack][mr_fw][mr_bw][iop][iproj] +
-                                deltamu[ijack][m_fw][r_fw]  *jmeslep[S22][ijack][mr_fw][mr_bw][iop][iproj];
+                                    deltam_cr[ijack][mr_fw]*jmeslep[P22][ijack][mr_fw][mr_bw][iop][iproj] +
+                                    deltamu[ijack][mr_fw]  *jmeslep[S22][ijack][mr_fw][mr_bw][iop][iproj];
                                 //N.B.: fw(bw) corresponds to OUT(IN)!
                             }
             

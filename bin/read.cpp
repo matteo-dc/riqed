@@ -226,10 +226,9 @@ vvvd_t oper_t::read_eff_mass_sea(const string name)
 
 
 // read deltamu and deltamcr
-vvvd_t oper_t::read_deltam(const string path, const string name)
+vvd_t oper_t::read_deltam(const string path, const string name)
 {
-    vvvd_t deltam(vvd_t(vd_t(0.0,nr),nm),njacks);
-    
+    vvd_t deltam(vd_t(0.0,nmr),njacks);
     
     FILE* input_deltam;
     input_deltam = fopen((path+name).c_str(),"rb");
@@ -244,28 +243,26 @@ vvvd_t oper_t::read_deltam(const string path, const string name)
     
     cout<<"Reading "<<name<<endl<<endl;
     
-    for(int m=0;m<nm;m++)
-        for(int r=0;r<nr;r++)
-            for(int ijack=0;ijack<njacks;ijack++)
+    for(int mr=0;mr<nmr;mr++)
+        for(int ijack=0;ijack<njacks;ijack++)
+        {
+            double temp;
+            
+            int rd=fread(&temp,sizeof(double),1,input_deltam);
+            if(rd!=1)
             {
-                double temp;
-                
-                int rd=fread(&temp,sizeof(double),1,input_deltam);
-                if(rd!=1)
-                {
-                    cerr<<"Unable to read from \""<<name<<"\" -- m: "<<m<<", r: "<<r<<", ijack: "<<ijack<<endl;
-                    exit(1);
-                }
-                
-                deltam[ijack][m][r]=temp; //store
+                cerr<<"Unable to read from \""<<name<<"\" -- mr: "<<mr<<", ijack: "<<ijack<<endl;
+                exit(1);
             }
+            
+            deltam[ijack][mr]=temp; //store
+        }
     
-    vvd_t deltam_ave=get<0>(ave_err(deltam));
-    vvd_t deltam_err=get<1>(ave_err(deltam));
+    vd_t deltam_ave=get<0>(ave_err(deltam));
+    vd_t deltam_err=get<1>(ave_err(deltam));
     
-    for(int m=0;m<nm;m++)
-        for(int r=0;r<nr;r++)
-            printf("m: %d \t r: %d \t %lg +- %lg\n",m,r,deltam_ave[m][r],deltam_err[m][r]);
+    for(int mr=0;mr<nmr;mr++)
+        printf("mr: %d \t %lg +- %lg\n",mr,deltam_ave[mr],deltam_err[mr]);
     printf("\n");
     
     return deltam;
