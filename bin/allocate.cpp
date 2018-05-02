@@ -4,137 +4,46 @@
 
 void oper_t::allocate()
 {
-    jZq.resize(_linmoms);
-    jZq_em.resize(_linmoms);
+    vector<vector<vvd_t>> sig={sigma1_LO,sigma1_PH,sigma1_P,sigma1_S,
+                               sigma2_LO,sigma2_PH,sigma2_P,sigma2_S,
+                               sigma3_LO,sigma3_PH,sigma3_P,sigma3_S};
     
-    jG_0.resize(_bilmoms);
-    jG_em.resize(_bilmoms);
+    vector<vector<vvd_t>>           zq={jZq,jZq_EM};
+    vector<vector<jproj_t>>         gbil={jG_LO,jG_EM};
+    vector<vector<jZbil_t>>         zbil={jZ,jZ_EM};
+    vector<vector<jproj_t>>         gbil4f={jG_LO_4f,jG_EM_4f};
+    vector<vector<jZ4f_t>>          z4f={jZ_4f,jZ_EM_4f};
+    vector<vector<jproj_meslep_t>>  meslep={jpr_meslep_LO,jpr_meslep_EM,jpr_meslep_nasty};
     
-    jZ.resize(_bilmoms);
-    jZ_em.resize(_bilmoms);
-    
-    jG_0_4f.resize(_bilmoms);
-    jG_em_4f.resize(_bilmoms);
-    
-    jpr_meslep_0.resize(_meslepmoms);
-    jpr_meslep_em.resize(_meslepmoms);
-    jpr_meslep_nasty.resize(_meslepmoms);
-    
-    jZ_4f.resize(_meslepmoms);
-    jZ_em_4f.resize(_meslepmoms);
-    
-    for(auto &ijack : jZq)
+    for(auto &s : sig)
     {
-        ijack.resize(njacks);
-        for(auto &mr : ijack)
-            mr.resize(_nmr);
-    }
-    
-    for(auto &ijack : jZq_em)
-    {
-        ijack.resize(njacks);
-        for(auto &mr : ijack)
-            mr.resize(_nmr);
-    }
-    
-    
-    for(auto &ibil : jG_0)
-    {
-        ibil.resize(nbil);
-        for(auto &ijack : ibil)
+        s.resize(_linmoms);
+        for(auto &ijack : s)
         {
             ijack.resize(njacks);
-            for(auto &mr1 : ijack)
-            {
-                mr1.resize(_nmr);
-                for(auto &mr2 : mr1)
-                    mr2.resize(_nmr);
-            }
+            for(auto &mr : ijack)
+                mr.resize(_nmr);
         }
     }
     
-    for(auto &ibil : jG_em)
+    for(auto &z : zq)
     {
-        ibil.resize(nbil);
-        for(auto &ijack : ibil)
+        z.resize(_linmoms);
+        for(auto &ijack : z)
         {
             ijack.resize(njacks);
-            for(auto &mr1 : ijack)
-            {
-                mr1.resize(_nmr);
-                for(auto &mr2 : mr1)
-                    mr2.resize(_nmr);
-            }
+            for(auto &mr : ijack)
+                mr.resize(_nmr);
         }
     }
     
-    for(auto &ibil : jZ)
+    for(auto &g : gbil)
     {
-        ibil.resize(nbil);
-        for(auto &ijack : ibil)
+        g.resize(_bilmoms);
+        for(auto &ibil : g)
         {
-            ijack.resize(njacks);
-            for(auto &mr1 : ijack)
-            {
-                mr1.resize(_nmr);
-                for(auto &mr2 : mr1)
-                    mr2.resize(_nmr);
-            }
-        }
-    }
-    
-    for(auto &ibil : jZ_em)
-    {
-        ibil.resize(nbil);
-        for(auto &ijack : ibil)
-        {
-            ijack.resize(njacks);
-            for(auto &mr1 : ijack)
-            {
-                mr1.resize(_nmr);
-                for(auto &mr2 : mr1)
-                    mr2.resize(_nmr);
-            }
-        }
-    }
-    
-    for(auto &ibil : jG_0_4f)
-    {
-        ibil.resize(nbil+1);
-        for(auto &ijack : ibil)
-        {
-            ijack.resize(njacks);
-            for(auto &mr1 : ijack)
-            {
-                mr1.resize(_nmr);
-                for(auto &mr2 : mr1)
-                    mr2.resize(_nmr);
-            }
-        }
-    }
-    
-    for(auto &ibil : jG_em_4f)
-    {
-        ibil.resize(nbil+1);
-        for(auto &ijack : ibil)
-        {
-            ijack.resize(njacks);
-            for(auto &mr1 : ijack)
-            {
-                mr1.resize(_nmr);
-                for(auto &mr2 : mr1)
-                    mr2.resize(_nmr);
-            }
-        }
-    }
-    
-    for(auto &iop1 : jpr_meslep_0)
-    {
-        iop1.resize(nbil);
-        for(auto &iop2 : iop1)
-        {
-            iop2.resize(nbil);
-            for(auto &ijack : iop2)
+            ibil.resize(nbil);
+            for(auto &ijack : ibil)
             {
                 ijack.resize(njacks);
                 for(auto &mr1 : ijack)
@@ -147,13 +56,13 @@ void oper_t::allocate()
         }
     }
     
-    for(auto &iop1 : jpr_meslep_em)
+    for(auto &z : zbil)
     {
-        iop1.resize(nbil);
-        for(auto &iop2 : iop1)
+        z.resize(_bilmoms);
+        for(auto &ibil : z)
         {
-            iop2.resize(nbil);
-            for(auto &ijack : iop2)
+            ibil.resize(nbil);
+            for(auto &ijack : ibil)
             {
                 ijack.resize(njacks);
                 for(auto &mr1 : ijack)
@@ -166,13 +75,13 @@ void oper_t::allocate()
         }
     }
     
-    for(auto &iop1 : jpr_meslep_nasty)
+    for(auto &g : gbil4f)
     {
-        iop1.resize(nbil);
-        for(auto &iop2 : iop1)
+        g.resize(_bilmoms);
+        for(auto &ibil : g)
         {
-            iop2.resize(nbil);
-            for(auto &ijack : iop2)
+            ibil.resize(nbil+1);
+            for(auto &ijack : ibil)
             {
                 ijack.resize(njacks);
                 for(auto &mr1 : ijack)
@@ -183,47 +92,54 @@ void oper_t::allocate()
                 }
             }
         }
+        
     }
     
-    for(auto &iop1 : jZ_4f)
+    for(auto &m : meslep)
     {
-        iop1.resize(nbil);
-        for(auto &iop2 : iop1)
+        m.resize(_meslepmoms);
+        for(auto &iop1 : m)
         {
-            iop2.resize(nbil);
-            for(auto &ijack : iop2)
+            iop1.resize(nbil);
+            for(auto &iop2 : iop1)
             {
-                ijack.resize(njacks);
-                for(auto &mr1 : ijack)
+                iop2.resize(nbil);
+                for(auto &ijack : iop2)
                 {
-                    mr1.resize(_nmr);
-                    for(auto &mr2 : mr1)
-                        mr2.resize(_nmr);
+                    ijack.resize(njacks);
+                    for(auto &mr1 : ijack)
+                    {
+                        mr1.resize(_nmr);
+                        for(auto &mr2 : mr1)
+                            mr2.resize(_nmr);
+                    }
                 }
-                
             }
         }
     }
     
-    for(auto &iop1 : jZ_em_4f)
+    for(auto &z : z4f)
     {
-        iop1.resize(nbil);
-        for(auto &iop2 : iop1)
+        z.resize(_meslepmoms);
+        for(auto &iop1 : z)
         {
-            iop2.resize(nbil);
-            for(auto &ijack : iop2)
+            iop1.resize(nbil);
+            for(auto &iop2 : iop1)
             {
-                ijack.resize(njacks);
-                for(auto &mr1 : ijack)
+                iop2.resize(nbil);
+                for(auto &ijack : iop2)
                 {
-                    mr1.resize(_nmr);
-                    for(auto &mr2 : mr1)
-                        mr2.resize(_nmr);
+                    ijack.resize(njacks);
+                    for(auto &mr1 : ijack)
+                    {
+                        mr1.resize(_nmr);
+                        for(auto &mr2 : mr1)
+                            mr2.resize(_nmr);
+                    }
+                    
                 }
-                
             }
         }
     }
-    
     
 }

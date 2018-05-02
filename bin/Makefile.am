@@ -26,16 +26,18 @@ bin_PROGRAMS=main
 main_SOURCES  =	 main.cpp \
 		 read_input.cpp  \
 		 read.cpp \
+		 jack.cpp \
 		 rotate.cpp \
 		 allocate.cpp \
+		 prop.cpp \
 		 operations.cpp \
+		 sigmas.cpp \
 		 vertices.cpp \
 		 tools.cpp \
 		 contractions.cpp \
 		 fit.cpp \
                  effective_mass.cpp \
 		 deltam_cr.cpp \
-		 jack.cpp \
 		 Dirac.cpp \
                  print.cpp \
 		 Zq.cpp \
