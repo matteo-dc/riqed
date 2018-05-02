@@ -16,8 +16,8 @@ void oper_t::allocate()
     vector<vector<jproj_meslep_t>>  meslep={jpr_meslep_LO,jpr_meslep_EM,jpr_meslep_nasty};
     
 #define ALLOCATE_SIGMA(NUM,KIND)                        \
-    sigma ## NUM_ ## KIND.resize(_linmoms);             \
-    for(auto &ijack : sigma ## NUM_ ## KIND)            \
+    sigma ## NUM ## _ ## KIND.resize(_linmoms);             \
+    for(auto &ijack : sigma ## NUM ## _ ## KIND)            \
     {                                                   \
         ijack.resize(njacks);                           \
         for(auto &mr : ijack)                           \
