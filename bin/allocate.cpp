@@ -18,7 +18,11 @@ void oper_t::allocate()
     {                                                   \
         ijack.resize(njacks);                           \
         for(auto &mr : ijack)                           \
+        {                                               \
             mr.resize(_nmr);                            \
+            for(auto &i : mr)                           \
+                i=0.0;                                  \
+        }                                               \
     }
     // defining Zq allocation
 #define ALLOCATE_ZQ(A)          \
