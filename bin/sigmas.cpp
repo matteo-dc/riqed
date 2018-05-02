@@ -180,8 +180,6 @@ void oper_t::compute_sigmas()
         FILE* input[combo];
         vector<string> v_path = setup_read_qprop(input);
         
-        vvvd_t jZq_LO_and_EM(vvd_t(vd_t(0.0,_nmr),njacks),2);
-        
         for(int ilinmom=0; ilinmom<_linmoms; ilinmom++)
         {
             cout<<"\r\t linmom = "<<ilinmom+1<<"/"<<_linmoms<<endl;
@@ -217,6 +215,11 @@ void oper_t::compute_sigmas()
             jS_inv_PH = jS_inv_LO*jS_PH*jS_inv_LO;
             jS_inv_P  = jS_inv_LO*jS_P*jS_inv_LO;
             jS_inv_S  = jS_inv_LO*jS_S*jS_inv_LO;
+            
+            cout<<"sigma1_LO: "<<sigma1_LO.size()<<" "<<sigma1_LO[0].size()<<" "<<sigma1_LO[0][0].size()<<endl;
+            cout<<"sigma1_PH: "<<sigma1_PH.size()<<" "<<sigma1_PH[0].size()<<" "<<sigma1_PH[0][0].size()<<endl;
+            cout<<"sigma1_P: "<<sigma1_P.size()<<" "<<sigma1_P[0].size()<<" "<<sigma1_P[0][0].size()<<endl;
+            cout<<"sigma1_S: "<<sigma1_S.size()<<" "<<sigma1_S[0].size()<<" "<<sigma1_S[0][0].size()<<endl;
             
             // define the computation of the sigmas
 #define COMPUTE_SIGMA(A)						\
