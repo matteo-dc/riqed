@@ -212,9 +212,9 @@ void oper_t::compute_sigmas()
             
             // invert propagator
             jS_inv_LO = invert_jprop(jS_LO);
-            jS_inv_PH = jS_inv_LO*jS_PH*jS_inv_LO;
-            jS_inv_P  = jS_inv_LO*jS_P*jS_inv_LO;
-            jS_inv_S  = jS_inv_LO*jS_S*jS_inv_LO;
+            jS_inv_PH = -jS_inv_LO*jS_PH*jS_inv_LO;
+            jS_inv_P  = -jS_inv_LO*jS_P*jS_inv_LO;
+            jS_inv_S  = -jS_inv_LO*jS_S*jS_inv_LO;
             
             // define the computation of the sigmas
 #define COMPUTE_SIGMA(A)						\
