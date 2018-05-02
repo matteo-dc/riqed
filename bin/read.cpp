@@ -230,38 +230,35 @@ vvvd_t oper_t::read_deltam(const string path, const string name)
 {
     vvvd_t deltam(vvd_t(vd_t(0.0,nr),nm),njacks);
     
-#warning computing deltamcr only in interacting case
-    if(strcmp(analysis.c_str(),"inte")==0)
+    
+    FILE* input_deltam;
+    input_deltam = fopen((path+name).c_str(),"rb");
+    
+    if(input_deltam == NULL)
     {
-        
-        FILE* input_deltam;
+        cout<<"Computing "<<name<<endl<<endl;
+//        compute_deltam();
+        compute_deltam_from_prop();
         input_deltam = fopen((path+name).c_str(),"rb");
-        
-        if(input_deltam == NULL)
-        {
-            cout<<"Computing "<<name<<endl<<endl;
-            compute_deltam();
-            input_deltam = fopen((path+name).c_str(),"rb");
-        }
-        
-        cout<<"Reading "<<name<<endl<<endl;
-        
-        for(int m=0;m<nm;m++)
-            for(int r=0;r<nr;r++)
-                for(int ijack=0;ijack<njacks;ijack++)
-                {
-                    double temp;
-                    
-                    int rd=fread(&temp,sizeof(double),1,input_deltam);
-                    if(rd!=1)
-                    {
-                        cerr<<"Unable to read from \""<<name<<"\" -- m: "<<m<<", r: "<<r<<", ijack: "<<ijack<<endl;
-                        exit(1);
-                    }
-                    
-                    deltam[ijack][m][r]=temp; //store
-                }
     }
+    
+    cout<<"Reading "<<name<<endl<<endl;
+    
+    for(int m=0;m<nm;m++)
+        for(int r=0;r<nr;r++)
+            for(int ijack=0;ijack<njacks;ijack++)
+            {
+                double temp;
+                
+                int rd=fread(&temp,sizeof(double),1,input_deltam);
+                if(rd!=1)
+                {
+                    cerr<<"Unable to read from \""<<name<<"\" -- m: "<<m<<", r: "<<r<<", ijack: "<<ijack<<endl;
+                    exit(1);
+                }
+                
+                deltam[ijack][m][r]=temp; //store
+            }
     
     vvd_t deltam_ave=get<0>(ave_err(deltam));
     vvd_t deltam_err=get<1>(ave_err(deltam));
