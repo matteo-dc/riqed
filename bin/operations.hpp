@@ -67,10 +67,11 @@ struct oper_t
     void compute_mPCAC(const string &suffix);
     
     // deltamu and deltamcr
-    vvvvd_t deltamu;
-    vvvvd_t deltam_cr;
-    vvvvd_t read_deltam(const string path, const string name);
+    vvvd_t deltamu;
+    vvvd_t deltam_cr;
+    vvvd_t read_deltam(const string path, const string name);
     void compute_deltam();
+    void compute_deltam_from_prop();
     
     // effective valence mass
     vvvd_t eff_mass;
