@@ -26,6 +26,12 @@ void oper_t::allocate()
         }
     }
     
+    cout<<"sigma1_LO: "<<sigma1_LO.size();
+    cout<<" "<<sigma1_LO[0].size()<<" "<<sigma1_LO[0][0].size()<<endl;
+    cout<<"sigma1_PH: "<<sigma1_PH.size()<<" "<<sigma1_PH[0].size()<<" "<<sigma1_PH[0][0].size()<<endl;
+    cout<<"sigma1_P: "<<sigma1_P.size()<<" "<<sigma1_P[0].size()<<" "<<sigma1_P[0][0].size()<<endl;
+    cout<<"sigma1_S: "<<sigma1_S.size()<<" "<<sigma1_S[0].size()<<" "<<sigma1_S[0][0].size()<<endl;
+    
     for(auto &z : zq)
     {
         z.resize(_linmoms);
