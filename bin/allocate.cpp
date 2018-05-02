@@ -53,7 +53,7 @@ void oper_t::allocate()
                 for(auto &mr2 : mr1)    \
                 {                       \
                     mr2.resize(_nmr);   \
-                    for(auto &i : mr2); \
+                    for(auto &i : mr2)  \
                         i=0.0;          \
                 }                       \
             }                           \
@@ -79,7 +79,7 @@ void oper_t::allocate()
                 for(auto &mr2 : mr1)    \
                 {                       \
                     mr2.resize(_nmr);   \
-                    for(auto &i : mr2); \
+                    for(auto &i : mr2)  \
                         i=0.0;          \
                 }                       \
             }                           \
@@ -103,7 +103,7 @@ void oper_t::allocate()
                     for(auto &mr2 : mr1)    \
                     {                       \
                         mr2.resize(_nmr);   \
-                        for(auto &i : mr2); \
+                        for(auto &i : mr2)  \
                             i=0.0;          \
                     }                       \
                 }                           \
@@ -128,7 +128,7 @@ void oper_t::allocate()
                     for(auto &mr2 : mr1)    \
                     {                       \
                         mr2.resize(_nmr);   \
-                        for(auto &i : mr2); \
+                        for(auto &i : mr2)  \
                             i=0.0;          \
                     }                       \
                 }                           \
