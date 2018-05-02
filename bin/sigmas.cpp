@@ -195,6 +195,11 @@ void oper_t::compute_sigmas()
             jprop_t jS_inv_P(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
             jprop_t jS_inv_S(valarray<prop_t>(prop_t::Zero(),_nmr),njacks);
             
+            cout<<"sigma1_LO: "<<sigma1_LO.size()<<" "<<sigma1_LO[0].size()<<" "<<sigma1_LO[0][0].size()<<endl;
+            cout<<"sigma1_PH: "<<sigma1_PH.size()<<" "<<sigma1_PH[0].size()<<" "<<sigma1_PH[0][0].size()<<endl;
+            cout<<"sigma1_P: "<<sigma1_P.size()<<" "<<sigma1_P[0].size()<<" "<<sigma1_P[0][0].size()<<endl;
+            cout<<"sigma1_S: "<<sigma1_S.size()<<" "<<sigma1_S[0].size()<<" "<<sigma1_S[0][0].size()<<endl;
+            
             for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
                 for(int ihit=0;ihit<nhits;ihit++)
                 {
@@ -215,11 +220,6 @@ void oper_t::compute_sigmas()
             jS_inv_PH = jS_inv_LO*jS_PH*jS_inv_LO;
             jS_inv_P  = jS_inv_LO*jS_P*jS_inv_LO;
             jS_inv_S  = jS_inv_LO*jS_S*jS_inv_LO;
-            
-            cout<<"sigma1_LO: "<<sigma1_LO.size()<<" "<<sigma1_LO[0].size()<<" "<<sigma1_LO[0][0].size()<<endl;
-            cout<<"sigma1_PH: "<<sigma1_PH.size()<<" "<<sigma1_PH[0].size()<<" "<<sigma1_PH[0][0].size()<<endl;
-            cout<<"sigma1_P: "<<sigma1_P.size()<<" "<<sigma1_P[0].size()<<" "<<sigma1_P[0][0].size()<<endl;
-            cout<<"sigma1_S: "<<sigma1_S.size()<<" "<<sigma1_S[0].size()<<" "<<sigma1_S[0][0].size()<<endl;
             
             // define the computation of the sigmas
 #define COMPUTE_SIGMA(A)						\
