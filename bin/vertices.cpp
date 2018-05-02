@@ -3,6 +3,7 @@
 #include "Dirac.hpp"
 #include "contractions.hpp"
 #include <omp.h>
+#include "prop.hpp"
 
 //calculate the vertex function in a given configuration for the given equal momenta
 prop_t make_vertex(const prop_t &prop1, const prop_t &prop2, const int mu)
@@ -49,17 +50,4 @@ void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,valarray<jvert_t> &jVert
 
                 }
     
-}
-
-// invert the propagator
-jprop_t invert_jprop(const jprop_t &jprop)
-{
-    jprop_t jprop_inv(valarray<prop_t>(prop_t::Zero(),nmr),njacks);
-    
-#pragma omp parallel for collapse(2)
-    for(int ijack=0;ijack<njacks;ijack++)
-        for(int mr=0;mr<nmr;mr++)
-            jprop_inv[ijack][mr]=jprop[ijack][mr].inverse();
-    
-    return jprop_inv;
 }
