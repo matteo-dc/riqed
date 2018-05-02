@@ -67,9 +67,9 @@ struct oper_t
     void compute_mPCAC(const string &suffix);
     
     // deltamu and deltamcr
-    vvvd_t deltamu;
-    vvvd_t deltam_cr;
-    vvvd_t read_deltam(const string path, const string name);
+    vvd_t deltamu;
+    vvd_t deltam_cr;
+    vvd_t read_deltam(const string path, const string name);
     void compute_deltam();
     void compute_deltam_from_prop();
     
@@ -138,9 +138,6 @@ struct oper_t
     vector<vvd_t> sigma3_P;
     vector<vvd_t> sigma3_S;
     
-    // definition of jZq
-    vector<jZ_t> jZq, jZq_EM;
-    
     // create props
     void compute_prop();
     
@@ -150,8 +147,6 @@ struct oper_t
     vvd_t compute_sigma2(jprop_t &jprop_inv);
     vvd_t compute_sigma3(jprop_t &jprop_inv);
     
-    // compute Zq
-    vvvd_t compute_jZq(vvvprop_t &jS_inv,const int imom);
     
     // definition of projected bils
     vector<jproj_t> jG_LO, jG_EM;
@@ -168,12 +163,18 @@ struct oper_t
     // compute meslep
     void compute_meslep();
     
+    // definition of jZq
+    vector<jZ_t> jZq, jZq_EM;
+    
     // definition of Z
     bool Zbil_computed{false};
     vector<jZbil_t> jZ, jZ_EM;
     
     // definition of Z (4fermions)
     vector<jZ4f_t> jZ_4f, jZ_EM_4f;
+    
+    // compute Zq
+    void compute_Zq();
     
     // compute Zbils
     void compute_Zbil();
