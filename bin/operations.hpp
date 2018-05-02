@@ -25,7 +25,7 @@ struct oper_t
     void read_mom_list(const string &path);
     
     // volume
-    double V=size[0]*size[1]*size[2]*size[3];
+    double V;
     
     // size of nm and nr
     int _nm;

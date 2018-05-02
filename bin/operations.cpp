@@ -189,6 +189,8 @@ void oper_t::create_basic(const int b, const int th, const int msea)
 {
 //    step = "basic";
     
+    V=size[0]*size[1]*size[2]*size[3];
+    
     _beta=beta[b];
     _beta_label=beta_label[b];
     _nm_Sea=nm_Sea[b];
