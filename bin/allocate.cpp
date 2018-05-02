@@ -4,10 +4,6 @@
 
 void oper_t::allocate()
 {
-    vector<vector<vvd_t>> sig={sigma1_LO,sigma1_PH,sigma1_P,sigma1_S,
-                               sigma2_LO,sigma2_PH,sigma2_P,sigma2_S,
-                               sigma3_LO,sigma3_PH,sigma3_P,sigma3_S};
-    
     vector<vector<vvd_t>>           zq={jZq,jZq_EM};
     vector<vector<jproj_t>>         gbil={jG_LO,jG_EM};
     vector<vector<jZbil_t>>         zbil={jZ,jZ_EM};
@@ -15,139 +11,143 @@ void oper_t::allocate()
     vector<vector<jZ4f_t>>          z4f={jZ_4f,jZ_EM_4f};
     vector<vector<jproj_meslep_t>>  meslep={jpr_meslep_LO,jpr_meslep_EM,jpr_meslep_nasty};
     
+    // defining sigma allocation
 #define ALLOCATE_SIGMA(NUM,KIND)                        \
     sigma ## NUM ## _ ## KIND.resize(_linmoms);             \
-    for(auto &ijack : sigma ## NUM ## _ ## KIND)            \
+    for(auto &ijack : sigma ## NUM ## _ ## KIND)        \
     {                                                   \
         ijack.resize(njacks);                           \
         for(auto &mr : ijack)                           \
             mr.resize(_nmr);                            \
-    }                                                   \
+    }
+    // defining Zq allocation
+#define ALLOCATE_ZQ(A)          \
+    A.resize(_linmoms);         \
+    for(auto &ijack : A)        \
+    {                           \
+        ijack.resize(njacks);   \
+        for(auto &mr : ijack)   \
+        mr.resize(_nmr);        \
+    }
+    // defining Gbil allocation
+#define ALLOCATE_GBIL(A)                \
+    A.resize(_bilmoms);                 \
+    for(auto &ibil : A)                 \
+    {                                   \
+        ibil.resize(nbil);              \
+        for(auto &ijack : ibil)         \
+        {                               \
+            ijack.resize(njacks);       \
+            for(auto &mr1 : ijack)      \
+            {                           \
+                mr1.resize(_nmr);       \
+                for(auto &mr2 : mr1)    \
+                    mr2.resize(_nmr);   \
+            }                           \
+        }                               \
+    }
+    // defining Zbil allocation
+#define ALLOCATE_ZBIL(A)    \
+    ALLOCATE_GBIL(A)
+    // defining Gbil4f allocation
+#define ALLOCATE_GBIL4f(A)              \
+    A.resize(_bilmoms);                 \
+    for(auto &ibil : A)                 \
+    {                                   \
+        ibil.resize(nbil+1);            \
+        for(auto &ijack : ibil)         \
+        {                               \
+            ijack.resize(njacks);       \
+            for(auto &mr1 : ijack)      \
+            {                           \
+                mr1.resize(_nmr);       \
+                for(auto &mr2 : mr1)    \
+                    mr2.resize(_nmr);   \
+            }                           \
+        }                               \
+    }
+    // defining meslep allocation
+#define ALLOCATE_MESLEP(A)                  \
+    A.resize(_meslepmoms);                  \
+    for(auto &iop1 : A)                     \
+    {                                       \
+        iop1.resize(nbil);                  \
+        for(auto &iop2 : iop1)              \
+        {                                   \
+            iop2.resize(nbil);              \
+            for(auto &ijack : iop2)         \
+            {                               \
+                ijack.resize(njacks);       \
+                for(auto &mr1 : ijack)      \
+                {                           \
+                    mr1.resize(_nmr);       \
+                    for(auto &mr2 : mr1)    \
+                        mr2.resize(_nmr);   \
+                }                           \
+            }                               \
+        }                                   \
+    }
+    // defining Z4f allocation
+#define ALLOCATE_Z4f(A)                     \
+    A.resize(_meslepmoms);                  \
+    for(auto &iop1 : A)                     \
+    {                                       \
+        iop1.resize(nbil);                  \
+        for(auto &iop2 : iop1)              \
+        {                                   \
+            iop2.resize(nbil);              \
+            for(auto &ijack : iop2)         \
+            {                               \
+                ijack.resize(njacks);       \
+                for(auto &mr1 : ijack)      \
+                {                           \
+                    mr1.resize(_nmr);       \
+                    for(auto &mr2 : mr1)    \
+                        mr2.resize(_nmr);   \
+                }                           \
+            }                               \
+        }                                   \
+    }
+
+    // allocation
     
     ALLOCATE_SIGMA(1,LO);
     ALLOCATE_SIGMA(1,PH);
     ALLOCATE_SIGMA(1,P);
     ALLOCATE_SIGMA(1,S);
+    ALLOCATE_SIGMA(2,LO);
+    ALLOCATE_SIGMA(2,PH);
+    ALLOCATE_SIGMA(2,P);
+    ALLOCATE_SIGMA(2,S);
+    ALLOCATE_SIGMA(3,LO);
+    ALLOCATE_SIGMA(3,PH);
+    ALLOCATE_SIGMA(3,P);
+    ALLOCATE_SIGMA(3,S);
+
+    ALLOCATE_ZQ(jZq);
+    ALLOCATE_ZQ(jZq_EM);
+    
+    ALLOCATE_GBIL(jG_LO);
+    ALLOCATE_GBIL(jG_EM);
+    
+    ALLOCATE_ZBIL(jZ);
+    ALLOCATE_ZBIL(jZ_EM);
+    
+    ALLOCATE_GBIL4f(jG_LO_4f);
+    ALLOCATE_GBIL4f(jG_EM_4f);
+    
+    ALLOCATE_MESLEP(jpr_meslep_LO);
+    ALLOCATE_MESLEP(jpr_meslep_EM);
+    ALLOCATE_MESLEP(jpr_meslep_nasty);
+    
+    ALLOCATE_Z4f(jZ_4f);
+    ALLOCATE_Z4f(jZ_EM_4f);
     
 #undef ALLOCATE_SIGMA
-    
-    
-    cout<<"sigma1_LO: "<<sigma1_LO.size()<<" "<<sigma1_LO[0].size()<<" "<<sigma1_LO[0][0].size()<<endl;
-    
-    for(auto &z : zq)
-    {
-        z.resize(_linmoms);
-        for(auto &ijack : z)
-        {
-            ijack.resize(njacks);
-            for(auto &mr : ijack)
-                mr.resize(_nmr);
-        }
-    }
-    
-    for(auto &g : gbil)
-    {
-        g.resize(_bilmoms);
-        for(auto &ibil : g)
-        {
-            ibil.resize(nbil);
-            for(auto &ijack : ibil)
-            {
-                ijack.resize(njacks);
-                for(auto &mr1 : ijack)
-                {
-                    mr1.resize(_nmr);
-                    for(auto &mr2 : mr1)
-                        mr2.resize(_nmr);
-                }
-            }
-        }
-    }
-    
-    for(auto &z : zbil)
-    {
-        z.resize(_bilmoms);
-        for(auto &ibil : z)
-        {
-            ibil.resize(nbil);
-            for(auto &ijack : ibil)
-            {
-                ijack.resize(njacks);
-                for(auto &mr1 : ijack)
-                {
-                    mr1.resize(_nmr);
-                    for(auto &mr2 : mr1)
-                        mr2.resize(_nmr);
-                }
-            }
-        }
-    }
-    
-    for(auto &g : gbil4f)
-    {
-        g.resize(_bilmoms);
-        for(auto &ibil : g)
-        {
-            ibil.resize(nbil+1);
-            for(auto &ijack : ibil)
-            {
-                ijack.resize(njacks);
-                for(auto &mr1 : ijack)
-                {
-                    mr1.resize(_nmr);
-                    for(auto &mr2 : mr1)
-                        mr2.resize(_nmr);
-                }
-            }
-        }
-        
-    }
-    
-    for(auto &m : meslep)
-    {
-        m.resize(_meslepmoms);
-        for(auto &iop1 : m)
-        {
-            iop1.resize(nbil);
-            for(auto &iop2 : iop1)
-            {
-                iop2.resize(nbil);
-                for(auto &ijack : iop2)
-                {
-                    ijack.resize(njacks);
-                    for(auto &mr1 : ijack)
-                    {
-                        mr1.resize(_nmr);
-                        for(auto &mr2 : mr1)
-                            mr2.resize(_nmr);
-                    }
-                }
-            }
-        }
-    }
-    
-    for(auto &z : z4f)
-    {
-        z.resize(_meslepmoms);
-        for(auto &iop1 : z)
-        {
-            iop1.resize(nbil);
-            for(auto &iop2 : iop1)
-            {
-                iop2.resize(nbil);
-                for(auto &ijack : iop2)
-                {
-                    ijack.resize(njacks);
-                    for(auto &mr1 : ijack)
-                    {
-                        mr1.resize(_nmr);
-                        for(auto &mr2 : mr1)
-                            mr2.resize(_nmr);
-                    }
-                    
-                }
-            }
-        }
-    }
-    
+#undef ALLOCATE_ZQ
+#undef ALLOCATE_GBIL
+#undef ALLOCATE_ZBIL
+#undef ALLOCATE_GBIL4f
+#undef ALLOCATE_MESLEP
+#undef ALLOCATE_Z4f
 }
