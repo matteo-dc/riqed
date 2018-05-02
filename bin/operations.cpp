@@ -249,7 +249,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     deltam_cr = read_deltam(path_to_ens,"deltam_cr_array");
     deltamu   = read_deltam(path_to_ens,"deltamu_array");
     
-//    compute_Zq();
+    compute_Zq();
 //    compute_Zbil();
 //    if(compute_4f) compute_Z4f();
     
