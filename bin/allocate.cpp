@@ -13,7 +13,7 @@ void oper_t::allocate()
     
     // defining sigma allocation
 #define ALLOCATE_SIGMA(NUM,KIND)                        \
-    sigma ## NUM ## _ ## KIND.resize(_linmoms);             \
+    sigma ## NUM ## _ ## KIND.resize(_linmoms);         \
     for(auto &ijack : sigma ## NUM ## _ ## KIND)        \
     {                                                   \
         ijack.resize(njacks);                           \
@@ -25,14 +25,19 @@ void oper_t::allocate()
         }                                               \
     }
     // defining Zq allocation
-#define ALLOCATE_ZQ(A)          \
-    A.resize(_linmoms);         \
-    for(auto &ijack : A)        \
-    {                           \
-        ijack.resize(njacks);   \
-        for(auto &mr : ijack)   \
-        mr.resize(_nmr);        \
+#define ALLOCATE_ZQ(A)              \
+    A.resize(_linmoms);             \
+    for(auto &ijack : A)            \
+    {                               \
+        ijack.resize(njacks);       \
+        for(auto &mr : ijack)       \
+        {                           \
+            mr.resize(_nmr);        \
+            for(auto &i : mr)       \
+                i=0.0;              \
+        }                           \
     }
+    
     // defining Gbil allocation
 #define ALLOCATE_GBIL(A)                \
     A.resize(_bilmoms);                 \
@@ -46,13 +51,19 @@ void oper_t::allocate()
             {                           \
                 mr1.resize(_nmr);       \
                 for(auto &mr2 : mr1)    \
+                {                       \
                     mr2.resize(_nmr);   \
+                    for(auto &i : mr2); \
+                        i=0.0;          \
+                }                       \
             }                           \
         }                               \
     }
+    
     // defining Zbil allocation
 #define ALLOCATE_ZBIL(A)    \
     ALLOCATE_GBIL(A)
+    
     // defining Gbil4f allocation
 #define ALLOCATE_GBIL4f(A)              \
     A.resize(_bilmoms);                 \
@@ -66,7 +77,11 @@ void oper_t::allocate()
             {                           \
                 mr1.resize(_nmr);       \
                 for(auto &mr2 : mr1)    \
+                {                       \
                     mr2.resize(_nmr);   \
+                    for(auto &i : mr2); \
+                        i=0.0;          \
+                }                       \
             }                           \
         }                               \
     }
@@ -86,7 +101,11 @@ void oper_t::allocate()
                 {                           \
                     mr1.resize(_nmr);       \
                     for(auto &mr2 : mr1)    \
+                    {                       \
                         mr2.resize(_nmr);   \
+                        for(auto &i : mr2); \
+                            i=0.0;          \
+                    }                       \
                 }                           \
             }                               \
         }                                   \
@@ -107,7 +126,11 @@ void oper_t::allocate()
                 {                           \
                     mr1.resize(_nmr);       \
                     for(auto &mr2 : mr1)    \
+                    {                       \
                         mr2.resize(_nmr);   \
+                        for(auto &i : mr2); \
+                            i=0.0;          \
+                    }                       \
                 }                           \
             }                               \
         }                                   \
