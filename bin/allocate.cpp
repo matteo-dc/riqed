@@ -15,22 +15,24 @@ void oper_t::allocate()
     vector<vector<jZ4f_t>>          z4f={jZ_4f,jZ_EM_4f};
     vector<vector<jproj_meslep_t>>  meslep={jpr_meslep_LO,jpr_meslep_EM,jpr_meslep_nasty};
     
-    for(auto &s : sig)
-    {
-        s.resize(_linmoms);
-        for(auto &ijack : s)
-        {
-            ijack.resize(njacks);
-            for(auto &mr : ijack)
-                mr.resize(_nmr);
-        }
-    }
+#define ALLOCATE_SIGMA(NUM,KIND)                        \
+    sigma ## NUM_ ## KIND.resize(_linmoms);             \
+    for(auto &ijack : sigma ## NUM_ ## KIND)            \
+    {                                                   \
+        ijack.resize(njacks);                           \
+        for(auto &mr : ijack)                           \
+            mr.resize(_nmr);                            \
+    }                                                   \
     
-    cout<<"sigma1_LO: "<<sigma1_LO.size();
-    cout<<" "<<sigma1_LO[0].size()<<" "<<sigma1_LO[0][0].size()<<endl;
-    cout<<"sigma1_PH: "<<sigma1_PH.size()<<" "<<sigma1_PH[0].size()<<" "<<sigma1_PH[0][0].size()<<endl;
-    cout<<"sigma1_P: "<<sigma1_P.size()<<" "<<sigma1_P[0].size()<<" "<<sigma1_P[0][0].size()<<endl;
-    cout<<"sigma1_S: "<<sigma1_S.size()<<" "<<sigma1_S[0].size()<<" "<<sigma1_S[0][0].size()<<endl;
+    ALLOCATE_SIGMA(1,LO);
+    ALLOCATE_SIGMA(1,PH);
+    ALLOCATE_SIGMA(1,P);
+    ALLOCATE_SIGMA(1,S);
+    
+#undef ALLOCATE_SIGMA
+    
+    
+    cout<<"sigma1_LO: "<<sigma1_LO.size()<<" "<<sigma1_LO[0].size()<<" "<<sigma1_LO[0][0].size()<<endl;
     
     for(auto &z : zq)
     {
