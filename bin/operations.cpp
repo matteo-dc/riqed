@@ -213,8 +213,6 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     path_print = path_to_ens+"print/";
    
     V=size[0]*size[1]*size[2]*size[3];
-
-    cout<<"V = "<<V<<endl;
  
     _nm=nm;
     _nr=nr;
