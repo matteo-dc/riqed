@@ -9,6 +9,8 @@
 
 void oper_t::compute_Zbil()
 {
+    cout<<"Computing Zbil"<<endl;
+    
     for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
     {
         const int imom1=bilmoms[ibilmom][1]; // p1

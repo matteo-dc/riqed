@@ -9,6 +9,7 @@ using namespace sigma;
 
 void oper_t::compute_Zq()
 {
+    cout<<"Computing Zq"<<endl;
     for(int ilinmom=0; ilinmom<_linmoms; ilinmom++)
     {
         // LO
