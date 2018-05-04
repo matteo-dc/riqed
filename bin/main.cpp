@@ -24,10 +24,6 @@
 
 #include "fit.hpp"
 
-ORDER ord;
-MESLEP_TYPES meslep_t;
-VERTEX_TYPES vertex_t;
-
 int main(int narg,char **arg)
 {
     omp_set_nested(1);
@@ -76,73 +72,73 @@ int main(int narg,char **arg)
                 
                 basic[b][th][m].create_basic(b,th,m);
                 basic[b][th][m].plot("");
-                 ave[b][th][m] = basic[b][th][m].average_equiv_moms();
-                 ave[b][th][m].plot("ave");
+//                ave[b][th][m] = basic[b][th][m].average_equiv_moms();
+//                ave[b][th][m].plot("ave");
                 
-                if(only_basic==0)
-                {
-                    /*  average r  */
-                    
-                    rave[b][th][m] = basic[b][th][m].average_r();
-                    rave[b][th][m].plot("rave");
-                    
-                    /*  average over equivalent momenta  */
-                    
-                    rave_ave[b][th][m] = rave[b][th][m].average_equiv_moms();
-                    rave_ave[b][th][m].plot("rave_ave");
-                    
-                    /*  valence chiral extr  */
-                    
-                    rave_ave_chir[b][th][m] = rave_ave[b][th][m].chiral_extr();
-                    rave_ave_chir[b][th][m].plot("rave_ave_chir");
-                    
-                    /*  O(a2g2) subtraction  */
-                    
-                    rave_ave_chir_sub[b][th][m] = rave_ave_chir[b][th][m].subtract();
-                    rave_ave_chir_sub[b][th][m].plot("rave_ave_chir_sub");
-                }
+//                if(only_basic==0)
+//                {
+//                    /*  average r  */
+//                    
+//                    rave[b][th][m] = basic[b][th][m].average_r();
+//                    rave[b][th][m].plot("rave");
+//                    
+//                    /*  average over equivalent momenta  */
+//                    
+//                    rave_ave[b][th][m] = rave[b][th][m].average_equiv_moms();
+//                    rave_ave[b][th][m].plot("rave_ave");
+//                    
+//                    /*  valence chiral extr  */
+//                    
+//                    rave_ave_chir[b][th][m] = rave_ave[b][th][m].chiral_extr();
+//                    rave_ave_chir[b][th][m].plot("rave_ave_chir");
+//                    
+//                    /*  O(a2g2) subtraction  */
+//                    
+//                    rave_ave_chir_sub[b][th][m] = rave_ave_chir[b][th][m].subtract();
+//                    rave_ave_chir_sub[b][th][m].plot("rave_ave_chir_sub");
+//                }
                 
             } //close nm_sea
             
-            if(nm_Sea[b]>1 and only_basic==0)
-            {
-                /*  sea chiral extr  */
-                
-                rave_ave_chir_sub_sea[b][th] = chiral_sea_extr(rave_ave_chir_sub[b][th]);
-                rave_ave_chir_sub_sea[b][th].plot(theta_label[th]+"/rave_ave_chir_sub_sea");
-            }
-            else if(only_basic==0)
-            {
-                rave_ave_chir_sub_sea[b][th] = rave_ave_chir_sub[b][th][0];
-            }
+//            if(nm_Sea[b]>1 and only_basic==0)
+//            {
+//                /*  sea chiral extr  */
+//                
+//                rave_ave_chir_sub_sea[b][th] = chiral_sea_extr(rave_ave_chir_sub[b][th]);
+//                rave_ave_chir_sub_sea[b][th].plot(theta_label[th]+"/rave_ave_chir_sub_sea");
+//            }
+//            else if(only_basic==0)
+//            {
+//                rave_ave_chir_sub_sea[b][th] = rave_ave_chir_sub[b][th][0];
+//            }
         } //close ntheta
         
-        if(ntheta>1 and only_basic==0)
-        {
-            /*  theta average  */
-            
-            rave_ave_chir_sub_sea_theta[b] = theta_average(rave_ave_chir_sub_sea[b]);
-            rave_ave_chir_sub_sea_theta[b].plot("rave_ave_chir_sub_sea_theta");
-            
-            /*  evolution to 1/a  */
-            
-            rave_ave_chir_sub_sea_theta_evo[b] = rave_ave_chir_sub_sea_theta[b].evolve(b);
-            rave_ave_chir_sub_sea_theta_evo[b].plot("rave_ave_chir_sub_sea_theta_evo");
-        }
+//        if(ntheta>1 and only_basic==0)
+//        {
+//            /*  theta average  */
+//            
+//            rave_ave_chir_sub_sea_theta[b] = theta_average(rave_ave_chir_sub_sea[b]);
+//            rave_ave_chir_sub_sea_theta[b].plot("rave_ave_chir_sub_sea_theta");
+//            
+//            /*  evolution to 1/a  */
+//            
+//            rave_ave_chir_sub_sea_theta_evo[b] = rave_ave_chir_sub_sea_theta[b].evolve(b);
+//            rave_ave_chir_sub_sea_theta_evo[b].plot("rave_ave_chir_sub_sea_theta_evo");
+//        }
     } //close nbeta
     
-    if(nbeta>1 and only_basic==0)
-    {
-        /*  a2p2->0 extrapolation  */
-        
-        rave_ave_chir_sub_sea_theta_evo_extr = a2p2_extr(rave_ave_chir_sub_sea_theta_evo);
-        
-        /*  continuum limit  */
-        
-        cout<<"Continuum limit extrapolation:"<<endl<<endl;
-//        a2p2_extr(rave_chir_sub_sea_theta_evo_ave,LO);
-//        a2p2_extr(rave_chir_sub_sea_theta_evo_ave,EM);
-    }
+//    if(nbeta>1 and only_basic==0)
+//    {
+//        /*  a2p2->0 extrapolation  */
+//        
+//        rave_ave_chir_sub_sea_theta_evo_extr = a2p2_extr(rave_ave_chir_sub_sea_theta_evo);
+//        
+//        /*  continuum limit  */
+//        
+//        cout<<"Continuum limit extrapolation:"<<endl<<endl;
+////        a2p2_extr(rave_chir_sub_sea_theta_evo_ave,LO);
+////        a2p2_extr(rave_chir_sub_sea_theta_evo_ave,EM);
+//    }
     
     cout<<"DONE!"<<endl;
     
