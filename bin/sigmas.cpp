@@ -133,7 +133,9 @@ void oper_t::plot_sigmas()
     // plotting averaged sigma
     for(int imom=0;imom<_linmoms;imom++)
     {
+        cout<<"a"<<endl;
         sigma_tup sigma_ave_err_mom=ave_err(sigma[imom]);
+        cout<<"b"<<endl;
         vvvd_t sigma_ave_mom=get<0>(sigma_ave_err_mom);
         vvvd_t sigma_err_mom=get<1>(sigma_ave_err_mom);
     
