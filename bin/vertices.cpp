@@ -118,20 +118,12 @@ void oper_t::compute_bil()
 {
     using namespace gbil;
     
-    vector<ifstream> jG_data(nins);
+    ifstream jG_data(path_print+"jG");
     
-    bool all_good = true;
-    for(int j=0; j<nins; j++)
-    {
-        jG_data[j].open(path_print+"jG_"+ins_tag[j]);
-        if(!jG_data[j].good()) all_good = false;
-    }
-    
-    if(all_good)
+    if(jG_data[j].good())
     {
         cout<<"Reading bilinears from files"<<endl<<endl;
-        for(int ins=0;ins<nins;ins++)
-            read_vec_bin(jG[ins],path_print+"jG_"+ins_tag[ins]);
+        read_vec_bin(jG,path_print+"jG");
     }
     else
     {
