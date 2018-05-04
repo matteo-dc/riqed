@@ -11,12 +11,12 @@ void oper_t::compute_Zbil()
 {
     cout<<"Computing Zbil"<<endl;
     
+    vvvvvd_t jG_EM(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,_nmr),_nmr),njacks),nbil),_bilmoms);
+    
     for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
     {
         const int imom1=bilmoms[ibilmom][1]; // p1
         const int imom2=bilmoms[ibilmom][2]; // p2
-        
-        vvvvvd_t jG_EM(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,_nmr),_nmr),njacks),nbil),_bilmoms);
         
         //compute Z's according to 'riqed.pdf', one for each momentum
 #pragma omp parallel for collapse(4)
