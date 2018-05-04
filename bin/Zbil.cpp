@@ -41,7 +41,7 @@ void oper_t::compute_Zbil()
 
                         
                         jZ_EM[ibilmom][ibil][ijack][mr_fw][mr_bw] =
-                            jG_EM[ibilmom][ibil][ijack][mr_fw][mr_bw] +
+                            -jG_EM[ibilmom][ibil][ijack][mr_fw][mr_bw] +
                             0.5*(jZq_EM[imom1][ijack][mr_fw] + jZq_EM[imom2][ijack][mr_bw]);
                     }
         
