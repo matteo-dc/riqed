@@ -115,7 +115,7 @@ struct oper_t
     {
         compute_sigmas();
         compute_bil();
-//        if(compute_4f) compute_meslep();
+        if(compute_4f) compute_meslep();
     }
     
     void smom()
