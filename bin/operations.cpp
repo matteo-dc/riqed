@@ -1360,12 +1360,14 @@ void oper_t::plot(const string suffix)
         read_vec(p2t,path_print+"p2_tilde_eqmoms.txt");
     }
     
+    cout<<"Plotting Zq"<<endl;
     for(int imom=0; imom<in._linmoms; imom++)
     {
         Zq_data<<p2t[imom]<<"\t"<<Zq_ave[imom][0]<<"\t"<<Zq_err[imom][0]<<endl;
         Zq_EM_data<<p2t[imom]<<"\t"<<Zq_EM_ave[imom][0]<<"\t"<<Zq_EM_err[imom][0]<<endl;
     }
     
+    cout<<"Plotting Zbil"<<endl;
     for(int ibil=0;ibil<nbil;ibil++)
     {
         Zbil_data[ibil].open(path_to_ens+"plots/Z"+bil[ibil]+(suffix!=""?("_"+suffix):string(""))+".txt");
