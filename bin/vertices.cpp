@@ -78,7 +78,8 @@ void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,valarray<jvert_t> &jVert
 //project the amputated green function
 jproj_t compute_pr_bil( vvvprop_t &jpropOUT_inv,  valarray<jvert_t> &jVert,  vvvprop_t  &jpropIN_inv)
 {
-    const int sign[2*gbil::nins]={+1,+1,+1,+1,+1,+1,-1,-1,-1,-1,-1,-1};
+    const int sign[2*gbil::nins]={+1,+1,+1,+1,+1,+1,
+                                  -1,-1,-1,-1,-1,-1};
     
     const int i1[2*gbil::nins]={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
                                 jprop::PH,jprop::LO,jprop::P ,jprop::LO,jprop::S ,jprop::LO}; //fw
@@ -102,12 +103,12 @@ jproj_t compute_pr_bil( vvvprop_t &jpropOUT_inv,  valarray<jvert_t> &jVert,  vvv
                     for(int igam=0;igam<gbil::nGamma;igam++)
                     {
                         prop_t lambda_igam = sign[k]*
-                        jpropOUT_inv[i1[k]][ijack][mr_fw]*
-                        jVert[iv[k]][ijack][mr_fw][mr_bw][igam]*
-                        GAMMA[5]*(jpropIN_inv[i2[k]][ijack][mr_bw]).adjoint()*GAMMA[5];
+                                             jpropOUT_inv[i1[k]][ijack][mr_fw]*
+                                             jVert[iv[k]][ijack][mr_fw][mr_bw][igam]*
+                                             GAMMA[5]*(jpropIN_inv[i2[k]][ijack][mr_bw]).adjoint()*GAMMA[5];
                         
                         pr_bil[ip[k]][ibil_of_igam[igam]][ijack][mr_fw][mr_bw] +=
-                        (lambda_igam*Proj[igam]).trace().real()/12.0;
+                            (lambda_igam*Proj[igam]).trace().real()/12.0;
                     }
     
     return pr_bil;
