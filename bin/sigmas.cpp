@@ -150,27 +150,13 @@ void oper_t::compute_sigmas()
 {
     using namespace sigma;
     
-    vector<ifstream> sigma_data(nsigma);
+    ifstream sigma_data;
+    sigma_data.open(path_print+"sigmas");
     
-    bool all_good = true;
-    for(int j=0; j<nsigma; j++)
-    {
-        int iproj = j%nproj;
-        int ins = (j-iproj)/nproj;
-        
-        sigma_data[j].open(path_print+"sigma"+proj_tag[iproj]+"_"+ins_tag[ins]);
-        if(!sigma_data[j].good()) all_good = false;
-    }
-    
-    if(all_good)
+    if(sigma_data.good())
     {
         cout<<"Reading Sigmas from files"<<endl<<endl;
-        for(int j=0; j<nsigma; j++)
-        {
-            int iproj = j%nproj;
-            int ins = (j-iproj)/nproj;
-            read_vec_bin(sigma[iproj][ins],path_print+"sigma"+proj_tag[iproj]+"_"+ins_tag[ins]);
-        }
+        read_vec_bin(sigma,path_print+"sigmas");
     }
     else
     {
@@ -213,13 +199,7 @@ void oper_t::compute_sigmas()
         } // close linmoms loop
         
         // print sigmas
-        for(int j=0; j<nsigma; j++)
-        {
-            int iproj = j%nproj;
-            int ins = (j-iproj)/nproj;
-            for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
-                print_vec_bin(sigma[ilinmom][iproj][ins],path_print+"sigma"+proj_tag[iproj]+"_"+ins_tag[ins]);
-        }
+        print_vec_bin(sigma,path_print+"sigmas");
     }
     
     plot_sigmas();
