@@ -111,7 +111,7 @@ void oper_t::plot_sigmas()
         int iproj = j%nproj;
         int ins = (j-iproj)/nproj;
         
-        sigma_data[j].open(path_to_ens+"plots/sigma"+proj_tag[iproj]+"_"+ins_tag[ins]);
+        sigma_data[j].open(path_to_ens+"plots/sigma"+proj_tag[iproj]+"_"+ins_tag[ins]+".txt");
     }
     
     // reading p2
@@ -138,7 +138,7 @@ void oper_t::plot_sigmas()
         {
             int iproj = j%nproj;
             int ins = (j-iproj)/nproj;
-                        
+            
             sigma_data[j]<<p2t[imom]<<"\t";
             sigma_data[j]<<sigma_ave_mom[iproj][ins][0]<<"\t";
             sigma_data[j]<<sigma_err_mom[iproj][ins][0]<<endl;
