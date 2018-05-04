@@ -114,7 +114,7 @@ struct oper_t
     void ri_mom()
     {
         compute_sigmas();
-//        compute_bil();
+        compute_bil();
 //        if(compute_4f) compute_meslep();
     }
     
