@@ -8,10 +8,13 @@
 #include "operations.hpp"
 #include "deltam_cr.hpp"
 #include "tools.hpp"
+#include "sigmas.hpp"
 
 // compute deltam_cr and deltamu from propagators
 void oper_t::compute_deltam_from_prop()
 {
+    using namespace sigma;
+    
     //define deltam_cr
     vvvd_t v_deltamc(vvd_t(vd_t(0.0,_linmoms),njacks),nmr);
     vvvd_t v_deltamu(vvd_t(vd_t(0.0,_linmoms),njacks),nmr);
@@ -32,13 +35,13 @@ void oper_t::compute_deltam_from_prop()
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mr=0;mr<nmr;mr++)
             {
-                double A = sigma2_PH[imom][ijack][mr];
-                double B = sigma2_S[imom][ijack][mr];
-                double C = sigma2_P[imom][ijack][mr];
+                double A = sigma[imom][SIGMA2][PH][ijack][mr];
+                double B = sigma[imom][SIGMA2][S ][ijack][mr];
+                double C = sigma[imom][SIGMA2][P ][ijack][mr];
                 
-                double D = sigma3_PH[imom][ijack][mr];
-                double E = sigma3_S[imom][ijack][mr];
-                double F = sigma3_P[imom][ijack][mr];
+                double D = sigma[imom][SIGMA3][PH][ijack][mr];
+                double E = sigma[imom][SIGMA3][S ][ijack][mr];
+                double F = sigma[imom][SIGMA3][P ][ijack][mr];
                 
                 double den = B*F-C*E;
                 double deltamu = (-A*F+C*D)/den;

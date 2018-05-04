@@ -43,10 +43,10 @@ using vvqline_t=valarray<vqline_t>;
 using vert_t = vvqline_t;
 
 //list of jackknife propagators
-using jprop_t=valarray< valarray<prop_t> >;
+using jprop_t=vvvprop_t;
 
 //list of jackknife vertices
-using jvert_t=valarray< vert_t >;
+using jvert_t=valarray< vert_t > ;
 
 //valarray of complex double
 using vd_t=valarray<double>;
@@ -74,17 +74,18 @@ using vvvXd_t=valarray<vvXd_t>;
 using O4f_t=Matrix<double,5,5>;
 
 //useful notation
-using jZ_t=vvd_t;
-using jZbil_t=vvvvd_t;
-using jproj_t=vvvvd_t;
+using jproj_t=vvvvvd_t;
 using jmeslep_t=valarray<jvert_t>;
-using jvproj_meslep_t = valarray<vvvvvd_t>;
-using jproj_meslep_t = vvvvvd_t;
-using jZ4f_t = jproj_meslep_t;
+using jvproj_meslep_t = valarray< valarray<vvvvvd_t> >;
+using jproj_meslep_t = valarray< vvvvvd_t >;
+using jZq_t=vvd_t;
+using jZbil_t=vvvvd_t;
+using jZ4f_t =vvvvvd_t;
 
 //tuple
 using Zbil_tup=tuple<vvvvd_t,vvvvd_t>;
 using Zq_tup=tuple<vvd_t,vvd_t>;
+using sigma_tup=tuple<vvvd_t,vvvd_t>;
 using Zmeslep_tup=tuple<vvvvvd_t,vvvvvd_t>;
 using Z4f_tup=Zmeslep_tup;
 

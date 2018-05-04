@@ -3,10 +3,26 @@
 
 #include "aliases.hpp"
 
-// compute LO and EM vertices
-void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,valarray<jvert_t> &jVert_LO_and_EM);
+#ifndef EXTERN_VERT
+ #define EXTERN_VERT extern
+#endif
 
-// calculate the vertex function in a given configuration for the given equal momenta
-//prop_t make_vertex(const prop_t &prop1, const prop_t &prop2, const int mu);
+// compute LO and EM vertices
+void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,valarray<jvert_t> &jVert);
+
+namespace gbil
+{
+    void set_ins();
+    
+    enum ins{LO,PH,Pfw,Pbw,Sfw,Sbw};
+    EXTERN_VERT vector<ins> ins_list;
+    EXTERN_VERT int nins;
+    
+    EXTERN_VERT int nGamma;
+    
+    EXTERN_VERT vector<string> ins_tag;
+}
+
+#undef EXTERN_VERT
 
 #endif 

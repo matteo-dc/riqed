@@ -93,6 +93,8 @@ struct oper_t
     // compute the basic RC estimators
     void create_basic(const int b, const int th, const int msea);
     
+    void set_ins();
+    
     void set_moms();
     
     void set_ri_mom_moms();
@@ -107,7 +109,7 @@ struct oper_t
     
     vector<string> setup_read_lprop(FILE* input_l[]);
     
-    void build_prop(const vvvprop_t &prop, jprop_t &jS_LO,jprop_t &jS_PH,jprop_t &jS_P, jprop_t &jS_S);
+    void build_prop(const vvvprop_t &prop, vvvprop_t &jprop);
     
     void ri_mom()
     {
@@ -121,64 +123,37 @@ struct oper_t
         ri_mom();
     }
 
-    
-    // definition of sigmas: trace of propagator
-    vector<vvd_t> sigma1_LO;
-    vector<vvd_t> sigma1_PH;
-    vector<vvd_t> sigma1_P;
-    vector<vvd_t> sigma1_S;
-    ///
-    vector<vvd_t> sigma2_LO;
-    vector<vvd_t> sigma2_PH;
-    vector<vvd_t> sigma2_P;
-    vector<vvd_t> sigma2_S;
-    ///
-    vector<vvd_t> sigma3_LO;
-    vector<vvd_t> sigma3_PH;
-    vector<vvd_t> sigma3_P;
-    vector<vvd_t> sigma3_S;
-    
     // create props
     void compute_prop();
     
+    // definition of sigmas: trace of propagator
+    vector<vvvvd_t> sigma;
     // compute sigmas
     void compute_sigmas();
-    vvd_t compute_sigma1(jprop_t &jprop_inv, const int imom);
-    vvd_t compute_sigma2(jprop_t &jprop_inv);
-    vvd_t compute_sigma3(jprop_t &jprop_inv);
-    
+    vvvd_t compute_sigma(vvvprop_t &jprop_inv, const int iproj, const int imom);
     
     // definition of projected bils
-    vector<jproj_t> jG_LO, jG_EM;
-    
-    // definition of projected charged bils (for 4fermions)
-    vector<jproj_t> jG_LO_4f, jG_EM_4f;
-    
-    // definition of projected meslep
-    vector<jproj_meslep_t> jpr_meslep_LO, jpr_meslep_EM, jpr_meslep_nasty;
-    
+    vector<jproj_t> jG;
     // compute projected bils
     void compute_bil();
-    
+
+    // definition of projected meslep
+    vector<jproj_meslep_t> jpr_meslep;
     // compute meslep
     void compute_meslep();
     
     // definition of jZq
-    vector<jZ_t> jZq, jZq_EM;
-    
-    // definition of Z
-    bool Zbil_computed{false};
-    vector<jZbil_t> jZ, jZ_EM;
-    
-    // definition of Z (4fermions)
-    vector<jZ4f_t> jZ_4f, jZ_EM_4f;
-    
+    vector<jZq_t> jZq, jZq_EM;
     // compute Zq
     void compute_Zq();
     
+    // definition of Z
+    vector<jZbil_t> jZ, jZ_EM;
     // compute Zbils
     void compute_Zbil();
     
+    // definition of Z (4fermions)
+    vector<jZ4f_t> jZ_4f, jZ_4f_EM;
     // compute Z4f
     void compute_Z4f();
     
@@ -203,9 +178,7 @@ struct oper_t
     void plot(const string suffix);
     
     // plot sigmas
-    void plot_sigmas();
-    
-    
+    void plot_sigmas();    
 };
 
 // valarray of oper_t struct;

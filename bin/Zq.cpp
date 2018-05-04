@@ -3,17 +3,21 @@
 #include "Dirac.hpp"
 #include <omp.h>
 #include "operations.hpp"
+#include "sigmas.hpp"
+
+using namespace sigma;
 
 void oper_t::compute_Zq()
 {
     for(int ilinmom=0; ilinmom<_linmoms; ilinmom++)
     {
         // LO
-        jZq[ilinmom] = sigma1_LO[ilinmom];
+        jZq[ilinmom] = sigma[ilinmom][SIGMA1][LO];
         
-        // EM
-        jZq_EM[ilinmom] = sigma1_PH[ilinmom] +
-                          sigma1_P[ilinmom]*deltam_cr +
-                          sigma1_S[ilinmom]*deltamu;
+        // EM (relative)
+        jZq_EM[ilinmom] = (sigma[ilinmom][SIGMA1][PH] +
+                           sigma[ilinmom][SIGMA1][P ]*deltam_cr +
+                           sigma[ilinmom][SIGMA1][S ]*deltamu)/
+                            sigma[ilinmom][SIGMA1][LO];
     }
 }

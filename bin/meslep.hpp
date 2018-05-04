@@ -1,6 +1,10 @@
 #ifndef MESLEP_HPP
 #define MESLEP_HPP
 
+#ifndef EXTERN_MESLEP
+ #define EXTERN_MESLEP extern
+#endif
+
 namespace meslep
 {
     const int nmeslep = 10;
@@ -26,11 +30,23 @@ namespace meslep
     const vector<int> proj_norm = {4,4,1,1,24};
     const vector<int> op_norm = {1,1,1,1,2};
     
-    enum{_LO=0 ,_F=1 ,_FF=2 ,_T=3 ,_P=4 ,_S=5 };
+    enum ins{LO,F,FF,T,P,S};
+}
+
+namespace pr_meslep
+{
+    void set_ins();
+    
+    enum ins{LO,EM,NASTY};
+    
+    EXTERN_MESLEP vector<ins> ins_list;
+    EXTERN_MESLEP int nins;
 }
 
 void build_meslep(const vvvprop_t &S1,const vvvprop_t &S2, const vvprop_t &L, valarray<jmeslep_t> &jmeslep);
 
 jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jmeslep, vvvprop_t  &jprop2_inv, const double q1, const double q2, const double ql);
+
+#undef EXTERN_MESLEP
 
 #endif

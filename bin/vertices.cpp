@@ -4,6 +4,29 @@
 #include "contractions.hpp"
 #include <omp.h>
 #include "prop.hpp"
+#include "rotate.hpp"
+#include "jack.hpp"
+#include "print.hpp"
+#include "prop.hpp"
+#include "operations.hpp"
+#include <chrono>
+
+#define EXTERN_VERT
+ #include "vertices.hpp"
+
+using namespace std::chrono;
+
+namespace gbil
+{
+    void set_ins()
+    {
+        ins_list={LO,PH,Pfw,Pbw,Sfw,Sbw};
+        ins_tag={"LO","EM","Pfw","Pbw","Sfw","Sbw"};
+        
+        nins=ins_list.size();
+        nGamma=16;
+    }
+}
 
 //calculate the vertex function in a given configuration for the given equal momenta
 prop_t make_vertex(const prop_t &prop1, const prop_t &prop2, const int mu)
@@ -12,7 +35,7 @@ prop_t make_vertex(const prop_t &prop1, const prop_t &prop2, const int mu)
 }
 
 // compute LO and EM vertices
-void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,valarray<jvert_t> &jVert_LO_EM_P_S)
+void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,valarray<jvert_t> &jVert)
 {
 #pragma omp parallel for collapse (4)
     for(int ijack=0;ijack<njacks;ijack++)
@@ -21,33 +44,212 @@ void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,valarray<jvert_t> &jVert
                 for(int igam=0;igam<16;igam++)
                 {
                     // LO
-                    jVert_LO_EM_P_S[LO][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(S1[ijack][_LO][mr_fw], S2[ijack][_LO][mr_bw],igam);
+                    jVert[gbil::LO][ijack][mr_fw][mr_bw][igam] +=
+                        make_vertex(S1[ijack][qprop::LO][mr_fw], S2[ijack][qprop::LO][mr_bw],igam);
                     
                     // EM: Self + Tadpole + Exchange
-                    jVert_LO_EM_P_S[EM][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(S1[ijack][_LO][mr_fw],S2[ijack][_FF][mr_bw],igam) +
-                        make_vertex(S1[ijack][_LO][mr_fw],S2[ijack][_T ][mr_bw],igam) +
-                        make_vertex(S1[ijack][_FF][mr_fw],S2[ijack][_LO][mr_bw],igam) +
-                        make_vertex(S1[ijack][_T ][mr_fw],S2[ijack][_LO][mr_bw],igam) +
-                        make_vertex(S1[ijack][_F ][mr_fw],S1[ijack][_F ][mr_bw],igam) ;
+                    jVert[gbil::PH][ijack][mr_fw][mr_bw][igam] +=
+                        make_vertex(S1[ijack][qprop::LO][mr_fw],S2[ijack][qprop::FF][mr_bw],igam) +
+                        make_vertex(S1[ijack][qprop::LO][mr_fw],S2[ijack][qprop::T ][mr_bw],igam) +
+                        make_vertex(S1[ijack][qprop::FF][mr_fw],S2[ijack][qprop::LO][mr_bw],igam) +
+                        make_vertex(S1[ijack][qprop::T ][mr_fw],S2[ijack][qprop::LO][mr_bw],igam) +
+                        make_vertex(S1[ijack][qprop::F ][mr_fw],S1[ijack][qprop::F ][mr_bw],igam) ;
                     
                     // Pfw
-                    jVert_LO_EM_P_S[Pfw][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(S1[ijack][_P ][mr_fw],S2[ijack][_LO][mr_bw],igam);
+                    jVert[gbil::Pfw][ijack][mr_fw][mr_bw][igam] +=
+                        make_vertex(S1[ijack][qprop::P ][mr_fw],S2[ijack][qprop::LO][mr_bw],igam);
                     
                     // Pbw
-                    jVert_LO_EM_P_S[Pbw][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(S1[ijack][_LO][mr_fw],S2[ijack][_P ][mr_bw],igam);
+                    jVert[gbil::Pbw][ijack][mr_fw][mr_bw][igam] +=
+                        make_vertex(S1[ijack][qprop::LO][mr_fw],S2[ijack][qprop::P ][mr_bw],igam);
                     
                     // Sfw
-                    jVert_LO_EM_P_S[Sfw][ijack][mr_fw][mr_bw][igam] +=
-                    make_vertex(S1[ijack][_S ][mr_fw],S2[ijack][_LO][mr_bw],igam);
+                    jVert[gbil::Sfw][ijack][mr_fw][mr_bw][igam] +=
+                        make_vertex(S1[ijack][qprop::S ][mr_fw],S2[ijack][qprop::LO][mr_bw],igam);
                     
                     // Sbw
-                    jVert_LO_EM_P_S[Sbw][ijack][mr_fw][mr_bw][igam] +=
-                    make_vertex(S1[ijack][_LO][mr_fw],S2[ijack][_S ][mr_bw],igam);
+                    jVert[gbil::Sbw][ijack][mr_fw][mr_bw][igam] +=
+                        make_vertex(S1[ijack][qprop::LO][mr_fw],S2[ijack][qprop::S ][mr_bw],igam);
 
                 }
     
+}
+
+//project the amputated green function
+jproj_t compute_pr_bil( vvvprop_t &jpropOUT_inv,  valarray<jvert_t> &jVert,  vvvprop_t  &jpropIN_inv)
+{
+    const int sign[2*gbil::nins]={+1,+1,+1,+1,+1,+1,-1,-1,-1,-1,-1,-1};
+    
+    const int i1[2*gbil::nins]={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
+                                jprop::PH,jprop::LO,jprop::P ,jprop::LO,jprop::S ,jprop::LO}; //fw
+    const int iv[2*gbil::nins]={gbil::LO,gbil::PH,gbil::Pfw,gbil::Pbw,gbil::Sfw,gbil::Sbw,
+                                gbil::LO,gbil::LO,gbil::LO ,gbil::LO ,gbil::LO ,gbil::LO };   //vert
+    const int i2[2*gbil::nins]={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
+                                jprop::LO,jprop::PH,jprop::LO,jprop::P ,jprop::LO,jprop::S }; //bw
+    
+    const int ip[2*gbil::nins]={gbil::LO,gbil::PH,gbil::Pfw,gbil::Pbw,gbil::Sfw,gbil::Sbw,
+                                gbil::PH,gbil::PH,gbil::Pfw,gbil::Pbw,gbil::Sfw,gbil::Sbw};
+    
+    jproj_t pr_bil(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nbil),gbil::nins);
+    
+    const int ibil_of_igam[gbil::nGamma]={0,1,1,1,1,2,3,3,3,3,4,4,4,4,4,4};
+    
+#pragma omp parallel for collapse(5)
+    for(int ijack=0;ijack<njacks;ijack++)
+        for(int mr_fw=0;mr_fw<nmr;mr_fw++)
+            for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+                for(int k=0;k<2*gbil::nins;k++)
+                    for(int igam=0;igam<gbil::nGamma;igam++)
+                    {
+                        prop_t lambda_igam = sign[k]*
+                        jpropOUT_inv[i1[k]][ijack][mr_fw]*
+                        jVert[iv[k]][ijack][mr_fw][mr_bw][igam]*
+                        GAMMA[5]*(jpropIN_inv[i2[k]][ijack][mr_bw]).adjoint()*GAMMA[5];
+                        
+                        pr_bil[ip[k]][ibil_of_igam[igam]][ijack][mr_fw][mr_bw] +=
+                        (lambda_igam*Proj[igam]).trace().real()/12.0;
+                    }
+    
+    return pr_bil;
+}
+
+void oper_t::compute_bil()
+{
+    using namespace gbil;
+    
+    vector<ifstream> jG_data(nins);
+    
+    bool all_good = true;
+    for(int j=0; j<nins; j++)
+    {
+        jG_data[j].open(path_print+"jG_"+ins_tag[j]);
+        if(!jG_data[j].good()) all_good = false;
+    }
+    
+    if(all_good)
+    {
+        cout<<"Reading bilinears from files"<<endl<<endl;
+        for(int ins=0;ins<nins;ins++)
+            read_vec_bin(jG[ins],path_print+"jG_"+ins_tag[ins]);
+    }
+    else
+    {
+        cout<<"Creating the vertices -- ";
+        
+        // array of input files to be read in a given conf
+        FILE* input[combo];
+        
+        const vector<string> v_path = setup_read_qprop(input);
+        
+        for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
+        {
+            high_resolution_clock::time_point t0=high_resolution_clock::now();
+            
+            cout<<endl;
+            cout<<"\r\t bilmom = "<<ibilmom+1<<"/"<<_bilmoms<<endl;
+            
+            const int imom1=bilmoms[ibilmom][1]; // p1
+            const int imom2=bilmoms[ibilmom][2]; // p2
+            const bool read2=(imom1!=imom2);
+            
+            // definition of jackknifed propagators
+            /* prop1 */
+            jprop_t jS1(vvprop_t(vprop_t(prop_t::Zero(),_nmr),njacks),jprop::nins);
+            /* prop2 */
+            jprop_t jS2(vvprop_t(vprop_t(prop_t::Zero(),_nmr),njacks),jprop::nins);
+            
+            // definition of jackknifed vertices
+            valarray<jvert_t> jVert(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),gbil::nGamma),_nmr),_nmr),njacks),gbil::nins);
+            
+            cout<<"- Building vertices"<<endl;
+            
+            double t_span1=0.0, t_span2=0.0, t_span3=0.0;
+            
+            for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
+                for(int ihit=0;ihit<nhits;ihit++)
+                {
+                    const int mom1=linmoms[imom1][0];
+                    const int mom2=linmoms[imom2][0];
+                    
+                    high_resolution_clock::time_point ta=high_resolution_clock::now();
+                    
+                    vvvprop_t S1=read_qprop_mom(input,v_path,i_in_clust,ihit,mom1);
+                    vvvprop_t S2=(read2)?read_qprop_mom(input,v_path,i_in_clust,ihit,mom2):S1;
+                    
+                    S1=rotate(S1);
+                    S2=(read2)?rotate(S2):S1;
+                    
+                    high_resolution_clock::time_point tb=high_resolution_clock::now();
+                    t_span1 += (duration_cast<duration<double>>(tb-ta)).count();
+                    
+                    ta=high_resolution_clock::now();
+                    
+                    build_prop(S1,jS1);
+                    if(read2) build_prop(S2,jS2);
+                    else {jS2=jS1;}
+                    
+                    tb=high_resolution_clock::now();
+                    t_span2 += (duration_cast<duration<double>>(tb-ta)).count();
+                    
+                    ta=high_resolution_clock::now();
+                    
+                    build_vert(S1,S2,jVert);
+                    
+                    tb=high_resolution_clock::now();
+                    t_span3 += (duration_cast<duration<double>>(tb-ta)).count();
+                }
+            cout<<"\t read: "<<t_span1<<" s"<<endl;
+            cout<<"\t build prop: "<<t_span2<<" s"<<endl;
+            cout<<"\t build vert: "<<t_span3<<" s"<<endl;
+            
+            
+            cout<<"- Jackknife of propagators and vertices"<<endl;
+            
+            // jackknife averages
+            /* prop1 */
+            for(auto &prop1 : jS1) prop1 = jackknife(prop1);
+            /* prop2 */
+            if(read2)
+                for(auto &prop2 : jS2) prop2 = jackknife(prop2);
+            else
+                jS2=jS1;
+            /* vert */
+            for(int ins=0; ins<nins; ins++)
+                jVert[ins] = jackknife(jVert[ins]);
+            
+            cout<<"- Inverting propagators"<<endl;
+            
+            // definition of inverse propagators
+            jprop_t jS1_inv(vvprop_t(vprop_t(prop_t::Zero(),_nmr),njacks),jprop::nins);
+            jprop_t jS2_inv(vvprop_t(vprop_t(prop_t::Zero(),_nmr),njacks),jprop::nins);
+            
+            // invert propagators
+            /* prop1 */
+            jS1_inv[jprop::LO] = invert_jprop(jS1[jprop::LO]);
+            for(int i=1;i<jprop::nins;i++)
+                jS1_inv[i] = - jS1_inv[jprop::LO]*jS1[i]*jS1_inv[jprop::LO];
+            /* prop2 */
+            if(read2)
+            {
+                jS2_inv[jprop::LO] = invert_jprop(jS2[jprop::LO]);
+                for(int i=1;i<jprop::nins;i++)
+                    jS2_inv[i] = - jS2_inv[jprop::LO]*jS2[i]*jS2_inv[jprop::LO];
+            }
+            else
+                jS2_inv=jS1_inv;
+            
+            cout<<"- Computing bilinears"<<endl;
+            
+            // compute the projected green function (S,V,P,A,T)
+            jG[ibilmom] = compute_pr_bil(jS1_inv,jVert,jS2_inv);
+            
+            high_resolution_clock::time_point t1=high_resolution_clock::now();
+            duration<double> t_span = duration_cast<duration<double>>(t1-t0);
+            cout<<"\t\t time: "<<t_span.count()<<" s"<<endl;
+            
+        } // close mom loop
+        cout<<endl<<endl;
+        
+        print_vec_bin(jG,path_print+"jG");
+    }
 }

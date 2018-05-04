@@ -1,6 +1,29 @@
 #ifndef ALLOC_HPP
 #define ALLOC_HPP
 
+#include "global.hpp"
+#include "aliases.hpp"
 
+void allocate_vec_internal(double &t, const vector<int> sizes, int isize);
+
+template <class T>
+void allocate_vec_internal(valarray<T> &v, const vector<int> sizes, int isize)
+{
+    v.resize(sizes[isize]);
+    isize++;
+    for(auto &i : v)
+        allocate_vec_internal(i,sizes,isize);
+}
+
+template <class T>
+void allocate_vec( T &vec, const vector<int> sizes)
+{
+    int isize=0;
+    
+    vec.resize(sizes[isize]);
+    isize++;
+    for(auto &i : vec)
+        allocate_vec_internal(i,sizes,isize);
+}
 
 #endif
