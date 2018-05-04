@@ -132,19 +132,4 @@ extern int only_basic;
 // compute mPCAC
 extern int compute_mpcac;
 
-
-typedef enum {
-    QCD = 0,    //  operator in pure QCD
-    IN = 1,     //  photon exchange between quark qIN  and charged lepton
-    OUT = 2,    //  photon exchange between quark qOUT and charged lepton
-    M11 = 3,    //  em correction to the quark qIN  propagator
-    M22 = 4,    //  em correction to the quark qOUT propagator
-    M12 = 5,    //  photon exchanged between the two quarks
-    P11 = 6,    //  pseudoscalar insertion on the quark qIN  propagator
-    P22 = 7,    //  pseudoscalar insertion on the quark qOUT propagator
-    S11 = 8,    //  scalar insertion on the quark qIN  propagator
-    S22 = 9     //  scalar insertion on the quark qOUT propagator
-} MESLEP_TYPES;
-
-extern MESLEP_TYPES meslep_t;
 #endif
