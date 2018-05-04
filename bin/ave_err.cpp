@@ -82,12 +82,12 @@ tuple<vvvvd_t,vvvvd_t> ave_err(vector<jZbil_t> jZ)
 }
 
 // average sigma
-tuple<vvvd_t,vvvd_t> ave_err(vvvvd_t sigma)
+tuple<vvvd_t,vvvd_t> ave_err(vvvvd_t sig)
 {
-    int nproj=(int)sigma.size();
-    int nins=(int)sigma[0].size();
-    int _njacks=(int)sigma[0][0].size();
-    int _nmr=(int)sigma[0][0][0].size();
+    int nproj=(int)sig.size();
+    int nins=(int)sig[0].size();
+    int _njacks=(int)sig[0][0].size();
+    int _nmr=(int)sig[0][0][0].size();
     
     vvvd_t sig_ave(vvd_t(vd_t(0.0,_nmr),nins),nproj);
     vvvd_t sqr_sig_ave=sig_ave;
@@ -98,9 +98,9 @@ tuple<vvvd_t,vvvd_t> ave_err(vvvvd_t sigma)
             for(int mr=0;mr<_nmr;mr++)
                 for(int ijack=0;ijack<_njacks;ijack++)
                 {
-                    sig_ave[iproj][ins][mr] += sigma[iproj][ins][ijack][mr]/_njacks;
-                    sqr_sig_ave[iproj][ins][mr] += sigma[iproj][ins][ijack][mr]*
-                                                   sigma[iproj][ins][ijack][mr]/_njacks;
+                    sig_ave[iproj][ins][mr] += sig[iproj][ins][ijack][mr]/_njacks;
+                    sqr_sig_ave[iproj][ins][mr] += sig[iproj][ins][ijack][mr]*
+                                                   sig[iproj][ins][ijack][mr]/_njacks;
                 }
     
     for(int iproj=0;iproj<nproj;iproj++)
