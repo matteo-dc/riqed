@@ -27,8 +27,8 @@ void oper_t::allocate()
     allocate_vec(jZq,{_linmoms,njacks,_nmr});
     allocate_vec(jZq_EM,{_linmoms,njacks,_nmr});
     // allocate Zbil
-    allocate_vec(jZ,{_bilmoms,njacks,_nmr,_nmr});
-    allocate_vec(jZ_EM,{_bilmoms,njacks,_nmr,_nmr});
+    allocate_vec(jZ,{_bilmoms,nbil,njacks,_nmr,_nmr});
+    allocate_vec(jZ_EM,{_bilmoms,nbil,njacks,_nmr,_nmr});
     // allocate Z4f
     allocate_vec(jZ_4f,{_meslepmoms,nbil,nbil,njacks,_nmr,_nmr});
     allocate_vec(jZ_4f_EM,{_meslepmoms,nbil,nbil,njacks,_nmr,_nmr});
