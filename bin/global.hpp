@@ -134,13 +134,6 @@ extern int compute_mpcac;
 
 
 typedef enum {
-    LO = 0,
-    EM = 1,
-    P = 2,
-    S = 3
-} ORDER;
-
-typedef enum {
     QCD = 0,    //  operator in pure QCD
     IN = 1,     //  photon exchange between quark qIN  and charged lepton
     OUT = 2,    //  photon exchange between quark qOUT and charged lepton
@@ -153,14 +146,5 @@ typedef enum {
     S22 = 9     //  scalar insertion on the quark qOUT propagator
 } MESLEP_TYPES;
 
-typedef enum {
-    Pfw = 2,
-    Pbw = 3,
-    Sfw = 4,
-    Sbw = 5
-} VERTEX_TYPES;
-
-extern ORDER ord;
 extern MESLEP_TYPES meslep_t;
-extern VERTEX_TYPES vertex_t;
 #endif
