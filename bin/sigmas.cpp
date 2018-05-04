@@ -217,7 +217,8 @@ void oper_t::compute_sigmas()
         {
             int iproj = j%nproj;
             int ins = (j-iproj)/nproj;
-            print_vec_bin(sigma[iproj][ins],path_print+"sigma"+proj_tag[iproj]+"_"+ins_tag[ins]);
+            for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
+                print_vec_bin(sigma[ilinmom][iproj][ins],path_print+"sigma"+proj_tag[iproj]+"_"+ins_tag[ins]);
         }
     }
     
