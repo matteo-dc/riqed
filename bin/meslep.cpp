@@ -357,12 +357,12 @@ jvproj_meslep_t compute_pr_meslep(jprop_t &jpropOUT_inv, valarray<jmeslep_t> &jm
     double Q[nloop]={1.0,ql*qIN,ql*qOUT,qIN*qIN,qOUT*qOUT,qIN*qOUT,qIN*qIN,qOUT*qOUT,qIN*qIN,qOUT*qOUT,
                                         qIN*qIN,qOUT*qOUT,         qIN*qIN,qOUT*qOUT,qIN*qIN,qOUT*qOUT};
     
-    const int i1[nloop]={qprop::LO,qprop::LO,qprop::LO,qprop::LO,qprop::LO,qprop::LO,qprop::LO,qprop::LO,qprop::LO,qprop::LO,
-                                                       qprop::LO,qprop::PH,          qprop::LO,qprop::P ,qprop::LO,qprop::S }; //propOUT_inv
+    const int i1[nloop]={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
+                                                       jprop::LO,jprop::PH,          jprop::LO,jprop::P ,jprop::LO,jprop::S }; //propOUT_inv
     const int iv[nloop]={LO ,IN ,OUT,M11,M22,M12,P11,P22,S11,S22,
                                      LO ,LO ,    LO ,LO ,LO ,LO }; //meslep
-    const int i2[nloop]={qprop::LO,qprop::LO,qprop::LO,qprop::LO,qprop::LO,qprop::LO,qprop::LO,qprop::LO,qprop::LO,qprop::LO,
-                                                       qprop::PH,qprop::LO,          qprop::P ,qprop::LO,qprop::S ,qprop::LO}; //propIN_inv
+    const int i2[nloop]={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
+                                                       jprop::PH,jprop::LO,          jprop::P ,jprop::LO,jprop::S ,jprop::LO}; //propIN_inv
     
     const int im[nloop]={LO ,IN ,OUT,M11,M22,M12,P11,P22,S11,S22,
                                      M11,M22,    P11,P22,S11,S22};
