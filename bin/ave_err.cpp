@@ -89,16 +89,12 @@ tuple<vvvd_t,vvvd_t> ave_err(vvvvd_t sig)
     int _njacks=(int)sig[0][0].size();
     int _nmr=(int)sig[0][0][0].size();
     
-    cout<<"--"<<endl;
-    
     vvvd_t sig_ave(vvd_t(vd_t(0.0,_nmr),nins),nproj);
     vvvd_t sqr_sig_ave=sig_ave;
     vvvd_t sig_err=sig_ave;
     
-    cout<<"--"<<endl;
-    
     for(int iproj=0;iproj<nproj;iproj++)
-        for(int ins=0;ins<nins;iproj++)
+        for(int ins=0;ins<nins;ins++)
             for(int mr=0;mr<_nmr;mr++)
                 for(int ijack=0;ijack<_njacks;ijack++)
                 {
@@ -107,15 +103,11 @@ tuple<vvvd_t,vvvd_t> ave_err(vvvvd_t sig)
                                                    sig[iproj][ins][ijack][mr]/_njacks;
                 }
     
-    cout<<"--"<<endl;
-    
     for(int iproj=0;iproj<nproj;iproj++)
-        for(int ins=0;ins<nins;iproj++)
+        for(int ins=0;ins<nins;ins++)
             for(int mr=0;mr<_nmr;mr++)
             sig_err[iproj][ins][mr]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_sig_ave[iproj][ins][mr]-sig_ave[iproj][ins][mr]*sig_ave[iproj][ins][mr]));
-    
-    cout<<"--"<<endl;
-    
+        
     tuple<vvvd_t,vvvd_t> tuple_ave_err(sig_ave,sig_err);
     
     return tuple_ave_err;
