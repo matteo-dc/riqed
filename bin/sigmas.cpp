@@ -112,7 +112,6 @@ void oper_t::plot_sigmas()
         int ins = (j-iproj)/nproj;
         
         sigma_data[j].open(path_to_ens+"plots/sigma"+proj_tag[iproj]+"_"+ins_tag[ins]);
-        cout<<"  opened \"plots/sigma"+proj_tag[iproj]+"_"+ins_tag[ins]+"\""<<endl;
     }
     
     // reading p2
@@ -128,14 +127,10 @@ void oper_t::plot_sigmas()
         read_vec(p2t,path_print+"p2_tilde_eqmoms.txt");
     }
     
-    cout<<sigma.size()<<" "<<sigma[0].size()<<" "<<sigma[0][0].size()<<" "<<sigma[0][0][0].size()<<" "<<sigma[0][0][0][0].size()<<endl;
-    
     // plotting averaged sigma
     for(int imom=0;imom<_linmoms;imom++)
     {
-        cout<<"a"<<endl;
         sigma_tup sigma_ave_err_mom=ave_err(sigma[imom]);
-        cout<<"b"<<endl;
         vvvd_t sigma_ave_mom=get<0>(sigma_ave_err_mom);
         vvvd_t sigma_err_mom=get<1>(sigma_ave_err_mom);
     
