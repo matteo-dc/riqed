@@ -9,28 +9,32 @@ namespace meslep
 {
     const int nmeslep = 10;
     const int nprmeslep = 8;
+    const int nampQED = 6;
     const int nOp = 5;
     const int nGamma = 11; // number of independent combinations of gamma matrices
     
     const vector<size_t>         iG            = { 1, 2, 3, 4,   0,  10,11,12,13,14,15};
     const vector<int>            g5L_sign      = {-1,-1,-1,-1,  +1,  +1,+1,+1,+1,+1,+1};
-
     
     const vector<vector<size_t>> iG_of_iop     = {{0,1,2,3},{0,1,2,3},{4},{4},{5,6,7,8,9,10}};
     
     const vector<int>            g5_sign       = { -1,  +1,  -1,  +1,  +1};
     
-//    const vector<size_t>         iG            ={1,2,3,4,1,2,3,4,0,0,10,11,12,13,14,15};
-//    const vector<int>            g5_sign       ={ -1,-1,-1,-1,  +1,+1,+1,+1,  -1,  +1,  +1,+1,+1,+1,+1,+1};
-//    const vector<int>            g5L_sign      ={ -1,-1,-1,-1,  -1,-1,-1,-1,  +1,  +1,  +1,+1,+1,+1,+1,+1};
-    
-    //    const vector<vector<size_t>> iG_of_iop = {{0,1,2,3},{4,5,6,7},{8},{9},{10,11,12}};
-//    const vector<vector<size_t>> iG_of_iop = {{0,1,2,3},{4,5,6,7},{8},{9},{10,11,12,13,14,15}};
-    
     const vector<int> proj_norm = {4,4,1,1,24};
     const vector<int> op_norm = {1,1,1,1,2};
     
-    enum ins{LO,F,FF,T,P,S};
+    enum kind{
+        LO,     //  operator in pure QCD
+        IN,     //  photon exchange between quark qIN  and charged lepton
+        OUT,    //  photon exchange between quark qOUT and charged lepton
+        M11,    //  em correction to the quark qIN  propagator
+        M22,    //  em correction to the quark qOUT propagator
+        M12,    //  photon exchanged between the two quarks
+        P11,    //  pseudoscalar insertion on the quark qIN  propagator
+        P22,    //  pseudoscalar insertion on the quark qOUT propagator
+        S11,    //  scalar insertion on the quark qIN  propagator
+        S22     //  scalar insertion on the quark qOUT propagator
+    };
 }
 
 namespace pr_meslep
