@@ -32,7 +32,7 @@ vvd_t jackknife(vvd_t &jd)
 }
 
 // jackknife Propagator
-jprop_t jackknife(jprop_t &jS)
+vvprop_t jackknife(vvprop_t &jS)
 {
     valarray<prop_t> jSum(prop_t::Zero(),nmr);
     
@@ -59,7 +59,6 @@ jvert_t jackknife(jvert_t &jVert)
             for(int igam=0;igam<16;igam++)
                 for(int ijack=0;ijack<njacks;ijack++)
                     jSum[mrA][mrB][igam] += jVert[ijack][mrA][mrB][igam];
-    
 
 #pragma omp parallel for collapse(4)
     for(int ijack=0;ijack<njacks;ijack++)
@@ -83,7 +82,6 @@ jmeslep_t jackknife(jmeslep_t &jmeslep)
                 for(int iproj=0;iproj<11;iproj++)
                     for(int ijack=0;ijack<njacks;ijack++)
                         jSum[mrA][mrB][iop][iproj] += jmeslep[ijack][mrA][mrB][iop][iproj];
-    
     
 #pragma omp parallel for collapse(5)
     for(int ijack=0;ijack<njacks;ijack++)

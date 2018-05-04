@@ -3,15 +3,15 @@
 
 #include "aliases.hpp"
 
+// clusterize propagator
 jprop_t clusterize(jprop_t &jS,vvprop_t &S);
-
+// jackknife double
 vvd_t jackknife(vvd_t &jd);
-
-jprop_t jackknife(jprop_t &jS);
-
+// jackknife Propagator
+vvprop_t jackknife(vvprop_t &jS);
+// jackknife Vertex
 jvert_t jackknife(jvert_t &jVert);
-
+// jackknife meslep
 jmeslep_t jackknife(jmeslep_t &jmeslep);
-
 
 #endif
