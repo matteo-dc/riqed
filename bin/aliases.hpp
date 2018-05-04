@@ -76,7 +76,7 @@ using O4f_t=Matrix<double,5,5>;
 //useful notation
 using jproj_t=vvvvvd_t;
 using jmeslep_t=valarray<jvert_t>;
-using jvproj_meslep_t = valarray< valarray<vvvvvd_t> >;
+using jvproj_meslep_t = valarray<vvvvvd_t> ;
 using jproj_meslep_t = valarray< vvvvvd_t >;
 using jZq_t=vvd_t;
 using jZbil_t=vvvvd_t;
