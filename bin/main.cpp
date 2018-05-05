@@ -87,11 +87,11 @@ int main(int narg,char **arg)
                     rave_ave[b][th][m] = rave[b][th][m].average_equiv_moms();
                     rave_ave[b][th][m].plot("rave_ave");
                     
-//                    /*  valence chiral extr  */
-//                    
-//                    rave_ave_chir[b][th][m] = rave_ave[b][th][m].chiral_extr();
-//                    rave_ave_chir[b][th][m].plot("rave_ave_chir");
-//                    
+                    /*  valence chiral extr  */
+                    
+                    rave_ave_chir[b][th][m] = rave_ave[b][th][m].chiral_extr();
+                    rave_ave_chir[b][th][m].plot("rave_ave_chir");
+                    
 //                    /*  O(a2g2) subtraction  */
 //                    
 //                    rave_ave_chir_sub[b][th][m] = rave_ave_chir[b][th][m].subtract();
