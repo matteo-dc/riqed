@@ -840,222 +840,203 @@ oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
 //    return out;
 //}
 
-//int mom_list_xyz(vector<coords_t> &mom_list, const size_t imom)
-//{
-//    return abs(mom_list[imom][1])*abs(mom_list[imom][2])*abs(mom_list[imom][3]);
-//}
-//
-//oper_t oper_t::average_equiv_moms()
-//{
-//    cout<<"Averaging over the equivalent momenta -- ";
-//    
-//    oper_t out=(*this);
-//    
-//    // Find equivalent linmoms
-//    int tag=0, tag_aux=0;
-//    double eps=1.0e-15;
-//    
-//    vector<int> tag_lin_vector;
-//    tag_lin_vector.push_back(0);
-//    
-//    // Tag assignment to linmoms
-//    for(int imom=0;imom<_linmoms;imom++)
-//    {
-//        int count_no=0;
-//        
-//        for(int j=0;j<imom;j++)
-//        {
-//            if( 2.0*abs(p2_tilde[j]-p2_tilde[imom])<eps*(p2_tilde[j]+p2_tilde[imom]) && mom_list_xyz(mom_list,j)==mom_list_xyz(mom_list,imom) &&
-//               2.0*abs(abs(p[j][0])-abs(p[imom][0]))<eps*(abs(p[j][0])+abs(p[imom][0])) )
-//            {
-//                tag_aux = tag_lin_vector[j];
-//            }else count_no++;
-//            
-//            if(count_no==imom)
-//            {
-//                tag++;
-//                tag_lin_vector.push_back(tag);
-//            }else if(j==imom-1)
-//            {
-//                tag_lin_vector.push_back(tag_aux);
-//            }
-//        }
-//    }
-//    
-//    // number of equivalent linmoms
-//    int neq_lin_moms = tag+1;
-//    
-////    int neqmoms = neq_lin_moms;
-//    
-//    out._linmoms=neq_lin_moms;
-//    cout<<"found: "<<out._linmoms<<" equivalent linmoms ";
-//    (out.linmoms).resize(out._linmoms);
-//    
-//    vector<double> p2_tilde_eqmoms(out._linmoms,0.0);
-//
-//
-//    // count the different tags
-//    vector<int> count_tag_lin_vector(out._linmoms);
-//    int count=0;
-//    for(int tag=0;tag<out._linmoms;tag++)
-//    {
-//        count=0;
-//        for(int imom=0;imom<_linmoms;imom++)
-//        {
-//            if(tag_lin_vector[imom]==tag) count++;
-//        }
-//        count_tag_lin_vector[tag]=count;
-//    }
-//    
-//    for(int tag=0;tag<out._linmoms;tag++)
-//        for(int imom=0;imom<_linmoms;imom++)
-//        {
-//            if(tag_lin_vector[imom]==tag)
-//            {
-//                // fill the new linmoms and p2tilde
-//                out.linmoms[tag] = {tag};
-//                p2_tilde_eqmoms[tag] = p2_tilde[imom];
-//            }
-//        }
-//    
-//    print_vec(p2_tilde_eqmoms,path_print+"p2_tilde_eqmoms.txt");
-//    
-//    // Find equivalent bilmoms
-//    tag=0, tag_aux=0;
-//    
-//    vector<int> tag_bil_vector;
-//    tag_bil_vector.push_back(0);
-//    
-//    
-//    //Tag assignment to bilmoms
-//    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
-//    {
-//        int count_no=0;
-//        
-//        const int imom1=bilmoms[ibilmom][1]; // p1
-//        const int imom2=bilmoms[ibilmom][2]; // p2
-//        
-//        for(int j=0;j<ibilmom;j++)
-//        {
-//            const int imomA=bilmoms[j][1]; // p1
-//            const int imomB=bilmoms[j][2]; // p2
-//            
-//            if( (tag_lin_vector[imom1]==tag_lin_vector[imomA] and tag_lin_vector[imom2]==tag_lin_vector[imomB])
-//               or (tag_lin_vector[imom1]==tag_lin_vector[imomB] and tag_lin_vector[imom2]==tag_lin_vector[imomA]))
-////            if(tag_lin_vector[imom1]+tag_lin_vector[imom2]==tag_lin_vector[imomA]+tag_lin_vector[imomB] and
-////               tag_lin_vector[imom1]*tag_lin_vector[imom2]==tag_lin_vector[imomA]*tag_lin_vector[imomB])
-//            {
-//                tag_aux=tag_bil_vector[j];
-//            }else count_no++;
-//            
-//            if(count_no==ibilmom)
-//            {
-//                tag++;
-//                tag_bil_vector.push_back(tag);
-//            }else if(j==ibilmom-1)
-//            {
-//                tag_bil_vector.push_back(tag_aux);
-//            }
-//        }
-//    }
-//    
-//    // number of equivalent bilmoms
-//    int neq_bil_moms = tag+1;
-//    
-//    out._bilmoms=neq_bil_moms;
-//    cout<<"and "<<neq_bil_moms<<" equivalent bilmoms "<<endl<<endl;
-//    (out.bilmoms).resize(out._bilmoms);
-//    
-//    // count the different tags
-//    vector<int> count_tag_bil_vector(out._bilmoms);
-//    count=0;
-//    for(int tag=0;tag<out._bilmoms;tag++)
-//    {
-//        count=0;
-//        for(int imom=0;imom<_bilmoms;imom++)
-//        {
-//            if(tag_bil_vector[imom]==tag) count++;
-//        }
-//        count_tag_bil_vector[tag]=count;
-//    }
-//    
-//    for(int tag=0;tag<out._bilmoms;tag++)
-//        for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
-//        {
-//            if(tag_bil_vector[ibilmom]==tag)
-//            {
-//                // fill the new bilmoms
-//                const int imom0=bilmoms[tag][0]; // k
-//                const int imom1=bilmoms[tag][1]; // p1
-//                const int imom2=bilmoms[tag][2]; // p2
-//                
-//                out.bilmoms[tag] = {imom0,imom1,imom2};
-//            }
-//        }
-//    
-////    resize_output(out);
-//    out.allocate();
-//    
-//    // average over the equivalent momenta
-//    for(int tag=0;tag<neq_lin_moms;tag++)
-//        for(int imom=0;imom<_linmoms;imom++)
-//        {
-//            if(tag_lin_vector[imom]==tag)
-//            {
-//                for(int ijack=0;ijack<njacks;ijack++)
-//                    for(int mr1=0; mr1<_nmr; mr1++)
-//                    {
-//                        (out.jZq)[tag][ijack][mr1]+=jZq[imom][ijack][mr1]/count_tag_lin_vector[tag];
-//                        (out.jZq_EM)[tag][ijack][mr1]+=jZq_EM[imom][ijack][mr1]/count_tag_lin_vector[tag];
-//                    }
-//            }
-//        }
-//    
-//    out.compute_Zq();
-//    
-//    for(int tag=0;tag<neq_bil_moms;tag++)
-//        for(int imom=0;imom<_bilmoms;imom++)
-//        {
-//            if(tag_bil_vector[imom]==tag)
-//            {
-//                for(int ibil=0;ibil<5;ibil++)
-//                    for(int ijack=0;ijack<njacks;ijack++)
-//                        for(int mr1=0; mr1<_nmr; mr1++)
-//                            for(int mr2=0; mr2<_nmr; mr2++)
-//                            {
-//                                (out.jG_LO)[tag][ibil][ijack][mr1][mr2]+=jG_LO[imom][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
-//                                (out.jG_EM)[tag][ibil][ijack][mr1][mr2]+=jG_EM[imom][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
-//                            }
-//            }
-//        }
-//
-//    out.compute_Zbil();
-//    
-//    if(compute_4f)
-//    {
-//        for(int tag=0;tag<neq_bil_moms;tag++)
-//            for(int imom=0;imom<_bilmoms;imom++)
-//            {
-//                if(tag_bil_vector[imom]==tag)
-//                {
-//                    for(int iop1=0;iop1<5;iop1++)
-//                        for(int iop2=0;iop2<5;iop2++)
-//                            for(int ijack=0;ijack<njacks;ijack++)
-//                                for(int mr1=0; mr1<_nmr; mr1++)
-//                                    for(int mr2=0; mr2<_nmr; mr2++)
-//                                    {
-//                                        (out.jpr_meslep_LO)[tag][iop1][iop2][ijack][mr1][mr2]+=jpr_meslep_LO[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
-//                                        (out.jpr_meslep_EM)[tag][iop1][iop2][ijack][mr1][mr2]+=jpr_meslep_EM[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
-//                                        (out.jpr_meslep_nasty)[tag][iop1][iop2][ijack][mr1][mr2]+=jpr_meslep_nasty[imom][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
-//                                    }
-//                }
-//            }
-//        
-//        out.compute_Z4f();
-//    }
-//    
-//    return out;
-//}
+int mom_list_xyz(vector<coords_t> &mom_list, const size_t imom)
+{
+    return abs(mom_list[imom][1])*abs(mom_list[imom][2])*abs(mom_list[imom][3]);
+}
+
+oper_t oper_t::average_equiv_moms()
+{
+    cout<<"Averaging over the equivalent momenta -- ";
+    
+    oper_t out=(*this);
+    
+    // Find equivalent linmoms
+    int tag=0, tag_aux=0;
+    double eps=1.0e-15;
+    
+    vector<int> tag_lin_vector;
+    tag_lin_vector.push_back(0);
+    
+    // Tag assignment to linmoms
+    for(int imom=0;imom<_linmoms;imom++)
+    {
+        int count_no=0;
+        
+        for(int j=0;j<imom;j++)
+        {
+            bool cond{2.0*abs(p2_tilde[j]-p2_tilde[imom])<eps*(p2_tilde[j]+p2_tilde[imom]) &&
+                      mom_list_xyz(mom_list,j)==mom_list_xyz(mom_list,imom) &&
+                      2.0*abs(abs(p[j][0])-abs(p[imom][0]))<eps*(abs(p[j][0])+abs(p[imom][0]))};
+            if(cond)
+                tag_aux = tag_lin_vector[j];
+            else
+                count_no++;
+            
+            if(count_no==imom)
+            {
+                tag++;
+                tag_lin_vector.push_back(tag);
+            }
+            else if(j==imom-1)
+                tag_lin_vector.push_back(tag_aux);
+        }
+    }
+    
+    // number of equivalent linmoms
+    int neq_lin_moms = tag+1;
+    
+    out._linmoms=neq_lin_moms;
+    cout<<"found: "<<out._linmoms<<" equivalent linmoms ";
+    (out.linmoms).resize(out._linmoms);
+    
+    vector<double> p2_tilde_eqmoms(out._linmoms,0.0);
+
+    // count the different tags
+    vector<int> count_tag_lin_vector(out._linmoms);
+    int count=0;
+    for(int tag=0;tag<out._linmoms;tag++)
+    {
+        count=0;
+        for(int imom=0;imom<_linmoms;imom++)
+            if(tag_lin_vector[imom]==tag) count++;
+        
+        count_tag_lin_vector[tag]=count;
+    }
+    
+    for(int tag=0;tag<out._linmoms;tag++)
+        for(int imom=0;imom<_linmoms;imom++)
+            if(tag_lin_vector[imom]==tag)
+            {
+                // fill the new linmoms and p2tilde
+                out.linmoms[tag] = {tag};
+                p2_tilde_eqmoms[tag] = p2_tilde[imom];
+            }
+    
+    
+    print_vec(p2_tilde_eqmoms,path_print+"p2_tilde_eqmoms.txt");
+    
+    // Find equivalent bilmoms
+    tag=0, tag_aux=0;
+    
+    vector<int> tag_bil_vector;
+    tag_bil_vector.push_back(0);
+    
+    
+    //Tag assignment to bilmoms
+    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
+    {
+        int count_no=0;
+        
+        const int imom1=bilmoms[ibilmom][1]; // p1
+        const int imom2=bilmoms[ibilmom][2]; // p2
+        
+        for(int j=0;j<ibilmom;j++)
+        {
+            const int imomA=bilmoms[j][1]; // p1
+            const int imomB=bilmoms[j][2]; // p2
+            
+            const bool cond{(tag_lin_vector[imom1]==tag_lin_vector[imomA] and
+                             tag_lin_vector[imom2]==tag_lin_vector[imomB]) or
+                            (tag_lin_vector[imom1]==tag_lin_vector[imomB] and
+                             tag_lin_vector[imom2]==tag_lin_vector[imomA])};
+            
+//            const bool cond{tag_lin_vector[imom1]+tag_lin_vector[imom2]==tag_lin_vector[imomA]+tag_lin_vector[imomB] and
+//                            tag_lin_vector[imom1]*tag_lin_vector[imom2]==tag_lin_vector[imomA]*tag_lin_vector[imomB]};
+            
+            if(cond)
+                tag_aux=tag_bil_vector[j];
+            else
+                count_no++;
+            
+            if(count_no==ibilmom)
+            {
+                tag++;
+                tag_bil_vector.push_back(tag);
+            }
+            else if(j==ibilmom-1)
+                tag_bil_vector.push_back(tag_aux);
+        }
+    }
+    
+    // number of equivalent bilmoms
+    int neq_bil_moms = tag+1;
+    
+    out._bilmoms=neq_bil_moms;
+    cout<<"and "<<neq_bil_moms<<" equivalent bilmoms "<<endl<<endl;
+    (out.bilmoms).resize(out._bilmoms);
+    
+    // count the different tags
+    vector<int> count_tag_bil_vector(out._bilmoms);
+    count=0;
+    for(int tag=0;tag<out._bilmoms;tag++)
+    {
+        count=0;
+        for(int imom=0;imom<_bilmoms;imom++)
+            if(tag_bil_vector[imom]==tag) count++;
+
+        count_tag_bil_vector[tag]=count;
+    }
+    
+    for(int tag=0;tag<out._bilmoms;tag++)
+        for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
+            if(tag_bil_vector[ibilmom]==tag)
+            {
+                // fill the new bilmoms
+                const int imom0=bilmoms[tag][0]; // k
+                const int imom1=bilmoms[tag][1]; // p1
+                const int imom2=bilmoms[tag][2]; // p2
+                
+                out.bilmoms[tag] = {imom0,imom1,imom2};
+            }
+    
+    out.allocate();
+    
+    for(int tag=0;tag<neq_lin_moms;tag++)
+        for(int imom=0;imom<_linmoms;imom++)
+            if(tag_lin_vector[imom]==tag)
+                for(int ijack=0;ijack<njacks;ijack++)
+                    for(int mr=0;mr<_nmr;mr++)
+                        for(int iproj=0;iproj<sigma::nproj;iproj++)
+                            for(int ins=0;ins<sigma::nins;ins++)
+                                (out.sigma)[tag][iproj][ins][ijack][mr]+=
+                                    sigma[imom][iproj][ins][ijack][mr]/count_tag_lin_vector[tag];
+    
+    out.compute_deltam_from_prop();
+    
+    out.compute_Zq();
+    
+    for(int tag=0;tag<neq_bil_moms;tag++)
+        for(int imom=0;imom<_bilmoms;imom++)
+            if(tag_bil_vector[imom]==tag)
+                for(int ibil=0;ibil<5;ibil++)
+                    for(int ijack=0;ijack<njacks;ijack++)
+                        for(int ins=0;ins<gbil::nins;ins++)
+                            for(int mr1=0; mr1<_nmr; mr1++)
+                                for(int mr2=0; mr2<_nmr; mr2++)
+                                    (out.jG)[tag][ins][ibil][ijack][mr1][mr2]+=
+                                        jG[imom][ins][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
+    
+    
+    out.compute_Zbil();
+    
+    if(compute_4f)
+        for(int tag=0;tag<neq_bil_moms;tag++)
+            for(int imom=0;imom<_bilmoms;imom++)
+                if(tag_bil_vector[imom]==tag)
+                    for(int iop1=0;iop1<nbil;iop1++)
+                        for(int iop2=0;iop2<nbil;iop2++)
+                            for(int ijack=0;ijack<njacks;ijack++)
+                                for(int ins=0;ins<pr_meslep::nins;ins++)
+                                    for(int mr1=0; mr1<_nmr; mr1++)
+                                        for(int mr2=0; mr2<_nmr; mr2++)
+                                            (out.jpr_meslep)[tag][ins][iop1][iop2][ijack][mr1][mr2]+=
+                                            jpr_meslep[imom][ins][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
+    
+    out.compute_Z4f();
+
+    return out;
+}
 
 //voper_t a2p2_extr(voper_t in /*, const int LO_or_EM*/)  // M1 method
 //{
