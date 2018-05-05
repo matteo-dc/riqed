@@ -29,6 +29,8 @@ void oper_t::compute_deltam_from_prop()
     }
     else
     {
+        cout<<"Computing deltam"<<endl;
+
         //define deltam_cr
         vvvd_t v_deltamc(vvd_t(vd_t(0.0,_linmoms),njacks),_nmr);
         vvvd_t v_deltamu(vvd_t(vd_t(0.0,_linmoms),njacks),_nmr);
@@ -130,6 +132,8 @@ void oper_t::compute_deltam()
     }
     else
     {
+        cout<<"Computing deltam"<<endl;
+        
         // array of the configurations
         int conf_id[nconfs];
         for(int iconf=0;iconf<nconfs;iconf++)
