@@ -98,12 +98,12 @@ void oper_t::compute_deltam_from_prop()
         
         for(int mr=0;mr<_nmr;mr++)
         {
-//            vvd_t deltamc_tmp = polyfit(coord, npar, error_mc[mr], v_deltamc[mr], delta_tmin, delta_tmax);
-            vvd_t deltamu_tmp = polyfit(coord, npar, error_mu[mr], v_deltamu[mr], delta_tmin, delta_tmax);
+            vvd_t deltamc_tmp = polyfit(coord, npar, error_mc[mr], v_deltamc[mr], 0, _linmoms);
+            vvd_t deltamu_tmp = polyfit(coord, npar, error_mu[mr], v_deltamu[mr], 0, _linmoms);
             
             for(int ijack=0;ijack<njacks;ijack++)
             {
-//                deltam_cr[ijack][mr]=deltamc_tmp[ijack][0];
+                deltam_cr[ijack][mr]=deltamc_tmp[ijack][0];
                 deltamu[ijack][mr]=deltamu_tmp[ijack][0];
             }
         }
