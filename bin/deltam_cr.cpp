@@ -21,7 +21,7 @@ void oper_t::compute_deltam_from_prop()
     deltamu_data.open(path_to_ens+"deltamu_array");
     deltamc_data.open(path_to_ens+"deltam_cr_array");
     
-    if(deltamu_data.good() and deltamc_data.good())
+    if(deltamu_data.good() and deltamc_data.good() and deltam_computed==false)
     {
         cout<<"Reading deltam from files"<<endl<<endl;
         read_vec_bin(deltamu,path_to_ens+"deltamu_array");
@@ -29,7 +29,10 @@ void oper_t::compute_deltam_from_prop()
     }
     else
     {
-        cout<<"Computing deltam"<<endl;
+        if(deltam_computed==false)
+            cout<<"Computing deltam"<<endl;
+        else
+            cout<<"Recomputing deltam"<<endl;
 
         //define deltam_cr
         vvvd_t v_deltamc(vvd_t(vd_t(0.0,_linmoms),njacks),_nmr);
