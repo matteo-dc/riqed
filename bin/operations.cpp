@@ -1319,9 +1319,7 @@ void oper_t::plot(const string suffix)
 //    Zmeslep_tup meslep_EM_ave_err = ave_err(in.jpr_meslep_EM);
 //    Zmeslep_tup meslep_nasty_ave_err = ave_err(in.jpr_meslep_nasty);
 //    
-//    Z4f_tup Z_4f_ave_err = ave_err(in.jZ_4f);
-//    Z4f_tup Z_EM_4f_ave_err = ave_err(in.jZ_EM_4f);
-//    
+//
 //    vvvvvd_t meslep_ave=get<0>(meslep_ave_err);  //[imom][iop1][iop2][mr1][mr2];
 //    vvvvvd_t meslep_EM_ave=get<0>(meslep_EM_ave_err);
 //    vvvvvd_t meslep_nasty_ave=get<0>(meslep_nasty_ave_err);
@@ -1329,12 +1327,16 @@ void oper_t::plot(const string suffix)
 //    vvvvvd_t meslep_err=get<1>(meslep_ave_err);  //[imom][iop1][iop2][mr1][mr2];
 //    vvvvvd_t meslep_EM_err=get<1>(meslep_EM_ave_err);
 //    vvvvvd_t meslep_nasty_err=get<1>(meslep_nasty_ave_err);
-//    
-//    vvvvvd_t Z_4f_ave=get<0>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
-//    vvvvvd_t Z_EM_4f_ave=get<0>(Z_EM_4f_ave_err);
-//    
-//    vvvvvd_t Z_4f_err=get<1>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
-//    vvvvvd_t Z_EM_4f_err=get<1>(Z_EM_4f_ave_err);
+//
+    
+    Z4f_tup Z_4f_ave_err = ave_err(in.jZ_4f);
+    Z4f_tup Z_4f_EM_ave_err = ave_err(in.jZ_4f_EM);
+
+    vvvvvd_t Z_4f_ave=get<0>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
+    vvvvvd_t Z_4f_EM_ave=get<0>(Z_4f_EM_ave_err);
+    
+    vvvvvd_t Z_4f_err=get<1>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
+    vvvvvd_t Z_4f_EM_err=get<1>(Z_4f_EM_ave_err);
     
     // this choice is relative to the twisted basis
     vector<string> bil={"S","V","P","A","T"};
@@ -1342,7 +1344,7 @@ void oper_t::plot(const string suffix)
     ofstream Zq_data, Zq_EM_data;
     vector<ofstream> Zbil_data(nbil), Zbil_EM_data(nbil);
 //    vector<ofstream> Zmeslep_data(nbil*nbil), Zmeslep_EM_data(nbil*nbil), Zmeslep_nasty_data(nbil*nbil);
-//    vector<ofstream> Z_4f_data(nbil*nbil), Z_EM_4f_data(nbil*nbil);
+    vector<ofstream> Z_4f_data(nbil*nbil), Z_4f_EM_data(nbil*nbil);
     
     Zq_data.open(path_to_ens+"plots/Zq"+(suffix!=""?("_"+suffix):string(""))+".txt");
     Zq_EM_data.open(path_to_ens+"plots/Zq_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
@@ -1385,8 +1387,8 @@ void oper_t::plot(const string suffix)
         }
     }
     
-//    if(compute_4f)
-//    {
+    if(compute_4f)
+    {
 //        for(int i=0;i<nbil*nbil;i++)
 //        {
 //            int iop2=i%nbil;
@@ -1408,26 +1410,26 @@ void oper_t::plot(const string suffix)
 //                Zmeslep_nasty_data[i]<<p2t[imomk]<<"\t"<<meslep_nasty_ave[imom][iop1][iop2][0][0]<<"\t"<<meslep_nasty_err[imom][iop1][iop2][0][0]<<endl;
 //            }
 //        }
-//        
-//        for(int i=0;i<nbil*nbil;i++)
-//        {
-//            int iop2=i%nbil;
-//            int iop1=(i-iop2)/nbil;
-//            
-//            Z_4f_data[i].open(path_to_ens+"plots/Z4f_"+to_string(iop1)+"_"+to_string(iop2)+(suffix!=""?("_"+suffix):string(""))+".txt");
-//            Z_EM_4f_data[i].open(path_to_ens+"plots/Z4f_"+to_string(iop1)+"_"+to_string(iop2)+"_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
-//            
-//            for(int imom=0; imom<in._bilmoms; imom++)
-//            {
-//                //            int imomq = in.bilmoms[imom][0];
-//                //            cout<<"imomq: "<<imomq<<endl;
-//                //            int imomk = in.linmoms[imomq][0];
-//                int imomk = imom;   // NB: it works only for RIMOM!
-//                
-//                Z_4f_data[i]<<p2t[imomk]<<"\t"<<Z_4f_ave[imom][iop1][iop2][0][0]<<"\t"<<Z_4f_err[imom][iop1][iop2][0][0]<<endl;
-//                Z_EM_4f_data[i]<<p2t[imomk]<<"\t"<<Z_EM_4f_ave[imom][iop1][iop2][0][0]<<"\t"<<Z_EM_4f_err[imom][iop1][iop2][0][0]<<endl;
-//            }
-//        }
-//    }
+        
+        for(int i=0;i<nbil*nbil;i++)
+        {
+            int iop2=i%nbil;
+            int iop1=(i-iop2)/nbil;
+            
+            Z_4f_data[i].open(path_to_ens+"plots/Z4f_"+to_string(iop1)+"_"+to_string(iop2)+(suffix!=""?("_"+suffix):string(""))+".txt");
+            Z_4f_EM_data[i].open(path_to_ens+"plots/Z4f_"+to_string(iop1)+"_"+to_string(iop2)+"_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
+            
+            for(int imom=0; imom<in._bilmoms; imom++)
+            {
+                //            int imomq = in.bilmoms[imom][0];
+                //            cout<<"imomq: "<<imomq<<endl;
+                //            int imomk = in.linmoms[imomq][0];
+                int imomk = imom;   // NB: it works only for RIMOM!
+                
+                Z_4f_data[i]<<p2t[imomk]<<"\t"<<Z_4f_ave[imom][iop1][iop2][0][0]<<"\t"<<Z_4f_err[imom][iop1][iop2][0][0]<<endl;
+                Z_4f_EM_data[i]<<p2t[imomk]<<"\t"<<Z_4f_EM_ave[imom][iop1][iop2][0][0]<<"\t"<<Z_4f_EM_err[imom][iop1][iop2][0][0]<<endl;
+            }
+        }
+    }
 
 }
