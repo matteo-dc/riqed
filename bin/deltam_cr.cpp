@@ -113,9 +113,7 @@ void oper_t::compute_deltam_from_prop()
     {
         print_vec_bin(deltam_cr,path_to_ens+"deltam_cr_array");
         print_vec_bin(deltamu,path_to_ens+"deltamu_array");
-    }
-    
-    deltam_computed=true;
+    }    
 }
 
 

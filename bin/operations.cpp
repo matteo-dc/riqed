@@ -307,6 +307,7 @@ oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
                         for(int ijack=0;ijack<njacks;ijack++)
                             (out.sigma)[ilinmom][iproj][ins][ijack][m] += sigma[ilinmom][iproj][ins][ijack][r+_nr*m]/_nr;
     
+    out.deltam_computed=true;
     out.compute_deltam_from_prop();
     
     out.compute_Zq();
@@ -1009,6 +1010,7 @@ oper_t oper_t::average_equiv_moms()
                                 (out.sigma)[tag][iproj][ins][ijack][mr]+=
                                     sigma[imom][iproj][ins][ijack][mr]/count_tag_lin_vector[tag];
     
+    out.deltam_computed=true;
     out.compute_deltam_from_prop();
     
     out.compute_Zq();
