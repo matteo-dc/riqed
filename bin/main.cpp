@@ -100,7 +100,7 @@ int main(int narg,char **arg)
                 
             } //close nm_sea
             
-//            if(nm_Sea[b]>1 and only_basic==0)
+//            if(nm_Sea[b]>1 and only_basic==0 and strcmp(analysis.c_str(),"free" )!=0)
 //            {
 //                /*  sea chiral extr  */
 //                

@@ -231,11 +231,18 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     
     allocate();
     
-    if(compute_mpcac) compute_mPCAC("");
-    if(compute_mpcac) compute_mPCAC("sea");
-    if(UseEffMass) eff_mass=read_eff_mass(path_to_ens+"eff_mass_array");
-    if(UseEffMass) eff_mass_time=read_eff_mass_time(path_to_ens+"eff_mass_array_time");
-    if(UseEffMass and _nm_Sea>0) eff_mass_sea=read_eff_mass_sea(path_to_ens+"eff_mass_sea_array");
+    if(compute_mpcac)
+    {
+        compute_mPCAC("");
+        if(strcmp(analysis.c_str(),"free" )!=0) compute_mPCAC("sea");
+    }
+    if(UseEffMass)
+    {
+        eff_mass=read_eff_mass(path_to_ens+"eff_mass_array");
+        eff_mass_time=read_eff_mass_time(path_to_ens+"eff_mass_array_time");
+        if(_nm_Sea>0 and strcmp(analysis.c_str(),"free" )!=0)
+            eff_mass_sea=read_eff_mass_sea(path_to_ens+"eff_mass_sea_array");
+    }
     
     switch(get_scheme())
     {
