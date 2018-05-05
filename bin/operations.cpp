@@ -266,116 +266,74 @@ void oper_t::create_basic(const int b, const int th, const int msea)
 
 //////////
 
-//oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
-//{
-//    cout<<"Averaging over r"<<endl<<endl;
-//    
-//    oper_t out=(*this);
-//    
-//    out._nr=1;
-//    out._nm=_nm;
-//    out._nmr=(out._nm)*(out._nr);
-//    
-//    out.allocate();
-//    
-//    if(UseEffMass==1)
-//    {
-//        vvvd_t eff_mass_temp(vvd_t(vd_t(0.0,out._nmr),out._nmr),njacks);
-//        
-//        for(int ijack=0;ijack<njacks;ijack++)
-//            for(int mA=0; mA<_nm; mA++)
-//                for(int mB=0; mB<_nm; mB++)
-//                    for(int r=0; r<_nr; r++)
-//                    {
-//                        eff_mass_temp[ijack][mA][mB] += eff_mass[ijack][r+_nr*mA][r+_nr*mB]/_nr;
-//                    }
-//        
-//        out.eff_mass=eff_mass_temp;
-//        
-//        
-//        if(_nm_Sea>1)
-//        {
-//            vvvd_t eff_mass_sea_temp(vvd_t(vd_t(0.0,out._nr),out._nr),njacks);
-//            
-//            for(int ijack=0;ijack<njacks;ijack++)
-//                for(int r=0; r<_nr; r++)
-//                    eff_mass_sea_temp[ijack][0][0] += eff_mass[ijack][r][r]/_nr;
-//            
-//            out.eff_mass_sea=eff_mass_sea_temp;
-//        }
-//    }
-//    
-//    for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
-//        for(int m=0; m<_nm; m++)
-//            for(int r=0; r<_nr; r++)
-//                for(int ijack=0;ijack<njacks;ijack++)
-//                {
-//                    //LO
-//                    (out.sigma1_LO)[ilinmom][ijack][m] += sigma1_LO[ilinmom][ijack][r+_nr*m]/_nr;
-//                    (out.sigma2_LO)[ilinmom][ijack][m] += sigma2_LO[ilinmom][ijack][r+_nr*m]/_nr;
-//                    (out.sigma3_LO)[ilinmom][ijack][m] += sigma3_LO[ilinmom][ijack][r+_nr*m]/_nr;
-//                    //EM
-//                    (out.sigma1_PH)[ilinmom][ijack][m] += sigma1_PH[ilinmom][ijack][r+_nr*m]/_nr;
-//                    (out.sigma2_PH)[ilinmom][ijack][m] += sigma2_PH[ilinmom][ijack][r+_nr*m]/_nr;
-//                    (out.sigma3_PH)[ilinmom][ijack][m] += sigma3_PH[ilinmom][ijack][r+_nr*m]/_nr;
-//                    (out.sigma1_P)[ilinmom][ijack][m]  += sigma1_P[ilinmom][ijack][r+_nr*m]/_nr;
-//                    (out.sigma2_P)[ilinmom][ijack][m]  += sigma2_P[ilinmom][ijack][r+_nr*m]/_nr;
-//                    (out.sigma3_P)[ilinmom][ijack][m]  += sigma3_P[ilinmom][ijack][r+_nr*m]/_nr;
-//                    (out.sigma1_S)[ilinmom][ijack][m]  += sigma1_S[ilinmom][ijack][r+_nr*m]/_nr;
-//                    (out.sigma2_S)[ilinmom][ijack][m]  += sigma2_S[ilinmom][ijack][r+_nr*m]/_nr;
-//                    (out.sigma3_S)[ilinmom][ijack][m]  += sigma3_S[ilinmom][ijack][r+_nr*m]/_nr;
-//                }
-//    
-//    out.compute_Zq();
-//    
-//    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
-//    {
-//        jproj_t jG_LO_mom_temp(vvvd_t(vvd_t(vd_t(0.0,out._nmr),out._nmr),njacks),nbil);
-//        jproj_t jG_EM_mom_temp(vvvd_t(vvd_t(vd_t(0.0,out._nmr),out._nmr),njacks),nbil);
-//        
-//        for(int mA=0; mA<_nm; mA++)
-//            for(int mB=0; mB<_nm; mB++)
-//                for(int r=0; r<_nr; r++)
-//                    for(int ijack=0;ijack<njacks;ijack++)
-//                        for(int ibil=0; ibil<5; ibil++)
-//                        {
-//                            //LO
-//                            jG_LO_mom_temp[ibil][ijack][mA][mB] +=
-//                                jG_LO[ibilmom][ibil][ijack][r+_nr*mA][r+_nr*mB]/_nr;
-//                            //EM
-//                            jG_EM_mom_temp[ibil][ijack][mA][mB] +=
-//                                jG_EM[ibilmom][ibil][ijack][r+nr*mA][r+nr*mB]/_nr;
-//                        }
-//        
-//        (out.jG_LO)[ibilmom]=jG_LO_mom_temp;
-//        (out.jG_EM)[ibilmom]=jG_EM_mom_temp;
-//    }
-//    
-//    out.compute_Zbil();
-//    
-//    if(compute_4f)
-//    {
-//        
-//        for(int imeslepmom=0;imeslepmom<_meslepmoms;imeslepmom++)
-//            for(int iop1=0;iop1<5;iop1++)
-//                for(int iop2=0;iop2<5;iop2++)
-//                    for(int ijack=0;ijack<njacks;ijack++)
-//                        for(int mA=0; mA<_nm; mA++)
-//                            for(int mB=0; mB<_nm; mB++)
-//                                for(int r=0; r<_nr; r++)
-//                                {
-//                                    //LO
-//                                    (out.jpr_meslep_LO)[imeslepmom][iop1][iop2][ijack][mA][mB] += jpr_meslep_LO[imeslepmom][iop1][iop2][ijack][r+_nr*mA][r+_nr*mB]/_nr;
-//                                    //EM
-//                                    (out.jpr_meslep_EM)[imeslepmom][iop1][iop2][ijack][mA][mB] += jpr_meslep_EM[imeslepmom][iop1][iop2][ijack][r+_nr*mA][r+_nr*mB]/_nr;;
-//                                    (out.jpr_meslep_nasty)[imeslepmom][iop1][iop2][ijack][mA][mB] += jpr_meslep_nasty[imeslepmom][iop1][iop2][ijack][r+_nr*mA][r+_nr*mB]/_nr;;
-//                                }
-//        
-//        out.compute_Z4f();
-//    }
-//    
-//    return out;
-//}
+oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
+{
+    cout<<"Averaging over r"<<endl<<endl;
+    
+    oper_t out=(*this);
+    
+    out._nr=1;
+    out._nm=_nm;
+    out._nmr=(out._nm)*(out._nr);
+    
+    out.allocate();
+    
+    if(UseEffMass==1)
+    {
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mA=0; mA<_nm; mA++)
+                for(int mB=0; mB<_nm; mB++)
+                    for(int r=0; r<_nr; r++)
+                        out.eff_mass[ijack][mA][mB] += eff_mass[ijack][r+_nr*mA][r+_nr*mB]/_nr;
+        
+        if(_nm_Sea>1)
+            for(int ijack=0;ijack<njacks;ijack++)
+                for(int r=0; r<_nr; r++)
+                    out.eff_mass_sea[ijack][0][0] += eff_mass_sea[ijack][r][r]/_nr;
+    }
+    
+    for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
+        for(int iproj=0;iproj<sigma::nproj;iproj++)
+            for(int ins=0;ins<sigma::nins;ins++)
+                for(int m=0; m<_nm; m++)
+                    for(int r=0; r<_nr; r++)
+                        for(int ijack=0;ijack<njacks;ijack++)
+                            (out.sigma)[ilinmom][iproj][ins][ijack][m] += sigma[ilinmom][iproj][ins][ijack][r+_nr*m]/_nr;
+    
+    out.compute_deltam_from_prop();
+    
+    out.compute_Zq();
+    
+    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
+        for(int mA=0; mA<_nm; mA++)
+            for(int mB=0; mB<_nm; mB++)
+                for(int r=0; r<_nr; r++)
+                    for(int ijack=0;ijack<njacks;ijack++)
+                        for(int ibil=0; ibil<5; ibil++)
+                            for(int ins=0; ins<gbil::nins; ins++)
+                                (out.jG)[ibilmom][ibil][ins][ijack][mA][mB] +=
+                                    jG[ibilmom][ibil][ins][ijack][r+_nr*mA][r+_nr*mB]/_nr;
+    
+    out.compute_Zbil();
+    
+    if(compute_4f)
+    {
+        for(int imeslepmom=0;imeslepmom<_meslepmoms;imeslepmom++)
+            for(int iop1=0;iop1<5;iop1++)
+                for(int iop2=0;iop2<5;iop2++)
+                    for(int ijack=0;ijack<njacks;ijack++)
+                        for(int ins=0;ins<pr_meslep::nins;ins++)
+                            for(int mA=0;mA<_nm;mA++)
+                                for(int mB=0;mB<_nm;mB++)
+                                    for(int r=0;r<_nr;r++)
+                                        (out.jpr_meslep)[imeslepmom][ins][iop1][iop2][ijack][mA][mB] +=
+                                            jpr_meslep[imeslepmom][ins][iop1][iop2][ijack][r+_nr*mA][r+_nr*mB]/_nr;
+        
+        out.compute_Z4f();
+    }
+    
+    return out;
+}
 
 //oper_t oper_t::chiral_extr()
 //{
