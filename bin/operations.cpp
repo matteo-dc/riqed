@@ -77,6 +77,7 @@ void oper_t::set_ri_mom_moms()
     bilmoms.resize(moms);
     meslepmoms.resize(moms);
     
+#pragma omp parallel for
     for(int imom=0;imom<moms;imom++)
         if(filt_moms[imom])
         {
@@ -102,6 +103,7 @@ void oper_t::set_smom_moms()
         exit(0);
     }
     
+#pragma omp parallel for
     for(int i=0;i<moms;i++)
         if(filt_moms[i])
             for(int j=0;j<moms;j++)
@@ -251,8 +253,10 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     }
     
     // read or compute deltam
-    deltam_cr = read_deltam(path_to_ens,"deltam_cr_array");
-    deltamu   = read_deltam(path_to_ens,"deltamu_array");
+    deltam_computed=false;
+    compute_deltam_from_prop();
+//    deltam_cr = read_deltam(path_to_ens,"deltam_cr_array");
+//    deltamu   = read_deltam(path_to_ens,"deltamu_array");
     
     compute_Zq();
     compute_Zbil();

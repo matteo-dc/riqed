@@ -23,6 +23,10 @@ void oper_t::allocate()
     // allocate pr_meslep
     allocate_vec(jpr_meslep,{_meslepmoms,pr_meslep::nins,nbil,nbil,njacks,_nmr,_nmr});
     
+    // allocate deltam
+    allocate_vec(deltam_cr,{njacks,_nmr});
+    allocate_vec(deltam_cr,{njacks,_nmr});
+    
     // allocate Zq
     allocate_vec(jZq,{_linmoms,njacks,_nmr});
     allocate_vec(jZq_EM,{_linmoms,njacks,_nmr});
