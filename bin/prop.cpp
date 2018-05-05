@@ -32,6 +32,7 @@ namespace lprop
 
 void oper_t::build_prop(const vvvprop_t &prop, vvvprop_t &jprop)
 {
+#pragma omp parallel for collapse(2)
     for(int mr=0;mr<nmr;mr++)
         for(int ijack=0;ijack<njacks;ijack++)
         {
