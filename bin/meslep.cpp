@@ -135,7 +135,7 @@ void oper_t::compute_meslep()
     {
         cout<<"Reading meslep from files"<<endl<<endl;
         
-        read_vec_bin(jpr_meslep,path_print+"jpr_meslep_LO");
+        read_vec_bin(jpr_meslep,path_print+"jpr_meslep");
     }
     else
     {
