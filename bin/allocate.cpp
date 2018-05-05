@@ -25,7 +25,7 @@ void oper_t::allocate()
     
     // allocate deltam
     allocate_vec(deltam_cr,{njacks,_nmr});
-    allocate_vec(deltam_cr,{njacks,_nmr});
+    allocate_vec(deltamu,{njacks,_nmr});
     
     // allocate Zq
     allocate_vec(jZq,{_linmoms,njacks,_nmr});
