@@ -256,7 +256,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     
     compute_Zq();
     compute_Zbil();
-//    if(compute_4f) compute_Z4f();
+    if(compute_4f) compute_Z4f();
     
 }
 

@@ -12,27 +12,6 @@
 #define EXTERN_MESLEP
  #include "meslep.hpp"
 
-//namespace meslep
-//{
-//    nmeslep = 10;
-//    nprmeslep = 8;
-//    nOp = 5;
-//    nGamma = 11; // number of independent combinations of gamma matrices
-//    
-//    iG        = { 1, 2, 3, 4,   0,  10,11,12,13,14,15};
-//    g5L_sign  = {-1,-1,-1,-1,  +1,  +1,+1,+1,+1,+1,+1};
-//    
-//    iG_of_iop = {{0,1,2,3},{0,1,2,3},{4},{4},{5,6,7,8,9,10}};
-//    
-//    g5_sign   = { -1,  +1,  -1,  +1,  +1};
-//    
-//    proj_norm = {4,4,1,1,24};
-//    op_norm = {1,1,1,1,2};
-//    
-//    enum ins{LO,F,FF,T,P,S};
-//}
-
-
 namespace pr_meslep
 {
     void set_ins()
@@ -254,41 +233,6 @@ void oper_t::compute_meslep()
             for(int ins=0;ins<meslep::nmeslep;ins++)
                 jmeslep[ins]=jackknife(jmeslep[ins]);
             
-//            // build the complete electromagnetic correction to the propagator
-//#pragma omp parallel for collapse(3)
-//            for(int ijack=0;ijack<njacks;ijack++)
-//                for(int m=0;m<nm;m++)
-//                    for(int r=0;r<nr;r++)
-//                    {
-//                        int mr = r + nr*m;
-//                        
-//                        jS1_EM[ijack][mr] = jS1_PH[ijack][mr] +
-//                                            deltam_cr[ijack][mr]*jS1_P[ijack][mr] +
-//                                            deltamu[ijack][mr]  *jS1_S[ijack][mr];
-//                        
-//                        (read2)?jS2_EM[ijack][mr] = jS2_PH[ijack][mr] +
-//                                                    deltam_cr[ijack][mr]*jS2_P[ijack][mr] +
-//                                                    deltamu[ijack][mr]  *jS2_S[ijack][mr]
-//                               :jS2_EM[ijack][mr] = jS1_EM[ijack][mr];
-//                    }
-//            
-//            // build the complete electromagnetic correction to the vertex
-//#pragma omp parallel for collapse (5)
-//            for(int ijack=0;ijack<njacks;ijack++)
-//                for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-//                    for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-//                        for(int iop=0;iop<5;iop++)
-//                            for(int iproj=0;iproj<11;iproj++)
-//                            {
-//                                jmeslep[M11][ijack][mr_fw][mr_bw][iop][iproj] +=
-//                                    deltam_cr[ijack][mr_bw]*jmeslep[P11][ijack][mr_fw][mr_bw][iop][iproj] +
-//                                    deltamu[ijack][mr_bw]  *jmeslep[S11][ijack][mr_fw][mr_bw][iop][iproj];
-//                                jmeslep[M22][ijack][mr_fw][mr_bw][iop][iproj] +=
-//                                    deltam_cr[ijack][mr_fw]*jmeslep[P22][ijack][mr_fw][mr_bw][iop][iproj] +
-//                                    deltamu[ijack][mr_fw]  *jmeslep[S22][ijack][mr_fw][mr_bw][iop][iproj];
-//                                //N.B.: fw(bw) corresponds to OUT(IN)!
-//                            }
-            
             cout<<"- Inverting propagators"<<endl;
             
             // definition of inverse propagators
@@ -393,56 +337,71 @@ jvproj_meslep_t compute_pr_meslep(jprop_t &jpropOUT_inv, valarray<jmeslep_t> &jm
     
     return jG_op;
 }
-//
-//
-//void oper_t::compute_Z4f()
-//{
-//    
-//    //#warning putting charges to 1
-//    //these are the charges in the lagrangian
-//    const double qIN=+2.0/3.0; //!< charge of the quark (in)
-//    const double qOUT=-1.0/3.0; //!< charge of the quark (out)
-//    //    const double qIN=1.0;
-//    //    const double qOUT=1.0;
-//    
-//    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
-//    {
-//        const int imom1=bilmoms[ibilmom][1]; // p1
-//        const int imom2=bilmoms[ibilmom][2]; // p2
-//        
-//        //compute Z's according to 'riqed.pdf', one for each momentum
-//#pragma omp parallel for collapse(3)
-//        for(int ijack=0;ijack<njacks;ijack++)
-//            for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
-//                for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
-//                {
-//                    O4f_t G4f_LO(O4f_t::Zero()), G4f_EM(O4f_t::Zero());
-//                    
-//                    for(int iop1=0;iop1<nbil;iop1++)
-//                        for(int iop2=0;iop2<nbil;iop2++)
-//                        {
-//                            G4f_LO(iop1,iop2)=jpr_meslep_LO[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw];
-//                            G4f_EM(iop1,iop2)=jpr_meslep_EM[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw]+jpr_meslep_nasty[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw];
-//                        }
-//                    
-//                    O4f_t G4f_LO_inv = G4f_LO.inverse();
-//                    
-//                    O4f_t G4f_EM_rel = G4f_EM*G4f_LO_inv;
-//                    
-//                    O4f_t Z4f_LO = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])*G4f_LO_inv;
-//                    
-//                    O4f_t Z4f_EM = //Z4f_LO*
-//                    (0.5*(qOUT*qOUT*jZq_EM[imom1][ijack][mr_fw] + qIN*qIN*jZq_EM[imom2][ijack][mr_bw])*O4f_t::Identity() -G4f_EM_rel);
-//                    
-//                    for(int iop1=0;iop1<nbil;iop1++)
-//                        for(int iop2=0;iop2<nbil;iop2++)
-//                        {
-//                            jZ_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = Z4f_LO(iop1,iop2);
-//                            jZ_EM_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = Z4f_EM(iop1,iop2);
-//                        }
-//                }
-//        
-//    }// close mom loop
-//    
-//}
+
+
+void oper_t::compute_Z4f()
+{
+    
+    //#warning putting charges to 1
+    //these are the charges in the lagrangian
+    const double qIN=+2.0/3.0; //!< charge of the quark (in)
+    const double qOU=-1.0/3.0; //!< charge of the quark (out)
+    //    const double qIN=1.0;
+    //    const double qOU=1.0;
+    
+    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
+    {
+        const int imom1=bilmoms[ibilmom][1]; // p1
+        const int imom2=bilmoms[ibilmom][2]; // p2
+        
+        //compute Z's according to 'riqed.pdf', one for each momentum
+#pragma omp parallel for collapse(3)
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
+                for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
+                {
+                    O4f_t G4f_LO(O4f_t::Zero()), G4f_EM(O4f_t::Zero());
+                    
+                    for(int iop1=0;iop1<nbil;iop1++)
+                        for(int iop2=0;iop2<nbil;iop2++)
+                        {
+                            // LO
+                            G4f_LO(iop1,iop2) =
+                                jpr_meslep[ibilmom][meslep::LO][iop1][iop2][ijack][mr_fw][mr_bw];
+                            
+                            // EM
+                            G4f_EM(iop1,iop2) =
+                                jpr_meslep[ibilmom][meslep::IN ][iop1][iop2][ijack][mr_fw][mr_bw] +
+                                jpr_meslep[ibilmom][meslep::OUT][iop1][iop2][ijack][mr_fw][mr_bw] +
+                                jpr_meslep[ibilmom][meslep::M11][iop1][iop2][ijack][mr_fw][mr_bw] +
+                                jpr_meslep[ibilmom][meslep::M22][iop1][iop2][ijack][mr_fw][mr_bw] +
+                                jpr_meslep[ibilmom][meslep::M12][iop1][iop2][ijack][mr_fw][mr_bw] +
+                                jpr_meslep[ibilmom][meslep::P11][iop1][iop2][ijack][mr_fw][mr_bw] +
+                                jpr_meslep[ibilmom][meslep::P22][iop1][iop2][ijack][mr_fw][mr_bw] +
+                                jpr_meslep[ibilmom][meslep::S11][iop1][iop2][ijack][mr_fw][mr_bw] +
+                                jpr_meslep[ibilmom][meslep::S22][iop1][iop2][ijack][mr_fw][mr_bw];
+                        }
+                    
+                    O4f_t G4f_LO_inv = G4f_LO.inverse();
+                    
+                    O4f_t G4f_EM_rel = G4f_EM*G4f_LO_inv;
+                    
+                    O4f_t Z4f_LO = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])*G4f_LO_inv;
+                    
+                    O4f_t Z4f_EM =
+                        0.5*(qOU*qOU*jZq_EM[imom1][ijack][mr_fw]+
+                             qIN*qIN*jZq_EM[imom2][ijack][mr_bw])*O4f_t::Identity() -
+                        G4f_EM_rel;
+                    
+                    for(int iop1=0;iop1<nbil;iop1++)
+                        for(int iop2=0;iop2<nbil;iop2++)
+                        {
+                            jZ_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = Z4f_LO(iop1,iop2);
+                            jZ_4f_EM[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = Z4f_EM(iop1,iop2);
+                        }
+                }
+        
+    }// close mom loop
+    
+}
 
