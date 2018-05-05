@@ -16,7 +16,7 @@ namespace pr_meslep
 {
     void set_ins()
     {
-        ins_list={LO,EM,NASTY};
+        ins_list={LO,IN,OUT,M11,M22,M12,P11,P22,S11,S22};
         nins=ins_list.size();
     }
 }

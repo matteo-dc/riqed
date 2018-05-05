@@ -41,7 +41,7 @@ namespace pr_meslep
 {
     void set_ins();
     
-    enum ins{LO,EM,NASTY};
+    enum ins{LO,IN,OUT,M11,M22,M12,P11,P22,S11,S22};
     
     EXTERN_MESLEP vector<ins> ins_list;
     EXTERN_MESLEP int nins;
