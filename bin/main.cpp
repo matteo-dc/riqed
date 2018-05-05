@@ -82,11 +82,11 @@ int main(int narg,char **arg)
                     rave[b][th][m] = basic[b][th][m].average_r();
                     rave[b][th][m].plot("rave");
                     
-//                    /*  average over equivalent momenta  */
-//                    
-//                    rave_ave[b][th][m] = rave[b][th][m].average_equiv_moms();
-//                    rave_ave[b][th][m].plot("rave_ave");
-//                    
+                    /*  average over equivalent momenta  */
+                    
+                    rave_ave[b][th][m] = rave[b][th][m].average_equiv_moms();
+                    rave_ave[b][th][m].plot("rave_ave");
+                    
 //                    /*  valence chiral extr  */
 //                    
 //                    rave_ave_chir[b][th][m] = rave_ave[b][th][m].chiral_extr();
