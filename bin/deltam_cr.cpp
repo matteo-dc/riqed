@@ -63,11 +63,11 @@ void oper_t::compute_deltam_from_prop()
                     double F = sigma[imom][SIGMA3][P ][ijack][mr];
                     
                     double den = B*F-C*E;
-                    double deltamu = (-A*F+C*D)/den;
-                    double deltamc = (-B*D+A*E)/den;
+                    double delta_mu = (-A*F+C*D)/den;
+                    double delta_mc = (-B*D+A*E)/den;
                     
-                    v_deltamu[mr][ijack][imom] = deltamu;
-                    v_deltamc[mr][ijack][imom] = deltamc;
+                    v_deltamu[mr][ijack][imom] = delta_mu;
+                    v_deltamc[mr][ijack][imom] = delta_mc;
                 }
         
 #pragma omp parallel for collapse(2)
