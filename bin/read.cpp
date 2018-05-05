@@ -303,7 +303,7 @@ vector<string> oper_t::setup_read_qprop(FILE* input[])
     vector<string> v_path;
     
     // open files
-#pragma omp parallel for collapse(5)
+//#pragma omp parallel for collapse(5)
     for(int iconf=0;iconf<nconfs;iconf++)
         for(int ihit=0;ihit<nhits;ihit++)
             for(int t=0;t<ntypes;t++)
@@ -346,7 +346,7 @@ vector<string> oper_t::setup_read_lprop(FILE* input[])
     const int ntypes_lep=2;
     
     // open files
-#pragma omp parallel for collapse(3)
+//#pragma omp parallel for collapse(3)
     for(int iconf=0;iconf<nconfs;iconf++)
         for(int ihit=0;ihit<nhits;ihit++)
             for(int t=0;t<ntypes_lep;t++)
