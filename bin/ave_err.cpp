@@ -82,33 +82,37 @@ tuple<vvvvd_t,vvvvd_t> ave_err(vector<jZbil_t> jZ)
 }
 
 // average sigma
-tuple<vvvd_t,vvvd_t> ave_err(vvvvd_t sig)
+tuple<vvvvd_t,vvvvd_t> ave_err(vvvvvd_t sig)
 {
-    int nproj=(int)sig.size();
-    int nins=(int)sig[0].size();
-    int _njacks=(int)sig[0][0].size();
-    int _nmr=(int)sig[0][0][0].size();
+    int _linmoms=(int)sig.size();
+    int nproj=(int)sig[0].size();
+    int nins=(int)sig[0][0].size();
+    int _njacks=(int)sig[0][0][0].size();
+    int _nmr=(int)sig[0][0][0][0].size();
     
-    vvvd_t sig_ave(vvd_t(vd_t(0.0,_nmr),nins),nproj);
-    vvvd_t sqr_sig_ave=sig_ave;
-    vvvd_t sig_err=sig_ave;
+    vvvvd_t sig_ave(vvvd_t(vvd_t(vd_t(0.0,_nmr),nins),nproj),_linmoms);
+    vvvvd_t sqr_sig_ave=sig_ave;
+    vvvvd_t sig_err=sig_ave;
     
-    for(int iproj=0;iproj<nproj;iproj++)
-        for(int ins=0;ins<nins;ins++)
-            for(int mr=0;mr<_nmr;mr++)
-                for(int ijack=0;ijack<_njacks;ijack++)
-                {
-                    sig_ave[iproj][ins][mr] += sig[iproj][ins][ijack][mr]/_njacks;
-                    sqr_sig_ave[iproj][ins][mr] += sig[iproj][ins][ijack][mr]*
-                                                   sig[iproj][ins][ijack][mr]/_njacks;
-                }
+#pragma omp parallel for collapse(4)
+    for(int imom=0;imom<_linmoms;imom++)
+        for(int iproj=0;iproj<nproj;iproj++)
+            for(int ins=0;ins<nins;ins++)
+                for(int mr=0;mr<_nmr;mr++)
+                    for(int ijack=0;ijack<_njacks;ijack++)
+                    {
+                        sig_ave[imom][iproj][ins][mr] += sig[imom][iproj][ins][ijack][mr]/_njacks;
+                        sqr_sig_ave[imom][iproj][ins][mr] += sig[imom][iproj][ins][ijack][mr]*
+                        sig[imom][iproj][ins][ijack][mr]/_njacks;
+                    }
+#pragma omp parallel for collapse(4)
+    for(int imom=0;imom<_linmoms;imom++)
+        for(int iproj=0;iproj<nproj;iproj++)
+            for(int ins=0;ins<nins;ins++)
+                for(int mr=0;mr<_nmr;mr++)
+                    sig_err[imom][iproj][ins][mr]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_sig_ave[imom][iproj][ins][mr]-sig_ave[imom][iproj][ins][mr]*sig_ave[imom][iproj][ins][mr]));
     
-    for(int iproj=0;iproj<nproj;iproj++)
-        for(int ins=0;ins<nins;ins++)
-            for(int mr=0;mr<_nmr;mr++)
-            sig_err[iproj][ins][mr]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_sig_ave[iproj][ins][mr]-sig_ave[iproj][ins][mr]*sig_ave[iproj][ins][mr]));
-    
-    tuple<vvvd_t,vvvd_t> tuple_ave_err(sig_ave,sig_err);
+    tuple<vvvvd_t,vvvvd_t> tuple_ave_err(sig_ave,sig_err);
     
     return tuple_ave_err;
 }
@@ -194,8 +198,54 @@ tuple<vd_t,vd_t> ave_err(vvd_t jdeltam)
     return tuple_ave_err;
 }
 
-// average meslep and Z4f
-tuple<vvvvvd_t,vvvvvd_t> ave_err(jproj_meslep_t jZ4f)
+// average meslep
+tuple<vvvvvvd_t,vvvvvvd_t> ave_err(vector<jproj_meslep_t> jpr_meslep)
+{
+    int _bilmoms=(int)jpr_meslep.size();
+    int _nins=(int)jpr_meslep[0].size();
+    int _nbil=(int)jpr_meslep[0][0].size();
+    int _njacks=(int)jpr_meslep[0][0][0][0].size();
+    int _nmr=(int)jpr_meslep[0][0][0][0][0].size();
+    
+    vvvvvvd_t pr_meslep_ave(vvvvvd_t(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,_nmr),_nmr),_nbil),_nbil),_nins),_bilmoms);
+    vvvvvvd_t sqr_pr_meslep_ave=pr_meslep_ave;
+    vvvvvvd_t pr_meslep_err=pr_meslep_ave;
+    
+    for(int imom=0;imom<_bilmoms;imom++)
+    {
+#pragma omp parallel for collapse(5)
+        for(int ins=0;ins<_nins;ins++)
+            for(int iop1=0;iop1<_nbil;iop1++)
+                for(int iop2=0;iop2<_nbil;iop2++)
+                    for(int mrA=0;mrA<_nmr;mrA++)
+                        for(int mrB=0;mrB<_nmr;mrB++)
+                            for(int ijack=0;ijack<_njacks;ijack++)
+                            {
+                                pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]+=
+                                    jpr_meslep[imom][ins][iop1][iop2][ijack][mrA][mrB]/_njacks;
+                                sqr_pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]+=
+                                    (jpr_meslep[imom][ins][iop1][iop2][ijack][mrA][mrB]*
+                                     jpr_meslep[imom][ins][iop1][iop2][ijack][mrA][mrB])/_njacks;
+                            }
+#pragma omp parallel for collapse(5)
+        for(int ins=0;ins<_nins;ins++)
+            for(int iop1=0;iop1<_nbil;iop1++)
+                for(int iop2=0;iop2<_nbil;iop2++)
+                    for(int mrA=0;mrA<_nmr;mrA++)
+                        for(int mrB=0;mrB<_nmr;mrB++)
+                        {
+                            pr_meslep_err[imom][iop1][iop2][mrA][mrB]=
+                                sqrt((double)(njacks-1))*sqrt(fabs(sqr_pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]-pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]*pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]));
+                        }
+    }
+    
+    tuple<vvvvvvd_t,vvvvvvd_t> tuple_ave_err(pr_meslep_ave,pr_meslep_err);
+    
+    return tuple_ave_err;
+}
+
+// average Z4f
+tuple<vvvvvd_t,vvvvvd_t> ave_err_Z4f(vector<jZ4f_t> jZ4f) //TO BE CHANGED!
 {
     int _bilmoms=(int)jZ4f.size();
     int _nbil=(int)jZ4f[0].size();

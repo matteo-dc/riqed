@@ -128,21 +128,19 @@ void oper_t::plot_sigmas()
     }
     
     // plotting averaged sigma
-    for(int imom=0;imom<_linmoms;imom++)
+    sigma_tup sigma_ave_err=ave_err(sigma);
+    vvvvd_t sigma_ave=get<0>(sigma_ave_err);
+    vvvvd_t sigma_err=get<1>(sigma_ave_err);
+
+    for(int j=0; j<nsigma; j++)
     {
-        sigma_tup sigma_ave_err_mom=ave_err(sigma[imom]);
-        vvvd_t sigma_ave_mom=get<0>(sigma_ave_err_mom);
-        vvvd_t sigma_err_mom=get<1>(sigma_ave_err_mom);
-    
-        for(int j=0; j<nsigma; j++)
-        {
-            int iproj = j%nproj;
-            int ins = (j-iproj)/nproj;
-            
-            sigma_data[j]<<p2t[imom]<<"\t";
-            sigma_data[j]<<sigma_ave_mom[iproj][ins][0]<<"\t";
-            sigma_data[j]<<sigma_err_mom[iproj][ins][0]<<endl;
-        }
+        int iproj = j%nproj;
+        int ins = (j-iproj)/nproj;
+        
+        for(int imom=0;imom<_linmoms;imom++)
+            sigma_data[j]<<p2t[imom]<<"\t"
+                         <<sigma_ave[imom][iproj][ins][0]<<"\t"
+                         <<sigma_err[imom][iproj][ins][0]<<endl;
     }
 }
 

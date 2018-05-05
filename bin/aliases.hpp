@@ -58,6 +58,7 @@ using vvd_t=valarray< valarray<double> > ;
 using vvvd_t=valarray< valarray< valarray<double> > >;
 using vvvvd_t=valarray<vvvd_t>;
 using vvvvvd_t=valarray<vvvvd_t>;
+using vvvvvvd_t=valarray<vvvvvd_t>;
 
 //valarray of complex double
 using vdcompl_t=valarray<dcompl>;
@@ -85,7 +86,7 @@ using jZ4f_t =vvvvvd_t;
 //tuple
 using Zbil_tup=tuple<vvvvd_t,vvvvd_t>;
 using Zq_tup=tuple<vvd_t,vvd_t>;
-using sigma_tup=tuple<vvvd_t,vvvd_t>;
+using sigma_tup=tuple<vvvvd_t,vvvvd_t>;
 using Zmeslep_tup=tuple<vvvvvd_t,vvvvvd_t>;
 using Z4f_tup=Zmeslep_tup;
 
