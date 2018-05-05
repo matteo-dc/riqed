@@ -273,7 +273,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
 
 //////////
 
-oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
+oper_t oper_t::average_r()
 {
     cout<<"Averaging over r"<<endl<<endl;
     
@@ -319,8 +319,8 @@ oper_t oper_t::average_r(/*const bool recompute_Zbil*/)
                     for(int ijack=0;ijack<njacks;ijack++)
                         for(int ibil=0; ibil<5; ibil++)
                             for(int ins=0; ins<gbil::nins; ins++)
-                                (out.jG)[ibilmom][ibil][ins][ijack][mA][mB] +=
-                                    jG[ibilmom][ibil][ins][ijack][r+_nr*mA][r+_nr*mB]/_nr;
+                                (out.jG)[ibilmom][ins][ibil][ijack][mA][mB] +=
+                                    jG[ibilmom][ins][ibil][ijack][r+_nr*mA][r+_nr*mB]/_nr;
     
     out.compute_Zbil();
     
