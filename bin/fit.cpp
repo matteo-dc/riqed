@@ -2,7 +2,7 @@
 #include "global.hpp"
 #include <iostream>
 
-vvd_t polyfit/*_par_jackknife*/(const vvd_t &coord, const int n_par, vd_t &error, const vvd_t &y, const int range_min, const int range_max)
+vvd_t polyfit(const vvd_t &coord, const int n_par, vd_t &error, const vvd_t &y, const int range_min, const int range_max)
 {
 //    int njacks = y.size();
     
