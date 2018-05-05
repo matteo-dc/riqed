@@ -350,6 +350,9 @@ void oper_t::compute_Z4f()
     //    const double qIN=1.0;
     //    const double qOU=1.0;
     
+    cout<<jpr_meslep.size()<<" "<<jpr_meslep[0].size()<<" "<<jpr_meslep[0][0].size()<<" "<<jpr_meslep[0][0][0].size()<<" ";
+    cout<<jpr_meslep[0][0][0][0].size()<<" "<<jpr_meslep[0][0][0][0][0].size()<<" "<<jpr_meslep[0][0][0][0][0][0].size()<<endl;
+    
     for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
     {
         const int imom1=bilmoms[ibilmom][1]; // p1
