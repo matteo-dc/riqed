@@ -21,7 +21,7 @@ void oper_t::compute_deltam_from_prop()
     deltamu_data.open(path_to_ens+"deltamu_array");
     deltamc_data.open(path_to_ens+"deltam_cr_array");
     
-    if(deltamu_data.good() and deltamc_data.good() and deltam_computed==false)
+    if(deltamu_data.good() and deltamc_data.good() and !deltam_computed)
     {
         cout<<"Reading deltam from files"<<endl<<endl;
         read_vec_bin(deltamu,path_to_ens+"deltamu_array");
@@ -29,7 +29,7 @@ void oper_t::compute_deltam_from_prop()
     }
     else
     {
-        if(deltam_computed==false)
+        if(!deltam_computed)
             cout<<"Computing deltam"<<endl;
         else
             cout<<"Recomputing deltam"<<endl;
@@ -109,11 +109,11 @@ void oper_t::compute_deltam_from_prop()
         }
     }
     
-    if(deltam_computed==false)
+    if(!deltam_computed)
     {
         print_vec_bin(deltam_cr,path_to_ens+"deltam_cr_array");
         print_vec_bin(deltamu,path_to_ens+"deltamu_array");
-    }    
+    }
 }
 
 
@@ -125,7 +125,7 @@ void oper_t::compute_deltam()
     deltamu_data.open(path_to_ens+"deltamu_array");
     deltamc_data.open(path_to_ens+"deltam_cr_array");
     
-    if(deltamu_data.good() and deltamc_data.good())
+    if(deltamu_data.good() and deltamc_data.good() and !deltam_computed)
     {
         cout<<"Reading deltam from files"<<endl<<endl;
         read_vec_bin(deltamu,path_to_ens+"deltamu_array");
@@ -133,7 +133,10 @@ void oper_t::compute_deltam()
     }
     else
     {
-        cout<<"Computing deltam"<<endl;
+        if(!deltam_computed)
+            cout<<"Computing deltam"<<endl;
+        else
+            cout<<"Recomputing deltam"<<endl;
         
         // array of the configurations
         int conf_id[nconfs];
@@ -326,11 +329,9 @@ void oper_t::compute_deltam()
             }
     }
     
-    if(deltam_computed==false)
+    if(!deltam_computed)
     {
         print_vec_bin(deltam_cr,path_to_ens+"deltam_cr_array");
         print_vec_bin(deltamu,path_to_ens+"deltamu_array");
     }
-    
-    deltam_computed=true;
 }
