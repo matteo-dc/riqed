@@ -225,48 +225,48 @@ vvvd_t oper_t::read_eff_mass_sea(const string name)
 }
 
 
-// read deltamu and deltamcr
-vvd_t oper_t::read_deltam(const string path, const string name)
-{
-    vvd_t deltam(vd_t(0.0,nmr),njacks);
-    
-    FILE* input_deltam;
-    input_deltam = fopen((path+name).c_str(),"rb");
-    
-    if(input_deltam == NULL)
-    {
-        cout<<"Computing "<<name<<endl<<endl;
-//        compute_deltam();
-        compute_deltam_from_prop();
-        input_deltam = fopen((path+name).c_str(),"rb");
-    }
-    
-    cout<<"Reading "<<name<<endl<<endl;
-    
-    for(int mr=0;mr<nmr;mr++)
-        for(int ijack=0;ijack<njacks;ijack++)
-        {
-            double temp;
-            
-            int rd=fread(&temp,sizeof(double),1,input_deltam);
-            if(rd!=1)
-            {
-                cerr<<"Unable to read from \""<<name<<"\" -- mr: "<<mr<<", ijack: "<<ijack<<endl;
-                exit(1);
-            }
-            
-            deltam[ijack][mr]=temp; //store
-        }
-    
-    vd_t deltam_ave=get<0>(ave_err(deltam));
-    vd_t deltam_err=get<1>(ave_err(deltam));
-    
-    for(int mr=0;mr<nmr;mr++)
-        printf("mr: %d \t %lg +- %lg\n",mr,deltam_ave[mr],deltam_err[mr]);
-    printf("\n");
-    
-    return deltam;
-}
+//// read deltamu and deltamcr
+//vvd_t oper_t::read_deltam(const string path, const string name)
+//{
+//    vvd_t deltam(vd_t(0.0,nmr),njacks);
+//    
+//    FILE* input_deltam;
+//    input_deltam = fopen((path+name).c_str(),"rb");
+//    
+//    if(input_deltam == NULL)
+//    {
+//        cout<<"Computing "<<name<<endl<<endl;
+////        compute_deltam();
+//        compute_deltam_from_prop();
+//        input_deltam = fopen((path+name).c_str(),"rb");
+//    }
+//    
+//    cout<<"Reading "<<name<<endl<<endl;
+//    
+//    for(int mr=0;mr<nmr;mr++)
+//        for(int ijack=0;ijack<njacks;ijack++)
+//        {
+//            double temp;
+//            
+//            int rd=fread(&temp,sizeof(double),1,input_deltam);
+//            if(rd!=1)
+//            {
+//                cerr<<"Unable to read from \""<<name<<"\" -- mr: "<<mr<<", ijack: "<<ijack<<endl;
+//                exit(1);
+//            }
+//            
+//            deltam[ijack][mr]=temp; //store
+//        }
+//    
+//    vd_t deltam_ave=get<0>(ave_err(deltam));
+//    vd_t deltam_err=get<1>(ave_err(deltam));
+//    
+//    for(int mr=0;mr<nmr;mr++)
+//        printf("mr: %d \t %lg +- %lg\n",mr,deltam_ave[mr],deltam_err[mr]);
+//    printf("\n");
+//    
+//    return deltam;
+//}
 
 // returns the linearized spin color index
 size_t isc(size_t is,size_t ic)
