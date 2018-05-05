@@ -1411,6 +1411,7 @@ void oper_t::plot(const string suffix)
 //            }
 //        }
         
+        cout<<"Plotting Z4f"<<endl;
         for(int i=0;i<nbil*nbil;i++)
         {
             int iop2=i%nbil;
@@ -1431,5 +1432,5 @@ void oper_t::plot(const string suffix)
             }
         }
     }
-
+    
 }
