@@ -343,269 +343,211 @@ oper_t oper_t::average_r()
     return out;
 }
 
-//oper_t oper_t::chiral_extr()
-//{
-//    cout<<"Chiral extrapolation"<<endl<<endl;
-//    
-//    oper_t out=(*this);
-//    
-//    out._nr=_nr;
-//    out._nm=1;
-//    out._nmr=(out._nm)*(out._nr);
-//    
-////    resize_output(out);
-//    out.allocate();
-//    
-//    vvvvd_t G_LO_err = get<1>(ave_err(jG_LO));    //[imom][ibil][mr1][mr2]
-//    vvvvd_t G_EM_err = get<1>(ave_err(jG_EM));
-//    
-//    vvd_t Zq_err = get<1>(ave_err(jZq));        //[imom][mr]
-//    vvd_t Zq_EM_err = get<1>(ave_err(jZq_EM));
-//    
-//    vvvvvd_t pr_meslep_LO_err=get<1>(ave_err(jpr_meslep_LO));  //[imom][iop1][iop2][mr1][mr2];
-//    vvvvvd_t pr_meslep_EM_err=get<1>(ave_err(jpr_meslep_EM));
-//    vvvvvd_t pr_meslep_nasty_err=get<1>(ave_err(jpr_meslep_nasty));
-//    
-//    //Sum of quark masses for the extrapolation
-////    vd_t mass_sum(0.0,10);
-////    int i_sum = 0;
-////    for (int i=0; i<nm; i++)
-////        for(int j=i;j<nm;j++)
-////        {
-////            mass_sum[i_sum] = mass_val[i]+mass_val[j];
-////            i_sum++;
-////        }
-//
-//    // average of eff_mass
-//    vvd_t M_eff = get<0>(ave_err(eff_mass));
-//    
-//    //range for fit Zq
-//    int x_min_q=0;
-//    int x_max_q=_nm-1;
-//    
-//    // range for fit bilinears
-//    int x_min=0;
-//    int x_max=_nm*(_nm+1)/2-1;
-//    
-//    // number of fit parameters for bilinears
-//    int npar[5]={3,2,3,2,2};
-//    
-//    // number of fit parameters for meslep
-//    int npar_meslep[5]={2,2,3,3,2};
-//    
-//    //extrapolate Zq
-//    for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
-//    {
-//        for(int r=0; r<_nr; r++)
+oper_t oper_t::chiral_extr()
+{
+    cout<<"Chiral extrapolation"<<endl<<endl;
+    
+    oper_t out=(*this);
+    
+    out._nr=_nr;
+    out._nm=1;
+    out._nmr=(out._nm)*(out._nr);
+    
+    out.allocate();
+    
+    vvvvd_t sigma_err = get<1>(ave_err(sigma));
+    vvvvvd_t G_err = get<1>(ave_err(jG));
+    vvvvvvd_t pr_meslep_err=get<1>(ave_err(jpr_meslep));
+    
+    //Sum of quark masses for the extrapolation
+//    vd_t mass_sum(0.0,10);
+//    int i_sum = 0;
+//    for (int i=0; i<nm; i++)
+//        for(int j=i;j<nm;j++)
 //        {
-//            vvd_t coord_q(vd_t(0.0,_nm),2); // coords at fixed r
-//            
-//            vvvd_t jZq_r(vvd_t(vd_t(0.0,_nm),njacks),_linmoms);
-//            vvvd_t jZq_EM_r(vvd_t(vd_t(0.0,_nm),njacks),_linmoms);
-//            
-//            vvd_t Zq_err_r(vd_t(0.0,_nm),_linmoms);
-//            vvd_t Zq_EM_err_r(vd_t(0.0,_nm),_linmoms);
-//            
-//            for(int m=0; m<_nm; m++)
-//            {
-//                int mr = r + _nr*m;
-//                
-//                coord_q[0][m] = 1.0;
-//                if(UseEffMass==0)
-//                    coord_q[1][m]= mass_val[m];
-//                else if(UseEffMass==0)
-//                    coord_q[1][m] = pow(M_eff[mr][mr],2.0);
-//                
-//                for(int ijack=0;ijack<njacks;ijack++)
-//                {
-//                    jZq_r[ilinmom][ijack][m]=jZq[ilinmom][ijack][mr];
-//                    jZq_EM_r[ilinmom][ijack][m]=jZq_EM[ilinmom][ijack][mr];
-//                }
-//                
-//                Zq_err_r[ilinmom][m]=Zq_err[ilinmom][mr];
-//                Zq_EM_err_r[ilinmom][m]=Zq_EM_err[ilinmom][mr];
-//            }
-//            
-//            vvd_t jZq_pars_mom_r = polyfit(coord_q,2,Zq_err_r[ilinmom],jZq_r[ilinmom],x_min_q,x_max_q);
-//            vvd_t jZq_EM_pars_mom_r = polyfit(coord_q,2,Zq_EM_err_r[ilinmom],jZq_EM_r[ilinmom],x_min_q,x_max_q);
-//            
-//            for(int ijack=0; ijack<njacks; ijack++)
-//            {
-//                (out.jZq)[ilinmom][ijack][r]=jZq_pars_mom_r[ijack][0];
-//                (out.jZq_EM)[ilinmom][ijack][r]=jZq_EM_pars_mom_r[ijack][0];
-//            }
+//            mass_sum[i_sum] = mass_val[i]+mass_val[j];
+//            i_sum++;
 //        }
-//    }
-//    
-//    //extrapolate bilinears
-//    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
-//    {
-//        for(int r1=0; r1<_nr; r1++)
-//            for(int r2=0; r2<_nr; r2++)
-//            {
-//                vvd_t coord_bil(vd_t(0.0,_nm*(_nm+1)/2),3); // coords at fixed r1 and r2
-//                
-//                vvvvd_t jG_LO_r1_r2(vvvd_t(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),njacks),nbil),_bilmoms);
-//                vvvvd_t jG_EM_r1_r2(vvvd_t(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),njacks),nbil),_bilmoms);
-//                
-//                vvvd_t G_LO_err_r1_r2(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),nbil),_bilmoms);
-//                vvvd_t G_EM_err_r1_r2(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),nbil),_bilmoms);
-//
-//                int ieq=0;
-//                for(int m1=0; m1<_nm; m1++)
-//                    for(int m2=m1; m2<_nm; m2++)
-//                    {
-//                        int mr1 = r1 + _nr*m1;
-//                        int mr2 = r2 + _nr*m2;
-//
-//                        coord_bil[0][ieq] = 1.0;
-//                        if(UseEffMass==0)
-//                        {
-//                            coord_bil[1][ieq] = mass_val[m1]+mass_val[m2];  // (am1+am2)
-//                            coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];    // 1/(am1+am2)
-//                        }
-//                        else if(UseEffMass==1)
-//                        {
-//                            coord_bil[1][ieq] = pow((M_eff[mr1][mr2]+M_eff[mr2][mr1])/2.0,2.0);   //M^2 (averaged over equivalent combinations)
-//                            coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];  //1/M^2
-//                        }
-//                    
-//                        for(int ibil=0;ibil<nbil;ibil++)
-//                        {
-//                            for(int ijack=0;ijack<njacks;ijack++)
-//                            {
-//                                jG_LO_r1_r2[ibilmom][ibil][ijack][ieq] = (jG_LO[ibilmom][ibil][ijack][mr1][mr2]/*+jG_LO[ibilmom][ibil][ijack][r1+_nr*m2][r2+_nr*m1])/2.0*/);
-//                                jG_EM_r1_r2[ibilmom][ibil][ijack][ieq] = (jG_EM[ibilmom][ibil][ijack][mr1][mr2]/*+jG_EM[ibilmom][ibil][ijack][r1+_nr*m2][r2+_nr*m1])/2.0*/);
-//                            }
-//                            
-//                            G_LO_err_r1_r2[ibilmom][ibil][ieq] = (G_LO_err[ibilmom][ibil][mr1][mr2]/* + G_LO_err[ibilmom][ibil][r1+_nr*m2][r2+_nr*m1])/2.0*/);
-//                            G_EM_err_r1_r2[ibilmom][ibil][ieq] = (G_EM_err[ibilmom][ibil][mr1][mr2] /*+ G_EM_err[ibilmom][ibil][r1+_nr*m2][r2+_nr*m1])/2.0*/);
-//                        }
-//                        
-//                        ieq++;
-//                    }
-//                
-//                for(int ibil=0;ibil<nbil;ibil++)
-//                {
-//                    vvd_t jG_LO_pars_mom_ibil_r1_r2 = polyfit(coord_bil,npar[ibil],G_LO_err_r1_r2[ibilmom][ibil],jG_LO_r1_r2[ibilmom][ibil],x_min,x_max);
-//                    vvd_t jG_EM_pars_mom_ibil_r1_r2 = polyfit(coord_bil,npar[ibil],G_EM_err_r1_r2[ibilmom][ibil],jG_EM_r1_r2[ibilmom][ibil],x_min,x_max);
-//                    
-//                    for(int ijack=0;ijack<njacks;ijack++)
-//                    {
-////                        if(ibil==0 or ibil==2)
-////                            for(int ieq=0;ieq<neq;ieq++)
-////                            {
-////                                // Goldstone pole subtraction from bilinears
-////                                jG_LO_ave_r[imom][ibil][ijack][ieq] -= jG_LO_pars_mom[ibil][ijack][2];
-////                                jG_EM_ave_r[imom][ibil][ijack][ieq] -= jG_EM_pars_mom[ibil][ijack][2];
-////                            }
-//                        
-//                        // extrapolated value
-//                        (out.jG_LO)[ibilmom][ibil][ijack][r1][r2] = jG_LO_pars_mom_ibil_r1_r2[ijack][0];
-//                        (out.jG_EM)[ibilmom][ibil][ijack][r1][r2] = jG_EM_pars_mom_ibil_r1_r2[ijack][0];
-//                    }
-//                }
-//            }
-//    }
-//    
-//    out.compute_Zbil();
-//    
-//    if(compute_4f)
-//    {
-//        
-//        //extrapolate meslep
-//        for(int imeslepmom=0;imeslepmom<_meslepmoms;imeslepmom++)
-//        {
-//            for(int r1=0; r1<_nr; r1++)
-//                for(int r2=0; r2<_nr; r2++)
-//                {
-//                    vvd_t coord_meslep(vd_t(0.0,_nm*(_nm+1)/2),3); // coords at fixed r1 and r2
-//                    
-//                    //                jpr_meslep_LO[imeslepmom][iop1][iop2][ijack][r+_nr*mA][r+_nr*mB]
-//                    
-//                    vvvvvd_t jpr_meslep_LO_r1_r2(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),njacks),nbil),nbil),_meslepmoms);
-//                    vvvvvd_t jpr_meslep_EM_r1_r2(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),njacks),nbil),nbil),_meslepmoms);
-//                    vvvvvd_t jpr_meslep_nasty_r1_r2(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),njacks),nbil),nbil),_meslepmoms);
-//                    
-//                    vvvvd_t pr_meslep_LO_err_r1_r2(vvvd_t(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),nbil),nbil),_meslepmoms);
-//                    vvvvd_t pr_meslep_EM_err_r1_r2(vvvd_t(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),nbil),nbil),_meslepmoms);
-//                    vvvvd_t pr_meslep_nasty_err_r1_r2(vvvd_t(vvd_t(vd_t(0.0,_nm*(_nm+1)/2),nbil),nbil),_meslepmoms);
-//                    
-//                    int ieq=0;
-//                    for(int m1=0; m1<_nm; m1++)
-//                        for(int m2=m1; m2<_nm; m2++)
-//                        {
-//                            int mr1 = r1 + _nr*m1;
-//                            int mr2 = r2 + _nr*m2;
-//                            
-//                            coord_meslep[0][ieq] = 1.0;
-//                            if(UseEffMass==0)
-//                            {
-//                                coord_meslep[1][ieq] = mass_val[m1]+mass_val[m2];  // (am1+am2)
-//                                coord_meslep[2][ieq] = 1.0/coord_meslep[1][ieq];    // 1/(am1+am2)
-//                            }
-//                            else if(UseEffMass==1)
-//                            {
-//                                coord_meslep[1][ieq] = pow((M_eff[mr1][mr2]+M_eff[mr2][mr1])/2.0,2.0);   //M^2 (averaged over equivalent combinations)
-//                                coord_meslep[2][ieq] = 1.0/coord_meslep[1][ieq];  //1/M^2
-//                            }
-//                            
-//                            for(int iop1=0;iop1<nbil;iop1++)
-//                                for(int iop2=0;iop2<nbil;iop2++)
-//                                {
-//                                    for(int ijack=0;ijack<njacks;ijack++)
-//                                    {
-//                                        jpr_meslep_LO_r1_r2[imeslepmom][iop1][iop2][ijack][ieq] = (jpr_meslep_LO[imeslepmom][iop1][iop2][ijack][mr1][mr2]/*+jG_LO[ibilmom][ibil][ijack][r1+_nr*m2][r2+_nr*m1])/2.0*/);
-//                                        jpr_meslep_EM_r1_r2[imeslepmom][iop1][iop2][ijack][ieq] = (jpr_meslep_EM[imeslepmom][iop1][iop2][ijack][mr1][mr2]/*+jG_LO[ibilmom][ibil][ijack][r1+_nr*m2][r2+_nr*m1])/2.0*/);
-//                                        jpr_meslep_nasty_r1_r2[imeslepmom][iop1][iop2][ijack][ieq] = (jpr_meslep_nasty[imeslepmom][iop1][iop2][ijack][mr1][mr2]/*+jG_LO[ibilmom][ibil][ijack][r1+_nr*m2][r2+_nr*m1])/2.0*/);
-//                                    }
-//                                    
-//                                    pr_meslep_LO_err_r1_r2[imeslepmom][iop1][iop2][ieq] = (pr_meslep_LO_err[imeslepmom][iop1][iop2][mr1][mr2]/* + G_LO_err[ibilmom][ibil][r1+_nr*m2][r2+_nr*m1])/2.0*/);
-//                                    pr_meslep_EM_err_r1_r2[imeslepmom][iop1][iop2][ieq] = (pr_meslep_EM_err[imeslepmom][iop1][iop2][mr1][mr2]/* + G_LO_err[ibilmom][ibil][r1+_nr*m2][r2+_nr*m1])/2.0*/);
-//                                    pr_meslep_nasty_err_r1_r2[imeslepmom][iop1][iop2][ieq] = (pr_meslep_nasty_err[imeslepmom][iop1][iop2][mr1][mr2]/* + G_LO_err[ibilmom][ibil][r1+_nr*m2][r2+_nr*m1])/2.0*/);
-//                                }
-//                            
-//                            ieq++;
-//                        }
-//                    
-//                    for(int iop1=0;iop1<nbil;iop1++)
-//                        for(int iop2=0;iop2<nbil;iop2++)
-//                        {
-//                            vvd_t jpr_meslep_LO_pars_mom_iop1_iop2_r1_r2 = polyfit(coord_meslep,npar_meslep[iop1],pr_meslep_LO_err_r1_r2[imeslepmom][iop1][iop2],jpr_meslep_LO_r1_r2[imeslepmom][iop1][iop2],x_min,x_max);
-//                            vvd_t jpr_meslep_EM_pars_mom_iop1_iop2_r1_r2 = polyfit(coord_meslep,npar_meslep[iop1],pr_meslep_EM_err_r1_r2[imeslepmom][iop1][iop2],jpr_meslep_EM_r1_r2[imeslepmom][iop1][iop2],x_min,x_max);
-//                            vvd_t jpr_meslep_nasty_pars_mom_iop1_iop2_r1_r2 = polyfit(coord_meslep,npar_meslep[iop1],pr_meslep_nasty_err_r1_r2[imeslepmom][iop1][iop2],jpr_meslep_nasty_r1_r2[imeslepmom][iop1][iop2],x_min,x_max);
-//                            
-//                            for(int ijack=0;ijack<njacks;ijack++)
-//                            {
-//                                //                        if(ibil==0 or ibil==2)
-//                                //                            for(int ieq=0;ieq<neq;ieq++)
-//                                //                            {
-//                                //                                // Goldstone pole subtraction from bilinears
-//                                //                                jG_LO_ave_r[imom][ibil][ijack][ieq] -= jG_LO_pars_mom[ibil][ijack][2];
-//                                //                                jG_EM_ave_r[imom][ibil][ijack][ieq] -= jG_EM_pars_mom[ibil][ijack][2];
-//                                //                            }
-//                                
-//                                // extrapolated value
-//                                (out.jpr_meslep_LO)[imeslepmom][iop1][iop2][ijack][r1][r2] = jpr_meslep_LO_pars_mom_iop1_iop2_r1_r2[ijack][0];
-//                                (out.jpr_meslep_EM)[imeslepmom][iop1][iop2][ijack][r1][r2] = jpr_meslep_EM_pars_mom_iop1_iop2_r1_r2[ijack][0];
-//                                (out.jpr_meslep_nasty)[imeslepmom][iop1][iop2][ijack][r1][r2] = jpr_meslep_nasty_pars_mom_iop1_iop2_r1_r2[ijack][0];
-//                            }
-//                        }
-//                }
-//        }
-//        
-//        out.compute_Z4f();
-//    }
-//    
-//    return out;
-//}
+
+    // average of eff_mass
+    vvd_t M_eff = get<0>(ave_err(eff_mass));
+    
+    //range for fit Zq
+    int x_min_q=0;
+    int x_max_q=_nm-1;
+    
+    // range for fit bilinears
+    int x_min=0;
+    int x_max=_nm*(_nm+1)/2-1;
+    
+    // number of fit parameters for sigma
+    int npar_sigma=2;
+    // number of fit parameters for bilinears
+    int npar_bil[5]={3,2,3,2,2};
+    // number of fit parameters for meslep
+    int npar_meslep[5]={2,2,3,3,2};
+    
+    //extrapolate sigma
+    for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
+        for(int iproj=0; iproj<sigma::nproj; iproj++)
+            for(int ins=0; ins<sigma::nins; ins++)
+                for(int r=0; r<_nr; r++)
+                {
+                    vvd_t coord_sigma(vd_t(0.0,_nm),npar_sigma); // coords at fixed r
+                    
+                    vvd_t sigma_r(vd_t(0.0,_nm),njacks);
+                    vd_t sigma_err_r(0.0,_nm);
+                    
+                    for(int m=0; m<_nm; m++)
+                    {
+                        int mr = r + _nr*m;
+                        
+                        if(UseEffMass==0)
+                        {
+                            coord_sigma[0][m] = 1.0;
+                            coord_sigma[1][m]= mass_val[m];
+                        }
+                        else if(UseEffMass==0)
+                        {
+                            coord_sigma[0][m] = 1.0;
+                            coord_sigma[1][m] = pow(M_eff[mr][mr],2.0);
+                        }
+                        
+                        for(int ijack=0;ijack<njacks;ijack++)
+                            sigma_r[ijack][m]=sigma[ilinmom][iproj][ins][ijack][mr];
+                        
+                        sigma_err_r[m]=sigma_err[ilinmom][iproj][ins][mr];
+                    }
+                    
+                    vvd_t sigma_pars_mom_r = polyfit(coord_sigma,npar_sigma,sigma_err_r,sigma_r,x_min_q,x_max_q);
+                    
+                    for(int ijack=0; ijack<njacks; ijack++)
+                        (out.sigma)[ilinmom][iproj][ins][ijack][r]=sigma_pars_mom_r[ijack][0];
+                }
+    
+    out.deltam_computed=true;
+    out.compute_deltam_from_prop();
+    
+    out.compute_Zq();
+    
+    //extrapolate bilinears
+    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
+        for(int r1=0; r1<_nr; r1++)
+            for(int r2=0; r2<_nr; r2++)
+                for(int ins=0; ins<gbil::nins; ins++)
+                    for(int ibil=0;ibil<nbil;ibil++)
+                    {
+                        vvd_t coord_bil(vd_t(0.0,_nm*(_nm+1)/2),npar_bil[ibil]); // coords at fixed r1 and r2
+                        
+                        vvd_t jG_r1_r2(vd_t(0.0,_nm*(_nm+1)/2),njacks);
+                        vd_t G_err_r1_r2(0.0,_nm*(_nm+1)/2);
+                        
+                        int ieq=0;
+                        for(int m1=0; m1<_nm; m1++)
+                            for(int m2=m1; m2<_nm; m2++)
+                            {
+                                int mr1 = r1 + _nr*m1;
+                                int mr2 = r2 + _nr*m2;
+                                
+                                if(UseEffMass==0)
+                                {
+                                    coord_bil[0][ieq] = 1.0;
+                                    // (am1+am2)
+                                    coord_bil[1][ieq] = mass_val[m1]+mass_val[m2];
+                                    // 1/(am1+am2)
+                                    coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];
+                                }
+                                else if(UseEffMass==1)
+                                {
+                                    coord_bil[0][ieq] = 1.0;
+                                    // M^2 (averaged over equivalent combinations)
+                                    coord_bil[1][ieq] = pow((M_eff[mr1][mr2]+M_eff[mr2][mr1])/2.0,2.0);
+                                    // 1/M^2
+                                    coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];
+                                }
+                                
+                                for(int ijack=0;ijack<njacks;ijack++)
+                                    jG_r1_r2[ijack][ieq] = jG[ibilmom][ins][ibil][ijack][mr1][mr2];
+                                
+                                G_err_r1_r2[ieq] = G_err[ibilmom][ins][ibil][mr1][mr2];
+                                
+                                ieq++;
+                            }
+                        
+                        vvd_t jG_pars = polyfit(coord_bil,npar_bil[ibil],G_err_r1_r2,jG_r1_r2,x_min,x_max);
+                    
+                        for(int ijack=0;ijack<njacks;ijack++)
+                            (out.jG)[ibilmom][ins][ibil][ijack][r1][r2] = jG_pars[ijack][0];
+                    }
+    
+    out.compute_Zbil();
+    
+    if(compute_4f)
+    {
+        //extrapolate meslep
+        for(int imom=0;imom<_meslepmoms;imom++)
+            for(int r1=0; r1<_nr; r1++)
+                for(int r2=0; r2<_nr; r2++)
+                    for(int ins=0; ins<pr_meslep::nins; ins++)
+                        for(int iop1=0;iop1<nbil;iop1++)
+                            for(int iop2=0;iop2<nbil;iop2++)
+                            {
+                                vvd_t coord_meslep(vd_t(0.0,_nm*(_nm+1)/2),npar_meslep[iop1]); // coords at fixed r1 and r2
+                                
+                                vvd_t jpr_meslep_r1_r2(vd_t(0.0,_nm*(_nm+1)/2),njacks);
+                                vd_t pr_meslep_err_r1_r2(0.0,_nm*(_nm+1)/2);
+                                
+                                int ieq=0;
+                                for(int m1=0; m1<_nm; m1++)
+                                    for(int m2=m1; m2<_nm; m2++)
+                                    {
+                                        int mr1 = r1 + _nr*m1;
+                                        int mr2 = r2 + _nr*m2;
+                                        
+                                        if(UseEffMass==0)
+                                        {
+                                            coord_meslep[0][ieq] = 1.0;
+                                            // (am1+am2)
+                                            coord_meslep[1][ieq] = mass_val[m1]+mass_val[m2];
+                                            // 1/(am1+am2)
+                                            coord_meslep[2][ieq] = 1.0/coord_meslep[1][ieq];
+                                        }
+                                        else if(UseEffMass==1)
+                                        {
+                                            coord_meslep[0][ieq] = 1.0;
+                                            // M^2 (averaged over equivalent combinations)
+                                            coord_meslep[1][ieq] = pow((M_eff[mr1][mr2]+M_eff[mr2][mr1])/2.0,2.0);
+                                            // 1/M^2
+                                            coord_meslep[2][ieq] = 1.0/coord_meslep[1][ieq];
+                                        }
+                                        
+                                        for(int ijack=0;ijack<njacks;ijack++)
+                                            jpr_meslep_r1_r2[ijack][ieq] =
+                                                jpr_meslep[imom][ins][iop1][iop2][ijack][mr1][mr2];
+                                            
+                                        pr_meslep_err_r1_r2[ieq] = pr_meslep_err[imom][ins][iop1][iop2][mr1][mr2];
+                
+                                        ieq++;
+                                    }
+    
+                                vvd_t jpr_meslep_pars = polyfit(coord_meslep,npar_meslep[iop1],pr_meslep_err_r1_r2,jpr_meslep_r1_r2,x_min,x_max);
+            
+            
+                                for(int ijack=0;ijack<njacks;ijack++)
+                                   (out.jpr_meslep)[imom][ins][iop1][iop2][ijack][r1][r2] = jpr_meslep_pars[ijack][0];
+                            }
+        out.compute_Z4f();
+    }
+
+    return out;
+}
 
 //oper_t oper_t::subtract()
 //{
 //    cout<<"Subtracting the O(a2) effects"<<endl<<endl;
-//    
+//
 //    oper_t out=(*this);
-//    
+//
 ////    resize_output(out);
 //    out.allocate();
 //    
