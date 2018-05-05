@@ -256,7 +256,7 @@ void oper_t::compute_meslep()
             
             cout<<"- Computing projected meslep"<<endl;
             
-            jvproj_meslep_t jpr_meslep = compute_pr_meslep(jS1_inv,jmeslep,jS2_inv,qIN,qOUT,ql);
+            jpr_meslep[imeslepmom] = compute_pr_meslep(jS1_inv,jmeslep,jS2_inv,qIN,qOUT,ql);
             
 //            jpr_meslep_LO[imeslepmom] = jpr_meslep[QCD];
 //            jpr_meslep_EM[imeslepmom] = jpr_meslep[M11] + jpr_meslep[M22] + jpr_meslep[M12] - jpr_meslep[6] - jpr_meslep[7];
@@ -341,6 +341,7 @@ jvproj_meslep_t compute_pr_meslep(jprop_t &jpropOUT_inv, valarray<jmeslep_t> &jm
 
 void oper_t::compute_Z4f()
 {
+    cout<<"Computing Z4f"<<endl;
     
     //#warning putting charges to 1
     //these are the charges in the lagrangian
