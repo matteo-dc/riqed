@@ -103,7 +103,7 @@ void oper_t::compute_deltam_from_prop()
             
             for(int ijack=0;ijack<njacks;ijack++)
             {
-                deltam_cr[ijack][mr]=deltamc_tmp[ijack][0];
+//                deltam_cr[ijack][mr]=deltamc_tmp[ijack][0];
                 deltamu[ijack][mr]=deltamu_tmp[ijack][0];
             }
         }
