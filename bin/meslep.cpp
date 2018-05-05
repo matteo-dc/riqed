@@ -366,10 +366,12 @@ void oper_t::compute_Z4f()
                     for(int iop1=0;iop1<nbil;iop1++)
                         for(int iop2=0;iop2<nbil;iop2++)
                         {
+                            cout<<iop1<<" "<<iop2<<endl;
                             // LO
                             G4f_LO(iop1,iop2) =
                                 jpr_meslep[ibilmom][meslep::LO][iop1][iop2][ijack][mr_fw][mr_bw];
                             
+                            cout<<"---"<<endl;
                             // EM
                             G4f_EM(iop1,iop2) =
                                 jpr_meslep[ibilmom][meslep::IN ][iop1][iop2][ijack][mr_fw][mr_bw] +
@@ -397,6 +399,7 @@ void oper_t::compute_Z4f()
                     for(int iop1=0;iop1<nbil;iop1++)
                         for(int iop2=0;iop2<nbil;iop2++)
                         {
+                            cout<<"***"<<endl;
                             jZ_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = Z4f_LO(iop1,iop2);
                             jZ_4f_EM[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = Z4f_EM(iop1,iop2);
                         }
