@@ -72,16 +72,16 @@ int main(int narg,char **arg)
                 
                 basic[b][th][m].create_basic(b,th,m);
                 basic[b][th][m].plot("");
-//                ave[b][th][m] = basic[b][th][m].average_equiv_moms();
-//                ave[b][th][m].plot("ave");
+                ave[b][th][m] = basic[b][th][m].average_equiv_moms();
+                ave[b][th][m].plot("ave");
                 
-//                if(only_basic==0)
-//                {
-//                    /*  average r  */
-//                    
-//                    rave[b][th][m] = basic[b][th][m].average_r();
-//                    rave[b][th][m].plot("rave");
-//                    
+                if(only_basic==0)
+                {
+                    /*  average r  */
+                    
+                    rave[b][th][m] = basic[b][th][m].average_r();
+                    rave[b][th][m].plot("rave");
+                    
 //                    /*  average over equivalent momenta  */
 //                    
 //                    rave_ave[b][th][m] = rave[b][th][m].average_equiv_moms();
@@ -96,7 +96,7 @@ int main(int narg,char **arg)
 //                    
 //                    rave_ave_chir_sub[b][th][m] = rave_ave_chir[b][th][m].subtract();
 //                    rave_ave_chir_sub[b][th][m].plot("rave_ave_chir_sub");
-//                }
+                }
                 
             } //close nm_sea
             
