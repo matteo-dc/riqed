@@ -287,6 +287,7 @@ oper_t oper_t::average_r()
     
     if(UseEffMass==1)
     {
+#pragma omp parallel for collapse(3)
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mA=0; mA<_nm; mA++)
                 for(int mB=0; mB<_nm; mB++)
@@ -294,31 +295,35 @@ oper_t oper_t::average_r()
                         out.eff_mass[ijack][mA][mB] += eff_mass[ijack][r+_nr*mA][r+_nr*mB]/_nr;
         
         if(_nm_Sea>1)
+#pragma omp parallel for
             for(int ijack=0;ijack<njacks;ijack++)
                 for(int r=0; r<_nr; r++)
                     out.eff_mass_sea[ijack][0][0] += eff_mass_sea[ijack][r][r]/_nr;
     }
     
+#pragma omp parallel for collapse(5)
     for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
         for(int iproj=0;iproj<sigma::nproj;iproj++)
             for(int ins=0;ins<sigma::nins;ins++)
                 for(int m=0; m<_nm; m++)
-                    for(int r=0; r<_nr; r++)
-                        for(int ijack=0;ijack<njacks;ijack++)
-                            (out.sigma)[ilinmom][iproj][ins][ijack][m] += sigma[ilinmom][iproj][ins][ijack][r+_nr*m]/_nr;
+                    for(int ijack=0;ijack<njacks;ijack++)
+                        for(int r=0; r<_nr; r++)
+                            (out.sigma)[ilinmom][iproj][ins][ijack][m] +=
+                                sigma[ilinmom][iproj][ins][ijack][r+_nr*m]/_nr;
     
     out.deltam_computed=true;
     out.compute_deltam_from_prop();
     
     out.compute_Zq();
     
+#pragma omp parallel for collapse(6)
     for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
         for(int mA=0; mA<_nm; mA++)
             for(int mB=0; mB<_nm; mB++)
-                for(int r=0; r<_nr; r++)
-                    for(int ijack=0;ijack<njacks;ijack++)
-                        for(int ibil=0; ibil<5; ibil++)
-                            for(int ins=0; ins<gbil::nins; ins++)
+                for(int ijack=0;ijack<njacks;ijack++)
+                    for(int ibil=0; ibil<5; ibil++)
+                        for(int ins=0; ins<gbil::nins; ins++)
+                            for(int r=0; r<_nr; r++)
                                 (out.jG)[ibilmom][ins][ibil][ijack][mA][mB] +=
                                     jG[ibilmom][ins][ibil][ijack][r+_nr*mA][r+_nr*mB]/_nr;
     
@@ -326,6 +331,7 @@ oper_t oper_t::average_r()
     
     if(compute_4f)
     {
+#pragma omp parallel for collapse(7)
         for(int imeslepmom=0;imeslepmom<_meslepmoms;imeslepmom++)
             for(int iop1=0;iop1<5;iop1++)
                 for(int iop2=0;iop2<5;iop2++)
@@ -390,12 +396,13 @@ oper_t oper_t::chiral_extr()
     int npar_meslep_max=3;
     
     //extrapolate sigma
+#pragma omp parallel for collapse(4)
     for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
         for(int iproj=0; iproj<sigma::nproj; iproj++)
             for(int ins=0; ins<sigma::nins; ins++)
                 for(int r=0; r<_nr; r++)
                 {
-                    vvd_t coord_sigma(vd_t(0.0,_nm),npar_sigma); // coords at fixed r
+                    vvd_t coord_sigma(vd_t(0.0,_nm),npar_sigma);
                     
                     vvd_t sigma_r(vd_t(0.0,_nm),njacks);
                     vd_t sigma_err_r(0.0,_nm);
@@ -433,13 +440,14 @@ oper_t oper_t::chiral_extr()
     out.compute_Zq();
     
     //extrapolate bilinears
+#pragma omp parallel for collapse(5)
     for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
         for(int r1=0; r1<_nr; r1++)
             for(int r2=0; r2<_nr; r2++)
                 for(int ins=0; ins<gbil::nins; ins++)
                     for(int ibil=0;ibil<nbil;ibil++)
                     {
-                        vvd_t coord_bil(vd_t(0.0,_nm*(_nm+1)/2),npar_bil_max); // coords at fixed r1 and r2
+                        vvd_t coord_bil(vd_t(0.0,_nm*(_nm+1)/2),npar_bil_max);
                         
                         vvd_t jG_r1_r2(vd_t(0.0,_nm*(_nm+1)/2),njacks);
                         vd_t G_err_r1_r2(0.0,_nm*(_nm+1)/2);
@@ -487,6 +495,7 @@ oper_t oper_t::chiral_extr()
     if(compute_4f)
     {
         //extrapolate meslep
+#pragma omp parallel for collapse(6)
         for(int imom=0;imom<_meslepmoms;imom++)
             for(int r1=0; r1<_nr; r1++)
                 for(int r2=0; r2<_nr; r2++)
@@ -494,7 +503,7 @@ oper_t oper_t::chiral_extr()
                         for(int iop1=0;iop1<nbil;iop1++)
                             for(int iop2=0;iop2<nbil;iop2++)
                             {
-                                vvd_t coord_meslep(vd_t(0.0,_nm*(_nm+1)/2),npar_meslep_max); // coords at fixed r1 and r2
+                                vvd_t coord_meslep(vd_t(0.0,_nm*(_nm+1)/2),npar_meslep_max);
                                 
                                 vvd_t jpr_meslep_r1_r2(vd_t(0.0,_nm*(_nm+1)/2),njacks);
                                 vd_t pr_meslep_err_r1_r2(0.0,_nm*(_nm+1)/2);
@@ -533,7 +542,6 @@ oper_t oper_t::chiral_extr()
                                     }
     
                                 vvd_t jpr_meslep_pars = polyfit(coord_meslep,npar_meslep[iop1],pr_meslep_err_r1_r2,jpr_meslep_r1_r2,x_min,x_max);
-            
             
                                 for(int ijack=0;ijack<njacks;ijack++)
                                    (out.jpr_meslep)[imom][ins][iop1][iop2][ijack][r1][r2] = jpr_meslep_pars[ijack][0];
@@ -581,137 +589,162 @@ oper_t oper_t::chiral_extr()
 //    return out;
 //}
 
-//oper_t chiral_sea_extr(voper_t in)
-//{
-//    cout<<"Chiral sea extrapolation"<<endl<<endl;
-//    
-//    oper_t out=in[0];  //?
-//    
-//    int nmSea = in[0]._nm_Sea;
-//    int _linmoms = in[0]._linmoms;
-//    int _bilmoms = in[0]._bilmoms;
-//    
-//    //    resize_output(out);
-//    out.allocate();
-//    
-//    out.path_to_ens = in[0].path_to_beta;
-//
-//    vd_t x(0.0,nmSea);
-//    
-//    vvd_t dy_Zq(vd_t(0.0,nmSea),_linmoms);
-//    vvd_t dy_Zq_EM(vd_t(0.0,nmSea),_linmoms);
-//    
-//    vvvd_t dy_G(vvd_t(vd_t(0.0,nmSea),nbil),_bilmoms);
-//    vvvd_t dy_G_EM(vvd_t(vd_t(0.0,nmSea),nbil),_bilmoms);
-//
-//    vvvd_t y_Zq(vvd_t(vd_t(0.0,nmSea),njacks),_linmoms);
-//    vvvd_t y_Zq_EM(vvd_t(vd_t(0.0,nmSea),njacks),_linmoms);
-//    
-//    vvvvd_t y_G(vvvd_t(vvd_t(vd_t(0.0,nmSea),njacks),nbil),_bilmoms);
-//    vvvvd_t y_G_EM(vvvd_t(vvd_t(vd_t(0.0,nmSea),njacks),nbil),_bilmoms);
-//    
-//    // range for fit
-//    int x_min=0;
-//    int x_max=nmSea-1;
-//    
-//    for(int msea=0; msea<nmSea; msea++)
-//    {
-//        x[msea] = ( get<0>(ave_err(in[msea].eff_mass_sea)) )[0][0];
-//
-//        for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
-//        {
-//            dy_Zq[ilinmom][msea] = (get<1>(ave_err(in[msea].jZq)))[ilinmom][0];
-//            dy_Zq_EM[ilinmom][msea] = (get<1>(ave_err(in[msea].jZq_EM)))[ilinmom][0];
-//            
-//            for(int ijack=0;ijack<njacks;ijack++)
-//            {
-//                y_Zq[ilinmom][ijack][msea] = in[msea].jZq[ilinmom][ijack][0];
-//                y_Zq_EM[ilinmom][ijack][msea] = in[msea].jZq_EM[ilinmom][ijack][0];
-//            }
-//        }
-//        
-//        for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
-//            for(int ibil=0;ibil<nbil;ibil++)
-//            {
-//                dy_G[ibilmom][ibil][msea] = (get<1>(ave_err(in[msea].jG_LO)))[ibilmom][ibil][0][0];
-//                dy_G_EM[ibilmom][ibil][msea] = (get<1>(ave_err(in[msea].jG_EM)))[ibilmom][ibil][0][0];
-//            
-//                for(int ijack=0;ijack<njacks;ijack++)
-//                {
-//                    y_G[ibilmom][ibil][ijack][msea] = in[msea].jG_LO[ibilmom][ibil][ijack][0][0];
-//                    y_G_EM[ibilmom][ibil][ijack][msea] = in[msea].jG_EM[ibilmom][ibil][ijack][0][0];
-//                }
-//            }
-//    }
-//    
-//    // extrapolate Zq
-//    for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
-//    {
-//        vvd_t coord_q(vd_t(0.0,nmSea),2); // coords at fixed r
-//
-//        for(int msea=0; msea<nmSea; msea++)
-//        {
-//            coord_q[0][msea] = 1.0;
-//            if(UseEffMass==0)
-//            {
-//                cout<<" Impossible to extrapolate without using the effective mass. "<<endl;
-//                exit(0);
-//                //      coord_q[1][m]= mass_val[m];
-//            }
-//            else if(UseEffMass==1)
-//                coord_q[1][msea] = pow(x[msea],2.0);
-//
-//            vvd_t jZq_pars_mom = polyfit(coord_q,2,dy_Zq[ilinmom],y_Zq[ilinmom],x_min,x_max);
-//            vvd_t jZq_EM_pars_mom = polyfit(coord_q,2,dy_Zq_EM[ilinmom],y_Zq_EM[ilinmom],x_min,x_max);
-//            
-//            for(int ijack=0; ijack<njacks; ijack++)
-//            {
-//                (out.jZq)[ilinmom][ijack][0]=jZq_pars_mom[ijack][0];
-//                (out.jZq_EM)[ilinmom][ijack][0]=jZq_EM_pars_mom[ijack][0];
-//            }
-//        }
-//    }
-//    
-//    // extrapolate bilinears
-//    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
-//    {
-//        vvd_t coord_bil(vd_t(0.0,nmSea),2); // linear fit in sea extrapolation
-//        
-//        for(int msea=0; msea<nmSea; msea++)
-//        {
-//            coord_bil[0][msea] = 1.0;
-//            if(UseEffMass==0)
-//            {
-//                cout<<" Impossible to extrapolate without using the effective mass. "<<endl;
-//                exit(0);
-////                coord_bil[1][ieq] = mass_val[m1]+mass_val[m2];  // (am1+am2)
-////                coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];    // 1/(am1+am2)
-//            }
-//            else if(UseEffMass==1)
-//                coord_bil[1][msea] = pow(x[msea],2.0);
-//            
-//            
-//            for(int ibil=0;ibil<nbil;ibil++)
-//            {
-//                vvd_t jG_LO_pars_mom_ibil = polyfit(coord_bil,2,dy_G[ibilmom][ibil],y_G[ibilmom][ibil],x_min,x_max);
-//                vvd_t jG_EM_pars_mom_ibil = polyfit(coord_bil,2,dy_G_EM[ibilmom][ibil],y_G_EM[ibilmom][ibil],x_min,x_max);
-//                
-//                for(int ijack=0;ijack<njacks;ijack++)
-//                {
-//                    // extrapolated value
-//                    (out.jG_LO)[ibilmom][ibil][ijack][0][0] = jG_LO_pars_mom_ibil[ijack][0];
-//                    (out.jG_EM)[ibilmom][ibil][ijack][0][0] = jG_EM_pars_mom_ibil[ijack][0];
-//                }
-//            }
-//        }
-//    }
-//    
-//    out.compute_Zbil();
-//    
-//#warning missing sea extrapolation for 4f
-//    
-//    return out;
-//}
+oper_t chiral_sea_extr(voper_t in)
+{
+    cout<<"Chiral sea extrapolation"<<endl<<endl;
+    
+    oper_t out=in[0];  //?
+    
+    int nmSea = in[0]._nm_Sea;
+    int _linmoms = in[0]._linmoms;
+    int _bilmoms = in[0]._bilmoms;
+    int _meslepmoms = in[0]._meslepmoms;
+    
+    //    resize_output(out);
+    out.allocate();
+    
+    out.path_to_ens = in[0].path_to_beta;
+
+    vd_t x(0.0,nmSea);
+    
+    vvvvd_t dy_sigma(vvvd_t(vvd_t(vd_t(0.0,nmSea),sigma::nins),sigma::nproj),_linmoms);
+    vvvvd_t dy_G(vvvd_t(vvd_t(vd_t(0.0,nmSea),nbil),gbil::nins),_bilmoms);
+    vvvvvd_t dy_meslep(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmSea),nbil),nbil),pr_meslep::nins),_meslepmoms);
+
+    vvvvvd_t y_sigma(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmSea),njacks),sigma::nins),sigma::nproj),_linmoms);
+    vvvvvd_t y_G(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmSea),njacks),nbil),gbil::nins),_bilmoms);
+    vvvvvvd_t y_meslep(vvvvvd_t(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmSea),njacks),nbil),nbil),pr_meslep::nins),_meslepmoms);
+
+    
+    // range for fit
+    int x_min=0;
+    int x_max=nmSea-1;
+    
+    for(int msea=0; msea<nmSea; msea++)
+        x[msea] = ( get<0>(ave_err(in[msea].eff_mass_sea)) )[0][0];
+    
+    // extrapolate sigma
+#pragma omp parallel for collapse(3)
+    for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
+        for(int iproj=0; iproj<sigma::nproj; iproj++)
+            for(int ins=0; ins<sigma::nins; ins++)
+            {
+                vvd_t coord_q(vd_t(0.0,nmSea),2); // coords at fixed r
+                
+                vvd_t y_sigma(vd_t(0.0,nmSea),njacks);
+                vd_t dy_sigma(0.0,nmSea);
+                
+                for(int msea=0; msea<nmSea; msea++)
+                {
+                    coord_q[0][msea] = 1.0;
+                    if(UseEffMass==0)
+                    {
+                        cout<<" Impossible to extrapolate without using the effective mass. "<<endl;
+                        exit(0);
+                        //      coord_q[1][m]= mass_val[m];
+                    }
+                    else if(UseEffMass==1)
+                        coord_q[1][msea] = pow(x[msea],2.0);
+                    
+                    for(int ijack=0;ijack<njacks;ijack++)
+                        y_sigma[ijack][msea] = in[msea].sigma[ilinmom][iproj][ins][ijack][0];
+                    
+                    dy_sigma[msea] = (get<1>(ave_err(in[msea].sigma)))[ilinmom][iproj][ins][0];
+                }
+                
+                vvd_t sigma_pars = polyfit(coord_q,2,dy_sigma,y_sigma,x_min,x_max);
+                
+                for(int ijack=0; ijack<njacks; ijack++)
+                    (out.sigma)[ilinmom][iproj][ins][ijack][0]=sigma_pars[ijack][0];
+            }
+    
+    out.deltam_computed=true;
+    out.compute_deltam_from_prop();
+    
+    out.compute_Zq();
+    
+    // extrapolate bilinears
+#pragma omp parallel for collapse(3)
+    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
+        for(int ins=0; ins<gbil::nins; ins++)
+            for(int ibil=0;ibil<nbil;ibil++)
+            {
+                vvd_t coord_bil(vd_t(0.0,nmSea),2); // linear fit in sea extrapolation
+                
+                vvd_t y_G(vd_t(0.0,nmSea),njacks);
+                vd_t dy_G(0.0,nmSea);
+                
+                for(int msea=0; msea<nmSea; msea++)
+                {
+                    coord_bil[0][msea] = 1.0;
+                    if(UseEffMass==0)
+                    {
+                        cout<<" Impossible to extrapolate without using the effective mass. "<<endl;
+                        exit(0);
+                        //                coord_bil[1][ieq] = mass_val[m1]+mass_val[m2];  // (am1+am2)
+                        //                coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];    // 1/(am1+am2)
+                    }
+                    else if(UseEffMass==1)
+                        coord_bil[1][msea] = pow(x[msea],2.0);
+
+                    for(int ijack=0;ijack<njacks;ijack++)
+                        y_G[ijack][msea] = in[msea].jG[ibilmom][ins][ibil][ijack][0][0];
+                    
+                    dy_G[msea] = (get<1>(ave_err(in[msea].jG)))[ibilmom][ins][ibil][0][0];
+                }
+                
+                vvd_t jG_pars = polyfit(coord_bil,2,dy_G,y_G,x_min,x_max);
+                
+                for(int ijack=0;ijack<njacks;ijack++)
+                    (out.jG)[ibilmom][ins][ibil][ijack][0][0] = jG_pars[ijack][0];
+            }
+    
+    out.compute_Zbil();
+    
+    if(compute_4f)
+    {
+        // extrapolate meslep
+#pragma omp parallel for collapse(4)
+        for(int imom=0;imom<_meslepmoms;imom++)
+            for(int ins=0; ins<gbil::nins; ins++)
+                for(int iop1=0;iop1<nbil;iop1++)
+                    for(int iop2=0;iop2<nbil;iop2++)
+                    {
+                        vvd_t coord_meslep(vd_t(0.0,nmSea),2); // linear fit in sea extrapolation
+                        
+                        vvd_t y_meslep(vd_t(0.0,nmSea),njacks);
+                        vd_t dy_meslep(0.0,nmSea);
+                        
+                        for(int msea=0; msea<nmSea; msea++)
+                        {
+                            coord_meslep[0][msea] = 1.0;
+                            if(UseEffMass==0)
+                            {
+                                cout<<" Impossible to extrapolate without using the effective mass. "<<endl;
+                                exit(0);
+                                //                coord_meslep[1][ieq] = mass_val[m1]+mass_val[m2];  // (am1+am2)
+                                //                coord_meslep[2][ieq] = 1.0/coord_bil[1][ieq];    // 1/(am1+am2)
+                            }
+                            else if(UseEffMass==1)
+                                coord_meslep[1][msea] = pow(x[msea],2.0);
+                            
+                            for(int ijack=0;ijack<njacks;ijack++)
+                                y_meslep[ijack][msea] = in[msea].jpr_meslep[imom][ins][iop1][iop2][ijack][0][0];
+                            
+                            dy_meslep[msea] = (get<1>(ave_err(in[msea].jpr_meslep)))[imom][ins][iop1][iop2][0][0];
+                        }
+                        
+                        vvd_t jmeslep_pars = polyfit(coord_meslep,2,dy_meslep,y_meslep,x_min,x_max);
+                        
+                        for(int ijack=0;ijack<njacks;ijack++)
+                            (out.jpr_meslep)[imom][ins][iop1][iop2][ijack][0][0] = jmeslep_pars[ijack][0];
+                    }
+        
+        out.compute_Z4f();
+    }
+    
+    return out;
+}
 
 //oper_t theta_average( voper_t in)
 //{
