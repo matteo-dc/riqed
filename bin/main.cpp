@@ -103,17 +103,17 @@ int main(int narg,char **arg)
                 
             } //close nm_sea
             
-//            if(nm_Sea[b]>1 and only_basic==0 and strcmp(analysis.c_str(),"free" )!=0)
-//            {
-//                /*  sea chiral extr  */
-//                
-//                rave_ave_chir_sub_sea[b][th] = chiral_sea_extr(rave_ave_chir_sub[b][th]);
-//                rave_ave_chir_sub_sea[b][th].plot(theta_label[th]+"/rave_ave_chir_sub_sea");
-//            }
-//            else if(only_basic==0)
-//            {
-//                rave_ave_chir_sub_sea[b][th] = rave_ave_chir_sub[b][th][0];
-//            }
+            if(nm_Sea[b]>1 and only_basic==0 and strcmp(analysis.c_str(),"free" )!=0)
+            {
+                /*  sea chiral extr  */
+                
+                rave_ave_chir_sub_sea[b][th] = chiral_sea_extr(rave_ave_chir_sub[b][th]);
+                rave_ave_chir_sub_sea[b][th].plot(theta_label[th]+"/rave_ave_chir_sub_sea");
+            }
+            else if(only_basic==0)
+            {
+                rave_ave_chir_sub_sea[b][th] = rave_ave_chir_sub[b][th][0];
+            }
         } //close ntheta
         
 //        if(ntheta>1 and only_basic==0)
