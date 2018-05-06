@@ -89,7 +89,10 @@ int main(int narg,char **arg)
                     
                     /*  valence chiral extr  */
                     
-                    rave_ave_chir[b][th][m] = rave_ave[b][th][m].chiral_extr();
+                    if(strcmp(analysis.c_str(),"free")!=0)
+                        rave_ave_chir[b][th][m] = rave_ave[b][th][m].chiral_extr();
+                    else
+                        rave_ave_chir[b][th][m] = rave_ave[b][th][m];
                     rave_ave_chir[b][th][m].plot("rave_ave_chir");
                     
 //                    /*  O(a2g2) subtraction  */
