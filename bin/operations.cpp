@@ -1228,8 +1228,8 @@ void oper_t::plot(const string suffix)
 //    vvvvvd_t meslep_nasty_err=get<1>(meslep_nasty_ave_err);
 //
     
-    Z4f_tup Z_4f_ave_err = ave_err_Z4f(in.jZ_4f);
-    Z4f_tup Z_4f_EM_ave_err = ave_err_Z4f(in.jZ_4f_EM);
+    Z4f_tup Z_4f_ave_err = ave_err(in.jZ_4f);
+    Z4f_tup Z_4f_EM_ave_err = ave_err(in.jZ_4f_EM);
 
     vvvvvd_t Z_4f_ave=get<0>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
     vvvvvd_t Z_4f_EM_ave=get<0>(Z_4f_EM_ave_err);
