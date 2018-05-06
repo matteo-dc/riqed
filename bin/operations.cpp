@@ -384,8 +384,10 @@ oper_t oper_t::chiral_extr()
     int npar_sigma=2;
     // number of fit parameters for bilinears
     int npar_bil[5]={3,2,3,2,2};
+    int npar_bil_max=3;
     // number of fit parameters for meslep
     int npar_meslep[5]={2,2,3,3,2};
+    int npar_meslep_max=3;
     
     //extrapolate sigma
     for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
@@ -437,8 +439,7 @@ oper_t oper_t::chiral_extr()
                 for(int ins=0; ins<gbil::nins; ins++)
                     for(int ibil=0;ibil<nbil;ibil++)
                     {
-                        cout<<"a"<<endl;
-                        vvd_t coord_bil(vd_t(0.0,_nm*(_nm+1)/2),npar_bil[ibil]); // coords at fixed r1 and r2
+                        vvd_t coord_bil(vd_t(0.0,_nm*(_nm+1)/2),npar_bil_max); // coords at fixed r1 and r2
                         
                         vvd_t jG_r1_r2(vd_t(0.0,_nm*(_nm+1)/2),njacks);
                         vd_t G_err_r1_r2(0.0,_nm*(_nm+1)/2);
@@ -466,32 +467,22 @@ oper_t oper_t::chiral_extr()
                                     // 1/M^2
                                     coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];
                                 }
-                                cout<<"b";
                                 
                                 for(int ijack=0;ijack<njacks;ijack++)
                                     jG_r1_r2[ijack][ieq] = jG[ibilmom][ins][ibil][ijack][mr1][mr2];
                                 
-                                cout<<"c";
-                                
                                 G_err_r1_r2[ieq] = G_err[ibilmom][ins][ibil][mr1][mr2];
                                 
                                 ieq++;
-                                
-                                cout<<"d"<<endl;
                             }
-                        cout<<"e"<<endl;
+                        
                         vvd_t jG_pars = polyfit(coord_bil,npar_bil[ibil],G_err_r1_r2,jG_r1_r2,x_min,x_max);
                     
-                        cout<<"f"<<endl;
-                        
                         for(int ijack=0;ijack<njacks;ijack++)
                             (out.jG)[ibilmom][ins][ibil][ijack][r1][r2] = jG_pars[ijack][0];
-                        cout<<"g"<<endl;
                     }
     
-    cout<<"++++"<<endl;
     out.compute_Zbil();
-    cout<<"----"<<endl;
     
     if(compute_4f)
     {
@@ -503,7 +494,7 @@ oper_t oper_t::chiral_extr()
                         for(int iop1=0;iop1<nbil;iop1++)
                             for(int iop2=0;iop2<nbil;iop2++)
                             {
-                                vvd_t coord_meslep(vd_t(0.0,_nm*(_nm+1)/2),npar_meslep[iop1]); // coords at fixed r1 and r2
+                                vvd_t coord_meslep(vd_t(0.0,_nm*(_nm+1)/2),npar_meslep_max); // coords at fixed r1 and r2
                                 
                                 vvd_t jpr_meslep_r1_r2(vd_t(0.0,_nm*(_nm+1)/2),njacks);
                                 vd_t pr_meslep_err_r1_r2(0.0,_nm*(_nm+1)/2);
