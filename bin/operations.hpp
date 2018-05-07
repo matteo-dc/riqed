@@ -69,7 +69,6 @@ struct oper_t
     // deltamu and deltamcr
     vvd_t deltamu;
     vvd_t deltam_cr;
-//    vvd_t read_deltam(const string path, const string name);
     void compute_deltam();
     void compute_deltam_from_prop();
     bool deltam_computed;
