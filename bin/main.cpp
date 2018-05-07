@@ -116,18 +116,18 @@ int main(int narg,char **arg)
             }
         } //close ntheta
         
-//        if(ntheta>1 and only_basic==0)
-//        {
-//            /*  theta average  */
-//            
-//            rave_ave_chir_sub_sea_theta[b] = theta_average(rave_ave_chir_sub_sea[b]);
-//            rave_ave_chir_sub_sea_theta[b].plot("rave_ave_chir_sub_sea_theta");
-//            
+        if(ntheta>1 and only_basic==0)
+        {
+            /*  theta average  */
+            
+            rave_ave_chir_sub_sea_theta[b] = theta_average(rave_ave_chir_sub_sea[b]);
+            rave_ave_chir_sub_sea_theta[b].plot("rave_ave_chir_sub_sea_theta");
+            
 //            /*  evolution to 1/a  */
 //            
 //            rave_ave_chir_sub_sea_theta_evo[b] = rave_ave_chir_sub_sea_theta[b].evolve(b);
 //            rave_ave_chir_sub_sea_theta_evo[b].plot("rave_ave_chir_sub_sea_theta_evo");
-//        }
+        }
     } //close nbeta
     
 //    if(nbeta>1 and only_basic==0)
