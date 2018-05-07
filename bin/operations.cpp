@@ -754,6 +754,7 @@ oper_t theta_average( voper_t in)
     
     int _linmoms = in[0]._linmoms;
     int _bilmoms = in[0]._bilmoms;
+    int _meslepmoms = in[0]._meslepmoms;
     
     out.allocate();
     out.path_to_ens = in[0].path_to_beta;
@@ -784,9 +785,6 @@ oper_t theta_average( voper_t in)
                     0.5*(in[0].jZ_4f_EM[imom][iop1][iop2][ijack][0][0] + in[1].jZ_4f_EM[imom][iop1][iop2][ijack][0][0]);
             }
 
-    
-#warning missing theta average for 4f
-    
     return out;
 }
 
