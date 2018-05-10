@@ -102,8 +102,10 @@ int main(int narg,char **arg)
                         if(free_analysis)
                             rave_ave_chir[th][m] = rave_ave[th][m];
                         else
+                        {
                             rave_ave_chir[th][m] = rave_ave[th][m].chiral_extr();
-                        rave_ave_chir[th][m].plot("rave_ave_chir");
+                            rave_ave_chir[th][m].plot("rave_ave_chir");
+                        }
                         
                         /*  O(a2g2) subtraction  */
                         

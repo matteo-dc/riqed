@@ -192,7 +192,7 @@ void oper_t::set_smom_moms()
 void oper_t::create_basic(const int b, const int th, const int msea)
 {
 //    step = "basic";
-    
+    cout<<endl;
     cout<<"----- basic -----"<<endl<<endl;
     
     
@@ -1374,14 +1374,14 @@ void oper_t::plot(const string suffix)
         read_vec(p2t,path_print+"p2_tilde_eqmoms.txt");
     }
     
-    cout<<"Plotting Zq"<<endl;
+    cout<<"Plotting Zq";
     for(int imom=0; imom<in._linmoms; imom++)
     {
         Zq_data<<p2t[imom]<<"\t"<<Zq_ave[imom][0]<<"\t"<<Zq_err[imom][0]<<endl;
         Zq_EM_data<<p2t[imom]<<"\t"<<Zq_EM_ave[imom][0]<<"\t"<<Zq_EM_err[imom][0]<<endl;
     }
     
-    cout<<"Plotting Zbil"<<endl;
+    cout<<", Zbil";
     for(int ibil=0;ibil<nbil;ibil++)
     {
         Zbil_data[ibil].open(path_to_ens+"plots/Z"+bil[ibil]+(suffix!=""?("_"+suffix):string(""))+".txt");
@@ -1401,7 +1401,7 @@ void oper_t::plot(const string suffix)
     
     if(compute_4f)
     {
-        cout<<"Plotting Z4f"<<endl;
+        cout<<" and Z4f :"<<endl;
         for(int i=0;i<nbil*nbil;i++)
         {
             int iop2=i%nbil;
@@ -1422,5 +1422,10 @@ void oper_t::plot(const string suffix)
             }
         }
     }
+    else
+        cout<<" :"<<endl;
+    
+    cout<<"\""<<path_to_ens<<"plots\""<<endl;
+    
     
 }
