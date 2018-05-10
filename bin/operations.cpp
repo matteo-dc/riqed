@@ -202,9 +202,9 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     if(inte_analysis)
     {
         // e.g. /.../matteo/Nf4/
-        path_ensemble = path_ensemble + path_analysis[0]+"/";
+        path_ensemble = path_folder + path_analysis[0]+"/";
         // e.g. /.../matteo/Nf4/B_b1.95/
-        path_to_beta = path_ensemble + _beta_label + "_b" + to_string_with_precision(_beta,2) + "/";
+        path_to_beta = path_folder + _beta_label + "_b" + to_string_with_precision(_beta,2) + "/";
         // e.g. B1m
         ensemble_name = _beta_label + _SeaMasses_label + _theta_label;
         // e.g. /.../matteo/Nf4/B_b1.95/B1m/
@@ -213,9 +213,9 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     else if(free_analysis)
     {
         // e.g. /.../matteo/free_matching/
-        path_ensemble = path_ensemble + path_analysis[0]+"/";
+        path_ensemble = path_folder + path_analysis[0]+"/";
         // e.g. /.../matteo/free_matching/B/
-        path_to_beta = path_ensemble + _beta_label + "/";
+        path_to_beta = path_folder + _beta_label + "/";
         // e.g. B1m
         ensemble_name = _beta_label + _SeaMasses_label + _theta_label;
         // e.g. /.../matteo/free_matching/B1m/
@@ -224,12 +224,12 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     else if(ratio_analysis)
     {
         // e.g. /.../matteo/Rat/
-        path_to_beta = path_ensemble + path_analysis[0]+"/";
+        path_to_beta = path_folder + path_analysis[0]+"/";
         // e.g. /.../matteo/****/
         if(!recompute_basic) /* Nf4 */
-            path_ensemble = path_ensemble + path_analysis[1]+"/";
+            path_ensemble = path_folder + path_analysis[1]+"/";
         else                 /* free_matching */
-            path_ensemble = path_ensemble + path_analysis[2]+"/";
+            path_ensemble = path_folder + path_analysis[2]+"/";
         // e.g. B1m
         ensemble_name = _beta_label + _SeaMasses_label + _theta_label;
         // e.g /.../matteo/*****/B1m/

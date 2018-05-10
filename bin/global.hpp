@@ -83,6 +83,8 @@ extern double plaquette;
 extern vector<double> ainv;
 // Lambda QCD
 extern double LambdaQCD;
+// path to upper folder
+extern string path_folder;
 // path to global ensembles folder
 extern string path_ensemble;
 // analysis method

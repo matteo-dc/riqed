@@ -19,7 +19,7 @@ vector<double> ainv;
 int conf_init, conf_step, nm, neq, neq2, nmr, delta_tmin, delta_tmax;
 double kappa, mu_sea, plaquette, LambdaQCD, p2min, thresh;
 vector<double> mass_val;
-string mom_path, action, path_ensemble, scheme, BC, out_hadr, out_lep, analysis;
+string mom_path, action, path_folder, scheme, BC, out_hadr, out_lep, analysis, path_ensemble;
 vector<string> path_analysis;
 vector<string> beta_label;  // beta_label[Nbeta]
 vector<string> theta_label;  // theta_label[Ntheta]
@@ -51,7 +51,7 @@ TK_glb_t get_TK_glb(FILE *fin)
     if(strcasecmp(tok,nconfs_tag)==0) return NCONFS_TK;
     if(strcasecmp(tok,njacks_tag)==0) return NJACKS_TK;
     if(strcasecmp(tok,act_tag)==0) return ACT_TK;
-    if(strcasecmp(tok,path_ensemble_tag)==0) return PATH_TK;
+    if(strcasecmp(tok,path_folder_tag)==0) return PATH_TK;
     if(strcasecmp(tok,nbeta_tag)==0) return NBETA_TK;
     if(strcasecmp(tok,beta_tag)==0) return BETA_TK;
     if(strcasecmp(tok,beta_label_tag)==0) return BETA_LAB_TK;
@@ -240,7 +240,7 @@ void read_input_glb(const char path[])
         
     action=DEFAULT_STR_VAL;
     scheme=DEFAULT_STR_VAL;
-    path_ensemble=DEFAULT_STR_VAL;
+    path_folder=DEFAULT_STR_VAL;
     BC=DEFAULT_STR_VAL;
     nconfs=DEFAULT_INT_VAL;
     njacks=DEFAULT_INT_VAL;
@@ -328,7 +328,7 @@ void read_input_glb(const char path[])
                 get_value_glb(fin,action);
                 break;
             case PATH_TK:
-                get_value_glb(fin,path_ensemble);
+                get_value_glb(fin,path_folder);
                 break;
             case NR_TK:
                 get_value_glb(fin,nr);
@@ -395,7 +395,7 @@ void read_input_glb(const char path[])
     //check initialization
     check_int_par(nconfs,nconfs_tag);
     check_int_par(njacks,njacks_tag);
-    check_str_par(path_ensemble,path_ensemble_tag);
+    check_str_par(path_folder,path_folder_tag);
     check_str_par(scheme,scheme_tag);
     check_str_par(BC,BC_tag);
     check_str_par(action,act_tag);
@@ -457,7 +457,7 @@ void read_input_glb(const char path[])
     }
     
     // this is the path to the directory which contains 'print', 'plots', ecc.
-    string full_path = path_ensemble+path_analysis[0]+"/";
+    string full_path = path_folder+path_analysis[0]+"/";
     
     //print input parameters
     printf("*------------------------------------------------------*\n");
@@ -474,7 +474,7 @@ void read_input_glb(const char path[])
     
     printf(" %s = %s  --  %s = %d  -- %s = %d -- %s = %.3lf \n",act_tag,action.c_str(),Nf_tag,Nf,Nc_tag,Nc,LambdaQCD_tag,LambdaQCD);
     printf(" %s = %d  (%d njacks) \n",nconfs_tag,nconfs,njacks);
-    printf(" %s = %s \n\n",path_ensemble_tag,full_path.c_str());
+    printf(" %s = %s \n\n",path_folder_tag,full_path.c_str());
     
     printf(" %s = %d\n",nr_tag,nr);
     printf(" %s = %d\n",ntypes_tag,ntypes);
