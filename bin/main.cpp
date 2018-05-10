@@ -54,10 +54,9 @@ int main(int narg,char **arg)
         
     for(int loop=0;loop<nloop;loop++)
     {
-        vvoper_t rave_ave_chir_sub_sea(voper_t(ntheta),nbeta);
-        voper_t  rave_ave_chir_sub_sea_theta(nbeta);
-        voper_t  rave_ave_chir_sub_sea_theta_evo(nbeta);
-        voper_t  rave_ave_chir_sub_sea_theta_evo_extr(nbeta);
+        vvoper_t rave_ave_chir_sea(voper_t(ntheta),nbeta);
+        voper_t  rave_ave_chir_sea_theta(nbeta);
+        voper_t  rave_ave_chir_sea_theta_extr(nbeta);
         
         if(loop>0) recompute_basic=true;
 
@@ -118,12 +117,12 @@ int main(int narg,char **arg)
                 {
                     /*  sea chiral extr  */
                     
-                    rave_ave_chir_sub_sea[b][th] = chiral_sea_extr(rave_ave_chir_sub[th]);
-                    rave_ave_chir_sub_sea[b][th].plot(theta_label[th]+"/rave_ave_chir_sub_sea");
+                    rave_ave_chir_sea[b][th] = chiral_sea_extr(rave_ave_chir[th]);
+                    rave_ave_chir_sea[b][th].plot(theta_label[th]+"/rave_ave_chir_sea");
                 }
                 else if(only_basic==0)
                 {
-                    rave_ave_chir_sub_sea[b][th] = rave_ave_chir_sub[th][0];
+                    rave_ave_chir_sea[b][th] = rave_ave_chir[th][0];
                 }
             } //close ntheta
             
@@ -131,19 +130,21 @@ int main(int narg,char **arg)
             {
                 /*  theta average  */
                 
-                rave_ave_chir_sub_sea_theta[b] = theta_average(rave_ave_chir_sub_sea[b]);
-                rave_ave_chir_sub_sea_theta[b].plot("rave_ave_chir_sub_sea_theta");
+                rave_ave_chir_sea_theta[b] = theta_average(rave_ave_chir_sea[b]);
+                rave_ave_chir_sea_theta[b].plot("rave_ave_chir_sea_theta");
                 
                 /*  evolution to 1/a  */
 
 //                rave_ave_chir_sub_sea_theta_evo[b] = rave_ave_chir_sub_sea_theta[b].evolve(b);
 //                rave_ave_chir_sub_sea_theta_evo[b].plot("rave_ave_chir_sub_sea_theta_evo");
             }
+            else if(only_basic==0)
+                rave_ave_chir_sea_theta[b] = rave_ave_chir_sea[b][0];
             
             /* store for ratio */
             
             if(ratio_analysis)
-                oper_for_ratio[b][loop] = rave_ave_chir_sub_sea_theta[b];
+                oper_for_ratio[b][loop] = rave_ave_chir_sea_theta[b];
             
         } //close nbeta
         
