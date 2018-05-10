@@ -199,15 +199,40 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     _SeaMasses_label=to_string(SeaMasses_label[b][msea]);
     _theta_label=theta_label[th];
     
-    if(strcmp(analysis.c_str(),"inte")==0)
+    if(inte_analysis)
     {
+        // e.g. /.../matteo/Nf4/
+        path_ensemble = path_ensemble + path_analysis[0]+"/";
+        // e.g. /.../matteo/Nf4/B_b1.95/
         path_to_beta = path_ensemble + _beta_label + "_b" + to_string_with_precision(_beta,2) + "/";
+        // e.g. B1m
         ensemble_name = _beta_label + _SeaMasses_label + _theta_label;
+        // e.g. /.../matteo/Nf4/B_b1.95/B1m/
         path_to_ens =  path_to_beta + ensemble_name + "/";
     }
-    else if(strcmp(analysis.c_str(),"free")==0)
+    else if(free_analysis)
     {
+        // e.g. /.../matteo/free_matching/
+        path_ensemble = path_ensemble + path_analysis[0]+"/";
+        // e.g. /.../matteo/free_matching/B/
+        path_to_beta = path_ensemble + _beta_label + "/";
+        // e.g. B1m
         ensemble_name = _beta_label + _SeaMasses_label + _theta_label;
+        // e.g. /.../matteo/free_matching/B1m/
+        path_to_ens = path_ensemble + ensemble_name + "/";
+    }
+    else if(ratio_analysis)
+    {
+        // e.g. /.../matteo/Rat/
+        path_to_beta = path_ensemble + path_analysis[0]+"/";
+        // e.g. /.../matteo/****/
+        if(!recompute_basic) /* Nf4 */
+            path_ensemble = path_ensemble + path_analysis[1]+"/";
+        else                 /* free_matching */
+            path_ensemble = path_ensemble + path_analysis[2]+"/";
+        // e.g. B1m
+        ensemble_name = _beta_label + _SeaMasses_label + _theta_label;
+        // e.g /.../matteo/*****/B1m/
         path_to_ens = path_ensemble + ensemble_name + "/";
     }
     
@@ -234,13 +259,13 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     if(compute_mpcac)
     {
         compute_mPCAC("");
-        if(strcmp(analysis.c_str(),"free" )!=0) compute_mPCAC("sea");
+        if(!free_analysis) compute_mPCAC("sea");
     }
     if(UseEffMass)
     {
         eff_mass=read_eff_mass(path_to_ens+"eff_mass_array");
         eff_mass_time=read_eff_mass_time(path_to_ens+"eff_mass_array_time");
-        if(_nm_Sea>0 and strcmp(analysis.c_str(),"free" )!=0)
+        if(_nm_Sea>0 and !free_analysis)
             eff_mass_sea=read_eff_mass_sea(path_to_ens+"eff_mass_sea_array");
     }
     
@@ -290,13 +315,13 @@ oper_t oper_t::average_r()
             for(int mA=0; mA<_nm; mA++)
                 for(int mB=0; mB<_nm; mB++)
                     for(int r=0; r<_nr; r++)
-                        out.eff_mass[ijack][mA][mB] += eff_mass[ijack][r+_nr*mA][r+_nr*mB]/_nr;
+                        out.eff_mass[ijack][mA][mB][0] += eff_mass[ijack][mA][mB][r]/_nr;
         
         if(_nm_Sea>1)
 #pragma omp parallel for
             for(int ijack=0;ijack<njacks;ijack++)
                 for(int r=0; r<_nr; r++)
-                    out.eff_mass_sea[ijack][0][0] += eff_mass_sea[ijack][r][r]/_nr;
+                    out.eff_mass_sea[ijack][0] += eff_mass_sea[ijack][r]/_nr;
     }
     
 #pragma omp parallel for collapse(5)
@@ -374,7 +399,7 @@ oper_t oper_t::chiral_extr()
 //        }
 
     // average of eff_mass
-    vvd_t M_eff = get<0>(ave_err(eff_mass));
+    vvvd_t M_eff = get<0>(ave_err(eff_mass));
     
     //range for fit Zq
     int x_min_q=0;
@@ -417,7 +442,7 @@ oper_t oper_t::chiral_extr()
                         else if(UseEffMass==0)
                         {
                             coord_sigma[0][m] = 1.0;
-                            coord_sigma[1][m] = pow(M_eff[mr][mr],2.0);
+                            coord_sigma[1][m] = pow(M_eff[m][m][r],2.0);
                         }
                         
                         for(int ijack=0;ijack<njacks;ijack++)
@@ -469,7 +494,7 @@ oper_t oper_t::chiral_extr()
                                 {
                                     coord_bil[0][ieq] = 1.0;
                                     // M^2 (averaged over equivalent combinations)
-                                    coord_bil[1][ieq] = pow((M_eff[mr1][mr2]+M_eff[mr2][mr1])/2.0,2.0);
+                                    coord_bil[1][ieq] = pow((M_eff[m1][m2][r1]+M_eff[m2][m1][r2])/2.0,2.0);
                                     // 1/M^2
                                     coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];
                                 }
@@ -525,7 +550,7 @@ oper_t oper_t::chiral_extr()
                                         {
                                             coord_meslep[0][ieq] = 1.0;
                                             // M^2 (averaged over equivalent combinations)
-                                            coord_meslep[1][ieq] = pow((M_eff[mr1][mr2]+M_eff[mr2][mr1])/2.0,2.0);
+                                            coord_meslep[1][ieq] = pow((M_eff[m1][m2][r1]+M_eff[m2][m1][r2])/2.0,2.0);
                                             // 1/M^2
                                             coord_meslep[2][ieq] = 1.0/coord_meslep[1][ieq];
                                         }
@@ -619,7 +644,7 @@ oper_t chiral_sea_extr(voper_t in)
     int x_max=nmSea-1;
     
     for(int msea=0; msea<nmSea; msea++)
-        x[msea] = ( get<0>(ave_err(in[msea].eff_mass_sea)) )[0][0];
+        x[msea] = ( get<0>(ave_err(in[msea].eff_mass_sea)) )[0];
     
     // extrapolate sigma
 #pragma omp parallel for collapse(3)
@@ -1038,10 +1063,56 @@ oper_t oper_t::average_equiv_moms()
     return out;
 }
 
+oper_t compute_ratio(voper_t in) // in[loop]
+{
+    oper_t out; // out
+    
+    out._nmr = in[1]._nmr;
+    out._linmoms = in[1]._linmoms;
+    out._bilmoms = in[1]._bilmoms;
+    out._meslepmoms = in[1]._meslepmoms;
+    
+    out.allocate();
+    
+    out.path_to_ens = in[1].path_to_beta;
+    
+    // Zq
+    for(int imom=0;imom<out._linmoms;imom++)
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mr=0;mr<out._nmr;mr++)
+                (out.jZq)[imom][ijack][mr] =
+                    (in[0].jZq_EM)[imom][ijack][mr]/
+                    (in[1].jZq_EM)[imom][ijack][mr];
+    // Zbil
+    for(int imom=0;imom<out._bilmoms;imom++)
+        for(int ibil=0;ibil<nbil;ibil++)
+            for(int ijack=0;ijack<njacks;ijack++)
+                for(int mr1=0;mr1<out._nmr;mr1++)
+                    for(int mr2=0;mr2<out._nmr;mr2++)
+                        (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] =
+                            (in[0].jZ_EM)[imom][ibil][ijack][mr1][mr2]/
+                            (in[1].jZ_EM)[imom][ibil][ijack][mr1][mr2];
+    
+    // Z4f
+    for(int imom=0;imom<out._meslepmoms;imom++)
+        for(int iop1=0;iop1<nbil;iop1++)
+            for(int iop2=0;iop2<nbil;iop2++)
+                for(int ijack=0;ijack<njacks;ijack++)
+                    for(int mr1=0;mr1<out._nmr;mr1++)
+                        for(int mr2=0;mr2<out._nmr;mr2++)
+                            (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] =
+                                (in[0].jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2]/
+                                (in[1].jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2];
+    
+    
+    return out;
+}
+
+
 //voper_t a2p2_extr(voper_t in /*, const int LO_or_EM*/)  // M1 method
 //{
 //    voper_t out;
-//    
+//
 //    //    int neq_moms = (out.jZq).size();
 //    int _linmoms=in[0]._linmoms;
 //    int _bilmoms=in[0]._bilmoms;

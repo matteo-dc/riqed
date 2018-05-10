@@ -23,6 +23,10 @@ string mom_path, action, path_ensemble, scheme, BC, out_hadr, out_lep, analysis;
 vector<string> path_analysis;
 vector<string> beta_label;  // beta_label[Nbeta]
 vector<string> theta_label;  // theta_label[Ntheta]
+bool free_analysis;
+bool inte_analysis;
+bool ratio_analysis;
+bool recompute_basic;
 
 coords_t size;
 
@@ -422,9 +426,28 @@ void read_input_glb(const char path[])
     
     fclose(fin);
     
-         if(strcmp(analysis.c_str(),"inte" )==0)  path_analysis={"Nf4"};
-    else if(strcmp(analysis.c_str(),"free" )==0)  path_analysis={"free_matching"};
-    else if(strcmp(analysis.c_str(),"ratio")==0) path_analysis={"Rat","Nf4","free_matching"};
+    free_analysis=false;
+    inte_analysis=false;
+    ratio_analysis=false;
+    
+    if(strcmp(analysis.c_str(),"inte" )==0)
+    {
+        path_analysis={"Nf4"};
+        
+        inte_analysis=true;
+    }
+    else if(strcmp(analysis.c_str(),"free" )==0)
+    {
+        path_analysis={"free_matching"};
+        
+        free_analysis=true;
+    }
+    else if(strcmp(analysis.c_str(),"ratio")==0)
+    {
+        path_analysis={"Rat","Nf4","free_matching"};
+        
+        ratio_analysis=true;
+    }
     else {cout<<"Choose the analysis: 'inte', 'free' or 'ratio'."<<endl; exit(0);}
     
     if(strcmp(analysis.c_str(),"free")==0 and nr>1)
@@ -432,8 +455,9 @@ void read_input_glb(const char path[])
         cout<<"Nr must be 1 in free theory. Setting Nr=1 instead of Nr="<<nr<<"."<<endl;
         nr=1;
     }
+    
     // this is the path to the directory which contains 'print', 'plots', ecc.
-    path_ensemble = path_ensemble+path_analysis[0]+"/";
+    string full_path = path_ensemble+path_analysis[0]+"/";
     
     //print input parameters
     printf("*------------------------------------------------------*\n");
@@ -450,7 +474,7 @@ void read_input_glb(const char path[])
     
     printf(" %s = %s  --  %s = %d  -- %s = %d -- %s = %.3lf \n",act_tag,action.c_str(),Nf_tag,Nf,Nc_tag,Nc,LambdaQCD_tag,LambdaQCD);
     printf(" %s = %d  (%d njacks) \n",nconfs_tag,nconfs,njacks);
-    printf(" %s = %s \n\n",path_ensemble_tag,path_ensemble.c_str());
+    printf(" %s = %s \n\n",path_ensemble_tag,full_path.c_str());
     
     printf(" %s = %d\n",nr_tag,nr);
     printf(" %s = %d\n",ntypes_tag,ntypes);

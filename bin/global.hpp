@@ -131,5 +131,10 @@ extern int ntypes_lep;
 extern int only_basic;
 // compute mPCAC
 extern int compute_mpcac;
-
+// bool for inte or free analysis
+extern bool free_analysis;
+extern bool inte_analysis;
+extern bool ratio_analysis;
+// bool for recomputing basic
+extern bool recompute_basic;
 #endif
