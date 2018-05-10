@@ -102,7 +102,7 @@ void oper_t::plot_sigmas()
 {
     using namespace sigma;
     
-    cout<<"  Plotting sigmas"<<endl;
+    cout<<" Plotting sigmas"<<endl<<endl;
     
     // opening files
     vector<ofstream> sigma_data(nsigma);
@@ -153,7 +153,7 @@ void oper_t::compute_sigmas()
     
     if(sigma_data.good())
     {
-        cout<<"Reading Sigmas from files"<<endl<<endl;
+        cout<<"Reading Sigmas from files"<<endl;
         read_vec_bin(sigma,path_print+"sigmas");
     }
     else

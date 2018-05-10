@@ -193,6 +193,9 @@ void oper_t::create_basic(const int b, const int th, const int msea)
 {
 //    step = "basic";
     
+    cout<<"----- basic -----"<<endl<<endl;
+    
+    
     _beta=beta[b];
     _beta_label=beta_label[b];
     _nm_Sea=nm_Sea[b];
@@ -298,7 +301,8 @@ void oper_t::create_basic(const int b, const int th, const int msea)
 
 oper_t oper_t::average_r()
 {
-    cout<<"Averaging over r"<<endl<<endl;
+    cout<<endl;
+    cout<<"----- r average -----"<<endl<<endl;
     
     oper_t out=(*this);
     
@@ -374,7 +378,8 @@ oper_t oper_t::average_r()
 
 oper_t oper_t::chiral_extr()
 {
-    cout<<"Chiral extrapolation"<<endl<<endl;
+    cout<<endl;
+    cout<<"----- valence chiral extrapolation -----"<<endl<<endl;
     
     oper_t out=(*this);
     
@@ -577,7 +582,8 @@ oper_t oper_t::chiral_extr()
 
 //oper_t oper_t::subtract()
 //{
-//    cout<<"Subtracting the O(a2) effects"<<endl<<endl;
+//    cout<<endl;
+//    cout<<"----- subtraction of O(a2) effects -----"<<endl<<endl;
 //
 //    oper_t out=(*this);
 //
@@ -614,7 +620,8 @@ oper_t oper_t::chiral_extr()
 
 oper_t chiral_sea_extr(voper_t in)
 {
-    cout<<"Chiral sea extrapolation"<<endl<<endl;
+    cout<<endl;
+    cout<<"----- chiral sea extrapolation -----"<<endl<<endl;
     
     oper_t out=in[0];  //?
     
@@ -771,7 +778,8 @@ oper_t chiral_sea_extr(voper_t in)
 
 oper_t theta_average( voper_t in)
 {
-    cout<<"Theta average"<<endl<<endl;
+    cout<<endl;
+    cout<<"----- theta average -----"<<endl<<endl;
     
     oper_t out=in[0];  //?
     
@@ -814,8 +822,9 @@ oper_t theta_average( voper_t in)
 
 //oper_t oper_t::evolve(const int b)
 //{
-//    cout<<"Evolving the Z's to the scale 1/a"<<endl<<endl;
-//    
+//    cout<<endl;
+//    cout<<"----- evolution to the scale 1/a -----"<<endl<<endl;
+//
 //    oper_t out=(*this);
 //
 //    double cq=0.0;
@@ -866,6 +875,7 @@ int mom_list_xyz(vector<coords_t> &mom_list, const size_t imom)
 
 oper_t oper_t::average_equiv_moms()
 {
+    cout<<endl;
     cout<<"Averaging over the equivalent momenta -- ";
     
     oper_t out=(*this);
@@ -1065,6 +1075,9 @@ oper_t oper_t::average_equiv_moms()
 
 oper_t compute_ratio(voper_t in) // in[loop]
 {
+    cout<<endl;
+    cout<<"----- ratio -----"<<endl<<endl;
+    
     oper_t out; // out
     
     out._nmr = in[1]._nmr;
