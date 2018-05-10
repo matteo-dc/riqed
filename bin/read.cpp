@@ -88,9 +88,9 @@ double read_plaquette(const string &path)
 }
 
 // read effective mass
-vvvd_t oper_t::read_eff_mass(const string name)
+vvvvd_t oper_t::read_eff_mass(const string name)
 {
-    vvvd_t eff_mass_tmp(vvd_t(vd_t(0.0,nmr),nmr),njacks);
+    vvvvd_t eff_mass_tmp(vvvd_t(vvd_t(vd_t(0.0,nr),nm),nm),njacks);
 
     FILE* input_effmass;
     input_effmass = fopen(name.c_str(),"rb");
@@ -105,27 +105,29 @@ vvvd_t oper_t::read_eff_mass(const string name)
     cout<<"Reading eff_mass"<<endl<<endl;
     
     for(int ijack=0;ijack<njacks;ijack++)
-        for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-            for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-            {
-                double temp;
-                
-                int rd=fread(&temp,sizeof(double),1,input_effmass);
-                if(rd!=1)
+        for(int m_fw=0;m_fw<nm;m_fw++)
+            for(int m_bw=0;m_bw<nm;m_bw++)
+                for(int r=0;r<nr;r++)
                 {
-                    cerr<<"Unable to read from \""<<name<<"\" mr_fw: "<<mr_fw<<", mr_bw: "<<mr_bw<<", ijack: "<<ijack<<endl;
-                    exit(1);
+                    double temp;
+                    
+                    int rd=fread(&temp,sizeof(double),1,input_effmass);
+                    if(rd!=1)
+                    {
+                        cerr<<"Unable to read from \""<<name<<"\" m_fw: "<<m_fw<<", m_bw: "<<m_bw<<", r: "<<r<<", ijack: "<<ijack<<endl;
+                        exit(1);
+                    }
+                    eff_mass_tmp[ijack][m_fw][m_bw][r]=temp; //store
                 }
-                eff_mass_tmp[ijack][mr_fw][mr_bw]=temp; //store
-            }
     
-    vvd_t eff_mass_ave=get<0>(ave_err(eff_mass_tmp));
-    vvd_t eff_mass_err=get<1>(ave_err(eff_mass_tmp));
+    vvvd_t eff_mass_ave=get<0>(ave_err(eff_mass_tmp));
+    vvvd_t eff_mass_err=get<1>(ave_err(eff_mass_tmp));
     
-    for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-        for(int mr_bw=0;mr_bw<nmr;mr_bw++)
+    for(int m_fw=0;m_fw<nm;m_fw++)
+        for(int m_bw=0;m_bw<nm;m_bw++)
+            for(int r=0;r<nr;r++)
             {
-                printf("mr1: %d \t mr2: %d \t %lg +- %lg\n",mr_fw,mr_bw,eff_mass_ave[mr_fw][mr_bw],eff_mass_err[mr_fw][mr_bw]);
+                printf("m1: %d \t m2: %d \t r: %d \t %lg +- %lg\n",m_fw,m_bw,r,eff_mass_ave[m_fw][m_bw][r],eff_mass_err[m_fw][m_bw][r]);
             }
     printf("\n");
     
@@ -133,10 +135,10 @@ vvvd_t oper_t::read_eff_mass(const string name)
 }
 
 // read effective mass time dependent
-vvvvd_t oper_t::read_eff_mass_time(const string name)
+vvvvvd_t oper_t::read_eff_mass_time(const string name)
 {
     int T=size[0];
-    vvvvd_t eff_mass_time_tmp(vvvd_t(vvd_t(vd_t(0.0,T/2),njacks),nmr),nmr);
+    vvvvvd_t eff_mass_time_tmp(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,T/2),njacks),nr),nm),nm);
     
     FILE* input_effmass_time;
     input_effmass_time = fopen(name.c_str(),"rb");
@@ -150,20 +152,21 @@ vvvvd_t oper_t::read_eff_mass_time(const string name)
     cout<<"Reading eff_mass_array_time"<<endl<<endl;
     
     for(int ijack=0;ijack<njacks;ijack++)
-        for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-            for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-                for(int t=0;t<T/2;t++)
-                {
-                    double temp;
-                    
-                    int rd=fread(&temp,sizeof(double),1,input_effmass_time);
-                    if(rd!=1)
+        for(int m_fw=0;m_fw<nm;m_fw++)
+            for(int m_bw=0;m_bw<nm;m_bw++)
+                for(int r=0;r<nr;r++)
+                    for(int t=0;t<T/2;t++)
                     {
-                        cerr<<"Unable to read from \""<<name<<"\" mr_fw: "<<mr_fw<<", mr_bw: "<<mr_bw<<", ijack: "<<ijack<<", t: "<<t<<endl;
-                        exit(1);
+                        double temp;
+                        
+                        int rd=fread(&temp,sizeof(double),1,input_effmass_time);
+                        if(rd!=1)
+                        {
+                            cerr<<"Unable to read from \""<<name<<"\" m_fw: "<<m_fw<<", m_bw: "<<m_bw<<", r: "<<r<<", ijack: "<<ijack<<", t: "<<t<<endl;
+                            exit(1);
+                        }
+                        eff_mass_time_tmp[m_fw][m_bw][r][ijack][t]=temp; //store
                     }
-                    eff_mass_time_tmp[mr_fw][mr_bw][ijack][t]=temp; //store
-                }
     
 //    vvd_t eff_mass_ave=get<0>(ave_err(eff_mass_tmp));
 //    vvd_t eff_mass_err=get<1>(ave_err(eff_mass_tmp));
@@ -180,9 +183,9 @@ vvvvd_t oper_t::read_eff_mass_time(const string name)
 
 
 // read effective sea mass
-vvvd_t oper_t::read_eff_mass_sea(const string name)
+vvd_t oper_t::read_eff_mass_sea(const string name)
 {
-    vvvd_t eff_mass_sea_tmp(vvd_t(vd_t(0.0,nr),nr),njacks);
+    vvd_t eff_mass_sea_tmp(vd_t(0.0,nr),njacks);
     
     FILE* input_effmass_sea;
     input_effmass_sea = fopen(name.c_str(),"rb");
@@ -197,27 +200,25 @@ vvvd_t oper_t::read_eff_mass_sea(const string name)
     cout<<"Reading eff_mass sea"<<endl<<endl;
     
     for(int ijack=0;ijack<njacks;ijack++)
-        for(int r1=0;r1<nr;r1++)
-            for(int r2=0;r2<nr;r2++)
-            {
-                double temp;
-                
-                int rd=fread(&temp,sizeof(double),1,input_effmass_sea);
-                if(rd!=1)
-                {
-                    cerr<<"Unable to read from \""<<name<<"\" r1: "<<r1<<", r2: "<<r2<<", ijack: "<<ijack<<endl;
-                    exit(1);
-                }
-                eff_mass_sea_tmp[ijack][r1][r2]=temp; //store
-            }
-    
-    vvd_t eff_mass_sea_ave=get<0>(ave_err(eff_mass_sea_tmp));
-    vvd_t eff_mass_sea_err=get<1>(ave_err(eff_mass_sea_tmp));
-    
-    for(int r1=0;r1<nr;r1++)
-        for(int r2=0;r2<nr;r2++)
+        for(int r=0;r<nr;r++)
         {
-            printf("r1: %d \t r2: %d \t %lg +- %lg\n",r1,r2,eff_mass_sea_ave[r1][r2],eff_mass_sea_err[r1][r2]);
+            double temp;
+            
+            int rd=fread(&temp,sizeof(double),1,input_effmass_sea);
+            if(rd!=1)
+            {
+                cerr<<"Unable to read from \""<<name<<"\" r: "<<r<<", ijack: "<<ijack<<endl;
+                exit(1);
+            }
+            eff_mass_sea_tmp[ijack][r]=temp; //store
+        }
+    
+    vd_t eff_mass_sea_ave=get<0>(ave_err(eff_mass_sea_tmp));
+    vd_t eff_mass_sea_err=get<1>(ave_err(eff_mass_sea_tmp));
+    
+        for(int r=0;r<nr;r++)
+        {
+            printf("r: %d \t %lg +- %lg\n",r,eff_mass_sea_ave[r],eff_mass_sea_err[r]);
         }
     printf("\n");
 
