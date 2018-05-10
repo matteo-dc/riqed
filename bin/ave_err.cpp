@@ -148,29 +148,59 @@ tuple<vvd_t,vvd_t> ave_err_Zq(vector<vvd_t> jZq)
 }
 
 // average effective mass
-tuple<vvd_t,vvd_t> ave_err(vvvd_t jM)
+tuple<vvvd_t,vvvd_t> ave_err(vvvvd_t jM)
 {
     int _njacks=njacks;
-    int _nmr=(int)jM[0].size();
+    int _nm=(int)jM[0].size();
+    int _nr=(int)jM[0][0][0].size();
     
-    vvd_t M_ave(vd_t(0.0,_nmr),_nmr);
-    vvd_t sqr_M_ave(vd_t(0.0,_nmr),_nmr);
-    vvd_t M_err(vd_t(0.0,_nmr),_nmr);
+    vvvd_t M_ave(vvd_t(vd_t(0.0,_nr),_nm),_nm);
+    vvvd_t sqr_M_ave(vvd_t(vd_t(0.0,_nr),_nm),_nm);
+    vvvd_t M_err(vvd_t(vd_t(0.0,_nr),_nm),_nm);
     
-    for(int mrA=0;mrA<_nmr;mrA++)
-        for(int mrB=0;mrB<_nmr;mrB++)
+    for(int mA=0;mA<_nm;mA++)
+        for(int mB=0;mB<_nm;mB++)
+            for(int r=0;r<_nr;r++)
+                for(int ijack=0;ijack<_njacks;ijack++)
+                {
+                    M_ave[mA][mB][r]+=jM[ijack][mA][mB][r]/njacks;
+                    sqr_M_ave[mA][mB][r]+=jM[ijack][mA][mB][r]*jM[ijack][mA][mB][r]/njacks;
+                }
+    
+    for(int mA=0;mA<_nm;mA++)
+        for(int mB=0;mB<_nm;mB++)
+            for(int r=0;r<_nr;r++)
+                M_err[mA][mB][r]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_M_ave[mA][mB][r]-M_ave[mA][mB][r]*M_ave[mA][mB][r]));
+    
+    tuple<vvvd_t,vvvd_t> tuple_ave_err(M_ave,M_err);
+    
+    return tuple_ave_err;
+}
+
+// average of MPCAC
+tuple<vvd_t,vvd_t> ave_err(vvvd_t jMPCAC)
+{
+    int _njacks=njacks;
+    int _nm=(int)jMPCAC[0].size();
+    
+    vvd_t M_ave(vd_t(0.0,_nm),_nm);
+    vvd_t sqr_M_ave(vd_t(0.0,_nm),_nm);
+    vvd_t M_err(vd_t(0.0,_nm),_nm);
+    
+    for(int mA=0;mA<_nm;mA++)
+        for(int mB=0;mB<_nm;mB++)
             for(int ijack=0;ijack<_njacks;ijack++)
             {
-                M_ave[mrA][mrB]+=jM[ijack][mrA][mrB]/njacks;
-                sqr_M_ave[mrA][mrB]+=jM[ijack][mrA][mrB]*jM[ijack][mrA][mrB]/njacks;
+                M_ave[mA][mB]+=jMPCAC[ijack][mA][mB]/njacks;
+                sqr_M_ave[mA][mB]+=jMPCAC[ijack][mA][mB]*jMPCAC[ijack][mA][mB]/njacks;
             }
     
-    for(int mrA=0;mrA<_nmr;mrA++)
-        for(int mrB=0;mrB<_nmr;mrB++)
-            M_err[mrA][mrB]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_M_ave[mrA][mrB]-M_ave[mrA][mrB]*M_ave[mrA][mrB]));
+    for(int mA=0;mA<_nm;mA++)
+        for(int mB=0;mB<_nm;mB++)
+            M_err[mA][mB]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_M_ave[mA][mB]-M_ave[mA][mB]*M_ave[mA][mB]));
     
     tuple<vvd_t,vvd_t> tuple_ave_err(M_ave,M_err);
-
+    
     return tuple_ave_err;
 }
 

@@ -270,23 +270,26 @@ void oper_t::compute_deltam()
         
         //#pragma omp parallel for collapse(3)
         for(int ijack=0;ijack<njacks;ijack++)
-            for(int mr=0;mr<_nmr;mr++)
-            {
-                A = symmetrize(symmetric_derivative(jV0P5_QED[mr][ijack])/jP5P5_LO[mr][ijack] - symmetric_derivative(jV0P5_LO[mr][ijack])*jP5P5_QED[mr][ijack]/jP5P5_LO[mr][ijack]/jP5P5_LO[mr][ijack],1);
-                B = symmetrize(symmetric_derivative(jV0P5_S[mr][ijack])/jP5P5_LO[mr][ijack] - symmetric_derivative(jV0P5_LO[mr][ijack])*jP5P5_S[mr][ijack]/jP5P5_LO[mr][ijack]/jP5P5_LO[mr][ijack],1);
-                C = symmetrize(symmetric_derivative(jV0P5_P[mr][ijack])/jP5P5_LO[mr][ijack] - symmetric_derivative(jV0P5_LO[mr][ijack])*jP5P5_P[mr][ijack]/jP5P5_LO[mr][ijack]/jP5P5_LO[mr][ijack],1);
-                
-                D = effective_slope(symmetrize(jP5P5_QED[mr][ijack]/jP5P5_LO[mr][ijack],1),eff_mass_time[mr][mr][ijack],T/2);
-                E = effective_slope(symmetrize(jP5P5_S[mr][ijack]/jP5P5_LO[mr][ijack],1),eff_mass_time[mr][mr][ijack],T/2);
-                F = effective_slope(symmetrize(jP5P5_P[mr][ijack]/jP5P5_LO[mr][ijack],1),eff_mass_time[mr][mr][ijack],T/2);
-                
-                vd_t den = B*F-C*E;
-                vd_t deltamu = (-A*F+C*D)/den;
-                vd_t deltamc = (-B*D+A*E)/den;
-                
-                v_deltamu[mr][ijack] = deltamu;
-                v_deltamc[mr][ijack] = deltamc;
-            }
+            for(int m=0;m<_nm;m++)
+                for(int r=0;r<_nr;r++)
+                {
+                    int mr = r+nr*m;
+                    
+                    A = symmetrize(symmetric_derivative(jV0P5_QED[mr][ijack])/jP5P5_LO[mr][ijack] - symmetric_derivative(jV0P5_LO[mr][ijack])*jP5P5_QED[mr][ijack]/jP5P5_LO[mr][ijack]/jP5P5_LO[mr][ijack],1);
+                    B = symmetrize(symmetric_derivative(jV0P5_S[mr][ijack])/jP5P5_LO[mr][ijack] - symmetric_derivative(jV0P5_LO[mr][ijack])*jP5P5_S[mr][ijack]/jP5P5_LO[mr][ijack]/jP5P5_LO[mr][ijack],1);
+                    C = symmetrize(symmetric_derivative(jV0P5_P[mr][ijack])/jP5P5_LO[mr][ijack] - symmetric_derivative(jV0P5_LO[mr][ijack])*jP5P5_P[mr][ijack]/jP5P5_LO[mr][ijack]/jP5P5_LO[mr][ijack],1);
+                    
+                    D = effective_slope(symmetrize(jP5P5_QED[mr][ijack]/jP5P5_LO[mr][ijack],1),eff_mass_time[m][m][r][ijack],T/2);
+                    E = effective_slope(symmetrize(jP5P5_S[mr][ijack]/jP5P5_LO[mr][ijack],1),eff_mass_time[m][m][r][ijack],T/2);
+                    F = effective_slope(symmetrize(jP5P5_P[mr][ijack]/jP5P5_LO[mr][ijack],1),eff_mass_time[m][m][r][ijack],T/2);
+                    
+                    vd_t den = B*F-C*E;
+                    vd_t deltamu = (-A*F+C*D)/den;
+                    vd_t deltamc = (-B*D+A*E)/den;
+                    
+                    v_deltamu[mr][ijack] = deltamu;
+                    v_deltamc[mr][ijack] = deltamc;
+                }
         
 #pragma omp parallel for collapse(2)
         for(int t=0;t<T/2/*+1*/;t++)

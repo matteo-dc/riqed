@@ -17,8 +17,8 @@ void allocate_vec_internal(double &t, const vector<int> sizes, int isize)
 void oper_t::allocate()
 {
     // allocate effective masses
-    allocate_vec(eff_mass,{njacks,_nmr,_nmr});
-    allocate_vec(eff_mass_sea,{njacks,_nr,_nr});
+    allocate_vec(eff_mass,{njacks,_nm,_nm,_nr});
+    allocate_vec(eff_mass_sea,{njacks,_nr});
     
     // allocate deltam
     allocate_vec(deltam_cr,{njacks,_nmr});

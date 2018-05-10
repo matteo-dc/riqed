@@ -32,8 +32,15 @@
 //    get_sizes(vec[0],sizes);
 //}
 //
+//template <class T, int pos_jack>
+//tuple<T,T> ave_err(vector<T> vec)
+//{
+//    for(int i=0; i<vec.size(); i++)
+//        ave_err<pos_jack-1>(vec[i]);
+//}
+//
 //template <class T>
-//tuple<T,T> ave_err(vector<T> vec, int col)
+//tuple<T,T> ave_err<T,0>(vector<T> vec)
 //{
 //    vector<int> sizes, new_sizes;
 //    
@@ -48,10 +55,6 @@
 //    allocate_vec(ave,new_sizes);
 //    allocate_vec(sqr_ave,new_sizes);
 //    allocate_vec(err,new_sizes);
-//    
-//    for(int i=0; i<; i++)
-//        compute_ave_internal();
-//    
 //}
 //
 //template <class T>///////////////
@@ -61,7 +64,6 @@
 //    
 //    get_sizes(vec,sizes);
 //}
-
 
 // average sigma
 tuple<vvvvd_t,vvvvd_t> ave_err(vector<vvvvd_t> sigma);
@@ -76,6 +78,9 @@ tuple<vvvvvd_t,vvvvvd_t> ave_err(vector<jproj_t> jG);
 tuple<vvvvd_t,vvvvd_t> ave_err_Z(vector<jZbil_t> jZ);
 
 // average of effective mass
+tuple<vvvd_t,vvvd_t> ave_err(vvvvd_t jM);
+
+// average of MPCAC
 tuple<vvd_t,vvd_t> ave_err(vvvd_t jM);
 
 // average of deltam

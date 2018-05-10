@@ -74,20 +74,20 @@ struct oper_t
     bool deltam_computed;
     
     // effective valence mass
-    vvvd_t eff_mass;
-    vvvd_t read_eff_mass(const string name);
+    vvvvd_t eff_mass;
+    vvvvd_t read_eff_mass(const string name);
     void compute_eff_mass();
     
     // effective valence mass (time dependent)
-    vvvvd_t eff_mass_time;
-    vvvvd_t read_eff_mass_time(const string name);
+    vvvvvd_t eff_mass_time;
+    vvvvvd_t read_eff_mass_time(const string name);
     
     // effective slope
     vd_t effective_slope(vd_t data, vd_t M, int TH);
     
     // effective sea mass
-    vvvd_t eff_mass_sea;
-    vvvd_t read_eff_mass_sea(const string name);
+    vvd_t eff_mass_sea;
+    vvd_t read_eff_mass_sea(const string name);
     void compute_eff_mass_sea();
 
     // compute the basic RC estimators
@@ -191,6 +191,10 @@ oper_t chiral_sea_extr(valarray<oper_t> in);
 
 // theta average
 oper_t theta_average(valarray<oper_t> in);
+
+// ratio between interacting and free theory
+oper_t compute_ratio(voper_t oper_for_ratio);
+
 
 // a2p2 extrapolation
 //void a2p2_extr();
