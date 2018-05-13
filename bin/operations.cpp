@@ -229,8 +229,9 @@ void oper_t::create_basic(const int b, const int th, const int msea)
         // e.g. /.../matteo/Rat/
         path_to_beta = path_folder + path_analysis[0]+"/";
         // e.g. /.../matteo/****/
-        if(!recompute_basic) /* Nf4 */
-            path_ensemble = path_folder + path_analysis[1]+"/";
+        if(!recompute_basic) /* Nf4/B_b1.95 */
+            path_ensemble = path_folder + path_analysis[1]+"/" +
+                            _beta_label + "_b" + to_string_with_precision(_beta,2) + "/";
         else                 /* free_matching */
             path_ensemble = path_folder + path_analysis[2]+"/";
         // e.g. B1m
