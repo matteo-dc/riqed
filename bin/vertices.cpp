@@ -118,7 +118,7 @@ void oper_t::compute_bil()
     
     if(jG_data.good())
     {
-        cout<<"Reading bilinears from files"<<endl<<endl;
+        cout<<"Reading bilinears from files: \""<<path_print<<"jG\""<<endl<<endl;
         read_vec_bin(jG,path_print+"jG");
     }
     else
