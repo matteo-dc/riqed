@@ -64,7 +64,7 @@ int main(int narg,char **arg)
         
         for(int b=0; b<nbeta; b++)
         {
-            vvoper_t basic(voper_t(nm_Sea[b]),ntheta); //nbeta index is useless!
+            vvoper_t basic(voper_t(nm_Sea[b]),ntheta);
             vvoper_t ave(voper_t(nm_Sea[b]),ntheta);
             
             vvoper_t rave(voper_t(nm_Sea[b]),ntheta);
@@ -99,7 +99,7 @@ int main(int narg,char **arg)
                         
                         /*  valence chiral extr  */
                         
-                        if(free_analysis)
+                        if(free_analysis or recompute_basic)
                             rave_ave_chir[th][m] = rave_ave[th][m];
                         else
                         {
@@ -115,20 +115,20 @@ int main(int narg,char **arg)
                     
                 } //close nm_sea
                 
-                if(nm_Sea[b]>1 and only_basic==0 and !free_analysis)
+                if(nm_Sea[b]>1 and !only_basic and (!free_analysis or !recompute_basic))
                 {
                     /*  sea chiral extr  */
                     
                     rave_ave_chir_sea[b][th] = chiral_sea_extr(rave_ave_chir[th]);
                     rave_ave_chir_sea[b][th].plot(theta_label[th]+"/rave_ave_chir_sea");
                 }
-                else if(only_basic==0)
+                else if(!only_basic)
                 {
                     rave_ave_chir_sea[b][th] = rave_ave_chir[th][0];
                 }
             } //close ntheta
             
-            if(ntheta>1 and only_basic==0)
+            if(ntheta>1 and !only_basic)
             {
                 /*  theta average  */
                 
@@ -140,7 +140,7 @@ int main(int narg,char **arg)
 //                rave_ave_chir_sub_sea_theta_evo[b] = rave_ave_chir_sub_sea_theta[b].evolve(b);
 //                rave_ave_chir_sub_sea_theta_evo[b].plot("rave_ave_chir_sub_sea_theta_evo");
             }
-            else if(only_basic==0)
+            else if(!only_basic)
                 rave_ave_chir_sea_theta[b] = rave_ave_chir_sea[b][0];
             
             /* store for ratio */
@@ -154,7 +154,10 @@ int main(int narg,char **arg)
     
     if(ratio_analysis)
         for(int b=0; b<nbeta; b++)
+        {
             ratio[b] = compute_ratio(oper_for_ratio[b]);
+            ratio[b].plot("ratio");
+        }
     
 
 //    if(nbeta>1 and only_basic==0)
