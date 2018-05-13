@@ -1086,7 +1086,7 @@ oper_t compute_ratio(voper_t in) // in[loop]
     cout<<endl;
     cout<<"----- ratio -----"<<endl<<endl;
     
-    oper_t out; // out
+    oper_t out=in[1]; // out
     
     out._nmr = in[1]._nmr;
     out._linmoms = in[1]._linmoms;

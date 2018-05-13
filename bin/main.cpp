@@ -85,7 +85,7 @@ int main(int narg,char **arg)
                     ave[th][m] = basic[th][m].average_equiv_moms();
                     ave[th][m].plot("ave");
                     
-                    if(only_basic==0)
+                    if(!only_basic)
                     {
                         /*  average r  */
                         
