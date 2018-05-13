@@ -254,8 +254,16 @@ void oper_t::create_basic(const int b, const int th, const int msea)
    
     V=size[0]*size[1]*size[2]*size[3];
  
-    _nm=nm;
-    _nr=nr;
+    if(!recompute_basic)
+    {
+        _nm=nm;
+        _nr=nr;
+    }
+    else
+    {
+        _nm=1;
+        _nr=1;
+    }
     _nmr=_nm*_nr;
     
     g2=6.0/_beta;
