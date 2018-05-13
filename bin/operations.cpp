@@ -515,7 +515,7 @@ oper_t oper_t::chiral_extr()
                                 {
                                     coord_bil[0][ieq] = 1.0;
                                     // M^2 (averaged over equivalent combinations)
-                                    coord_bil[1][ieq] = pow((M_eff[m1][m2][r1]+M_eff[m2][m1][r2])/2.0,2.0);
+                                    coord_bil[1][ieq] = pow((M_eff[m1][m2][0]+M_eff[m2][m1][0])/2.0,2.0);
                                     // 1/M^2
                                     coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];
                                 }
@@ -571,7 +571,7 @@ oper_t oper_t::chiral_extr()
                                         {
                                             coord_meslep[0][ieq] = 1.0;
                                             // M^2 (averaged over equivalent combinations)
-                                            coord_meslep[1][ieq] = pow((M_eff[m1][m2][r1]+M_eff[m2][m1][r2])/2.0,2.0);
+                                            coord_meslep[1][ieq] = pow((M_eff[m1][m2][0]+M_eff[m2][m1][0])/2.0,2.0);
                                             // 1/M^2
                                             coord_meslep[2][ieq] = 1.0/coord_meslep[1][ieq];
                                         }
