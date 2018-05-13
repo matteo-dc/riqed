@@ -23,7 +23,7 @@ void oper_t::compute_deltam_from_prop()
     
     if(deltamu_data.good() and deltamc_data.good() and !deltam_computed)
     {
-        cout<<"Reading deltam from files"<<endl<<endl;
+        cout<<"Reading deltam from files: \""<<path_to_ens<<"deltam*\""<<endl<<endl;
         read_vec_bin(deltamu,path_to_ens+"deltamu_array");
         read_vec_bin(deltam_cr,path_to_ens+"deltam_cr_array");
     }
