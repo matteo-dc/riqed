@@ -240,7 +240,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
         path_to_ens = path_ensemble + ensemble_name + "/";
     }
     
-    // impose not to read mes_contr in the 2nd loop (free) 
+    // impose not to read mes_contr in the 2nd loop (free)
     if(recompute_basic)
     {
         compute_mpcac=0;
@@ -447,12 +447,12 @@ oper_t oper_t::chiral_extr()
                     {
                         int mr = r + _nr*m;
                         
-                        if(UseEffMass==0)
+                        if(!UseEffMass)
                         {
                             coord_sigma[0][m] = 1.0;
                             coord_sigma[1][m]= mass_val[m];
                         }
-                        else if(UseEffMass==0)
+                        else if(UseEffMass)
                         {
                             coord_sigma[0][m] = 1.0;
                             coord_sigma[1][m] = pow(M_eff[m][m][r],2.0);
@@ -495,7 +495,7 @@ oper_t oper_t::chiral_extr()
                                 int mr1 = r1 + _nr*m1;
                                 int mr2 = r2 + _nr*m2;
                                 
-                                if(UseEffMass==0)
+                                if(!UseEffMass)
                                 {
                                     coord_bil[0][ieq] = 1.0;
                                     // (am1+am2)
@@ -503,7 +503,7 @@ oper_t oper_t::chiral_extr()
                                     // 1/(am1+am2)
                                     coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];
                                 }
-                                else if(UseEffMass==1)
+                                else if(UseEffMass)
                                 {
                                     coord_bil[0][ieq] = 1.0;
                                     // M^2 (averaged over equivalent combinations)
@@ -551,7 +551,7 @@ oper_t oper_t::chiral_extr()
                                         int mr1 = r1 + _nr*m1;
                                         int mr2 = r2 + _nr*m2;
                                         
-                                        if(UseEffMass==0)
+                                        if(!UseEffMass)
                                         {
                                             coord_meslep[0][ieq] = 1.0;
                                             // (am1+am2)
@@ -559,7 +559,7 @@ oper_t oper_t::chiral_extr()
                                             // 1/(am1+am2)
                                             coord_meslep[2][ieq] = 1.0/coord_meslep[1][ieq];
                                         }
-                                        else if(UseEffMass==1)
+                                        else if(UseEffMass)
                                         {
                                             coord_meslep[0][ieq] = 1.0;
                                             // M^2 (averaged over equivalent combinations)
@@ -675,13 +675,13 @@ oper_t chiral_sea_extr(voper_t in)
                 for(int msea=0; msea<nmSea; msea++)
                 {
                     coord_q[0][msea] = 1.0;
-                    if(UseEffMass==0)
+                    if(!UseEffMass)
                     {
                         cout<<" Impossible to extrapolate without using the effective mass. "<<endl;
                         exit(0);
                         //      coord_q[1][m]= mass_val[m];
                     }
-                    else if(UseEffMass==1)
+                    else if(UseEffMass)
                         coord_q[1][msea] = pow(x[msea],2.0);
                     
                     for(int ijack=0;ijack<njacks;ijack++)
@@ -715,14 +715,14 @@ oper_t chiral_sea_extr(voper_t in)
                 for(int msea=0; msea<nmSea; msea++)
                 {
                     coord_bil[0][msea] = 1.0;
-                    if(UseEffMass==0)
+                    if(!UseEffMass)
                     {
                         cout<<" Impossible to extrapolate without using the effective mass. "<<endl;
                         exit(0);
                         //                coord_bil[1][ieq] = mass_val[m1]+mass_val[m2];  // (am1+am2)
                         //                coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];    // 1/(am1+am2)
                     }
-                    else if(UseEffMass==1)
+                    else if(UseEffMass)
                         coord_bil[1][msea] = pow(x[msea],2.0);
 
                     for(int ijack=0;ijack<njacks;ijack++)
@@ -756,14 +756,14 @@ oper_t chiral_sea_extr(voper_t in)
                         for(int msea=0; msea<nmSea; msea++)
                         {
                             coord_meslep[0][msea] = 1.0;
-                            if(UseEffMass==0)
+                            if(!UseEffMass)
                             {
                                 cout<<" Impossible to extrapolate without using the effective mass. "<<endl;
                                 exit(0);
                                 //                coord_meslep[1][ieq] = mass_val[m1]+mass_val[m2];  // (am1+am2)
                                 //                coord_meslep[2][ieq] = 1.0/coord_bil[1][ieq];    // 1/(am1+am2)
                             }
-                            else if(UseEffMass==1)
+                            else if(UseEffMass)
                                 coord_meslep[1][msea] = pow(x[msea],2.0);
                             
                             for(int ijack=0;ijack<njacks;ijack++)
