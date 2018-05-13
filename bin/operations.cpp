@@ -240,6 +240,13 @@ void oper_t::create_basic(const int b, const int th, const int msea)
         path_to_ens = path_ensemble + ensemble_name + "/";
     }
     
+    // impose not to read mes_contr in the 2nd loop (free) 
+    if(recompute_basic)
+    {
+        compute_mpcac=0;
+        UseEffMass=0;
+    }
+    
     read_input(path_to_ens,ensemble_name);
     path_to_moms = path_to_ens + mom_path;
     
