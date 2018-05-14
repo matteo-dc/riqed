@@ -428,7 +428,7 @@ oper_t oper_t::chiral_extr()
     for(int m1=0; m1<_nm; m1++)
         for(int m2=m1; m2<_nm; m2++)
             for(int r=0; r<_nr; r++)
-                cout<<M_eff[m1][m2][r1]<<endl;
+                cout<<M_eff[m1][m2][r]<<endl;
     cout<<"******"<<endl;
 
     
