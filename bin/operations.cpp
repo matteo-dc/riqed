@@ -336,9 +336,7 @@ oper_t oper_t::average_r()
                 for(int mB=0; mB<_nm; mB++)
                     for(int r=0; r<_nr; r++)
                         (out.eff_mass)[ijack][mA][mB][0] += eff_mass[ijack][mA][mB][r]/_nr;
-        
-//        printf("%lg \t %lg \n %lg\n",eff_mass[0][0][0][0],eff_mass[0][0][0][1],(out.eff_mass)[0][0][0][0]);
-        
+                
         if(_nm_Sea>1)
 #pragma omp parallel for
             for(int ijack=0;ijack<njacks;ijack++)
@@ -353,8 +351,12 @@ oper_t oper_t::average_r()
                 for(int m=0; m<_nm; m++)
                     for(int ijack=0;ijack<njacks;ijack++)
                         for(int r=0; r<_nr; r++)
+                        {
+                            const int coeff=(iproj==sigma::SIGMA3 and r==1)?-1:+1;
+                            
                             (out.sigma)[ilinmom][iproj][ins][ijack][m] +=
-                                sigma[ilinmom][iproj][ins][ijack][r+_nr*m]/_nr;
+                                coeff*sigma[ilinmom][iproj][ins][ijack][r+_nr*m]/_nr;
+                        }
     
     out.deltam_computed=true;
     out.compute_deltam_from_prop();
