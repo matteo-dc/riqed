@@ -337,7 +337,7 @@ oper_t oper_t::average_r()
                     for(int r=0; r<_nr; r++)
                         (out.eff_mass)[ijack][mA][mB][0] += eff_mass[ijack][mA][mB][r]/_nr;
         
-        printf("%lg \t %lg \n %lg\n",eff_mass[0][0][0][0],eff_mass[0][0][0][1],(out.eff_mass)[0][0][0][0]);
+//        printf("%lg \t %lg \n %lg\n",eff_mass[0][0][0][0],eff_mass[0][0][0][1],(out.eff_mass)[0][0][0][0]);
         
         if(_nm_Sea>1)
 #pragma omp parallel for
@@ -423,6 +423,14 @@ oper_t oper_t::chiral_extr()
 
     // average of eff_mass
     vvvd_t M_eff = get<0>(ave_err(eff_mass));
+    
+    cout<<"******"<<endl;
+    for(int m1=0; m1<_nm; m1++)
+        for(int m2=m1; m2<_nm; m2++)
+            for(int r=0; r<_nr; r++)
+                cout<<M_eff[m1][m2][r1]<<endl;
+    cout<<"******"<<endl;
+
     
     //range for fit Zq
     int x_min_q=0;
