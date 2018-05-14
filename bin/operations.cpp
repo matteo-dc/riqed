@@ -424,20 +424,6 @@ oper_t oper_t::chiral_extr()
     // average of eff_mass
     vvvd_t M_eff = get<0>(ave_err(eff_mass));
     
-    cout<<"******"<<endl;
-    for(int ijack=0;ijack<njacks;ijack++)
-        for(int m1=0; m1<_nm; m1++)
-            for(int m2=m1; m2<_nm; m2++)
-                for(int r=0; r<_nr; r++)
-                    cout<<eff_mass[ijack][m1][m2][r]<<endl;
-    cout<<"******"<<endl;
-    for(int m1=0; m1<_nm; m1++)
-        for(int m2=m1; m2<_nm; m2++)
-            for(int r=0; r<_nr; r++)
-                cout<<M_eff[m1][m2][r]<<endl;
-    cout<<"******"<<endl;
-
-    
     //range for fit Zq
     int x_min_q=0;
     int x_max_q=_nm-1;
@@ -541,11 +527,6 @@ oper_t oper_t::chiral_extr()
                                 
                                 G_err_r1_r2[ieq] = G_err[ibilmom][ins][ibil][mr1][mr2];
                                 
-                                printf("-------------\n");
-                                printf("%d \n %lg \t %lg \t %lg\n",ieq,coord_bil[0][ieq],coord_bil[1][ieq],coord_bil[2][ieq]);
-                                printf("%lg \n %lg",jG_r1_r2[0][ieq],G_err_r1_r2[ieq]);
-                                printf("-------------\n");
-
                                 ieq++;
                             }
                         
