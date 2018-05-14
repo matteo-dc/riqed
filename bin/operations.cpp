@@ -525,6 +525,12 @@ oper_t oper_t::chiral_extr()
                                 
                                 G_err_r1_r2[ieq] = G_err[ibilmom][ins][ibil][mr1][mr2];
                                 
+                                cout<<"-------------"<<endl;
+                                cout<<ieq<<endl;
+                                cout<<coord_bil[0][ieq]<<" "<<coord_bil[1][ieq]<<" "<<coord_bil[2][ieq]<<" "<<endl;
+                                cout<<jG_r1_r2[0][ieq]<<endl;
+                                cout<<G_err_r1_r2[ieq]<<endl;
+                                cout<<"-------------"<<endl;
                                 ieq++;
                             }
                         
