@@ -10,15 +10,20 @@ using namespace sigma;
 void oper_t::compute_Zq()
 {
     cout<<"Computing Zq"<<endl;
+    
+#pragma omp parallel for collapse(3)
     for(int ilinmom=0; ilinmom<_linmoms; ilinmom++)
-    {
-        // LO
-        jZq[ilinmom] = sigma[ilinmom][SIGMA1][LO];
-        
-        // EM (relative)
-        jZq_EM[ilinmom] = (sigma[ilinmom][SIGMA1][PH] +
-                           sigma[ilinmom][SIGMA1][P ]*deltam_cr +
-                           sigma[ilinmom][SIGMA1][S ]*deltamu)/
-                            sigma[ilinmom][SIGMA1][LO];
-    }
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mr=0;mr<nmr;mr++)
+            {
+                // LO
+                jZq[ilinmom][ijack][mr] = sigma[ilinmom][SIGMA1][LO][ijack][mr];
+                
+                // EM (relative)
+                jZq_EM[ilinmom][ijack][mr] =
+                    (sigma[ilinmom][SIGMA1][PH][ijack][mr] +
+                     sigma[ilinmom][SIGMA1][P ][ijack][mr]*deltam_cr[ijack][mr] +
+                     sigma[ilinmom][SIGMA1][S ][ijack][mr]*deltamu[ijack][mr])/
+                    sigma[ilinmom][SIGMA1][LO][ijack][mr];
+            }
 }
