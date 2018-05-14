@@ -14,7 +14,7 @@ void oper_t::compute_Zq()
 #pragma omp parallel for collapse(3)
     for(int ilinmom=0; ilinmom<_linmoms; ilinmom++)
         for(int ijack=0;ijack<njacks;ijack++)
-            for(int mr=0;mr<nmr;mr++)
+            for(int mr=0;mr<_nmr;mr++)
             {
                 // LO
                 jZq[ilinmom][ijack][mr] = sigma[ilinmom][SIGMA1][LO][ijack][mr];
