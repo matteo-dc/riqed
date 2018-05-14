@@ -336,5 +336,27 @@ void oper_t::compute_deltam()
     {
         print_vec_bin(deltam_cr,path_to_ens+"deltam_cr_array");
         print_vec_bin(deltamu,path_to_ens+"deltamu_array");
+        
+        vd_t deltamu_ave(0.0,_nmr), deltamc_ave(0.0,_nmr);
+        vd_t sqr_deltamu_ave(0.0,_nmr), sqr_deltamc_ave(0.0,_nmr);
+        vd_t deltamu_err(0.0,_nmr), deltamc_err(0.0,_nmr);
+        
+        for(int mr=0;mr<_nmr;mr++)
+        {
+            for(int ijack=0;ijack<njacks;ijack++)
+            {
+                deltamu_ave[mr] += deltamu[ijack][mr]/njacks;
+                deltamc_ave[mr] += deltam_cr[ijack][mr]/njacks;
+                
+                sqr_deltamu_ave[mr] += deltamu[ijack][mr]*deltamu[ijack][mr]/njacks;
+                sqr_deltamc_ave[mr] += deltam_cr[ijack][mr]*deltam_cr[ijack][mr]/njacks;
+            }
+            
+            deltamu_err[mr] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_deltamu_ave[mr]-deltamu_ave[mr]*deltamu_ave[mr]));
+            deltamc_err[mr] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_deltamc_ave[mr]-deltamc_ave[mr]*deltamc_ave[mr]));
+        }
+        
+        for(int mr=0;mr<_nmr;mr++)
+            printf("mr: %d \t %lg +- %lg \t %lg +- %lg \n",mr,deltamc_ave[mr],deltamc_err[mr],deltamu_ave[mr],deltamu_err[mr]);
     }
 }
