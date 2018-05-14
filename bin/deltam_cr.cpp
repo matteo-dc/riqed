@@ -87,13 +87,14 @@ void oper_t::compute_deltam_from_prop()
                 error_mc[mr][imom] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_mean_value_mc[mr][imom]-mean_value_mc[mr][imom]*mean_value_mc[mr][imom]));
             }
         
-        int npar=3;
+        int npar=4;
         vvd_t coord(vd_t(0.0,_linmoms),npar);
         for(int j=0; j<_linmoms; j++)
         {
             coord[0][j] = 1.0;
             coord[1][j] = p2[j];
             coord[2][j] = p2[j]*p2[j];
+            coord[3][j] = p2[j]*p2[j]*p2[j];
         }
         
         double p2min = 0.01;
