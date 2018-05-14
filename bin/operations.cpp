@@ -335,13 +335,15 @@ oper_t oper_t::average_r()
             for(int mA=0; mA<_nm; mA++)
                 for(int mB=0; mB<_nm; mB++)
                     for(int r=0; r<_nr; r++)
-                        out.eff_mass[ijack][mA][mB][0] += eff_mass[ijack][mA][mB][r]/_nr;
+                        (out.eff_mass)[ijack][mA][mB][0] += eff_mass[ijack][mA][mB][r]/_nr;
+        
+        printf("%lg \t %lg \n %lg\n",eff_mass[0][0][0][0],eff_mass[0][0][0][1],(out.eff_mass)[0][0][0][0]);
         
         if(_nm_Sea>1)
 #pragma omp parallel for
             for(int ijack=0;ijack<njacks;ijack++)
                 for(int r=0; r<_nr; r++)
-                    out.eff_mass_sea[ijack][0] += eff_mass_sea[ijack][r]/_nr;
+                    (out.eff_mass_sea)[ijack][0] += eff_mass_sea[ijack][r]/_nr;
     }
     
 #pragma omp parallel for collapse(5)
