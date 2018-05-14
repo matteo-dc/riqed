@@ -1063,6 +1063,9 @@ oper_t oper_t::average_equiv_moms()
     
     out.allocate();
     
+    out.eff_mass = eff_mass;
+    out.eff_mass_sea = eff_mass_sea;
+    
     for(int tag=0;tag<neq_lin_moms;tag++)
         for(int imom=0;imom<_linmoms;imom++)
             if(tag_lin_vector[imom]==tag)
