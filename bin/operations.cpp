@@ -336,7 +336,7 @@ oper_t oper_t::average_r()
                 for(int mB=0; mB<_nm; mB++)
                     for(int r=0; r<_nr; r++)
                         (out.eff_mass)[ijack][mA][mB][0] += eff_mass[ijack][mA][mB][r]/_nr;
-                
+        
         if(_nm_Sea>1)
 #pragma omp parallel for
             for(int ijack=0;ijack<njacks;ijack++)
@@ -1118,7 +1118,7 @@ oper_t compute_ratio(voper_t in) // in[loop]
             for(int mr=0;mr<out._nmr;mr++)
                 (out.jZq)[imom][ijack][mr] =
                     (in[0].jZq_EM)[imom][ijack][mr]/
-                    (in[1].jZq_EM)[imom][ijack][mr];
+                    (in[1].jZq_EM)[imom][ijack][mr] - 1.0;
     // Zbil
     for(int imom=0;imom<out._bilmoms;imom++)
         for(int ibil=0;ibil<nbil;ibil++)
@@ -1127,7 +1127,7 @@ oper_t compute_ratio(voper_t in) // in[loop]
                     for(int mr2=0;mr2<out._nmr;mr2++)
                         (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] =
                             (in[0].jZ_EM)[imom][ibil][ijack][mr1][mr2]/
-                            (in[1].jZ_EM)[imom][ibil][ijack][mr1][mr2];
+                            (in[1].jZ_EM)[imom][ibil][ijack][mr1][mr2] - 1.0;
     
     // Z4f
     for(int imom=0;imom<out._meslepmoms;imom++)
@@ -1138,7 +1138,7 @@ oper_t compute_ratio(voper_t in) // in[loop]
                         for(int mr2=0;mr2<out._nmr;mr2++)
                             (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] =
                                 (in[0].jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2]/
-                                (in[1].jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2];
+                                (in[1].jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] - 1.0;
     
     
     return out;
