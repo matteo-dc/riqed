@@ -425,6 +425,12 @@ oper_t oper_t::chiral_extr()
     vvvd_t M_eff = get<0>(ave_err(eff_mass));
     
     cout<<"******"<<endl;
+    for(int ijack=0;ijack<njacks;ijack++)
+        for(int m1=0; m1<_nm; m1++)
+            for(int m2=m1; m2<_nm; m2++)
+                for(int r=0; r<_nr; r++)
+                    cout<<eff_mass[ijack][m1][m2][r]<<endl;
+    cout<<"******"<<endl;
     for(int m1=0; m1<_nm; m1++)
         for(int m2=m1; m2<_nm; m2++)
             for(int r=0; r<_nr; r++)
