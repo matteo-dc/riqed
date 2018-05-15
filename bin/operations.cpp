@@ -402,7 +402,9 @@ oper_t oper_t::chiral_extr()
     cout<<"****2***"<<endl;
     
     vvvvd_t sigma_err = get<1>(ave_err(sigma));
+    cout<<"****2a***"<<endl;
     vvvvvd_t G_err = get<1>(ave_err(jG));
+    cout<<"****2b***"<<endl;
     vvvvvvd_t pr_meslep_err=get<1>(ave_err(jpr_meslep));
     
     cout<<"****3***"<<endl;
