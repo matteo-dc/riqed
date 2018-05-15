@@ -227,13 +227,9 @@ tuple<vvvvvvd_t,vvvvvvd_t> ave_err(vector<jproj_meslep_t> jpr_meslep)
     int _njacks=(int)jpr_meslep[0][0][0][0].size();
     int _nmr=(int)jpr_meslep[0][0][0][0][0].size();
     
-    cout<<"a"<<endl;
-    
     vvvvvvd_t pr_meslep_ave(vvvvvd_t(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,_nmr),_nmr),_nbil),_nbil),_nins),_bilmoms);
     vvvvvvd_t sqr_pr_meslep_ave=pr_meslep_ave;
     vvvvvvd_t pr_meslep_err=pr_meslep_ave;
-    
-    cout<<"b"<<endl;
     
     for(int imom=0;imom<_bilmoms;imom++)
     {
@@ -245,8 +241,6 @@ tuple<vvvvvvd_t,vvvvvvd_t> ave_err(vector<jproj_meslep_t> jpr_meslep)
                         for(int mrB=0;mrB<_nmr;mrB++)
                             for(int ijack=0;ijack<_njacks;ijack++)
                             {
-                                cout<<imom<<" "<<ins<<" "<<iop1<<" "<<iop2<<" "<<mrA<<" "<<mrB<<" "<<ijack<<endl;
-                                
                                 pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]+=
                                     jpr_meslep[imom][ins][iop1][iop2][ijack][mrA][mrB]/_njacks;
                                 sqr_pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]+=
@@ -260,15 +254,11 @@ tuple<vvvvvvd_t,vvvvvvd_t> ave_err(vector<jproj_meslep_t> jpr_meslep)
                     for(int mrA=0;mrA<_nmr;mrA++)
                         for(int mrB=0;mrB<_nmr;mrB++)
                         {
-                            cout<<imom<<" "<<ins<<" "<<iop1<<" "<<iop2<<" "<<mrA<<" "<<mrB<<" "<<endl;
-                            
-                            pr_meslep_err[imom][iop1][iop2][mrA][mrB]=
+                            pr_meslep_err[imom][ins][iop1][iop2][mrA][mrB]=
                                 sqrt((double)(njacks-1))*sqrt(fabs(sqr_pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]-pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]*pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]));
                         }
     }
-    
-    cout<<"c"<<endl;
-    
+        
     tuple<vvvvvvd_t,vvvvvvd_t> tuple_ave_err(pr_meslep_ave,pr_meslep_err);
     
     return tuple_ave_err;

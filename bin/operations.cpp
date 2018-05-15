@@ -394,24 +394,14 @@ oper_t oper_t::chiral_extr()
     out._nm=1;
     out._nmr=(out._nm)*(out._nr);
     
-    cout<<"****1***"<<endl;
-    cout<<_nm<<" "<<_nr<<" "<<_nmr<<endl;
-    
     out.allocate();
-    
-    cout<<"****2***"<<endl;
     
     out.eff_mass = eff_mass;
     out.eff_mass_sea = eff_mass_sea;
     
     vvvvd_t sigma_err = get<1>(ave_err(sigma));
-    cout<<"****2a***"<<endl;
     vvvvvd_t G_err = get<1>(ave_err(jG));
-    cout<<"****2b***"<<endl;
-    cout<<jpr_meslep.size()<<" "<<jpr_meslep[0].size()<<" "<<jpr_meslep[0][0].size()<<" "<<jpr_meslep[0][0][0].size()<<" "<<jpr_meslep[0][0][0][0].size()<<" "<<jpr_meslep[0][0][0][0][0].size()<<" "<<jpr_meslep[0][0][0][0][0][0].size()<<" "<<endl;
     vvvvvvd_t pr_meslep_err=get<1>(ave_err(jpr_meslep));
-    
-    cout<<"****3***"<<endl;
     
     //Sum of quark masses for the extrapolation
 //    vd_t mass_sum(0.0,10);
@@ -425,8 +415,6 @@ oper_t oper_t::chiral_extr()
 
     // average of eff_mass
     vvd_t M_eff = get<0>(ave_err(eff_mass));
-    
-    cout<<"****4***"<<endl;
     
     //range for fit Zq
     int x_min_q=0;
@@ -444,9 +432,7 @@ oper_t oper_t::chiral_extr()
     // number of fit parameters for meslep
     int npar_meslep[5]={2,2,3,3,2};
     int npar_meslep_max=3;
-    
-    cout<<"****5***"<<endl;
-    
+        
     //extrapolate sigma
 #pragma omp parallel for collapse(4)
     for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
