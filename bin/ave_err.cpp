@@ -245,6 +245,8 @@ tuple<vvvvvvd_t,vvvvvvd_t> ave_err(vector<jproj_meslep_t> jpr_meslep)
                         for(int mrB=0;mrB<_nmr;mrB++)
                             for(int ijack=0;ijack<_njacks;ijack++)
                             {
+                                cout<<imom<<" "<<ins<<" "<<iop1<<" "<<iop2<<" "<<mrA<<" "<<mrB<<" "<<ijack<<endl;
+                                
                                 pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]+=
                                     jpr_meslep[imom][ins][iop1][iop2][ijack][mrA][mrB]/_njacks;
                                 sqr_pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]+=
@@ -258,6 +260,8 @@ tuple<vvvvvvd_t,vvvvvvd_t> ave_err(vector<jproj_meslep_t> jpr_meslep)
                     for(int mrA=0;mrA<_nmr;mrA++)
                         for(int mrB=0;mrB<_nmr;mrB++)
                         {
+                            cout<<imom<<" "<<ins<<" "<<iop1<<" "<<iop2<<" "<<mrA<<" "<<mrB<<" "<<endl;
+                            
                             pr_meslep_err[imom][iop1][iop2][mrA][mrB]=
                                 sqrt((double)(njacks-1))*sqrt(fabs(sqr_pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]-pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]*pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]));
                         }
