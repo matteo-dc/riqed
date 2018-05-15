@@ -248,8 +248,7 @@ tuple<vvvvvvd_t,vvvvvvd_t> ave_err(vector<jproj_meslep_t> jpr_meslep)
                                 pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]+=
                                     jpr_meslep[imom][ins][iop1][iop2][ijack][mrA][mrB]/_njacks;
                                 sqr_pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]+=
-                                    (jpr_meslep[imom][ins][iop1][iop2][ijack][mrA][mrB]*
-                                     jpr_meslep[imom][ins][iop1][iop2][ijack][mrA][mrB])/_njacks;
+                                    (jpr_meslep[imom][ins][iop1][iop2][ijack][mrA][mrB]*jpr_meslep[imom][ins][iop1][iop2][ijack][mrA][mrB])/_njacks;
                             }
         
 #pragma omp parallel for collapse(5)
