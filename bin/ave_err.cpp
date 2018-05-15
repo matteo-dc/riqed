@@ -227,9 +227,13 @@ tuple<vvvvvvd_t,vvvvvvd_t> ave_err(vector<jproj_meslep_t> jpr_meslep)
     int _njacks=(int)jpr_meslep[0][0][0][0].size();
     int _nmr=(int)jpr_meslep[0][0][0][0][0].size();
     
+    cout<<"a"<<endl;
+    
     vvvvvvd_t pr_meslep_ave(vvvvvd_t(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,_nmr),_nmr),_nbil),_nbil),_nins),_bilmoms);
     vvvvvvd_t sqr_pr_meslep_ave=pr_meslep_ave;
     vvvvvvd_t pr_meslep_err=pr_meslep_ave;
+    
+    cout<<"b"<<endl;
     
     for(int imom=0;imom<_bilmoms;imom++)
     {
@@ -247,6 +251,7 @@ tuple<vvvvvvd_t,vvvvvvd_t> ave_err(vector<jproj_meslep_t> jpr_meslep)
                                     (jpr_meslep[imom][ins][iop1][iop2][ijack][mrA][mrB]*
                                      jpr_meslep[imom][ins][iop1][iop2][ijack][mrA][mrB])/_njacks;
                             }
+        
 #pragma omp parallel for collapse(5)
         for(int ins=0;ins<_nins;ins++)
             for(int iop1=0;iop1<_nbil;iop1++)
@@ -258,6 +263,8 @@ tuple<vvvvvvd_t,vvvvvvd_t> ave_err(vector<jproj_meslep_t> jpr_meslep)
                                 sqrt((double)(njacks-1))*sqrt(fabs(sqr_pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]-pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]*pr_meslep_ave[imom][ins][iop1][iop2][mrA][mrB]));
                         }
     }
+    
+    cout<<"c"<<endl;
     
     tuple<vvvvvvd_t,vvvvvvd_t> tuple_ave_err(pr_meslep_ave,pr_meslep_err);
     
