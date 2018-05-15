@@ -328,6 +328,9 @@ oper_t oper_t::average_r()
     
     out.allocate();
     
+    out.eff_mass=eff_mass;
+    out.eff_mass_sea=eff_mass_sea;
+    
 #pragma omp parallel for collapse(5)
     for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
         for(int iproj=0;iproj<sigma::nproj;iproj++)
