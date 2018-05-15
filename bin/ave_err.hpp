@@ -77,11 +77,11 @@ tuple<vvvvvd_t,vvvvvd_t> ave_err(vector<jproj_t> jG);
 // average of Zbil
 tuple<vvvvd_t,vvvvd_t> ave_err_Z(vector<jZbil_t> jZ);
 
-// average of effective mass
-tuple<vvvd_t,vvvd_t> ave_err(vvvvd_t jM);
-
-// average of MPCAC
+// average of valence effective mass and mPCAC
 tuple<vvd_t,vvd_t> ave_err(vvvd_t jM);
+
+// average of sea effective mass
+tuple<double,double> ave_err(vd_t jM);
 
 // average of deltam
 tuple<vd_t,vd_t> ave_err(vvd_t jdeltam);

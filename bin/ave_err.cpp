@@ -147,41 +147,11 @@ tuple<vvd_t,vvd_t> ave_err_Zq(vector<vvd_t> jZq)
     return tuple_ave_err;
 }
 
-// average effective mass
-tuple<vvvd_t,vvvd_t> ave_err(vvvvd_t jM)
+// average of valence effective mass and mPCAC
+tuple<vvd_t,vvd_t> ave_err(vvvd_t jM)
 {
-    int _njacks=njacks;
+    int _njacks=jM.size();
     int _nm=(int)jM[0].size();
-    int _nr=(int)jM[0][0][0].size();
-    
-    vvvd_t M_ave(vvd_t(vd_t(0.0,_nr),_nm),_nm);
-    vvvd_t sqr_M_ave(vvd_t(vd_t(0.0,_nr),_nm),_nm);
-    vvvd_t M_err(vvd_t(vd_t(0.0,_nr),_nm),_nm);
-    
-    for(int mA=0;mA<_nm;mA++)
-        for(int mB=0;mB<_nm;mB++)
-            for(int r=0;r<_nr;r++)
-                for(int ijack=0;ijack<_njacks;ijack++)
-                {
-                    M_ave[mA][mB][r]+=jM[ijack][mA][mB][r]/njacks;
-                    sqr_M_ave[mA][mB][r]+=jM[ijack][mA][mB][r]*jM[ijack][mA][mB][r]/njacks;
-                }
-    
-    for(int mA=0;mA<_nm;mA++)
-        for(int mB=0;mB<_nm;mB++)
-            for(int r=0;r<_nr;r++)
-                M_err[mA][mB][r]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_M_ave[mA][mB][r]-M_ave[mA][mB][r]*M_ave[mA][mB][r]));
-    
-    tuple<vvvd_t,vvvd_t> tuple_ave_err(M_ave,M_err);
-    
-    return tuple_ave_err;
-}
-
-// average of MPCAC
-tuple<vvd_t,vvd_t> ave_err(vvvd_t jMPCAC)
-{
-    int _njacks=njacks;
-    int _nm=(int)jMPCAC[0].size();
     
     vvd_t M_ave(vd_t(0.0,_nm),_nm);
     vvd_t sqr_M_ave(vd_t(0.0,_nm),_nm);
@@ -191,8 +161,8 @@ tuple<vvd_t,vvd_t> ave_err(vvvd_t jMPCAC)
         for(int mB=0;mB<_nm;mB++)
             for(int ijack=0;ijack<_njacks;ijack++)
             {
-                M_ave[mA][mB]+=jMPCAC[ijack][mA][mB]/njacks;
-                sqr_M_ave[mA][mB]+=jMPCAC[ijack][mA][mB]*jMPCAC[ijack][mA][mB]/njacks;
+                M_ave[mA][mB]+=jM[ijack][mA][mB]/_njacks;
+                sqr_M_ave[mA][mB]+=jM[ijack][mA][mB]*jM[ijack][mA][mB]/_njacks;
             }
     
     for(int mA=0;mA<_nm;mA++)
@@ -200,6 +170,25 @@ tuple<vvd_t,vvd_t> ave_err(vvvd_t jMPCAC)
             M_err[mA][mB]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_M_ave[mA][mB]-M_ave[mA][mB]*M_ave[mA][mB]));
     
     tuple<vvd_t,vvd_t> tuple_ave_err(M_ave,M_err);
+    
+    return tuple_ave_err;
+}
+
+// average of sea effective mass
+tuple<double,double> ave_err(vd_t jM)
+{
+    int _njacks=jM.size();
+    
+    double M_ave=0.0, sqr_M_ave=0.0, M_err=0.0;
+    
+    for(int ijack=0;ijack<_njacks;ijack++)
+    {
+        M_ave+=jM[ijack]/_njacks;
+        sqr_M_ave+=jM[ijack]*jM[ijack]/_njacks;
+    }
+    M_err=sqrt((double)(njacks-1))*sqrt(fabs(sqr_M_ave-M_ave*M_ave));
+    
+    tuple<double,double> tuple_ave_err(M_ave,M_err);
     
     return tuple_ave_err;
 }

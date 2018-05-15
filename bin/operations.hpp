@@ -74,20 +74,20 @@ struct oper_t
     bool deltam_computed;
     
     // effective valence mass
-    vvvvd_t eff_mass;
-    vvvvd_t read_eff_mass(const string name);
+    vvvd_t eff_mass;
+    vvvd_t read_eff_mass(const string name);
     void compute_eff_mass();
     
     // effective valence mass (time dependent)
-    vvvvvd_t eff_mass_time;
-    vvvvvd_t read_eff_mass_time(const string name);
+    vvvvd_t eff_mass_time;
+    vvvvd_t read_eff_mass_time(const string name);
     
     // effective slope
     vd_t effective_slope(vd_t data, vd_t M, int TH);
     
     // effective sea mass
-    vvd_t eff_mass_sea;
-    vvd_t read_eff_mass_sea(const string name);
+    vd_t eff_mass_sea;
+    vd_t read_eff_mass_sea(const string name);
     void compute_eff_mass_sea();
 
     // compute the basic RC estimators

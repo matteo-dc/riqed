@@ -328,22 +328,6 @@ oper_t oper_t::average_r()
     
     out.allocate();
     
-    if(UseEffMass==1)
-    {
-#pragma omp parallel for collapse(3)
-        for(int ijack=0;ijack<njacks;ijack++)
-            for(int mA=0; mA<_nm; mA++)
-                for(int mB=0; mB<_nm; mB++)
-                    for(int r=0; r<_nr; r++)
-                        (out.eff_mass)[ijack][mA][mB][0] += eff_mass[ijack][mA][mB][r]/_nr;
-        
-        if(_nm_Sea>1)
-#pragma omp parallel for
-            for(int ijack=0;ijack<njacks;ijack++)
-                for(int r=0; r<_nr; r++)
-                    (out.eff_mass_sea)[ijack][0] += eff_mass_sea[ijack][r]/_nr;
-    }
-    
 #pragma omp parallel for collapse(5)
     for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
         for(int iproj=0;iproj<sigma::nproj;iproj++)
@@ -424,7 +408,7 @@ oper_t oper_t::chiral_extr()
 //        }
 
     // average of eff_mass
-    vvvd_t M_eff = get<0>(ave_err(eff_mass));
+    vvd_t M_eff = get<0>(ave_err(eff_mass));
     
     //range for fit Zq
     int x_min_q=0;
@@ -467,7 +451,7 @@ oper_t oper_t::chiral_extr()
                         else if(UseEffMass)
                         {
                             coord_sigma[0][m] = 1.0;
-                            coord_sigma[1][m] = pow(M_eff[m][m][r],2.0);
+                            coord_sigma[1][m] = pow(M_eff[m][m],2.0);
                         }
                         
                         for(int ijack=0;ijack<njacks;ijack++)
@@ -519,7 +503,7 @@ oper_t oper_t::chiral_extr()
                                 {
                                     coord_bil[0][ieq] = 1.0;
                                     // M^2 (averaged over equivalent combinations)
-                                    coord_bil[1][ieq] = pow((M_eff[m1][m2][r1]+M_eff[m1][m2][r1]/*M_eff[m2][m1][r1]*/)/2.0,2.0);
+                                    coord_bil[1][ieq] = pow((M_eff[m1][m2]+M_eff[m2][m1])/2.0,2.0);
                                     // 1/M^2
                                     coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];
                                 }
@@ -575,7 +559,7 @@ oper_t oper_t::chiral_extr()
                                         {
                                             coord_meslep[0][ieq] = 1.0;
                                             // M^2 (averaged over equivalent combinations)
-                                            coord_meslep[1][ieq] = pow((M_eff[m1][m2][r1]+M_eff[m1][m2][r1]/*M_eff[m2][m1][r1]*/)/2.0,2.0);
+                                            coord_meslep[1][ieq] = pow((M_eff[m1][m2]+M_eff[m2][m1])/2.0,2.0);
                                             // 1/M^2
                                             coord_meslep[2][ieq] = 1.0/coord_meslep[1][ieq];
                                         }
@@ -671,7 +655,7 @@ oper_t chiral_sea_extr(voper_t in)
     int x_max=nmSea-1;
     
     for(int msea=0; msea<nmSea; msea++)
-        x[msea] = ( get<0>(ave_err(in[msea].eff_mass_sea)) )[0];
+        x[msea] = get<0>(ave_err(in[msea].eff_mass_sea));
     
     // extrapolate sigma
 #pragma omp parallel for collapse(3)

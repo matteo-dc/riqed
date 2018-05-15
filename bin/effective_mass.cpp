@@ -260,38 +260,44 @@ void oper_t::compute_eff_mass()
             for(int r=0;r<nr;r++)
                 jP5P5_00[m_fw][m_bw][r]=get_contraction("",out_hadr,m_fw,m_bw,r,r,_LO,_LO,"P5P5",RE,EVN,conf_id,path_to_ens);
 
-    
-    // define effective mass array
-    vvvvvd_t M_eff(vvvvd_t(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nr),nm),nm);
-    
+    // define jackknife P5P5 correlators r-averaged
+    vvvvd_t jP5P5_00_rave(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nm),nm);
 #pragma omp parallel for collapse(5)
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
             for(int r=0;r<nr;r++)
                 for(int ijack=0; ijack<njacks;ijack++)
                     for(int t=0;t<T/2;t++)
-                        M_eff[m_fw][m_bw][r][ijack][t] =
-                            solve_Newton (jP5P5_00[m_fw][m_bw][r],ijack,t,T);
+                        jP5P5_00_rave[m_fw][m_bw][ijack][t]+=jP5P5_00[m_fw][m_bw][r][ijack][t]/nr;
     
-    vvvvd_t mass_ave(vvvd_t(vvd_t(vd_t(0.0,T/2),nr),nm),nm);
-    vvvvd_t sqr_mass_ave=mass_ave;
-    vvvvd_t mass_err=mass_ave;
-    
+    // compute effective mass time array
+    vvvvd_t M_eff(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nm),nm);
 #pragma omp parallel for collapse(4)
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
-            for(int r=0;r<nr;r++)
+            for(int ijack=0; ijack<njacks;ijack++)
                 for(int t=0;t<T/2;t++)
+                    M_eff[m_fw][m_bw][ijack][t] =
+                        solve_Newton (jP5P5_00_rave[m_fw][m_bw],ijack,t,T);
+    
+    vvvd_t mass_ave(vvd_t(vd_t(0.0,T/2),nm),nm);
+    vvvd_t sqr_mass_ave=mass_ave;
+    vvvd_t mass_err=mass_ave;
+    
+#pragma omp parallel for collapse(3)
+    for(int m_fw=0;m_fw<nm;m_fw++)
+        for(int m_bw=0;m_bw<nm;m_bw++)
+            for(int t=0;t<T/2;t++)
+            {
+                for(int ijack=0;ijack<njacks;ijack++)
                 {
-                    for(int ijack=0;ijack<njacks;ijack++)
-                    {
-                        mass_ave[m_fw][m_bw][r][t] += M_eff[m_fw][m_bw][r][ijack][t]/njacks;
-                        sqr_mass_ave[m_fw][m_bw][r][t] +=
-                            M_eff[m_fw][m_bw][r][ijack][t]*M_eff[m_fw][m_bw][r][ijack][t]/njacks;
-                    }
-                    
-                    mass_err[m_fw][m_bw][r][t]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_mass_ave[m_fw][m_bw][r][t]-mass_ave[m_fw][m_bw][r][t]*mass_ave[m_fw][m_bw][r][t]));
+                    mass_ave[m_fw][m_bw][t] += M_eff[m_fw][m_bw][ijack][t]/njacks;
+                    sqr_mass_ave[m_fw][m_bw][t] +=
+                        M_eff[m_fw][m_bw][ijack][t]*M_eff[m_fw][m_bw][ijack][t]/njacks;
                 }
+                
+                mass_err[m_fw][m_bw][t] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_mass_ave[m_fw][m_bw][t]-mass_ave[m_fw][m_bw][t]*mass_ave[m_fw][m_bw][t]));
+            }
     
     //t-range for the fit
     int t_min = delta_tmin;
@@ -303,22 +309,21 @@ void oper_t::compute_eff_mass()
         coord[0][j] = 1.0;  //fit a costante
     }
     
-    vvvvvd_t jeff_mass(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,coord.size()),njacks),nr),nm),nm);
+    vvvvd_t jeff_mass(vvvd_t(vvd_t(vd_t(0.0,coord.size()),njacks),nm),nm);
     
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
-            for(int r=0;r<nr;r++)
-                jeff_mass[m_fw][m_bw][r] =
-                    polyfit(coord,1,mass_err[m_fw][m_bw][r],M_eff[m_fw][m_bw][r],t_min,t_max);
+            jeff_mass[m_fw][m_bw] =
+                polyfit(coord,1,mass_err[m_fw][m_bw],M_eff[m_fw][m_bw],t_min,t_max);
     
-    vvvvd_t eff_mass_tmp(vvvd_t(vvd_t(vd_t(0.0,nr),nm),nm),njacks);
+    // define meson effective mass
+    vvvd_t eff_mass_tmp(vvd_t(vd_t(0.0,nm),nm),njacks);
     
-#pragma omp parallel for collapse(4)
+#pragma omp parallel for collapse(3)
     for(int ijack=0;ijack<njacks;ijack++)
         for(int m_fw=0;m_fw<nm;m_fw++)
             for(int m_bw=0;m_bw<nm;m_bw++)
-                for(int r=0;r<nr;r++)
-                    eff_mass_tmp[ijack][m_fw][m_bw][r] = jeff_mass[m_fw][m_bw][r][ijack][0];
+                eff_mass_tmp[ijack][m_fw][m_bw] = jeff_mass[m_fw][m_bw][ijack][0];
     
     
     ofstream outfile;
@@ -329,10 +334,9 @@ void oper_t::compute_eff_mass()
         for(int ijack=0;ijack<njacks;ijack++)
             for(int m_fw=0;m_fw<nm;m_fw++)
                 for(int m_bw=0;m_bw<nm;m_bw++)
-                    for(int r=0;r<nr;r++)
-                    {
-                        outfile.write((char*) &eff_mass_tmp[ijack][m_fw][m_bw][r],sizeof(double));
-                    }
+                {
+                    outfile.write((char*) &eff_mass_tmp[ijack][m_fw][m_bw],sizeof(double));
+                }
         
         outfile.close();
     }
@@ -346,11 +350,10 @@ void oper_t::compute_eff_mass()
         for(int ijack=0;ijack<njacks;ijack++)
             for(int m_fw=0;m_fw<nm;m_fw++)
                 for(int m_bw=0;m_bw<nm;m_bw++)
-                    for(int r=0;r<nr;r++)
-                        for(int t=0;t<T/2;t++)
-                        {
-                            outfile_time.write((char*) &M_eff[m_fw][m_bw][r][ijack][t],sizeof(double));
-                        }
+                    for(int t=0;t<T/2;t++)
+                    {
+                        outfile_time.write((char*) &M_eff[m_fw][m_bw][ijack][t],sizeof(double));
+                    }
         
         outfile_time.close();
     }
@@ -367,38 +370,43 @@ void oper_t::compute_eff_mass_sea()
     
     int T=size[0];
     
-    // define jackknife V0P5 correlators
+    // define jackknife P5P5 correlators
     vvvd_t jP5P5_00(vvd_t(vd_t(T/2+1),njacks),nr);
     
     // load correlators
     for(int r=0;r<nr;r++)
         jP5P5_00[r]=get_contraction("sea",out_hadr,0,0,r,r,_LO,_LO,"P5P5",RE,EVN,conf_id,path_to_ens);
     
-    // define effective mass array
-    vvvd_t M_eff(vvd_t(vd_t(T/2),njacks),nr);
-    
+    // define jackknife P5P5 correlators
+    vvd_t jP5P5_00_rave(vd_t(0.0,T/2+1),njacks);
 #pragma omp parallel for collapse(3)
     for(int r=0;r<nr;r++)
         for(int ijack=0; ijack<njacks;ijack++)
             for(int t=0;t<T/2;t++)
-                M_eff[r][ijack][t] = solve_Newton (jP5P5_00[r],ijack,t,T);
+                jP5P5_00_rave[ijack][t]+=jP5P5_00[r][ijack][t]/nr;
     
-    vvd_t mass_ave(vd_t(0.0,T/2),nr);
-    vvd_t sqr_mass_ave=mass_ave;
-    vvd_t mass_err=mass_ave;
+    // define effective mass array
+    vvd_t M_eff(vd_t(T/2),njacks);
     
 #pragma omp parallel for collapse(2)
-    for(int r=0;r<nr;r++)
+    for(int ijack=0; ijack<njacks;ijack++)
         for(int t=0;t<T/2;t++)
+            M_eff[ijack][t] = solve_Newton(jP5P5_00_rave,ijack,t,T);
+    
+    vd_t mass_ave(0.0,T/2);
+    vd_t sqr_mass_ave=mass_ave;
+    vd_t mass_err=mass_ave;
+    
+#pragma omp parallel for
+    for(int t=0;t<T/2;t++)
+    {
+        for(int ijack=0;ijack<njacks;ijack++)
         {
-            for(int ijack=0;ijack<njacks;ijack++)
-            {
-                mass_ave[r][t]+=M_eff[r][ijack][t]/njacks;
-                sqr_mass_ave[r][t]+=M_eff[r][ijack][t]*M_eff[r][ijack][t]/njacks;
-            }
-            
-            mass_err[r][t]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_mass_ave[r][t]-mass_ave[r][t]*mass_ave[r][t]));
+            mass_ave[t]+=M_eff[ijack][t]/njacks;
+            sqr_mass_ave[t]+=M_eff[ijack][t]*M_eff[ijack][t]/njacks;
         }
+        mass_err[t]=sqrt((double)(njacks-1))*sqrt(fabs(sqr_mass_ave[t]-mass_ave[t]*mass_ave[t]));
+    }
     
     //t-range for the fit
     int t_min = delta_tmin;
@@ -410,18 +418,15 @@ void oper_t::compute_eff_mass_sea()
         coord[0][j] = 1.0;  //fit a costante
     }
     
-    vvvd_t jeff_mass(vvd_t(vd_t(0.0,coord.size()),njacks),nr);
+    vvd_t jeff_mass(vd_t(0.0,coord.size()),njacks);
     
-    for(int r=0;r<nr;r++)
-        jeff_mass[r] = polyfit(coord,1,mass_err[r],M_eff[r],t_min,t_max);
+    jeff_mass = polyfit(coord,1,mass_err,M_eff,t_min,t_max);
     
-    vvd_t eff_mass_tmp(vd_t(0.0,nr),njacks);
+    vd_t eff_mass_tmp(0.0,njacks);
     
-#pragma omp parallel for collapse(2)
+#pragma omp parallel for
     for(int ijack=0;ijack<njacks;ijack++)
-        for(int r=0;r<nr;r++)
-            eff_mass_tmp[ijack][r]=jeff_mass[r][ijack][0];
-    
+        eff_mass_tmp[ijack]=jeff_mass[ijack][0];
     
     ofstream outfile;
     outfile.open(path_to_ens+"eff_mass_sea_array", ios::out | ios::binary);
@@ -429,11 +434,7 @@ void oper_t::compute_eff_mass_sea()
     if (outfile.is_open())
     {
         for(int ijack=0;ijack<njacks;ijack++)
-            for(int r=0;r<nr;r++)
-            {
-                outfile.write((char*) &eff_mass_tmp[ijack][r],sizeof(double));
-            }
-        
+            outfile.write((char*) &eff_mass_tmp[ijack],sizeof(double));
         outfile.close();
     }
     else cerr<<"Unable to create the output file \"eff_mass_sea_array\" "<<endl;
