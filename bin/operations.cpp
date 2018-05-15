@@ -401,6 +401,9 @@ oper_t oper_t::chiral_extr()
     
     cout<<"****2***"<<endl;
     
+    out.eff_mass = eff_mass;
+    out.eff_mass_sea = eff_mass_sea;
+    
     vvvvd_t sigma_err = get<1>(ave_err(sigma));
     cout<<"****2a***"<<endl;
     vvvvvd_t G_err = get<1>(ave_err(jG));
@@ -1020,6 +1023,10 @@ oper_t oper_t::average_equiv_moms()
     out._bilmoms=neq_bil_moms;
     cout<<"and "<<neq_bil_moms<<" equivalent bilmoms "<<endl<<endl;
     (out.bilmoms).resize(out._bilmoms);
+    
+    // number of equivalent meslepmoms
+    int neq_meslep_moms = neq_bil_moms;
+    out._meslepmoms=neq_meslep_moms;
     
     // count the different tags
     vector<int> count_tag_bil_vector(out._bilmoms);
