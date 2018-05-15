@@ -405,6 +405,7 @@ oper_t oper_t::chiral_extr()
     cout<<"****2a***"<<endl;
     vvvvvd_t G_err = get<1>(ave_err(jG));
     cout<<"****2b***"<<endl;
+    cout<<jpr_meslep.size()<<" "<<jpr_meslep[0].size()<<" "<<jpr_meslep[0][0].size()<<" "<<jpr_meslep[0][0][0].size()<<" "<<jpr_meslep[0][0][0][0].size()<<" "<<jpr_meslep[0][0][0][0][0].size()<<" "<<jpr_meslep[0][0][0][0][0][0].size()<<" "<<endl;
     vvvvvvd_t pr_meslep_err=get<1>(ave_err(jpr_meslep));
     
     cout<<"****3***"<<endl;
