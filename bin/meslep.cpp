@@ -377,10 +377,10 @@ void oper_t::compute_Z4f()
                                 jpr_meslep[ibilmom][meslep::M11][iop1][iop2][ijack][mr_fw][mr_bw] +
                                 jpr_meslep[ibilmom][meslep::M22][iop1][iop2][ijack][mr_fw][mr_bw] +
                                 jpr_meslep[ibilmom][meslep::M12][iop1][iop2][ijack][mr_fw][mr_bw] +
-                                jpr_meslep[ibilmom][meslep::P11][iop1][iop2][ijack][mr_fw][mr_bw] +
-                                jpr_meslep[ibilmom][meslep::P22][iop1][iop2][ijack][mr_fw][mr_bw] +
-                                jpr_meslep[ibilmom][meslep::S11][iop1][iop2][ijack][mr_fw][mr_bw] +
-                                jpr_meslep[ibilmom][meslep::S22][iop1][iop2][ijack][mr_fw][mr_bw];
+                                jpr_meslep[ibilmom][meslep::P11][iop1][iop2][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_bw] +
+                                jpr_meslep[ibilmom][meslep::P22][iop1][iop2][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_fw] +
+                                jpr_meslep[ibilmom][meslep::S11][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_bw] +
+                                jpr_meslep[ibilmom][meslep::S22][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_fw];
                         }
                     
                     O4f_t G4f_LO_inv = G4f_LO.inverse();
