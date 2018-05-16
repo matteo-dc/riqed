@@ -262,12 +262,12 @@ void oper_t::compute_eff_mass()
 
     // define jackknife P5P5 correlators r-averaged
     vvvvd_t jP5P5_00_rave(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nm),nm);
-#pragma omp parallel for collapse(5)
+#pragma omp parallel for collapse(4)
     for(int m_fw=0;m_fw<nm;m_fw++)
         for(int m_bw=0;m_bw<nm;m_bw++)
-            for(int r=0;r<nr;r++)
-                for(int ijack=0; ijack<njacks;ijack++)
-                    for(int t=0;t<T/2;t++)
+            for(int ijack=0; ijack<njacks;ijack++)
+                for(int t=0;t<T/2;t++)
+                    for(int r=0;r<nr;r++)
                         jP5P5_00_rave[m_fw][m_bw][ijack][t]+=jP5P5_00[m_fw][m_bw][r][ijack][t]/nr;
     
     // compute effective mass time array
