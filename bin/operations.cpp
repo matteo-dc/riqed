@@ -415,6 +415,9 @@ oper_t oper_t::chiral_extr()
 
     // average of eff_mass
     vvd_t M_eff = get<0>(ave_err(eff_mass));
+    for(int m1=0; m1<_nm; m1++)
+        for(int m2=m1; m2<_nm; m2++)
+            printf("m1: %d m2: %d \t %lg \n",m1,m2,pow((M_eff[m1][m2]+M_eff[m2][m1])/2.0,2.0));
     
     //range for fit Zq
     int x_min_q=0;
