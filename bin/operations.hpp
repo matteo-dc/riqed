@@ -103,7 +103,10 @@ struct oper_t
     
     void clear_all();
     
+    // allocate vectors
     void allocate();
+    // allocate valarrays
+    void allocate_val();
     
     void resize_output(oper_t out);
     

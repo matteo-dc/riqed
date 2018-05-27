@@ -273,7 +273,8 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     
     set_ins();
     
-    allocate();
+    allocate_val();
+    if(!load_ave) allocate();
     
     if(compute_mpcac)
     {
@@ -328,6 +329,7 @@ oper_t oper_t::average_r()
     out._nm=_nm;
     out._nmr=(out._nm)*(out._nr);
     
+    out.allocate_val();
     out.allocate();
     
     out.eff_mass=eff_mass;
@@ -396,6 +398,7 @@ oper_t oper_t::chiral_extr()
     out._nm=1;
     out._nmr=(out._nm)*(out._nr);
     
+    out.allocate_val();
     out.allocate();
     
     out.eff_mass = eff_mass;
@@ -645,7 +648,7 @@ oper_t chiral_sea_extr(voper_t in)
     int _bilmoms = in[0]._bilmoms;
     int _meslepmoms = in[0]._meslepmoms;
     
-    //    resize_output(out);
+    out.allocate_val();
     out.allocate();
     
     out.path_to_ens = in[0].path_to_beta;
@@ -802,7 +805,9 @@ oper_t theta_average( voper_t in)
     int _bilmoms = in[0]._bilmoms;
     int _meslepmoms = in[0]._meslepmoms;
     
+    out.allocate_val();
     out.allocate();
+    
     out.path_to_ens = in[0].path_to_beta;
     
     for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
@@ -1043,6 +1048,8 @@ oper_t oper_t::average_equiv_moms()
                 out.bilmoms[tag] = {imom0,imom1,imom2};
             }
     
+    out.allocate_val();
+    
     if(!load_ave)
     {
         out.allocate();
@@ -1110,6 +1117,7 @@ oper_t compute_ratio(voper_t in) // in[loop]
     out._bilmoms = in[1]._bilmoms;
     out._meslepmoms = in[1]._meslepmoms;
     
+    out.allocate_val();
     out.allocate();
     
     out.path_to_ens = in[1].path_to_beta;

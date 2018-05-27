@@ -41,10 +41,8 @@ void oper_t::clear_all()
     jZ_4f_EM.shrink_to_fit();
 }
 
-void oper_t::allocate()
+void oper_t::allocate_val()
 {
-    clear_all();
-    
     // allocate effective masses
     allocate_vec(eff_mass,{njacks,_nm,_nm});
     allocate_vec(eff_mass_sea,{njacks});
@@ -52,6 +50,11 @@ void oper_t::allocate()
     // allocate deltam
     allocate_vec(deltam_cr,{njacks,_nmr});
     allocate_vec(deltamu,{njacks,_nmr});
+}
+
+void oper_t::allocate()
+{
+    clear_all();
     
     // allocate sigmas
     allocate_vec(sigma,{_linmoms,sigma::nproj,sigma::nins,njacks,_nmr});
