@@ -1160,9 +1160,9 @@ oper_t compute_ratio(voper_t in) // in[loop]
 
 void oper_t::print(const string suffix)
 {
-    print_vec_bin(sigma,path_print+"sigmas"+suffix);
-    print_vec_bin(jG,path_print+"jG"+suffix);
-    print_vec_bin(jpr_meslep,path_print+"jpr_meslep"+suffix);
+    print_vec_bin(sigma,path_print+"sigmas_"+suffix);
+    print_vec_bin(jG,path_print+"jG_"+suffix);
+    print_vec_bin(jpr_meslep,path_print+"jpr_meslep_"+suffix);
 }
 
 void oper_t::load(const string suffix)
