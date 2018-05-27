@@ -330,58 +330,62 @@ oper_t oper_t::average_r()
     out._nmr=(out._nm)*(out._nr);
     
     out.allocate_val();
-    out.allocate();
     
-    out.eff_mass=eff_mass;
-    out.eff_mass_sea=eff_mass_sea;
-    
-#pragma omp parallel for collapse(5)
-    for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
-        for(int iproj=0;iproj<sigma::nproj;iproj++)
-            for(int ins=0;ins<sigma::nins;ins++)
-                for(int m=0; m<_nm; m++)
-                    for(int ijack=0;ijack<njacks;ijack++)
-                        for(int r=0; r<_nr; r++)
-                        {
-                            const int coeff=(iproj==sigma::SIGMA3 and r==1)?-1:+1;
-                            
-                            (out.sigma)[ilinmom][iproj][ins][ijack][m] +=
-                                coeff*sigma[ilinmom][iproj][ins][ijack][r+_nr*m]/_nr;
-                        }
-    
-    out.deltam_computed=true;
-    out.compute_deltam_from_prop();
-    
-    out.compute_Zq();
-    
-#pragma omp parallel for collapse(6)
-    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
-        for(int mA=0; mA<_nm; mA++)
-            for(int mB=0; mB<_nm; mB++)
-                for(int ijack=0;ijack<njacks;ijack++)
-                    for(int ibil=0; ibil<5; ibil++)
-                        for(int ins=0; ins<gbil::nins; ins++)
-                            for(int r=0; r<_nr; r++)
-                                (out.jG)[ibilmom][ins][ibil][ijack][mA][mB] +=
-                                    jG[ibilmom][ins][ibil][ijack][r+_nr*mA][r+_nr*mB]/_nr;
-    
-    out.compute_Zbil();
-    
-    if(compute_4f)
+    if(!load_ave)
     {
-#pragma omp parallel for collapse(7)
-        for(int imeslepmom=0;imeslepmom<_meslepmoms;imeslepmom++)
-            for(int iop1=0;iop1<5;iop1++)
-                for(int iop2=0;iop2<5;iop2++)
-                    for(int ijack=0;ijack<njacks;ijack++)
-                        for(int ins=0;ins<pr_meslep::nins;ins++)
-                            for(int mA=0;mA<_nm;mA++)
-                                for(int mB=0;mB<_nm;mB++)
-                                    for(int r=0;r<_nr;r++)
-                                        (out.jpr_meslep)[imeslepmom][ins][iop1][iop2][ijack][mA][mB] +=
-                                            jpr_meslep[imeslepmom][ins][iop1][iop2][ijack][r+_nr*mA][r+_nr*mB]/_nr;
+        out.allocate();
         
-        out.compute_Z4f();
+        out.eff_mass=eff_mass;
+        out.eff_mass_sea=eff_mass_sea;
+        
+#pragma omp parallel for collapse(5)
+        for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
+            for(int iproj=0;iproj<sigma::nproj;iproj++)
+                for(int ins=0;ins<sigma::nins;ins++)
+                    for(int m=0; m<_nm; m++)
+                        for(int ijack=0;ijack<njacks;ijack++)
+                            for(int r=0; r<_nr; r++)
+                            {
+                                const int coeff=(iproj==sigma::SIGMA3 and r==1)?-1:+1;
+                                
+                                (out.sigma)[ilinmom][iproj][ins][ijack][m] +=
+                                coeff*sigma[ilinmom][iproj][ins][ijack][r+_nr*m]/_nr;
+                            }
+        
+        out.deltam_computed=true;
+        out.compute_deltam_from_prop();
+        
+        out.compute_Zq();
+        
+#pragma omp parallel for collapse(6)
+        for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
+            for(int mA=0; mA<_nm; mA++)
+                for(int mB=0; mB<_nm; mB++)
+                    for(int ijack=0;ijack<njacks;ijack++)
+                        for(int ibil=0; ibil<5; ibil++)
+                            for(int ins=0; ins<gbil::nins; ins++)
+                                for(int r=0; r<_nr; r++)
+                                    (out.jG)[ibilmom][ins][ibil][ijack][mA][mB] +=
+                                    jG[ibilmom][ins][ibil][ijack][r+_nr*mA][r+_nr*mB]/_nr;
+        
+        out.compute_Zbil();
+        
+        if(compute_4f)
+        {
+#pragma omp parallel for collapse(7)
+            for(int imeslepmom=0;imeslepmom<_meslepmoms;imeslepmom++)
+                for(int iop1=0;iop1<5;iop1++)
+                    for(int iop2=0;iop2<5;iop2++)
+                        for(int ijack=0;ijack<njacks;ijack++)
+                            for(int ins=0;ins<pr_meslep::nins;ins++)
+                                for(int mA=0;mA<_nm;mA++)
+                                    for(int mB=0;mB<_nm;mB++)
+                                        for(int r=0;r<_nr;r++)
+                                            (out.jpr_meslep)[imeslepmom][ins][iop1][iop2][ijack][mA][mB] +=
+                                            jpr_meslep[imeslepmom][ins][iop1][iop2][ijack][r+_nr*mA][r+_nr*mB]/_nr;
+            
+            out.compute_Z4f();
+        }
     }
     
     return out;
