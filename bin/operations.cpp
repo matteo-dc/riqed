@@ -331,12 +331,12 @@ oper_t oper_t::average_r()
     
     out.allocate_val();
     
+    out.eff_mass=eff_mass;
+    out.eff_mass_sea=eff_mass_sea;
+    
     if(!load_ave)
     {
         out.allocate();
-        
-        out.eff_mass=eff_mass;
-        out.eff_mass_sea=eff_mass_sea;
         
 #pragma omp parallel for collapse(5)
         for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
@@ -349,7 +349,7 @@ oper_t oper_t::average_r()
                                 const int coeff=(iproj==sigma::SIGMA3 and r==1)?-1:+1;
                                 
                                 (out.sigma)[ilinmom][iproj][ins][ijack][m] +=
-                                coeff*sigma[ilinmom][iproj][ins][ijack][r+_nr*m]/_nr;
+                                    coeff*sigma[ilinmom][iproj][ins][ijack][r+_nr*m]/_nr;
                             }
         
         out.deltam_computed=true;
@@ -366,7 +366,7 @@ oper_t oper_t::average_r()
                             for(int ins=0; ins<gbil::nins; ins++)
                                 for(int r=0; r<_nr; r++)
                                     (out.jG)[ibilmom][ins][ibil][ijack][mA][mB] +=
-                                    jG[ibilmom][ins][ibil][ijack][r+_nr*mA][r+_nr*mB]/_nr;
+                                        jG[ibilmom][ins][ibil][ijack][r+_nr*mA][r+_nr*mB]/_nr;
         
         out.compute_Zbil();
         
@@ -382,7 +382,7 @@ oper_t oper_t::average_r()
                                     for(int mB=0;mB<_nm;mB++)
                                         for(int r=0;r<_nr;r++)
                                             (out.jpr_meslep)[imeslepmom][ins][iop1][iop2][ijack][mA][mB] +=
-                                            jpr_meslep[imeslepmom][ins][iop1][iop2][ijack][r+_nr*mA][r+_nr*mB]/_nr;
+                                                jpr_meslep[imeslepmom][ins][iop1][iop2][ijack][r+_nr*mA][r+_nr*mB]/_nr;
             
             out.compute_Z4f();
         }
@@ -1054,12 +1054,12 @@ oper_t oper_t::average_equiv_moms()
     
     out.allocate_val();
     
+    out.eff_mass = eff_mass;
+    out.eff_mass_sea = eff_mass_sea;
+    
     if(!load_ave)
     {
         out.allocate();
-        
-        out.eff_mass = eff_mass;
-        out.eff_mass_sea = eff_mass_sea;
         
         for(int tag=0;tag<neq_lin_moms;tag++)
             for(int imom=0;imom<_linmoms;imom++)
