@@ -1043,54 +1043,57 @@ oper_t oper_t::average_equiv_moms()
                 out.bilmoms[tag] = {imom0,imom1,imom2};
             }
     
-    out.allocate();
-    
-    out.eff_mass = eff_mass;
-    out.eff_mass_sea = eff_mass_sea;
-    
-    for(int tag=0;tag<neq_lin_moms;tag++)
-        for(int imom=0;imom<_linmoms;imom++)
-            if(tag_lin_vector[imom]==tag)
-                for(int ijack=0;ijack<njacks;ijack++)
-                    for(int mr=0;mr<_nmr;mr++)
-                        for(int iproj=0;iproj<sigma::nproj;iproj++)
-                            for(int ins=0;ins<sigma::nins;ins++)
-                                (out.sigma)[tag][iproj][ins][ijack][mr]+=
-                                    sigma[imom][iproj][ins][ijack][mr]/count_tag_lin_vector[tag];
-    
-    out.deltam_computed=true;
-    out.compute_deltam_from_prop();
-    
-    out.compute_Zq();
-    
-    for(int tag=0;tag<neq_bil_moms;tag++)
-        for(int imom=0;imom<_bilmoms;imom++)
-            if(tag_bil_vector[imom]==tag)
-                for(int ibil=0;ibil<5;ibil++)
+    if(!load_ave)
+    {
+        out.allocate();
+        
+        out.eff_mass = eff_mass;
+        out.eff_mass_sea = eff_mass_sea;
+        
+        for(int tag=0;tag<neq_lin_moms;tag++)
+            for(int imom=0;imom<_linmoms;imom++)
+                if(tag_lin_vector[imom]==tag)
                     for(int ijack=0;ijack<njacks;ijack++)
-                        for(int ins=0;ins<gbil::nins;ins++)
-                            for(int mr1=0; mr1<_nmr; mr1++)
-                                for(int mr2=0; mr2<_nmr; mr2++)
-                                    (out.jG)[tag][ins][ibil][ijack][mr1][mr2]+=
-                                        jG[imom][ins][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
-    
-    
-    out.compute_Zbil();
-    
-    if(compute_4f)
+                        for(int mr=0;mr<_nmr;mr++)
+                            for(int iproj=0;iproj<sigma::nproj;iproj++)
+                                for(int ins=0;ins<sigma::nins;ins++)
+                                    (out.sigma)[tag][iproj][ins][ijack][mr]+=
+                                    sigma[imom][iproj][ins][ijack][mr]/count_tag_lin_vector[tag];
+        
+        out.deltam_computed=true;
+        out.compute_deltam_from_prop();
+        
+        out.compute_Zq();
+        
         for(int tag=0;tag<neq_bil_moms;tag++)
             for(int imom=0;imom<_bilmoms;imom++)
                 if(tag_bil_vector[imom]==tag)
-                    for(int iop1=0;iop1<nbil;iop1++)
-                        for(int iop2=0;iop2<nbil;iop2++)
-                            for(int ijack=0;ijack<njacks;ijack++)
-                                for(int ins=0;ins<pr_meslep::nins;ins++)
-                                    for(int mr1=0; mr1<_nmr; mr1++)
-                                        for(int mr2=0; mr2<_nmr; mr2++)
-                                            (out.jpr_meslep)[tag][ins][iop1][iop2][ijack][mr1][mr2]+=
-                                            jpr_meslep[imom][ins][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
-    
-    out.compute_Z4f();
+                    for(int ibil=0;ibil<5;ibil++)
+                        for(int ijack=0;ijack<njacks;ijack++)
+                            for(int ins=0;ins<gbil::nins;ins++)
+                                for(int mr1=0; mr1<_nmr; mr1++)
+                                    for(int mr2=0; mr2<_nmr; mr2++)
+                                        (out.jG)[tag][ins][ibil][ijack][mr1][mr2]+=
+                                        jG[imom][ins][ibil][ijack][mr1][mr2]/count_tag_bil_vector[tag];
+        
+        
+        out.compute_Zbil();
+        
+        if(compute_4f)
+            for(int tag=0;tag<neq_bil_moms;tag++)
+                for(int imom=0;imom<_bilmoms;imom++)
+                    if(tag_bil_vector[imom]==tag)
+                        for(int iop1=0;iop1<nbil;iop1++)
+                            for(int iop2=0;iop2<nbil;iop2++)
+                                for(int ijack=0;ijack<njacks;ijack++)
+                                    for(int ins=0;ins<pr_meslep::nins;ins++)
+                                        for(int mr1=0; mr1<_nmr; mr1++)
+                                            for(int mr2=0; mr2<_nmr; mr2++)
+                                                (out.jpr_meslep)[tag][ins][iop1][iop2][ijack][mr1][mr2]+=
+                                                jpr_meslep[imom][ins][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
+        
+        out.compute_Z4f();
+    }
 
     return out;
 }

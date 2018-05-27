@@ -101,6 +101,8 @@ struct oper_t
     
     void set_smom_moms();
     
+    void clear_all();
+    
     void allocate();
     
     void resize_output(oper_t out);

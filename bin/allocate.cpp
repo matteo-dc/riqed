@@ -14,8 +14,41 @@ void allocate_vec_internal(double &t, const vector<int> sizes, int isize)
     t=0.0;
 }
 
+void oper_t::clear_all()
+{
+    sigma.clear();
+    sigma.shrink_to_fit();
+    
+    jG.clear();
+    jG.shrink_to_fit();
+
+    jpr_meslep.clear();
+    jpr_meslep.shrink_to_fit();
+
+    jZq.clear();
+    jZq.shrink_to_fit();
+    jZq_EM.clear();
+    jZq_EM.shrink_to_fit();
+
+    jZ.clear();
+    jZ.shrink_to_fit();
+    jZ_EM.clear();
+    jZ_EM.shrink_to_fit();
+
+    jZ_4f.clear();
+    jZ_4f.shrink_to_fit();
+    jZ_4f_EM.clear();
+    jZ_4f_EM.shrink_to_fit();
+}
+
 void oper_t::allocate()
 {
+    cout<<jpr_meslep.capacity()<<endl;
+    
+    clear_all();
+    
+    cout<<jpr_meslep.capacity()<<endl;
+    
     // allocate effective masses
     allocate_vec(eff_mass,{njacks,_nm,_nm});
     allocate_vec(eff_mass_sea,{njacks});
@@ -40,4 +73,6 @@ void oper_t::allocate()
     // allocate Z4f
     allocate_vec(jZ_4f,{_meslepmoms,nbil,nbil,njacks,_nmr,_nmr});
     allocate_vec(jZ_4f_EM,{_meslepmoms,nbil,nbil,njacks,_nmr,_nmr});
+    
+    cout<<jpr_meslep.capacity()<<endl;
 }
