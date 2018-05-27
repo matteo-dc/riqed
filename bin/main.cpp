@@ -88,18 +88,18 @@ int main(int narg,char **arg)
                     ave[th][m] = basic[th][m].average_equiv_moms();
                     if(!load_ave) ave[th][m].plot("ave");
                     
+                    /*  average r  */
+                    
+                    rave[th][m] = ave[th][m].average_r();
+                    if(!load_ave) rave[th][m].plot("rave");
+                    
+                    /* store averaged ingredients */
+                    if(!load_ave) rave[th][m].print("rave");
+                    
                     if(!only_basic)
                     {
-                        /*  average r  */
-                            
-                        rave[th][m] = ave[th][m].average_r();
-                        if(!load_ave)
-                        {
-                            rave[th][m].plot("rave");
-                            rave[th][m].print("rave");
-                        }
-                        else
-                            rave[th][m].load("rave");
+                        /* load averaged ingredients if needed */
+                        if(load_ave) rave[th][m].load("rave");
                         
                         /*  valence chiral extr  */
                         
