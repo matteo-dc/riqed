@@ -1166,7 +1166,9 @@ void oper_t::print(const string suffix)
 }
 
 void oper_t::load(const string suffix)
-{    
+{
+    (*this).allocate();
+    
     ifstream sigma_data(path_print+"sigmas_"+suffix);
     ifstream jG_data(path_print+"jG_"+suffix);
     ifstream jpr_meslep_data(path_print+"jpr_meslep_"+suffix);
