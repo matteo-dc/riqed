@@ -284,33 +284,35 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     {
         eff_mass=read_eff_mass(path_to_ens+"eff_mass_array");
         eff_mass_time=read_eff_mass_time(path_to_ens+"eff_mass_array_time");
-        if(_nm_Sea>0 and !free_analysis)
+        if(_nm_Sea>1 and !free_analysis)
             eff_mass_sea=read_eff_mass_sea(path_to_ens+"eff_mass_sea_array");
     }
     
-    switch(get_scheme())
+    if(!load_ave)
     {
-        case RI_MOM:
-            ri_mom();
-            break;
-        case SMOM:
-            cout<<"SMOM!"<<endl;
-            smom();
-            break;
-        case ERR:
-            cout<<"Invalid scheme."<<endl;
-            exit(0);
-            break;
+        switch(get_scheme())
+        {
+            case RI_MOM:
+                ri_mom();
+                break;
+            case SMOM:
+                cout<<"SMOM!"<<endl;
+                smom();
+                break;
+            case ERR:
+                cout<<"Invalid scheme."<<endl;
+                exit(0);
+                break;
+        }
+        
+        // read or compute deltam
+        deltam_computed=false;
+        compute_deltam_from_prop();
+        
+        compute_Zq();
+        compute_Zbil();
+        if(compute_4f) compute_Z4f();
     }
-    
-    // read or compute deltam
-    deltam_computed=false;
-    compute_deltam_from_prop();
-    
-    compute_Zq();
-    compute_Zbil();
-    if(compute_4f) compute_Z4f();
-    
 }
 
 //////////
@@ -1141,6 +1143,32 @@ oper_t compute_ratio(voper_t in) // in[loop]
     return out;
 }
 
+void oper_t::print(const string suffix)
+{
+    print_vec_bin(sigma,path_print+"sigmas"+suffix);
+    print_vec_bin(jG,path_print+"jG"+suffix);
+    print_vec_bin(jpr_meslep,path_print+"jpr_meslep"+suffix);
+}
+
+void oper_t::load(const string suffix)
+{    
+    ifstream sigma_data(path_print+"sigmas_"+suffix);
+    ifstream jG_data(path_print+"jG_"+suffix);
+    ifstream jpr_meslep_data(path_print+"jpr_meslep_"+suffix);
+    
+    if(sigma_data.good() and jG_data.good() and jpr_meslep_data.good())
+    {
+        cout<<"Loading averaged quantities from files."<<endl;
+        read_vec_bin(sigma,path_print+"sigmas_"+suffix);
+        read_vec_bin(jG,path_print+"jG_"+suffix);
+        read_vec_bin(jpr_meslep,path_print+"jpr_meslep_"+suffix);
+    }
+    else
+    {
+        cout<<"Cannot open files of averaged quantities."<<endl;
+        exit(0);
+    }
+}
 
 //voper_t a2p2_extr(voper_t in /*, const int LO_or_EM*/)  // M1 method
 //{

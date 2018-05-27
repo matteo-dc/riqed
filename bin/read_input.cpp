@@ -9,7 +9,7 @@
 #define DEFAULT_DOUBLE_VAL 1.2345
 
 // define global variables
-int nconfs, njacks, nr, ntypes, nhits, Nf, Nc, UseSigma1, UseEffMass, nbeta, ntheta, compute_4f,only_basic, compute_mpcac;
+int nconfs, njacks, nr, ntypes, nhits, Nf, Nc, UseSigma1, UseEffMass, nbeta, ntheta, compute_4f,only_basic, compute_mpcac, load_ave;
 int clust_size, nbil, combo, combo_lep, ntypes_lep;
 vector<double> beta;
 vector<int> nm_Sea;
@@ -17,7 +17,7 @@ vector<vector<int>> SeaMasses_label; // SeaMasses_label[Nbeta][NSeaMass]
 int L, T;
 vector<double> ainv;
 int conf_init, conf_step, nm, neq, neq2, nmr, delta_tmin, delta_tmax;
-double kappa, mu_sea, plaquette, LambdaQCD, p2min, thresh;
+double kappa, mu_sea, plaquette, LambdaQCD, p2min, thresh, p2ref;
 vector<double> mass_val;
 string mom_path, action, path_folder, scheme, BC, out_hadr, out_lep, analysis, path_ensemble;
 vector<string> path_analysis;
@@ -29,7 +29,6 @@ bool ratio_analysis;
 bool recompute_basic;
 
 coords_t size;
-
 
 char tok[128];
 
@@ -78,7 +77,9 @@ TK_glb_t get_TK_glb(FILE *fin)
     if(strcasecmp(tok,only_basic_tag)==0) return ONLY_BASIC_TK;
     if(strcasecmp(tok,compute_mpcac_tag)==0) return COMPUTE_MPCAC_TK;
     if(strcasecmp(tok,analysis_tag)==0) return ANALYSIS_TK;
-
+    if(strcasecmp(tok,p2ref_tag)==0) return P2REF_TK;
+    if(strcasecmp(tok,load_ave_tag)==0) return LOAD_AVE_TK;
+    
     return VALUE_GLB_TK;
 }
 
@@ -109,7 +110,7 @@ TK_t get_TK(FILE *fin)
     if(strcasecmp(tok,plaquette_tag)==0) return PLAQ_TK;
     if(strcasecmp(tok,delta_tmin_tag)==0) return DELTA_TMIN_TK;
     if(strcasecmp(tok,delta_tmax_tag)==0) return DELTA_TMAX_TK;
-    
+
     return VALUE_TK;
 }
 
@@ -260,6 +261,8 @@ void read_input_glb(const char path[])
     only_basic=DEFAULT_INT_VAL;
     compute_mpcac=DEFAULT_INT_VAL;
     analysis=DEFAULT_STR_VAL;
+    p2ref=DEFAULT_DOUBLE_VAL;
+    load_ave=DEFAULT_INT_VAL;
     
 //    for(auto &bl : beta_label) bl=DEFAULT_STR_VAL;
 //    //        for(auto &l : L) l=DEFAULT_INT_VAL;
@@ -386,6 +389,12 @@ void read_input_glb(const char path[])
             case ANALYSIS_TK:
                 get_value_glb(fin,analysis);
                 break;
+            case P2REF_TK:
+                get_value(fin,p2ref);
+                break;
+            case LOAD_AVE_TK:
+                get_value(fin,load_ave);
+                break;
                 
             case FEOF_GLB_TK:
                 break;
@@ -423,6 +432,8 @@ void read_input_glb(const char path[])
     check_int_par(only_basic,only_basic_tag);
     check_int_par(compute_mpcac,compute_mpcac_tag);
     check_str_par(analysis,analysis_tag);
+    check_double_par(p2ref,p2ref_tag);
+    check_int_par(load_ave,load_ave_tag);
     
     fclose(fin);
     
@@ -454,6 +465,12 @@ void read_input_glb(const char path[])
     {
         cout<<"Nr must be 1 in free theory. Setting Nr=1 instead of Nr="<<nr<<"."<<endl;
         nr=1;
+    }
+    
+    if(load_ave and only_basic)
+    {
+        cout<<"Cannot load averaged quantities in the only_basic mode."<<endl;
+        exit(0);
     }
     
     // this is the path to the directory which contains 'print', 'plots', ecc.
@@ -492,6 +509,9 @@ void read_input_glb(const char path[])
     
     if(only_basic)
         printf(" Computing only basic quantities. \n");
+    
+    if(load_ave)
+        printf(" Loading averaged quantities. \n");
     
     // define global variables from input
     clust_size=nconfs/njacks;

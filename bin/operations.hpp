@@ -126,6 +126,12 @@ struct oper_t
     // create props
     void compute_prop();
     
+    // print averaged quantities
+    void print(const string suffix);
+    
+    // load averaged quantities
+    void load(const string suffix);
+    
     // definition of sigmas: trace of propagator
     vector<vvvvd_t> sigma;
     // compute sigmas
@@ -174,11 +180,21 @@ struct oper_t
     // average of equivalent momenta
     oper_t average_equiv_moms();
     
+    // returns the range in which x is contained
+    pair<double,double> get_a2p2tilde_range(const int size,const double a2p2_ref,const size_t n=5) const;
+    
+    // interpolate to p2ref
+    oper_t interpolate_to_p2ref(int b);
+    vector<jZq_t> interpolate_to_p2ref_Zq(const double a2p2_ref,const int LO_or_EM);
+    vector<jZbil_t> interpolate_to_p2ref_Zbil(const double a2p2_ref,const int LO_or_EM);
+    vector<jZ4f_t> interpolate_to_p2ref_Z4f(const double a2p2_ref,const int LO_or_EM);
+    
     // plot Zq and Z
     void plot(const string suffix);
     
     // plot sigmas
-    void plot_sigmas();    
+    void plot_sigmas();
+    
 };
 
 // valarray of oper_t struct;

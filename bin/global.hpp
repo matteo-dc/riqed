@@ -66,19 +66,8 @@ extern vector<vector<int>> SeaMasses_label;
 extern double mu_sea;
 // valence masses
 extern vector<double> mass_val;
-
-// effective masses
-//        extern vvvd_t eff_mass;
-// deltam_cr
-//        extern vvvd_t deltam_cr;
-
 // plaquette
 extern double plaquette;
-// coupling
-//    extern double g2;
-// boosted coupling
-//    extern double g2_tilde;
-
 // inverse lattice spacing (Gev)
 extern vector<double> ainv;
 // Lambda QCD
@@ -102,11 +91,6 @@ extern int UseEffMass;
 //    extern vector<int> Np;
 // path to mom list
 extern string mom_path;
-//    // mom lists
-//    extern vector<coords_t> mom_list;
-//    extern vector<p_t> p, p_tilde;
-//    extern vector<double> p2, p2_tilde;//, p2_tilde_eqmoms;
-//    extern vector<double> p4, p4_tilde;
 // string scheme
 extern string scheme;
 // range for deltam_cr fit
@@ -139,4 +123,8 @@ extern bool inte_analysis;
 extern bool ratio_analysis;
 // bool for recomputing basic
 extern bool recompute_basic;
+// reference p2
+extern double p2ref;
+// load averaged quantities
+extern int load_ave;
 #endif
