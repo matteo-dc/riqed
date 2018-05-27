@@ -54,7 +54,9 @@ void oper_t::allocate_val()
 
 void oper_t::allocate()
 {
+    cout<<"AA"<<endl;
     clear_all();
+    cout<<"BB"<<endl;
     
     // allocate sigmas
     allocate_vec(sigma,{_linmoms,sigma::nproj,sigma::nins,njacks,_nmr});
