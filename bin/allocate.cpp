@@ -43,11 +43,7 @@ void oper_t::clear_all()
 
 void oper_t::allocate()
 {
-    cout<<jpr_meslep.capacity()<<endl;
-    
     clear_all();
-    
-    cout<<jpr_meslep.capacity()<<endl;
     
     // allocate effective masses
     allocate_vec(eff_mass,{njacks,_nm,_nm});
@@ -73,6 +69,4 @@ void oper_t::allocate()
     // allocate Z4f
     allocate_vec(jZ_4f,{_meslepmoms,nbil,nbil,njacks,_nmr,_nmr});
     allocate_vec(jZ_4f_EM,{_meslepmoms,nbil,nbil,njacks,_nmr,_nmr});
-    
-    cout<<jpr_meslep.capacity()<<endl;
 }
