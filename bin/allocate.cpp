@@ -54,9 +54,7 @@ void oper_t::allocate_val()
 
 void oper_t::allocate()
 {
-    cout<<"AA"<<endl;
     clear_all();
-    cout<<"BB"<<endl;
     
     // allocate sigmas
     allocate_vec(sigma,{_linmoms,sigma::nproj,sigma::nins,njacks,_nmr});
@@ -74,6 +72,4 @@ void oper_t::allocate()
     // allocate Z4f
     allocate_vec(jZ_4f,{_meslepmoms,nbil,nbil,njacks,_nmr,_nmr});
     allocate_vec(jZ_4f_EM,{_meslepmoms,nbil,nbil,njacks,_nmr,_nmr});
-    
-    cout<<"CC"<<endl;
 }
