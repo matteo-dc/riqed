@@ -19,7 +19,7 @@ vector<double> ainv;
 int conf_init, conf_step, nm, neq, neq2, nmr, delta_tmin, delta_tmax;
 double kappa, mu_sea, plaquette, LambdaQCD, p2min, thresh, p2ref;
 vector<double> mass_val;
-string mom_path, action, path_folder, scheme, BC, out_hadr, out_lep, analysis, path_ensemble;
+string mom_path, action, path_folder, scheme, BC, out_hadr, out_lep, analysis, path_ensemble, an_suffix;
 vector<string> path_analysis;
 vector<string> beta_label;  // beta_label[Nbeta]
 vector<string> theta_label;  // theta_label[Ntheta]
@@ -79,6 +79,7 @@ TK_glb_t get_TK_glb(FILE *fin)
     if(strcasecmp(tok,analysis_tag)==0) return ANALYSIS_TK;
     if(strcasecmp(tok,p2ref_tag)==0) return P2REF_TK;
     if(strcasecmp(tok,load_ave_tag)==0) return LOAD_AVE_TK;
+    if(strcasecmp(tok,an_suffix_tag)==0) return SUFFIX_TK;
     
     return VALUE_GLB_TK;
 }
@@ -263,6 +264,7 @@ void read_input_glb(const char path[])
     analysis=DEFAULT_STR_VAL;
     p2ref=DEFAULT_DOUBLE_VAL;
     load_ave=DEFAULT_INT_VAL;
+    an_suffix=DEFAULT_STR_VAL;
     
 //    for(auto &bl : beta_label) bl=DEFAULT_STR_VAL;
 //    //        for(auto &l : L) l=DEFAULT_INT_VAL;
@@ -395,6 +397,9 @@ void read_input_glb(const char path[])
             case LOAD_AVE_TK:
                 get_value(fin,load_ave);
                 break;
+            case SUFFIX_TK:
+                get_value(fin,an_suffix);
+                break;
                 
             case FEOF_GLB_TK:
                 break;
@@ -434,6 +439,7 @@ void read_input_glb(const char path[])
     check_str_par(analysis,analysis_tag);
     check_double_par(p2ref,p2ref_tag);
     check_int_par(load_ave,load_ave_tag);
+    check_str_par(an_suffix,an_suffix_tag);
     
     fclose(fin);
     
@@ -443,19 +449,19 @@ void read_input_glb(const char path[])
     
     if(strcmp(analysis.c_str(),"inte" )==0)
     {
-        path_analysis={"Nf4"};
+        path_analysis={"Nf4"+an_suffix};
         
         inte_analysis=true;
     }
     else if(strcmp(analysis.c_str(),"free" )==0)
     {
-        path_analysis={"free_matching"};
+        path_analysis={"free_matching"+an_suffix};
         
         free_analysis=true;
     }
     else if(strcmp(analysis.c_str(),"eta")==0)
     {
-        path_analysis={"Rat","Nf4","free_matching"};
+        path_analysis={"Rat"+an_suffix,"Nf4"+an_suffix,"free_matching"+an_suffix};
         
         eta_analysis=true;
     }

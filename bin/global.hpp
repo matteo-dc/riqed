@@ -82,6 +82,8 @@ extern string analysis;
 extern vector<string> path_analysis;
 // path to the ensemble
 extern string path_to_ens;
+// add suffix to analysis folder
+extern string an_suffix;
 
 // use Sigma1 parameter
 extern int UseSigma1;
