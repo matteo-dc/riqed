@@ -239,6 +239,7 @@ vector<string> oper_t::setup_read_qprop(FILE* input[])
     vector<string> Types;
     if(ntypes==5) Types={"0","F","FF","T","P"};
     if(ntypes==6) Types={"0","F","FF","T","P","S"};
+    if(ntypes==3) Types={"0","F","QED"};
     
     vector<string> v_path;
     
