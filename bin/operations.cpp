@@ -195,12 +195,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
 //    step = "basic";
     cout<<endl;
     cout<<"----- basic -----"<<endl<<endl;
-    
-    voper_t aa;
-    cout<<aa.size()<<endl;
-    allocate_vec(aa,{njacks});
-    cout<<aa.size()<<endl;
-    
+        
     _beta=beta[b];
     _beta_label=beta_label[b];
     _nm_Sea=nm_Sea[b];
