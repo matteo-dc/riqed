@@ -19,7 +19,7 @@
 #include "sigmas.hpp"
 #include "allocate.hpp"
 
-#define EXTERN_OPER
+//#define EXTERN_OPER
  #include "operations.hpp"
 
 using namespace std::chrono;
