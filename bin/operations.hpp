@@ -213,8 +213,8 @@ oper_t chiral_sea_extr(valarray<oper_t> in);
 // theta average
 oper_t theta_average(valarray<oper_t> in);
 
-// ratio between interacting and free theory
-oper_t compute_ratio(voper_t oper_for_ratio);
+// difference between interacting and free theory
+oper_t compute_eta(voper_t oper_for_eta);
 
 
 // a2p2 extrapolation

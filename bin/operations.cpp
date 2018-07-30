@@ -17,6 +17,7 @@
 #include <chrono>
 #include "prop.hpp"
 #include "sigmas.hpp"
+#include "allocate.hpp"
 
 #define EXTERN_OPER
  #include "operations.hpp"
@@ -195,6 +196,10 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     cout<<endl;
     cout<<"----- basic -----"<<endl<<endl;
     
+    voper_t aa;
+    cout<<aa.size()<<endl;
+    allocate_vec(aa,{njacks});
+    cout<<aa.size()<<endl;
     
     _beta=beta[b];
     _beta_label=beta_label[b];
@@ -224,7 +229,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
         // e.g. /.../matteo/free_matching/B1m/
         path_to_ens = path_ensemble + ensemble_name + "/";
     }
-    else if(ratio_analysis)
+    else if(eta_analysis)
     {
         // e.g. /.../matteo/Rat/
         path_to_beta = path_folder + path_analysis[0]+"/";
@@ -1109,10 +1114,10 @@ oper_t oper_t::average_equiv_moms()
     return out;
 }
 
-oper_t compute_ratio(voper_t in) // in[loop]
+oper_t compute_eta(voper_t in) // in[loop]
 {
     cout<<endl;
-    cout<<"----- ratio -----"<<endl<<endl;
+    cout<<"----- eta -----"<<endl<<endl;
     
     oper_t out=in[1]; // out
     
@@ -1131,8 +1136,8 @@ oper_t compute_ratio(voper_t in) // in[loop]
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mr=0;mr<out._nmr;mr++)
                 (out.jZq)[imom][ijack][mr] =
-                    (in[0].jZq_EM)[imom][ijack][mr]/
-                    (in[1].jZq_EM)[imom][ijack][mr] - 1.0;
+                    (in[0].jZq_EM)[imom][ijack][mr] -
+                    (in[1].jZq_EM)[imom][ijack][mr];
     // Zbil
     for(int imom=0;imom<out._bilmoms;imom++)
         for(int ibil=0;ibil<nbil;ibil++)
@@ -1140,8 +1145,8 @@ oper_t compute_ratio(voper_t in) // in[loop]
                 for(int mr1=0;mr1<out._nmr;mr1++)
                     for(int mr2=0;mr2<out._nmr;mr2++)
                         (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] =
-                            (in[0].jZ_EM)[imom][ibil][ijack][mr1][mr2]/
-                            (in[1].jZ_EM)[imom][ibil][ijack][mr1][mr2] - 1.0;
+                            (in[0].jZ_EM)[imom][ibil][ijack][mr1][mr2] -
+                            (in[1].jZ_EM)[imom][ibil][ijack][mr1][mr2];
     
     // Z4f
     for(int imom=0;imom<out._meslepmoms;imom++)
@@ -1151,8 +1156,8 @@ oper_t compute_ratio(voper_t in) // in[loop]
                     for(int mr1=0;mr1<out._nmr;mr1++)
                         for(int mr2=0;mr2<out._nmr;mr2++)
                             (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] =
-                                (in[0].jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2]/
-                                (in[1].jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] - 1.0;
+                                (in[0].jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] -
+                                (in[1].jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2];
     
     
     return out;

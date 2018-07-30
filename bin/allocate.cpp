@@ -14,6 +14,9 @@ void allocate_vec_internal(double &t, const vector<int> sizes, int isize)
     t=0.0;
 }
 
+void allocate_vec_internal(oper_t &o, const vector<int> sizes, int isize)
+{}
+
 void oper_t::clear_all()
 {
     sigma.clear();

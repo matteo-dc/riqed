@@ -4,7 +4,11 @@
 #include "global.hpp"
 #include "aliases.hpp"
 
+#include "operations.hpp"
+
 void allocate_vec_internal(double &t, const vector<int> sizes, int isize);
+
+void allocate_vec_internal(oper_t &o, const vector<int> sizes, int isize);
 
 template <class T>
 void allocate_vec_internal(valarray<T> &v, const vector<int> sizes, int isize)

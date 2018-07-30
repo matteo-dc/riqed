@@ -120,7 +120,7 @@ extern int compute_mpcac;
 // bool for inte or free analysis
 extern bool free_analysis;
 extern bool inte_analysis;
-extern bool ratio_analysis;
+extern bool eta_analysis;
 // bool for recomputing basic
 extern bool recompute_basic;
 // reference p2

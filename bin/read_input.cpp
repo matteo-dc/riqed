@@ -25,7 +25,7 @@ vector<string> beta_label;  // beta_label[Nbeta]
 vector<string> theta_label;  // theta_label[Ntheta]
 bool free_analysis;
 bool inte_analysis;
-bool ratio_analysis;
+bool eta_analysis;
 bool recompute_basic;
 
 coords_t size;
@@ -439,7 +439,7 @@ void read_input_glb(const char path[])
     
     free_analysis=false;
     inte_analysis=false;
-    ratio_analysis=false;
+    eta_analysis=false;
     
     if(strcmp(analysis.c_str(),"inte" )==0)
     {
@@ -453,13 +453,13 @@ void read_input_glb(const char path[])
         
         free_analysis=true;
     }
-    else if(strcmp(analysis.c_str(),"ratio")==0)
+    else if(strcmp(analysis.c_str(),"eta")==0)
     {
         path_analysis={"Rat","Nf4","free_matching"};
         
-        ratio_analysis=true;
+        eta_analysis=true;
     }
-    else {cout<<"Choose the analysis: 'inte', 'free' or 'ratio'."<<endl; exit(0);}
+    else {cout<<"Choose the analysis: 'inte', 'free' or 'eta'."<<endl; exit(0);}
     
     if(strcmp(analysis.c_str(),"free")==0 and nr>1)
     {

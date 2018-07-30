@@ -45,18 +45,18 @@ int main(int narg,char **arg)
     int nloop;
     if(free_analysis or inte_analysis)
         nloop=1;
-    if(ratio_analysis)
+    if(eta_analysis)
         nloop=2;
     
-    vvoper_t oper_for_ratio(voper_t(nloop),nbeta);
-    voper_t ratio(nbeta);
+    vvoper_t oper_for_eta(voper_t(nloop),nbeta);
+    voper_t eta(nbeta);
     recompute_basic = false;
         
     for(int loop=0;loop<nloop;loop++)
     {
-        vvoper_t rave_ave_chir_sea(voper_t(ntheta),nbeta);
-        voper_t  rave_ave_chir_sea_theta(nbeta);
-        voper_t  rave_ave_chir_sea_theta_extr(nbeta);
+        vvoper_t sea_chir(voper_t(ntheta),nbeta);
+        voper_t  theta_ave(nbeta);
+        voper_t  p2extr(nbeta);
         
         if(loop>0) recompute_basic=true;
 
@@ -70,9 +70,7 @@ int main(int narg,char **arg)
             vvoper_t rave(voper_t(nm_Sea[b]),ntheta);
             
             vvoper_t val_chir(voper_t(nm_Sea[b]),ntheta);
-            vvoper_t rave_ave_chir_M2(voper_t(nm_Sea[b]),ntheta);
-            
-            vvoper_t rave_ave_chir_sub(voper_t(nm_Sea[b]),ntheta);
+            vvoper_t interpol_M2(voper_t(nm_Sea[b]),ntheta);
             
             for(int th=0; th<ntheta; th++)
             {
@@ -113,8 +111,8 @@ int main(int narg,char **arg)
                         
 //                        /* interpolation to p2ref (M2 method) */
 //                        
-//                        rave_ave_chir_M2[th][m] = rave_ave_chir[th][m].interpolate_to_p2ref(b);
-//                        rave_ave_chir_M2[th][m].plot("rave_ave_chir_M2");
+//                        interpol_M2[th][m] = val_chir[th][m].interpolate_to_p2ref(b);
+//                        interpol_M2[th][m].plot("interpol_M2");
                     }
                     
                 } //close nm_sea
@@ -125,11 +123,11 @@ int main(int narg,char **arg)
                 {
                     if(nm_Sea[b]>1 and (!free_analysis or !recompute_basic))
                     {
-                        rave_ave_chir_sea[b][th] = chiral_sea_extr(val_chir[th]);
-                        rave_ave_chir_sea[b][th].plot(theta_label[th]+"/rave_ave_chir_sea");
+                        sea_chir[b][th] = chiral_sea_extr(val_chir[th]);
+                        sea_chir[b][th].plot(theta_label[th]+"/sea");
                     }
                     else
-                        rave_ave_chir_sea[b][th] = val_chir[th][0];
+                        sea_chir[b][th] = val_chir[th][0];
                 }
             } //close ntheta
             
@@ -139,8 +137,8 @@ int main(int narg,char **arg)
                 {
                     /*  theta average  */
                     
-                    rave_ave_chir_sea_theta[b] = theta_average(rave_ave_chir_sea[b]);
-                    rave_ave_chir_sea_theta[b].plot("rave_ave_chir_sea_theta");
+                    theta_ave[b] = theta_average(sea_chir[b]);
+                    theta_ave[b].plot("theta");
                     
                     /*  evolution to 1/a  */
                     
@@ -148,23 +146,23 @@ int main(int narg,char **arg)
 //                    rave_ave_chir_sub_sea_theta_evo[b].plot("rave_ave_chir_sub_sea_theta_evo");
                 }
                 else
-                    rave_ave_chir_sea_theta[b] = rave_ave_chir_sea[b][0];
+                    theta_ave[b] = sea_chir[b][0];
             }
             
-            /* store for ratio */
+            /* store for eta */
             
-            if(ratio_analysis)
-                oper_for_ratio[b][loop] = rave_ave_chir_sea_theta[b];
+            if(eta_analysis)
+                oper_for_eta[b][loop] = theta_ave[b];
             
         } //close nbeta
         
     } //close nloop
     
-    if(ratio_analysis)
+    if(eta_analysis)
         for(int b=0; b<nbeta; b++)
         {
-            ratio[b] = compute_ratio(oper_for_ratio[b]);
-            ratio[b].plot("ratio");
+            eta[b] = compute_eta(oper_for_eta[b]);
+            eta[b].plot("eta");
         }
     
 
