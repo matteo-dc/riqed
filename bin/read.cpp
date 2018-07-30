@@ -102,7 +102,7 @@ vvvd_t oper_t::read_eff_mass(const string name)
         input_effmass = fopen(name.c_str(),"rb");
     }
     
-    cout<<"Reading eff_mass"<<endl<<endl;
+    cout<<"Reading eff_mass from \""<<name<<"\""<<endl<<endl;
     
     for(int ijack=0;ijack<njacks;ijack++)
         for(int m_fw=0;m_fw<nm;m_fw++)
@@ -146,7 +146,7 @@ vvvvd_t oper_t::read_eff_mass_time(const string name)
         exit(1);
     }
     
-    cout<<"Reading eff_mass_array_time"<<endl<<endl;
+    cout<<"Reading eff_mass_array_time from \""<<name<<"\""<<endl<<endl;
     
     for(int ijack=0;ijack<njacks;ijack++)
         for(int m_fw=0;m_fw<nm;m_fw++)
@@ -183,7 +183,7 @@ vd_t oper_t::read_eff_mass_sea(const string name)
         input_effmass_sea = fopen(name.c_str(),"rb");
     }
     
-    cout<<"Reading eff_mass sea"<<endl<<endl;
+    cout<<"Reading eff_mass sea from \""<<name<<"\""<<endl<<endl;
     
     for(int ijack=0;ijack<njacks;ijack++)
         {
