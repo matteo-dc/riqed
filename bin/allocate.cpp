@@ -55,6 +55,14 @@ void oper_t::allocate_val()
     allocate_vec(deltamu,{njacks,_nmr});
 }
 
+void oper_t::check_allocation()
+{
+    printf("\n --- Allocated memory --- \n");
+    printf("sigma: \t %d/%d %d/%d %d/%d %d/%d %d/%d ",
+           sigma.size(),_linmoms,sigma[0].size(),sigma::nproj,
+           sigma[0][0].size(),sigma::nins,sigma[0][0][0].size(),njacks,sigma[0][0][0][0].size(),_nmr);
+}
+
 void oper_t::allocate()
 {
     clear_all();
@@ -75,4 +83,6 @@ void oper_t::allocate()
     // allocate Z4f
     allocate_vec(jZ_4f,{_meslepmoms,nbil,nbil,njacks,_nmr,_nmr});
     allocate_vec(jZ_4f_EM,{_meslepmoms,nbil,nbil,njacks,_nmr,_nmr});
+    
+    check_allocation();
 }

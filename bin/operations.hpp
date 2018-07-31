@@ -107,6 +107,8 @@ struct oper_t
     void allocate();
     // allocate valarrays
     void allocate_val();
+    // check allocation
+    void check_allocation();
     
     void resize_output(oper_t out);
     
