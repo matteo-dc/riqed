@@ -14,7 +14,7 @@ namespace gbil
 {
     void set_ins();
     
-    enum ins{LO,PH,Pfw,Pbw,Sfw,Sbw};
+    enum ins{LO,PH,Pfw,Pbw,Sfw,Sbw,QED=1};
     EXTERN_VERT vector<ins> ins_list;
     EXTERN_VERT int nins;
     

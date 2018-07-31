@@ -20,8 +20,16 @@ namespace gbil
 {
     void set_ins()
     {
-        ins_list={LO,PH,Pfw,Pbw,Sfw,Sbw};
-        ins_tag={"LO","EM","Pfw","Pbw","Sfw","Sbw"};
+        if(ntypes==6)
+        {
+            ins_list={LO,PH,Pfw,Pbw,Sfw,Sbw};
+            ins_tag={"LO","EM","Pfw","Pbw","Sfw","Sbw"};
+        }
+        if(ntypes==3)
+        {
+            ins_list={LO,QED};
+            ins_tag={"LO","QED"};
+        }
         
         nins=ins_list.size();
         nGamma=16;
@@ -43,34 +51,49 @@ void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,valarray<jvert_t> &jVert
             for(int mr_bw=0;mr_bw<nmr;mr_bw++)
                 for(int igam=0;igam<16;igam++)
                 {
-                    // LO
-                    jVert[gbil::LO][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(S1[ijack][qprop::LO][mr_fw], S2[ijack][qprop::LO][mr_bw],igam);
+                    if(ntypes==6)
+                    {
+                        // LO
+                        jVert[gbil::LO][ijack][mr_fw][mr_bw][igam] +=
+                            make_vertex(S1[ijack][qprop::LO][mr_fw], S2[ijack][qprop::LO][mr_bw],igam);
+                        
+                        // EM: Self + Tadpole + Exchange
+                        jVert[gbil::PH][ijack][mr_fw][mr_bw][igam] +=
+                            make_vertex(S1[ijack][qprop::LO][mr_fw],S2[ijack][qprop::FF][mr_bw],igam) +
+                            make_vertex(S1[ijack][qprop::LO][mr_fw],S2[ijack][qprop::T ][mr_bw],igam) +
+                            make_vertex(S1[ijack][qprop::FF][mr_fw],S2[ijack][qprop::LO][mr_bw],igam) +
+                            make_vertex(S1[ijack][qprop::T ][mr_fw],S2[ijack][qprop::LO][mr_bw],igam) +
+                            make_vertex(S1[ijack][qprop::F ][mr_fw],S1[ijack][qprop::F ][mr_bw],igam) ;
+                        
+                        // Pfw
+                        jVert[gbil::Pfw][ijack][mr_fw][mr_bw][igam] +=
+                            make_vertex(S1[ijack][qprop::P ][mr_fw],S2[ijack][qprop::LO][mr_bw],igam);
+                        
+                        // Pbw
+                        jVert[gbil::Pbw][ijack][mr_fw][mr_bw][igam] +=
+                            make_vertex(S1[ijack][qprop::LO][mr_fw],S2[ijack][qprop::P ][mr_bw],igam);
+                        
+                        // Sfw
+                        jVert[gbil::Sfw][ijack][mr_fw][mr_bw][igam] +=
+                            make_vertex(S1[ijack][qprop::S ][mr_fw],S2[ijack][qprop::LO][mr_bw],igam);
+                        
+                        // Sbw
+                        jVert[gbil::Sbw][ijack][mr_fw][mr_bw][igam] +=
+                            make_vertex(S1[ijack][qprop::LO][mr_fw],S2[ijack][qprop::S ][mr_bw],igam);
+                    }
+                    if(ntypes==3)
+                    {
+                        // LO
+                        jVert[gbil::LO][ijack][mr_fw][mr_bw][igam] +=
+                            make_vertex(S1[ijack][qprop::LO][mr_fw], S2[ijack][qprop::LO][mr_bw],igam);
+                        
+                        // EM: Self + Tadpole + S + P + Exchange
+                        jVert[gbil::PH][ijack][mr_fw][mr_bw][igam] +=
+                            make_vertex(S1[ijack][qprop::LO ][mr_fw],S2[ijack][qprop::QED][mr_bw],igam) +
+                            make_vertex(S1[ijack][qprop::QED][mr_fw],S2[ijack][qprop::LO ][mr_bw],igam) +
+                            make_vertex(S1[ijack][qprop::F  ][mr_fw],S1[ijack][qprop::F  ][mr_bw],igam) ;
+                    }
                     
-                    // EM: Self + Tadpole + Exchange
-                    jVert[gbil::PH][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(S1[ijack][qprop::LO][mr_fw],S2[ijack][qprop::FF][mr_bw],igam) +
-                        make_vertex(S1[ijack][qprop::LO][mr_fw],S2[ijack][qprop::T ][mr_bw],igam) +
-                        make_vertex(S1[ijack][qprop::FF][mr_fw],S2[ijack][qprop::LO][mr_bw],igam) +
-                        make_vertex(S1[ijack][qprop::T ][mr_fw],S2[ijack][qprop::LO][mr_bw],igam) +
-                        make_vertex(S1[ijack][qprop::F ][mr_fw],S1[ijack][qprop::F ][mr_bw],igam) ;
-                    
-                    // Pfw
-                    jVert[gbil::Pfw][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(S1[ijack][qprop::P ][mr_fw],S2[ijack][qprop::LO][mr_bw],igam);
-                    
-                    // Pbw
-                    jVert[gbil::Pbw][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(S1[ijack][qprop::LO][mr_fw],S2[ijack][qprop::P ][mr_bw],igam);
-                    
-                    // Sfw
-                    jVert[gbil::Sfw][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(S1[ijack][qprop::S ][mr_fw],S2[ijack][qprop::LO][mr_bw],igam);
-                    
-                    // Sbw
-                    jVert[gbil::Sbw][ijack][mr_fw][mr_bw][igam] +=
-                        make_vertex(S1[ijack][qprop::LO][mr_fw],S2[ijack][qprop::S ][mr_bw],igam);
-
                 }
     
 }
