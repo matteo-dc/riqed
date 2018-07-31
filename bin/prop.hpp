@@ -9,8 +9,7 @@ namespace jprop
 {
     void set_ins();
     
-    enum ins{LO,PH,P,S};
-    enum ins_short{LO,QED};
+    enum ins{LO,PH,P,S,QED=1};
     
     EXTERN_PROP vector<ins> ins_list;
     EXTERN_PROP int nins;
@@ -20,8 +19,7 @@ namespace qprop
 {
     void set_ins();
     
-    enum ins{LO,F,FF,T,P,S};
-    enum ins_short{LO,F,QED};
+    enum ins{LO,F,FF,T,P,S,QED=2};
     
     EXTERN_PROP vector<ins> ins_list;
     EXTERN_PROP int nins;
