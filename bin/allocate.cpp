@@ -66,8 +66,8 @@ void oper_t::check_allocation()
            jG[0][0].size(),nbil,jG[0][0][0].size(),njacks,jG[0][0][0][0].size(),_nmr);
     printf("jpr_meslep: \t %zu/%d %zu/%d %zu/%d %zu/%d %zu/%d \n",
            jpr_meslep.size(),_meslepmoms,jpr_meslep[0].size(),pr_meslep::nins,
-           jpr_meslep[0][0].size(),nbil,jpr_meslep[0][0][0].size(),njacks,
-           jpr_meslep[0][0][0][0].size(),_nmr);
+           jpr_meslep[0][0].size(),nbil,jpr_meslep[0][0][0][0].size(),njacks,
+           jpr_meslep[0][0][0][0][0].size(),_nmr);
     printf("\n ------------------------ \n");
 }
 
