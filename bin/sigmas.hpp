@@ -13,7 +13,7 @@ namespace sigma
     void set_ins();
     
     enum proj{SIGMA1,SIGMA2,SIGMA3};
-    enum ins{LO,PH,P,S};
+    enum ins{LO,PH,P,S,QED=1};
     
     EXTERN_SIGMA vector<proj> proj_list;
     EXTERN_SIGMA vector<ins>  ins_list;
