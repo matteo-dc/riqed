@@ -100,16 +100,34 @@ void build_vert(const vvvprop_t &S1,const vvvprop_t &S2,valarray<jvert_t> &jVert
 
 //project the amputated green function
 jproj_t compute_pr_bil( vvvprop_t &jpropOUT_inv,  valarray<jvert_t> &jVert,  vvvprop_t  &jpropIN_inv)
-{
-    const int i1[2*gbil::nins]={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
-                                jprop::PH,jprop::LO,jprop::P ,jprop::LO,jprop::S ,jprop::LO}; //fw
-    const int iv[2*gbil::nins]={gbil::LO,gbil::PH,gbil::Pfw,gbil::Pbw,gbil::Sfw,gbil::Sbw,
-                                gbil::LO,gbil::LO,gbil::LO ,gbil::LO ,gbil::LO ,gbil::LO };   //vert
-    const int i2[2*gbil::nins]={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
-                                jprop::LO,jprop::PH,jprop::LO,jprop::P ,jprop::LO,jprop::S }; //bw
+{    
+    int lambda_size = gbil::nins + 2*jprop::nins - 2;
     
-    const int ip[2*gbil::nins]={gbil::LO,gbil::PH,gbil::Pfw,gbil::Pbw,gbil::Sfw,gbil::Sbw,
-                                gbil::PH,gbil::PH,gbil::Pfw,gbil::Pbw,gbil::Sfw,gbil::Sbw};
+    vector<int> i1;
+    vector<int> iv;
+    vector<int> i2;
+    vector<int> ip;
+    
+    if(ntypes==6)
+    {
+        i1={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
+            jprop::PH,jprop::LO,jprop::P ,jprop::LO,jprop::S ,jprop::LO}; //fw
+        iv={gbil::LO,gbil::PH,gbil::Pfw,gbil::Pbw,gbil::Sfw,gbil::Sbw,
+            gbil::LO,gbil::LO,gbil::LO ,gbil::LO ,gbil::LO ,gbil::LO };   //vert
+        i2={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
+            jprop::LO,jprop::PH,jprop::LO,jprop::P ,jprop::LO,jprop::S }; //bw
+        
+        ip={gbil::LO,gbil::PH,gbil::Pfw,gbil::Pbw,gbil::Sfw,gbil::Sbw,
+            gbil::PH,gbil::PH,gbil::Pfw,gbil::Pbw,gbil::Sfw,gbil::Sbw};
+    }
+    if(ntypes==3)
+    {
+        i1={jprop::LO,jprop::QED,jprop::LO,jprop::LO};
+        iv={gbil::LO,gbil::LO,gbil::LO,gbil::QED};
+        i2={jprop::LO,jprop::LO,jprop::QED,jprop::LO};
+        
+        ip={gbil::LO,gbil::QED,gbil::QED,gbil::QED};
+    }
     
     jproj_t pr_bil(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nbil),gbil::nins);
     
@@ -119,7 +137,7 @@ jproj_t compute_pr_bil( vvvprop_t &jpropOUT_inv,  valarray<jvert_t> &jVert,  vvv
     for(int ijack=0;ijack<njacks;ijack++)
         for(int mr_fw=0;mr_fw<nmr;mr_fw++)
             for(int mr_bw=0;mr_bw<nmr;mr_bw++)
-                for(int k=0;k<2*gbil::nins;k++)
+                for(int k=0;k<lambda_size;k++)
                     for(int igam=0;igam<gbil::nGamma;igam++)
                     {
                         prop_t lambda_igam = jpropOUT_inv[i1[k]][ijack][mr_fw]*
