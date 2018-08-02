@@ -1034,9 +1034,17 @@ oper_t oper_t::average_equiv_moms()
             {
                 tag++;
                 tag_bil_vector.push_back(tag);
+                
+#warning debugging equiv moms
+                cout<<j<<"  "<<tag_bil_vector[j]<<"  ("<<imomA<<" "<<imomB<<") ("<<imom1<<" "<<imom2")"<<endl;
             }
             else if(j==ibilmom-1)
+            {
                 tag_bil_vector.push_back(tag_aux);
+                
+#warning debugging equiv moms
+                cout<<j<<"  "<<tag_bil_vector[j]<<"  ("<<imomA<<" "<<imomB<<") ("<<imom1<<" "<<imom2")"<<endl;
+            }
         }
     }
     
@@ -1073,9 +1081,6 @@ oper_t oper_t::average_equiv_moms()
                 const int imom2=bilmoms[tag][2]; // p2
                 
                 out.bilmoms[tag] = {imom0,imom1,imom2};
-                
-#warning debugging equiv moms
-                cout<<tag<<"  "<<imom1<<" "<<imom2<<endl;
             }
     
     out.allocate_val();
