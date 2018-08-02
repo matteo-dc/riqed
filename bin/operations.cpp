@@ -1094,8 +1094,11 @@ oper_t oper_t::average_equiv_moms()
                                     (out.sigma)[tag][iproj][ins][ijack][mr]+=
                                     sigma[imom][iproj][ins][ijack][mr]/count_tag_lin_vector[tag];
         
-        out.deltam_computed=true;
-        out.compute_deltam_from_prop();
+        if(ntypes!=3)
+        {
+            out.deltam_computed=true;
+            out.compute_deltam_from_prop();
+        }
         
         out.compute_Zq();
         
