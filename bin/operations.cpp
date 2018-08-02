@@ -1036,14 +1036,14 @@ oper_t oper_t::average_equiv_moms()
                 tag_bil_vector.push_back(tag);
                 
 #warning debugging equiv moms
-                cout<<j<<"  "<<tag_bil_vector[j]<<"  ("<<imomA<<" "<<imomB<<") ("<<imom1<<" "<<imom2")"<<endl;
+                cout<<j<<"  "<<tag_bil_vector[j]<<"  ("<<imomA<<" "<<imomB<<") ("<<imom1<<" "<<imom2<<")"<<endl;
             }
             else if(j==ibilmom-1)
             {
                 tag_bil_vector.push_back(tag_aux);
                 
 #warning debugging equiv moms
-                cout<<j<<"  "<<tag_bil_vector[j]<<"  ("<<imomA<<" "<<imomB<<") ("<<imom1<<" "<<imom2")"<<endl;
+                cout<<j<<"  "<<tag_bil_vector[j]<<"  ("<<imomA<<" "<<imomB<<") ("<<imom1<<" "<<imom2<<")"<<endl;
             }
         }
     }
