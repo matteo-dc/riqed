@@ -6,10 +6,9 @@
 #endif
 
 namespace meslep
-{
-    const int nmeslep = 10;
-    const int nprmeslep = 8;
-    const int nampQED = 6;
+{    
+//    const int nmeslep = 10;
+//    int nmeslep;
     const int nOp = 5;
     const int nGamma = 11; // number of independent combinations of gamma matrices
     
@@ -22,7 +21,7 @@ namespace meslep
     
     const vector<int> proj_norm = {4,4,1,1,24};
     const vector<int> op_norm = {1,1,1,1,2};
-    
+        
     enum kind{
         LO,     //  operator in pure QCD
         IN,     //  photon exchange between quark qIN  and charged lepton
@@ -33,7 +32,8 @@ namespace meslep
         P11,    //  pseudoscalar insertion on the quark qIN  propagator
         P22,    //  pseudoscalar insertion on the quark qOUT propagator
         S11,    //  scalar insertion on the quark qIN  propagator
-        S22     //  scalar insertion on the quark qOUT propagator
+        S22,    //  scalar insertion on the quark qOUT propagator
+        QED=3
     };
 }
 
@@ -41,10 +41,13 @@ namespace pr_meslep
 {
     void set_ins();
     
-    enum ins{LO,IN,OUT,M11,M22,M12,P11,P22,S11,S22};
+    enum ins{LO,IN,OUT,M11,M22,M12,P11,P22,S11,S22,QED=3};
     
     EXTERN_MESLEP vector<ins> ins_list;
     EXTERN_MESLEP int nins;
+    
+    EXTERN_MESLEP int nLOampQED;
+
 }
 
 void build_meslep(const vvvprop_t &S1,const vvvprop_t &S2, const vvprop_t &L, valarray<jmeslep_t> &jmeslep);

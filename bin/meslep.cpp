@@ -16,8 +16,11 @@ namespace pr_meslep
 {
     void set_ins()
     {
-        ins_list={LO,IN,OUT,M11,M22,M12,P11,P22,S11,S22};
+        if(ntypes==6) ins_list={LO,IN,OUT,M11,M22,M12,P11,P22,S11,S22};
+        if(ntypes==3) ins_list={LO,IN,OUT,M11,M22,M12};
         nins=ins_list.size();
+        
+        nLOampQED=2*(jprop::nins-1);
     }
 }
 
@@ -89,40 +92,56 @@ void build_meslep(const vvvprop_t &SOUT,const vvvprop_t &SIN, const vvprop_t &L,
                                             SIN[ijack][qprop::LO][mr_bw],
                                             mesloop[lprop::F][ijack][ig][iproj],iop,ig);
                             
-                            jmeslep[M11][ijack][mr_fw][mr_bw][iop][iproj] +=
+                            jmeslep[M12][ijack][mr_fw][mr_bw][iop][iproj] +=
+                            make_meslep(SOUT[ijack][qprop::F][mr_fw],
+                                        SIN[ijack][qprop::F][mr_bw],
+                                        mesloop[lprop::LO][ijack][ig][iproj],iop,ig);
+                            
+                            if(ntypes==6)
+                            {
+                                jmeslep[M11][ijack][mr_fw][mr_bw][iop][iproj] +=
                                 make_meslep(SOUT[ijack][qprop::LO][mr_fw],
                                             SIN[ijack][qprop::FF][mr_bw]+SIN[ijack][qprop::T][mr_bw],
                                             mesloop[lprop::LO][ijack][ig][iproj],iop,ig);
-                            
-                            jmeslep[M22][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                
+                                jmeslep[M22][ijack][mr_fw][mr_bw][iop][iproj] +=
                                 make_meslep(SOUT[ijack][qprop::FF][mr_fw]+SOUT[ijack][qprop::T][mr_fw],
                                             SIN[ijack][qprop::LO][mr_bw],
                                             mesloop[lprop::LO][ijack][ig][iproj],iop,ig);
-                            
-                            jmeslep[M12][ijack][mr_fw][mr_bw][iop][iproj] +=
-                                make_meslep(SOUT[ijack][qprop::F][mr_fw],
-                                            SIN[ijack][qprop::F][mr_bw],
-                                            mesloop[lprop::LO][ijack][ig][iproj],iop,ig);
-                            
-                            jmeslep[P11][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                
+                                jmeslep[P11][ijack][mr_fw][mr_bw][iop][iproj] +=
                                 make_meslep(SOUT[ijack][qprop::LO][mr_fw],
                                             SIN[ijack][qprop::P][mr_bw],
                                             mesloop[lprop::LO][ijack][ig][iproj],iop,ig);
-                            
-                            jmeslep[P22][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                
+                                jmeslep[P22][ijack][mr_fw][mr_bw][iop][iproj] +=
                                 make_meslep(SOUT[ijack][qprop::P][mr_fw],
                                             SIN[ijack][qprop::LO][mr_bw],
                                             mesloop[lprop::LO][ijack][ig][iproj],iop,ig);
-                            
-                            jmeslep[S11][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                
+                                jmeslep[S11][ijack][mr_fw][mr_bw][iop][iproj] +=
                                 make_meslep(SOUT[ijack][qprop::LO][mr_fw],
                                             SIN[ijack][qprop::S][mr_bw],
                                             mesloop[lprop::LO][ijack][ig][iproj],iop,ig);
-                            
-                            jmeslep[S22][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                
+                                jmeslep[S22][ijack][mr_fw][mr_bw][iop][iproj] +=
                                 make_meslep(SOUT[ijack][qprop::S][mr_fw],
                                             SIN[ijack][qprop::LO][mr_bw],
                                             mesloop[lprop::LO][ijack][ig][iproj],iop,ig);
+                            }
+                            if(ntypes==3)
+                            {
+                                jmeslep[M11][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                make_meslep(SOUT[ijack][qprop::LO][mr_fw],
+                                            SIN[ijack][qprop::QED][mr_bw],
+                                            mesloop[lprop::LO][ijack][ig][iproj],iop,ig);
+                                
+                                jmeslep[M22][ijack][mr_fw][mr_bw][iop][iproj] +=
+                                make_meslep(SOUT[ijack][qprop::QED][mr_fw],
+                                            SIN[ijack][qprop::LO][mr_bw],
+                                            mesloop[lprop::LO][ijack][ig][iproj],iop,ig);
+                            }
+                            
                         }
                     }
 }
@@ -170,8 +189,8 @@ void oper_t::compute_meslep()
             /* prop2 */
             jprop_t jS2(vvprop_t(vprop_t(prop_t::Zero(),_nmr),njacks),jprop::nins);
             
-            // definition of jackknifed meslep ("in" & "out" diagrams)
-            valarray<jmeslep_t> jmeslep(jmeslep_t(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),meslep::nGamma),meslep::nOp),_nmr),_nmr),njacks),meslep::nmeslep);
+            // definition of jackknifed meslep
+            valarray<jmeslep_t> jmeslep(jmeslep_t(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),meslep::nGamma),meslep::nOp),_nmr),_nmr),njacks),pr_meslep::nins);
             
             cout<<"- Building meslep"<<endl;
             
@@ -230,7 +249,7 @@ void oper_t::compute_meslep()
             else
                 jS2=jS1;
             /* meslep */
-            for(int ins=0;ins<meslep::nmeslep;ins++)
+            for(int ins=0;ins<pr_meslep::nins;ins++)
                 jmeslep[ins]=jackknife(jmeslep[ins]);
             
             cout<<"- Inverting propagators"<<endl;
@@ -258,22 +277,6 @@ void oper_t::compute_meslep()
             
             jpr_meslep[imeslepmom] = compute_pr_meslep(jS1_inv,jmeslep,jS2_inv,qIN,qOUT,ql);
             
-//            jpr_meslep_LO[imeslepmom] = jpr_meslep[QCD];
-//            jpr_meslep_EM[imeslepmom] = jpr_meslep[M11] + jpr_meslep[M22] + jpr_meslep[M12] - jpr_meslep[6] - jpr_meslep[7];
-//            jpr_meslep_nasty[imeslepmom] = jpr_meslep[IN] + jpr_meslep[OUT];
-            
-            ////////////////////////////////////////////////////////////
-            //
-            //#pragma omp parallel for collapse(3)
-            //        for(int ijack=0;ijack<njacks;ijack++)
-            //            for(int mr_fw=0;mr_fw<nmr;mr_fw++)
-            //                for(int iop1=0;iop1<nbil;iop1++)
-            //                {
-            //                    jpr_meslep_EM[imeslepmom][iop1][iop1][ijack][mr_fw][mr_fw] = jZq_EM[imeslepmom][ijack][mr_fw] - jpr_meslep_EM[imeslepmom][iop1][iop1][ijack][mr_fw][mr_fw];
-            //                }
-            //
-            ////////////////////////////////////////////////////////////
-            
             high_resolution_clock::time_point t1=high_resolution_clock::now();
             duration<double> t_span = duration_cast<duration<double>>(t1-t0);
             cout<<"\t\t time: "<<t_span.count()<<" s"<<endl;
@@ -289,27 +292,55 @@ void oper_t::compute_meslep()
 jvproj_meslep_t compute_pr_meslep(jprop_t &jpropOUT_inv, valarray<jmeslep_t> &jmeslep, jprop_t  &jpropIN_inv, const double qIN, const double qOUT, const double ql)
 {
     using namespace meslep;
+    const int nmeslep = pr_meslep::nins;
     
     jvproj_meslep_t jG_op(vvvvvd_t(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nOp),nOp),nmeslep);
     
-    int nloop = nmeslep + nampQED;
-      
-//#warning putting charges to 1
-//    double Q[nprmeslep]={1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
+    int nloop = nmeslep + pr_meslep::nLOampQED;
     
-//    charge factors
-    double Q[nloop]={1.0,ql*qIN,ql*qOUT,qIN*qIN,qOUT*qOUT,qIN*qOUT,qIN*qIN,qOUT*qOUT,qIN*qIN,qOUT*qOUT,
-                                        qIN*qIN,qOUT*qOUT,         qIN*qIN,qOUT*qOUT,qIN*qIN,qOUT*qOUT};
+    vector<double> Q;
+    vector<int> i1;
+    vector<int> iv;
+    vector<int> i2;
+    vector<int> im;
     
-    const int i1[nloop]={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
-                                                       jprop::LO,jprop::PH,          jprop::LO,jprop::P ,jprop::LO,jprop::S }; //propOUT_inv
-    const int iv[nloop]={LO ,IN ,OUT,M11,M22,M12,P11,P22,S11,S22,
-                                     LO ,LO ,    LO ,LO ,LO ,LO }; //meslep
-    const int i2[nloop]={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
-                                                       jprop::PH,jprop::LO,          jprop::P ,jprop::LO,jprop::S ,jprop::LO}; //propIN_inv
-    
-    const int im[nloop]={LO ,IN ,OUT,M11,M22,M12,P11,P22,S11,S22,
-                                     M11,M22,    P11,P22,S11,S22};
+    if(ntypes==6)
+    {
+        //    charge factors
+        Q={1.0,ql*qIN,ql*qOUT,qIN*qIN,qOUT*qOUT,qIN*qOUT,qIN*qIN,qOUT*qOUT,qIN*qIN,qOUT*qOUT,
+                              qIN*qIN,qOUT*qOUT,         qIN*qIN,qOUT*qOUT,qIN*qIN,qOUT*qOUT};
+        //propOUT_inv
+        i1={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
+                                          jprop::LO,jprop::PH,          jprop::LO,jprop::P ,jprop::LO,jprop::S };
+        //meslep
+        iv={LO ,IN ,OUT,M11,M22,M12,P11,P22,S11,S22,
+                        LO ,LO ,    LO ,LO ,LO ,LO };
+        //propIN_inv
+        i2={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
+                                          jprop::PH,jprop::LO,          jprop::P ,jprop::LO,jprop::S ,jprop::LO};
+        //collecting amputated meslep
+        im={LO ,IN ,OUT,M11,M22,M12,P11,P22,S11,S22,
+                        M11,M22,    P11,P22,S11,S22};
+    }
+    if(ntypes==3)
+    {
+        //    charge factors
+        Q={1.0,ql*qIN,ql*qOUT,qIN*qIN,qOUT*qOUT,qIN*qOUT,
+                              qIN*qIN,qOUT*qOUT         };
+        //propOUT_inv
+        i1={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
+                                          jprop::LO,jprop::PH          };
+        //meslep
+        iv={LO ,IN ,OUT,M11,M22,M12,
+                        LO ,LO     };
+        //propIN_inv
+        i2={jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,jprop::LO,
+                                          jprop::PH,jprop::LO         };
+        //collecting amputated meslep
+        im={LO ,IN ,OUT,M11,M22,M12,
+                        M11,M22    };
+
+    }
     
     //    cout<<"---------  projected meslep 5x5 (QCD,IN,OUT) without charges  ----------"<<endl;
 #pragma omp parallel for collapse(6)
@@ -376,11 +407,15 @@ void oper_t::compute_Z4f()
                                 jpr_meslep[ibilmom][meslep::OUT][iop1][iop2][ijack][mr_fw][mr_bw] +
                                 jpr_meslep[ibilmom][meslep::M11][iop1][iop2][ijack][mr_fw][mr_bw] +
                                 jpr_meslep[ibilmom][meslep::M22][iop1][iop2][ijack][mr_fw][mr_bw] +
-                                jpr_meslep[ibilmom][meslep::M12][iop1][iop2][ijack][mr_fw][mr_bw] +
+                                jpr_meslep[ibilmom][meslep::M12][iop1][iop2][ijack][mr_fw][mr_bw] ;
+                            if(ntypes==6)
+                            {
+                                G4f_EM(iop1,iop2) +=
                                 jpr_meslep[ibilmom][meslep::P11][iop1][iop2][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_bw] +
                                 jpr_meslep[ibilmom][meslep::P22][iop1][iop2][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_fw] +
                                 jpr_meslep[ibilmom][meslep::S11][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_bw] +
                                 jpr_meslep[ibilmom][meslep::S22][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_fw];
+                            }
                         }
                     
                     O4f_t G4f_LO_inv = G4f_LO.inverse();
