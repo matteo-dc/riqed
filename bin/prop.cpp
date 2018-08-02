@@ -5,21 +5,21 @@
 #define EXTERN_PROP
  #include "prop.hpp"
 
-namespace jprop
-{
-    void set_ins()
-    {
-        if(ntypes==6) ins_list={LO,PH,P,S};
-        if(ntypes==3) ins_list={LO,QED};
-        nins=ins_list.size();
-    }
-}
 namespace qprop
 {
     void set_ins()
     {
         if(ntypes==6) ins_list={LO,F,FF,T,P,S};
         if(ntypes==3) ins_list={LO,F,QED};
+        nins=ins_list.size();
+    }
+}
+namespace jprop
+{
+    void set_ins()
+    {
+        if(ntypes==6) ins_list={LO,PH,P,S};
+        if(ntypes==3) ins_list={LO,QED};
         nins=ins_list.size();
     }
 }
