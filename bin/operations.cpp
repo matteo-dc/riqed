@@ -321,7 +321,8 @@ void oper_t::create_basic(const int b, const int th, const int msea)
         
         // read or compute deltam
         deltam_computed=false;
-        compute_deltam_from_prop();
+        if(ntypes!=3)
+            compute_deltam_from_prop();
         
         compute_Zq();
         compute_Zbil();
@@ -365,8 +366,11 @@ oper_t oper_t::average_r()
                                     coeff*sigma[ilinmom][iproj][ins][ijack][r+_nr*m]/_nr;
                             }
         
-        out.deltam_computed=true;
-        out.compute_deltam_from_prop();
+        if(ntypes!=3)
+        {
+            out.deltam_computed=true;
+            out.compute_deltam_from_prop();
+        }
         
         out.compute_Zq();
         
@@ -497,8 +501,11 @@ oper_t oper_t::chiral_extr()
                         (out.sigma)[ilinmom][iproj][ins][ijack][r]=sigma_pars_mom_r[ijack][0];
                 }
     
-    out.deltam_computed=true;
-    out.compute_deltam_from_prop();
+    if(ntypes!=3)
+    {
+        out.deltam_computed=true;
+        out.compute_deltam_from_prop();
+    }
     
     out.compute_Zq();
     
@@ -723,8 +730,11 @@ oper_t chiral_sea_extr(voper_t in)
                     (out.sigma)[ilinmom][iproj][ins][ijack][0]=sigma_pars[ijack][0];
             }
     
-    out.deltam_computed=true;
-    out.compute_deltam_from_prop();
+    if(ntypes!=3)
+    {
+        out.deltam_computed=true;
+        out.compute_deltam_from_prop();
+    }
     
     out.compute_Zq();
     
