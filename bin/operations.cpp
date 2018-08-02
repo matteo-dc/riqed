@@ -1012,15 +1012,24 @@ oper_t oper_t::average_equiv_moms()
         const int imom1=bilmoms[ibilmom][1]; // p1
         const int imom2=bilmoms[ibilmom][2]; // p2
         
+#warning debug
+        cout<<" --- mom=("<<imom1<<" "<<imom2<<")  tag=("<<tag_lin_vector[imom1]<<" "<<tag_lin_vector[imom2]<<") ---"<<endl;
+        
         for(int j=0;j<ibilmom;j++)
         {
             const int imomA=bilmoms[j][1]; // p1
             const int imomB=bilmoms[j][2]; // p2
             
+#warning debug
+            cout<<"mom=("<<imomA<<" "<<imomB<<")  tag=("<<tag_lin_vector[imomA]<<" "<<tag_lin_vector[imomB]<<")   --- ";
+            
             const bool cond{(tag_lin_vector[imom1]==tag_lin_vector[imomA] and
                              tag_lin_vector[imom2]==tag_lin_vector[imomB]) or
                             (tag_lin_vector[imom1]==tag_lin_vector[imomB] and
                              tag_lin_vector[imom2]==tag_lin_vector[imomA])};
+            
+#warning debug
+            cout<<" condition = "<<cond<<endl;
             
 //            const bool cond{tag_lin_vector[imom1]+tag_lin_vector[imom2]==tag_lin_vector[imomA]+tag_lin_vector[imomB] and
 //                            tag_lin_vector[imom1]*tag_lin_vector[imom2]==tag_lin_vector[imomA]*tag_lin_vector[imomB]};
