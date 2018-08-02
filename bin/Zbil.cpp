@@ -32,13 +32,18 @@ void oper_t::compute_Zbil()
                         
                         // EM (relative)
                         jG_EM[ibilmom][ibil][ijack][mr_fw][mr_bw] =
-                            (jG[ibilmom][gbil::PH ][ibil][ijack][mr_fw][mr_bw] +
-                             jG[ibilmom][gbil::Pfw][ibil][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_fw] +
-                             jG[ibilmom][gbil::Pbw][ibil][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_bw] +
-                             jG[ibilmom][gbil::Sfw][ibil][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_fw] +
-                             jG[ibilmom][gbil::Sbw][ibil][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_bw])/
+                            jG[ibilmom][gbil::PH ][ibil][ijack][mr_fw][mr_bw] /
                             jG[ibilmom][gbil::LO][ibil][ijack][mr_fw][mr_bw];
 
+                        if(ntypes==6)
+                        {
+                            jG_EM[ibilmom][ibil][ijack][mr_fw][mr_bw] +=
+                                (jG[ibilmom][gbil::Pfw][ibil][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_fw] +
+                                jG[ibilmom][gbil::Pbw][ibil][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_bw] +
+                                jG[ibilmom][gbil::Sfw][ibil][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_fw] +
+                                jG[ibilmom][gbil::Sbw][ibil][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_bw]) /
+                                jG[ibilmom][gbil::LO][ibil][ijack][mr_fw][mr_bw];
+                        }
                         
                         jZ_EM[ibilmom][ibil][ijack][mr_fw][mr_bw] =
                             -jG_EM[ibilmom][ibil][ijack][mr_fw][mr_bw] +
