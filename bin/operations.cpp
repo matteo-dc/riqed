@@ -989,10 +989,6 @@ oper_t oper_t::average_equiv_moms()
                 out.linmoms[tag] = {tag};
                 p2_eqmoms[tag] = p2[imom];
                 p2_tilde_eqmoms[tag] = p2_tilde[imom];
-                
-#warning debugging equiv moms
-                cout<<" --DEBUG-- "<<endl;
-                cout<<p2_tilde_eqmoms[tag]<<"  "<<tag<<endl;
             }
     
     out.p2=p2_eqmoms;
@@ -1077,6 +1073,9 @@ oper_t oper_t::average_equiv_moms()
                 const int imom2=bilmoms[tag][2]; // p2
                 
                 out.bilmoms[tag] = {imom0,imom1,imom2};
+                
+#warning debugging equiv moms
+                cout<<tag<<"  "<<imom1<<" "<<imom2<<endl;
             }
     
     out.allocate_val();
