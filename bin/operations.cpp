@@ -47,7 +47,7 @@ void oper_t::set_moms()
     //read mom list
     read_mom_list(path_to_moms);
     moms=mom_list.size();
-    cout<<"Read: "<<moms<<" momenta from \""<<mom_path<<"\" (BC: "<<BC<<")."<<endl<<endl;
+    cout<<"Read: "<<moms<<" momenta from \""<<mom_path<<"\" (BC: "<<BC<<")."<<endl;
     
     switch(get_scheme())
     {
@@ -78,18 +78,23 @@ void oper_t::set_ri_mom_moms()
     bilmoms.resize(moms);
     meslepmoms.resize(moms);
     
+    int count_filtered=0;
+    
 #pragma omp parallel for
     for(int imom=0;imom<moms;imom++)
         if(filt_moms[imom])
         {
+            count_filtered++;
+            
             linmoms[imom]={imom};
             bilmoms[imom]={imom,imom,imom};
             meslepmoms[imom]=bilmoms[imom];
         }
-    
-#warning debug
-    for(int imom=0;imom<moms;imom++)
-        cout<<linmoms[imom][0]<<"\t"<<bilmoms[imom][0]<<" "<<bilmoms[imom][1]<<" "<<bilmoms[imom][2]<<endl;
+    cout<<"Filtered "<<count_filtered<<" momenta."<<endl;
+
+//#warning debug
+//    for(int imom=0;imom<moms;imom++)
+//        cout<<linmoms[imom][0]<<"\t"<<bilmoms[imom][0]<<" "<<bilmoms[imom][1]<<" "<<bilmoms[imom][2]<<endl;
 }
 
 void oper_t::set_smom_moms()
@@ -1008,9 +1013,9 @@ oper_t oper_t::average_equiv_moms()
     tag_bil_vector.push_back(0);
     
     
-#warning debug
-    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
-        cout<<ibilmom<<" "<<"{"<<bilmoms[ibilmom][0]<<","<<bilmoms[ibilmom][1]<<","<<bilmoms[ibilmom][2]<<";"<<endl;
+//#warning debug
+//    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
+//        cout<<ibilmom<<" "<<"{"<<bilmoms[ibilmom][0]<<","<<bilmoms[ibilmom][1]<<","<<bilmoms[ibilmom][2]<<";"<<endl;
     
     //Tag assignment to bilmoms
     for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
@@ -1020,24 +1025,24 @@ oper_t oper_t::average_equiv_moms()
         const int imom1=bilmoms[ibilmom][1]; // p1
         const int imom2=bilmoms[ibilmom][2]; // p2
         
-#warning debug
-        cout<<" --- mom=("<<imom1<<" "<<imom2<<")  tag=("<<tag_lin_vector[imom1]<<" "<<tag_lin_vector[imom2]<<") ---"<<endl;
+//#warning debug
+//        cout<<" --- mom=("<<imom1<<" "<<imom2<<")  tag=("<<tag_lin_vector[imom1]<<" "<<tag_lin_vector[imom2]<<") ---"<<endl;
         
         for(int j=0;j<ibilmom;j++)
         {
             const int imomA=bilmoms[j][1]; // p1
             const int imomB=bilmoms[j][2]; // p2
             
-#warning debug
-            cout<<"mom=("<<imomA<<" "<<imomB<<")  tag=("<<tag_lin_vector[imomA]<<" "<<tag_lin_vector[imomB]<<")   --- ";
+//#warning debug
+//            cout<<"mom=("<<imomA<<" "<<imomB<<")  tag=("<<tag_lin_vector[imomA]<<" "<<tag_lin_vector[imomB]<<")   --- ";
             
             const bool cond{(tag_lin_vector[imom1]==tag_lin_vector[imomA] and
                              tag_lin_vector[imom2]==tag_lin_vector[imomB]) or
                             (tag_lin_vector[imom1]==tag_lin_vector[imomB] and
                              tag_lin_vector[imom2]==tag_lin_vector[imomA])};
             
-#warning debug
-            cout<<" condition = "<<cond<<endl;
+//#warning debug
+//            cout<<" condition = "<<cond<<endl;
             
 //            const bool cond{tag_lin_vector[imom1]+tag_lin_vector[imom2]==tag_lin_vector[imomA]+tag_lin_vector[imomB] and
 //                            tag_lin_vector[imom1]*tag_lin_vector[imom2]==tag_lin_vector[imomA]*tag_lin_vector[imomB]};
@@ -1052,15 +1057,15 @@ oper_t oper_t::average_equiv_moms()
                 tag++;
                 tag_bil_vector.push_back(tag);
                 
-#warning debugging equiv moms
-                cout<<j<<"  "<<tag<<"  ("<<tag_lin_vector[imomA]<<" "<<tag_lin_vector[imomB]<<") ("<<tag_lin_vector[imom1]<<" "<<tag_lin_vector[imom2]<<")"<<endl;
+//#warning debugging equiv moms
+//                cout<<j<<"  "<<tag<<"  ("<<tag_lin_vector[imomA]<<" "<<tag_lin_vector[imomB]<<") ("<<tag_lin_vector[imom1]<<" "<<tag_lin_vector[imom2]<<")"<<endl;
             }
             else if(j==ibilmom-1)
             {
                 tag_bil_vector.push_back(tag_aux);
                 
-#warning debugging equiv moms
-                cout<<j<<"  "<<tag_aux<<"  ("<<tag_lin_vector[imomA]<<" "<<tag_lin_vector[imomB]<<") ("<<tag_lin_vector[imom1]<<" "<<tag_lin_vector[imom2]<<")"<<endl;
+//#warning debugging equiv moms
+//                cout<<j<<"  "<<tag_aux<<"  ("<<tag_lin_vector[imomA]<<" "<<tag_lin_vector[imomB]<<") ("<<tag_lin_vector[imom1]<<" "<<tag_lin_vector[imom2]<<")"<<endl;
             }
         }
     }
