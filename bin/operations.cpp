@@ -89,7 +89,7 @@ void oper_t::set_ri_mom_moms()
     
 #warning debug
     for(int imom=0;imom<moms;imom++)
-        cout<<bilmoms[imom][0]<<" "<<bilmoms[imom][1]<<" "<<bilmoms[imom][2]<<endl;
+        cout<<linmoms[imom]<<"\t"<<bilmoms[imom][0]<<" "<<bilmoms[imom][1]<<" "<<bilmoms[imom][2]<<endl;
 }
 
 void oper_t::set_smom_moms()
