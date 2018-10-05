@@ -80,7 +80,6 @@ void oper_t::set_ri_mom_moms()
     
     int count_filtered=0;
     
-#pragma omp parallel for
     for(int imom=0;imom<moms;imom++)
         if(filt_moms[imom])
         {
@@ -91,10 +90,6 @@ void oper_t::set_ri_mom_moms()
             meslepmoms[imom]=bilmoms[imom];
         }
     cout<<"Filtered "<<count_filtered<<" momenta."<<endl;
-
-//#warning debug
-//    for(int imom=0;imom<moms;imom++)
-//        cout<<linmoms[imom][0]<<"\t"<<bilmoms[imom][0]<<" "<<bilmoms[imom][1]<<" "<<bilmoms[imom][2]<<endl;
 }
 
 void oper_t::set_smom_moms()
@@ -306,7 +301,11 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     if(UseEffMass)
     {
         eff_mass=read_eff_mass(path_to_ens+"eff_mass_array");
+        eff_mass_corr=read_eff_mass_corr(path_to_ens+"eff_mass_corr_array");
+        
         eff_mass_time=read_eff_mass_time(path_to_ens+"eff_mass_array_time");
+        eff_mass_corr_time=read_eff_mass_corr_time(path_to_ens+"eff_mass_corr_array_time");
+        
         if(_nm_Sea>1 and !free_analysis)
             eff_mass_sea=read_eff_mass_sea(path_to_ens+"eff_mass_sea_array");
     }
@@ -434,7 +433,7 @@ oper_t oper_t::chiral_extr()
     out.eff_mass = eff_mass;
     out.eff_mass_sea = eff_mass_sea;
     
-    vvvvd_t sigma_err = get<1>(ave_err(sigma));
+   // vvvvd_t sigma_err = get<1>(ave_err(sigma));
     vvvvvd_t G_err = get<1>(ave_err(jG));
     vvvvvvd_t pr_meslep_err=get<1>(ave_err(jpr_meslep));
     
@@ -450,9 +449,9 @@ oper_t oper_t::chiral_extr()
 
     // average of eff_mass
     vvd_t M_eff = get<0>(ave_err(eff_mass));
-    for(int m1=0; m1<_nm; m1++)
-        for(int m2=m1; m2<_nm; m2++)
-            printf("m1: %d m2: %d \t %lg \n",m1,m2,pow((M_eff[m1][m2]+M_eff[m2][m1])/2.0,2.0));
+    vvd_t dM_eff = get<0>(ave_err(eff_mass_corr));
+    for(int m=0; m<_nm; m++)
+        printf("m: %d \t M_eff: %lg \t dM_eff: %lg\n",m,M_eff[m][m],dM_eff[m][m]);
     
     //range for fit Zq
     int x_min_q=0;
@@ -470,18 +469,22 @@ oper_t oper_t::chiral_extr()
     // number of fit parameters for meslep
     int npar_meslep[5]={2,2,3,3,2};
     int npar_meslep_max=3;
-        
+    
     //extrapolate sigma
-#pragma omp parallel for collapse(4)
+    
+    vvd_t sigma_pars_QCD(vd_t(0.0,npar_sigma),njacks);
+    
+#pragma omp parallel for collapse(3)
     for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
         for(int iproj=0; iproj<sigma::nproj; iproj++)
-            for(int ins=0; ins<sigma::nins; ins++)
-                for(int r=0; r<_nr; r++)
+            for(int r=0; r<_nr; r++)
+                for(int ins=0; ins<sigma::nins; ins++) // not collapsed
                 {
                     vvd_t coord_sigma(vd_t(0.0,_nm),npar_sigma);
                     
                     vvd_t sigma_r(vd_t(0.0,_nm),njacks);
-                    vd_t sigma_err_r(0.0,_nm);
+                    
+                    vd_t sig_ave_r(0.0,_nmr), sqr_sig_ave_r(0.0,_nmr), sig_err_r(0.0,_nmr);
                     
                     for(int m=0; m<_nm; m++)
                     {
@@ -490,7 +493,7 @@ oper_t oper_t::chiral_extr()
                         if(!UseEffMass)
                         {
                             coord_sigma[0][m] = 1.0;
-                            coord_sigma[1][m]= mass_val[m];
+                            coord_sigma[1][m] = mass_val[m];
                         }
                         else if(UseEffMass)
                         {
@@ -498,13 +501,35 @@ oper_t oper_t::chiral_extr()
                             coord_sigma[1][m] = pow(M_eff[m][m],2.0);
                         }
                         
-                        for(int ijack=0;ijack<njacks;ijack++)
-                            sigma_r[ijack][m]=sigma[ilinmom][iproj][ins][ijack][mr];
+                        // subtraction of mass correction
+                        if(ins==sigma::QED)
+                            for(int ijack=0;ijack<njacks;ijack++)
+                            {
+                                double b0 = sigma_pars_QCD[1][ijack];
+                                double varb = 2.0*b0*eff_mass[ijack][m][m]*eff_mass_corr[ijack][m][m];
+                                
+                                sigma[ilinmom][iproj][ins][ijack][mr] -= varb;
+                            }
                         
-                        sigma_err_r[m]=sigma_err[ilinmom][iproj][ins][mr];
+                        
+                        for(int ijack=0;ijack<njacks;ijack++)
+                        {
+                            sigma_r[ijack][m]=sigma[ilinmom][iproj][ins][ijack][mr];
+                            
+                            sig_ave_r[m] += sigma[ilinmom][iproj][ins][ijack][mr]/njacks;
+                            sqr_sig_ave_r[m] +=
+                                sigma[ilinmom][iproj][ins][ijack][mr]*
+                                sigma[ilinmom][iproj][ins][ijack][mr]/njacks;
+                        }
+                        sig_err_r[m] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_sig_ave_r[mr]-sig_ave_r[mr]*sig_ave_r[mr]));
                     }
                     
-                    vvd_t sigma_pars_mom_r = polyfit(coord_sigma,npar_sigma,sigma_err_r,sigma_r,x_min_q,x_max_q);
+                    vvd_t sigma_pars_mom_r = polyfit(coord_sigma,npar_sigma,sig_err_r,sigma_r,x_min_q,x_max_q);
+                    
+                    //save fit parameters to be used to subtract dM
+                    if(ins==sigma::LO)
+                        for(int ijack=0;ijack<njacks;ijack++)
+                            sigma_pars_QCD[ijack]=sigma_pars_mom_r[ijack];
                     
                     for(int ijack=0; ijack<njacks; ijack++)
                         (out.sigma)[ilinmom][iproj][ins][ijack][r]=sigma_pars_mom_r[ijack][0];
@@ -517,6 +542,8 @@ oper_t oper_t::chiral_extr()
     }
     
     out.compute_Zq();
+    
+#warning add double pole subtraction
     
     //extrapolate bilinears
 #pragma omp parallel for collapse(5)
@@ -570,6 +597,8 @@ oper_t oper_t::chiral_extr()
                     }
     
     out.compute_Zbil();
+    
+#warning add double pole subtraction (?)
     
     if(compute_4f)
     {
@@ -1012,11 +1041,6 @@ oper_t oper_t::average_equiv_moms()
     vector<int> tag_bil_vector;
     tag_bil_vector.push_back(0);
     
-    
-//#warning debug
-//    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
-//        cout<<ibilmom<<" "<<"{"<<bilmoms[ibilmom][0]<<","<<bilmoms[ibilmom][1]<<","<<bilmoms[ibilmom][2]<<";"<<endl;
-    
     //Tag assignment to bilmoms
     for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
     {
@@ -1025,24 +1049,15 @@ oper_t oper_t::average_equiv_moms()
         const int imom1=bilmoms[ibilmom][1]; // p1
         const int imom2=bilmoms[ibilmom][2]; // p2
         
-//#warning debug
-//        cout<<" --- mom=("<<imom1<<" "<<imom2<<")  tag=("<<tag_lin_vector[imom1]<<" "<<tag_lin_vector[imom2]<<") ---"<<endl;
-        
         for(int j=0;j<ibilmom;j++)
         {
             const int imomA=bilmoms[j][1]; // p1
             const int imomB=bilmoms[j][2]; // p2
             
-//#warning debug
-//            cout<<"mom=("<<imomA<<" "<<imomB<<")  tag=("<<tag_lin_vector[imomA]<<" "<<tag_lin_vector[imomB]<<")   --- ";
-            
             const bool cond{(tag_lin_vector[imom1]==tag_lin_vector[imomA] and
                              tag_lin_vector[imom2]==tag_lin_vector[imomB]) or
                             (tag_lin_vector[imom1]==tag_lin_vector[imomB] and
                              tag_lin_vector[imom2]==tag_lin_vector[imomA])};
-            
-//#warning debug
-//            cout<<" condition = "<<cond<<endl;
             
 //            const bool cond{tag_lin_vector[imom1]+tag_lin_vector[imom2]==tag_lin_vector[imomA]+tag_lin_vector[imomB] and
 //                            tag_lin_vector[imom1]*tag_lin_vector[imom2]==tag_lin_vector[imomA]*tag_lin_vector[imomB]};
@@ -1056,16 +1071,10 @@ oper_t oper_t::average_equiv_moms()
             {
                 tag++;
                 tag_bil_vector.push_back(tag);
-                
-//#warning debugging equiv moms
-//                cout<<j<<"  "<<tag<<"  ("<<tag_lin_vector[imomA]<<" "<<tag_lin_vector[imomB]<<") ("<<tag_lin_vector[imom1]<<" "<<tag_lin_vector[imom2]<<")"<<endl;
             }
             else if(j==ibilmom-1)
             {
                 tag_bil_vector.push_back(tag_aux);
-                
-//#warning debugging equiv moms
-//                cout<<j<<"  "<<tag_aux<<"  ("<<tag_lin_vector[imomA]<<" "<<tag_lin_vector[imomB]<<") ("<<tag_lin_vector[imom1]<<" "<<tag_lin_vector[imom2]<<")"<<endl;
             }
         }
     }
