@@ -56,6 +56,10 @@ vvd_t get_contraction(const string &suffix, const string &out, const int m_fw, c
 {
     int T=size[0];
     
+    vector<string> kind_tag;
+    if(ntypes==6) kind_tag={"0","F","FF","T","P","S"};
+    if(ntypes==3) kind_tag={"0","F","QED"};
+    
     const string Tbw=kind_tag[kbw];
     const string Tfw=kind_tag[kfw];
         
