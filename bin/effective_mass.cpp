@@ -424,7 +424,7 @@ void oper_t::compute_eff_mass_correction()
         vvvvd_t M_eff(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nm),nm);
         vvvvd_t dM_eff(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nm),nm);
         
-        cout<<"b"<<endl
+        cout<<"b"<<endl;
         
         //LO
 #pragma omp parallel for collapse(4)
