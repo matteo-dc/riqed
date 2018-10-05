@@ -360,6 +360,161 @@ void oper_t::compute_eff_mass()
     else cerr<<"Unable to create the output file \"eff_mass_array_time\" "<<endl;
 }
 
+// compute meson mass correction
+void oper_t::compute_eff_mass_correction()
+{
+    if(ntypes!=3)
+    {
+        cout<<"Not implemented for ntypes!=3"<<endl;
+        exit(0);
+    }
+    else
+    {
+        // array of the configurations
+        int conf_id[nconfs];
+        for(int iconf=0;iconf<nconfs;iconf++)
+            conf_id[iconf]=conf_init+iconf*conf_step;
+        
+        int T=size[0];
+        
+        // define jackknife P5P5 correlators
+        vvvvvd_t jP5P5_00(vvvvd_t(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nr),nm),nm);
+        vvvvvd_t jP5P5_LL(vvvvd_t(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nr),nm),nm);
+        vvvvvd_t jP5P5_0M(vvvvd_t(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nr),nm),nm);
+        vvvvvd_t jP5P5_M0(vvvvd_t(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nr),nm),nm);
+        // define jackknife complete correction
+        vvvvvd_t jP5P5_QED(vvvvd_t(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nr),nm),nm);
+        
+        
+        // load correlators
+#pragma omp parallel for collapse (3)
+        for(int m_fw=0;m_fw<nm;m_fw++)
+            for(int m_bw=0;m_bw<nm;m_bw++)
+                for(int r=0;r<nr;r++)
+                {
+                    jP5P5_00[m_fw][m_bw][r]=get_contraction("",out_hadr,m_fw,m_bw,r,r,_LO,_LO,"P5P5",RE,EVN,conf_id,path_to_ens);
+                    jP5P5_LL[m_fw][m_bw][r]=get_contraction("",out_hadr,m_fw,m_bw,r,r,_F,_F,"P5P5",RE,EVN,conf_id,path_to_ens);
+                    jP5P5_0M[m_fw][m_bw][r]=get_contraction("",out_hadr,m_fw,m_bw,r,r,_LO,_QED,"P5P5",RE,EVN,conf_id,path_to_ens);
+                    jP5P5_M0[m_fw][m_bw][r]=get_contraction("",out_hadr,m_fw,m_bw,r,r,_QED,_LO,"P5P5",RE,EVN,conf_id,path_to_ens);
+                    
+                    for(int ijack=0; ijack<njacks;ijack++)
+                        jP5P5_QED[m_fw][m_bw][r][ijack]=jP5P5_LL[m_fw][m_bw][r][ijack]+
+                                                        jP5P5_0M[m_fw][m_bw][r][ijack]+
+                                                        jP5P5_M0[m_fw][m_bw][r][ijack];
+                }
+        
+        // define jackknife P5P5 correlators r-averaged
+        vvvvd_t jP5P5_00_rave(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nm),nm);
+        vvvvd_t jP5P5_QED_rave(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nm),nm);
+        
+#pragma omp parallel for collapse(4)
+        for(int m_fw=0;m_fw<nm;m_fw++)
+            for(int m_bw=0;m_bw<nm;m_bw++)
+                for(int ijack=0; ijack<njacks;ijack++)
+                    for(int t=0;t<T/2;t++)
+                        for(int r=0;r<nr;r++)
+                        {
+                            jP5P5_00_rave[m_fw][m_bw][ijack][t] +=jP5P5_00[m_fw][m_bw][r][ijack][t]/nr;
+                            jP5P5_QED_rave[m_fw][m_bw][ijack][t]+=jP5P5_QED[m_fw][m_bw][r][ijack][t]/nr;
+                        }
+        
+        // compute effective mass time array
+        vvvvd_t M_eff(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nm),nm);
+        vvvvd_t dM_eff(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nm),nm);
+        
+        //LO
+#pragma omp parallel for collapse(4)
+        for(int m_fw=0;m_fw<nm;m_fw++)
+            for(int m_bw=0;m_bw<nm;m_bw++)
+                for(int ijack=0; ijack<njacks;ijack++)
+                    for(int t=0;t<T/2;t++)
+                        M_eff[m_fw][m_bw][ijack][t] = solve_Newton(jP5P5_00_rave[m_fw][m_bw],ijack,t,T);
+        // QED
+#pragma omp parallel for collapse(3)
+        for(int m_fw=0;m_fw<nm;m_fw++)
+            for(int m_bw=0;m_bw<nm;m_bw++)
+                for(int ijack=0; ijack<njacks;ijack++)
+                    dM_eff[m_fw][m_bw][ijack] = effective_slope(symmetrize(jP5P5_QED_rave[m_fw][m_bw][ijack]/jP5P5_00_rave[m_fw][m_bw][ijack],1),M_eff[m_fw][m_bw][ijack],T/2);
+        
+        vvvd_t dM_ave(vvd_t(vd_t(0.0,T/2),nm),nm);
+        vvvd_t sqr_dM_ave = dM_ave;
+        vvvd_t dM_err = dM_ave;
+        
+#pragma omp parallel for collapse(3)
+        for(int m_fw=0;m_fw<nm;m_fw++)
+            for(int m_bw=0;m_bw<nm;m_bw++)
+                for(int t=0;t<T/2;t++)
+                {
+                    for(int ijack=0;ijack<njacks;ijack++)
+                    {
+                        dM_ave[m_fw][m_bw][t] += dM_eff[m_fw][m_bw][ijack][t]/njacks;
+                        sqr_dM_ave[m_fw][m_bw][t] += dM_eff[m_fw][m_bw][ijack][t]*dM_eff[m_fw][m_bw][ijack][t]/njacks;
+                    }
+                    
+                    dM_err[m_fw][m_bw][t] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_dM_ave[m_fw][m_bw][t]-dM_ave[m_fw][m_bw][t]*dM_ave[m_fw][m_bw][t]));
+                }
+        
+        //t-range for the fit
+        int t_min = delta_tmin;
+        int t_max = delta_tmax;
+        
+        vvd_t coord(vd_t(0.0,T/2),1);
+        for(int j=0; j<T/2; j++)
+        {
+            coord[0][j] = 1.0;  //fit a costante
+        }
+        
+        vvvvd_t jdM_eff(vvvd_t(vvd_t(vd_t(0.0,coord.size()),njacks),nm),nm);
+        
+        for(int m_fw=0;m_fw<nm;m_fw++)
+            for(int m_bw=0;m_bw<nm;m_bw++)
+                jdM_eff[m_fw][m_bw] = polyfit(coord,1,dM_err[m_fw][m_bw],dM_eff[m_fw][m_bw],t_min,t_max);
+        
+        // define meson effective mass
+        vvvd_t dM_eff_tmp(vvd_t(vd_t(0.0,nm),nm),njacks);
+        
+#pragma omp parallel for collapse(3)
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int m_fw=0;m_fw<nm;m_fw++)
+                for(int m_bw=0;m_bw<nm;m_bw++)
+                    dM_eff_tmp[ijack][m_fw][m_bw] = jdM_eff[m_fw][m_bw][ijack][0];
+        
+        
+        ofstream outfile;
+        outfile.open(path_to_ens+"eff_mass_corr_array", ios::out | ios::binary);
+        
+        if (outfile.is_open())
+        {
+            for(int ijack=0;ijack<njacks;ijack++)
+                for(int m_fw=0;m_fw<nm;m_fw++)
+                    for(int m_bw=0;m_bw<nm;m_bw++)
+                    {
+                        outfile.write((char*) &dM_eff_tmp[ijack][m_fw][m_bw],sizeof(double));
+                    }
+            
+            outfile.close();
+        }
+        else cerr<<"Unable to create the output file \"eff_mass_corr_array\" "<<endl;
+        
+        ofstream outfile_time;
+        outfile_time.open(path_to_ens+"eff_mass_corr_array_time", ios::out | ios::binary);
+        
+        if (outfile_time.is_open())
+        {
+            for(int ijack=0;ijack<njacks;ijack++)
+                for(int m_fw=0;m_fw<nm;m_fw++)
+                    for(int m_bw=0;m_bw<nm;m_bw++)
+                        for(int t=0;t<T/2;t++)
+                        {
+                            outfile_time.write((char*) &dM_eff[m_fw][m_bw][ijack][t],sizeof(double));
+                        }
+            
+            outfile_time.close();
+        }
+        else cerr<<"Unable to create the output file \"eff_mass_corr_array_time\" "<<endl;
+    }
+}
+
 // compute effective sea mass
 void oper_t::compute_eff_mass_sea()
 {
