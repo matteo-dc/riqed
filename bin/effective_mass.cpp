@@ -406,9 +406,7 @@ void oper_t::compute_eff_mass_correction()
         // define jackknife P5P5 correlators r-averaged
         vvvvd_t jP5P5_00_rave(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nm),nm);
         vvvvd_t jP5P5_QED_rave(vvvd_t(vvd_t(vd_t(0.0,T/2+1),njacks),nm),nm);
-        
-        cout<<"a"<<endl;
-        
+                
 #pragma omp parallel for collapse(4)
         for(int m_fw=0;m_fw<nm;m_fw++)
             for(int m_bw=0;m_bw<nm;m_bw++)
@@ -424,8 +422,6 @@ void oper_t::compute_eff_mass_correction()
         vvvvd_t M_eff(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nm),nm);
         vvvvd_t dM_eff(vvvd_t(vvd_t(vd_t(T/2+1),njacks),nm),nm);
         
-        cout<<"b"<<endl;
-        
         //LO
 #pragma omp parallel for collapse(4)
         for(int m_fw=0;m_fw<nm;m_fw++)
@@ -433,14 +429,12 @@ void oper_t::compute_eff_mass_correction()
                 for(int ijack=0; ijack<njacks;ijack++)
                     for(int t=0;t<T/2;t++)
                         M_eff[m_fw][m_bw][ijack][t] = solve_Newton(jP5P5_00_rave[m_fw][m_bw],ijack,t,T);
-        cout<<"c"<<endl;
         // QED
 #pragma omp parallel for collapse(3)
         for(int m_fw=0;m_fw<nm;m_fw++)
             for(int m_bw=0;m_bw<nm;m_bw++)
                 for(int ijack=0; ijack<njacks;ijack++)
-                    dM_eff[m_fw][m_bw][ijack] = effective_slope(symmetrize(jP5P5_QED_rave[m_fw][m_bw][ijack]/jP5P5_00_rave[m_fw][m_bw][ijack],1),eff_mass_time[m_fw][m_bw][ijack],T/2);
-        cout<<"d"<<endl;
+                    dM_eff[m_fw][m_bw][ijack] = effective_slope(jP5P5_QED_rave[m_fw][m_bw][ijack]/jP5P5_00_rave[m_fw][m_bw][ijack],M_eff[m_fw][m_bw][ijack],T/2);
         
         vvvd_t dM_ave(vvd_t(vd_t(0.0,T/2),nm),nm);
         vvvd_t sqr_dM_ave = dM_ave;
@@ -459,8 +453,6 @@ void oper_t::compute_eff_mass_correction()
                     
                     dM_err[m_fw][m_bw][t] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_dM_ave[m_fw][m_bw][t]-dM_ave[m_fw][m_bw][t]*dM_ave[m_fw][m_bw][t]));
                 }
-        cout<<"e"<<endl;
-
         
         
         //t-range for the fit
