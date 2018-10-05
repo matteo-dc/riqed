@@ -394,8 +394,8 @@ void oper_t::compute_eff_mass_correction()
                 {
                     jP5P5_00[m_fw][m_bw][r]=get_contraction("",out_hadr,m_fw,m_bw,r,r,_LO,_LO,"P5P5",RE,EVN,conf_id,path_to_ens);
                     jP5P5_LL[m_fw][m_bw][r]=get_contraction("",out_hadr,m_fw,m_bw,r,r,_F,_F,"P5P5",RE,EVN,conf_id,path_to_ens);
-                    jP5P5_0M[m_fw][m_bw][r]=get_contraction("",out_hadr,m_fw,m_bw,r,r,_LO,_QED,"P5P5",RE,EVN,conf_id,path_to_ens);
-                    jP5P5_M0[m_fw][m_bw][r]=get_contraction("",out_hadr,m_bw,m_fw,r,r,_LO,_QED,"P5P5",RE,EVN,conf_id,path_to_ens);
+                    jP5P5_0M[m_fw][m_bw][r]=get_contraction("",out_hadr,m_fw,m_bw,r,r,_QED,_LO,"P5P5",RE,EVN,conf_id,path_to_ens);
+                    jP5P5_M0[m_fw][m_bw][r]=get_contraction("",out_hadr,m_bw,m_fw,r,r,_QED,_LO,"P5P5",RE,EVN,conf_id,path_to_ens);
                     
                     for(int ijack=0; ijack<njacks;ijack++)
                         jP5P5_QED[m_fw][m_bw][r][ijack]=jP5P5_LL[m_fw][m_bw][r][ijack]+
