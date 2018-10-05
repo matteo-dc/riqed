@@ -75,12 +75,17 @@ struct oper_t
     
     // effective valence mass
     vvvd_t eff_mass;
+    vvvd_t eff_mass_corr;
     vvvd_t read_eff_mass(const string name);
+    vvvd_t read_eff_mass_corr(const string name);
     void compute_eff_mass();
+    void compute_eff_mass_correction();
     
     // effective valence mass (time dependent)
     vvvvd_t eff_mass_time;
+    vvvvd_t eff_mass_corr_time;
     vvvvd_t read_eff_mass_time(const string name);
+    vvvvd_t read_eff_mass_corr_time(const string name);
     
     // effective slope
     vd_t effective_slope(vd_t data, vd_t M, int TH);
