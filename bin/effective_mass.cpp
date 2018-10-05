@@ -397,10 +397,15 @@ void oper_t::compute_eff_mass_correction()
                     jP5P5_0M[m_fw][m_bw][r]=get_contraction("",out_hadr,m_fw,m_bw,r,r,_QED,_LO,"P5P5",RE,EVN,conf_id,path_to_ens);
                     jP5P5_M0[m_fw][m_bw][r]=get_contraction("",out_hadr,m_bw,m_fw,r,r,_QED,_LO,"P5P5",RE,EVN,conf_id,path_to_ens);
                     
+                    cout<<" aaa"<<endl;
                     for(int ijack=0; ijack<njacks;ijack++)
+                    {
+                        cout<<"ijack: ";
                         jP5P5_QED[m_fw][m_bw][r][ijack]=jP5P5_LL[m_fw][m_bw][r][ijack]+
                                                         jP5P5_0M[m_fw][m_bw][r][ijack]+
                                                         jP5P5_M0[m_fw][m_bw][r][ijack];
+                        cout<<ijack<<endl;
+                    }
                 }
         
         // define jackknife P5P5 correlators r-averaged
