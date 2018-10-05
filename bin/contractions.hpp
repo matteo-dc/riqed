@@ -6,7 +6,7 @@
 
 const double tau3[2]={-1.0,+1.0}; //!< tau entering the propagator
 
-enum                      {_LO ,_F ,_FF ,_T ,_P ,_S ,_QED};
+enum                      {_LO ,_F ,_FF ,_T ,_P ,_S ,_QED=1};
 
 enum{RE,IM};
 
