@@ -6,8 +6,8 @@
 
 const double tau3[2]={-1.0,+1.0}; //!< tau entering the propagator
 
-enum                      {_LO ,_F ,_FF ,_T ,_P ,_S };
-const char kind_tag[6][4]={"0" ,"F","FF","T","P","S"};
+enum                      {_LO ,_F ,_FF ,_T ,_P ,_S ,_QED=2};
+const char kind_tag[7][4]={"0" ,"F","FF","T","P","S","QED"};
 
 enum{RE,IM};
 
