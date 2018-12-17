@@ -528,7 +528,6 @@ oper_t oper_t::chiral_extr()
     
     out.compute_Zq();
     
-    cout<<"DEBUG"<<endl;
     
     //extrapolate bilinears
     
@@ -553,6 +552,8 @@ oper_t oper_t::chiral_extr()
                         for(int m1=0; m1<_nm; m1++)
                             for(int m2=m1; m2<_nm; m2++)
                             {
+                                cout<<"DEBUG: mom: "<<ibilmom<<" r1 "<<r1<<" r2 "<<r2<<" ibil "<<ibil<<" ins "<<ins<<" m1 "<<m1<<" m2 "<<m2<<endl;
+                                
                                 int mr1 = r1 + _nr*m1;
                                 int mr2 = r2 + _nr*m2;
                                 
