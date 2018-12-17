@@ -12,7 +12,7 @@
 #define EXTERN_MESLEP
  #include "meslep.hpp"
 
-namespace pr_meslep
+namespace jmeslep //////////
 {
     void set_ins()
     {
@@ -21,6 +21,15 @@ namespace pr_meslep
         nins=ins_list.size();
         
         nLOampQED=2*(jprop::nins-1);
+    }
+}
+
+namespace pr_meslep /////////////
+{
+    void set_ins()
+    {
+        ins_list={LO,QED};
+        nins=ins_list.size();
     }
 }
 
@@ -190,7 +199,7 @@ void oper_t::compute_meslep()
             jprop_t jS2(vvprop_t(vprop_t(prop_t::Zero(),_nmr),njacks),jprop::nins);
             
             // definition of jackknifed meslep
-            valarray<jmeslep_t> jmeslep(jmeslep_t(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),meslep::nGamma),meslep::nOp),_nmr),_nmr),njacks),pr_meslep::nins);
+            valarray<jmeslep_t> jmeslep(jmeslep_t(jvert_t(vvvprop_t(vvprop_t(vprop_t(prop_t::Zero(),meslep::nGamma),meslep::nOp),_nmr),_nmr),njacks),jmeslep::nins);
             
             cout<<"- Building meslep"<<endl;
             
@@ -249,7 +258,7 @@ void oper_t::compute_meslep()
             else
                 jS2=jS1;
             /* meslep */
-            for(int ins=0;ins<pr_meslep::nins;ins++)
+            for(int ins=0;ins<jmeslep::nins;ins++)
                 jmeslep[ins]=jackknife(jmeslep[ins]);
             
             cout<<"- Inverting propagators"<<endl;
@@ -275,7 +284,7 @@ void oper_t::compute_meslep()
             
             cout<<"- Computing projected meslep"<<endl;
             
-            jpr_meslep[imeslepmom] = compute_pr_meslep(jS1_inv,jmeslep,jS2_inv,qIN,qOUT,ql);
+            jpr_meslep[imeslepmom] = compute_pr_meslep(jS1_inv,jmeslep,jS2_inv, deltam_cr,deltamu, qIN,qOUT,ql);
             
             high_resolution_clock::time_point t1=high_resolution_clock::now();
             duration<double> t_span = duration_cast<duration<double>>(t1-t0);
@@ -289,14 +298,17 @@ void oper_t::compute_meslep()
 }
 
 
-jvproj_meslep_t compute_pr_meslep(jprop_t &jpropOUT_inv, valarray<jmeslep_t> &jmeslep, jprop_t  &jpropIN_inv, const double qIN, const double qOUT, const double ql)
+jvproj_meslep_t compute_pr_meslep(jprop_t &jpropOUT_inv, valarray<jmeslep_t> &jmeslep, jprop_t  &jpropIN_inv, vvd_t deltam_cr, vvd_t deltamu, const double qIN, const double qOUT, const double ql)
 {
     using namespace meslep;
-    const int nmeslep = pr_meslep::nins;
+    const int njmeslep = jmeslep::nins;
+    const int nprmeslep = pr_meslep::nins;
     
-    jvproj_meslep_t jG_op(vvvvvd_t(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nOp),nOp),nmeslep);
+    jvproj_meslep_t jG_op(vvvvvd_t(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nOp),nOp),njmeslep);
     
-    int nloop = nmeslep + pr_meslep::nLOampQED;
+    jvproj_meslep_t pr_meslep(vvvvvd_t(vvvvd_t(vvvd_t(vvd_t(vd_t(0.0,nmr),nmr),njacks),nOp),nOp),nprmeslep);
+    
+    int nloop = njmeslep + jmeslep::nLOampQED;
     
     vector<double> Q;
     vector<int> i1;
@@ -321,6 +333,7 @@ jvproj_meslep_t compute_pr_meslep(jprop_t &jpropOUT_inv, valarray<jmeslep_t> &jm
         //collecting amputated meslep
         im={LO ,IN ,OUT,M11,M22,M12,P11,P22,S11,S22,
                         M11,M22,    P11,P22,S11,S22};
+        
     }
     if(ntypes==3)
     {
@@ -364,9 +377,33 @@ jvproj_meslep_t compute_pr_meslep(jprop_t &jpropOUT_inv, valarray<jmeslep_t> &jm
                                 
                                 jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw] += jGamma*op_norm[iop1]/proj_norm[iop2];
                             }
+                        
+                            if(k==0)
+                                pr_meslep[pr_meslep::LO][iop1][iop2][ijack][mr_fw][mr_bw] =
+                                    jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw];
+                            else
+                            {
+                                if(im[k]<P11)
+                                    pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
+                                        jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw];
+                                if(im[k]==P11)
+                                    pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
+                                        jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_bw];
+                                if(im[k]==P22)
+                                    pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
+                                        jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_fw];
+                                if(im[k]==S11)
+                                    pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
+                                        jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_bw];
+                                if(im[k]==S22)
+                                    pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
+                                        jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_fw];
+                            }
                         }
     
-    return jG_op;
+    
+    
+    return pr_meslep;
 }
 
 
@@ -399,23 +436,10 @@ void oper_t::compute_Z4f()
                         {
                             // LO
                             G4f_LO(iop1,iop2) =
-                                jpr_meslep[ibilmom][meslep::LO][iop1][iop2][ijack][mr_fw][mr_bw];
-                            
+                                jpr_meslep[ibilmom][pr_meslep::LO][iop1][iop2][ijack][mr_fw][mr_bw];
                             // EM
                             G4f_EM(iop1,iop2) =
-                                jpr_meslep[ibilmom][meslep::IN ][iop1][iop2][ijack][mr_fw][mr_bw] +
-                                jpr_meslep[ibilmom][meslep::OUT][iop1][iop2][ijack][mr_fw][mr_bw] +
-                                jpr_meslep[ibilmom][meslep::M11][iop1][iop2][ijack][mr_fw][mr_bw] +
-                                jpr_meslep[ibilmom][meslep::M22][iop1][iop2][ijack][mr_fw][mr_bw] +
-                                jpr_meslep[ibilmom][meslep::M12][iop1][iop2][ijack][mr_fw][mr_bw] ;
-                            if(ntypes==6)
-                            {
-                                G4f_EM(iop1,iop2) +=
-                                jpr_meslep[ibilmom][meslep::P11][iop1][iop2][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_bw] +
-                                jpr_meslep[ibilmom][meslep::P22][iop1][iop2][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_fw] +
-                                jpr_meslep[ibilmom][meslep::S11][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_bw] +
-                                jpr_meslep[ibilmom][meslep::S22][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_fw];
-                            }
+                                jpr_meslep[ibilmom][pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw];
                         }
                     
                     O4f_t G4f_LO_inv = G4f_LO.inverse();

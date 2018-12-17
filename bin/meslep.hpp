@@ -41,7 +41,17 @@ namespace pr_meslep
 {
     void set_ins();
     
-    enum ins{LO,IN,OUT,M11,M22,M12,P11,P22,S11,S22,QED=3};
+    enum ins{LO,QED};
+    
+    EXTERN_MESLEP vector<ins> ins_list;
+    EXTERN_MESLEP int nins;
+}
+
+namespace jmeslep
+{
+    void set_ins();
+
+    enum ins{LO,IN,OUT,M11,M22,M12,P11,P22,S11,S22};
     
     EXTERN_MESLEP vector<ins> ins_list;
     EXTERN_MESLEP int nins;
@@ -52,7 +62,7 @@ namespace pr_meslep
 
 void build_meslep(const vvvprop_t &S1,const vvvprop_t &S2, const vvprop_t &L, valarray<jmeslep_t> &jmeslep);
 
-jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jmeslep, vvvprop_t  &jprop2_inv, const double q1, const double q2, const double ql);
+jvproj_meslep_t compute_pr_meslep(vvvprop_t &jprop1_inv, valarray<jmeslep_t> &jmeslep, vvvprop_t  &jprop2_inv, vvd_t deltam_cr, vvd_t deltamu, const double q1, const double q2, const double ql);
 
 #undef EXTERN_MESLEP
 
