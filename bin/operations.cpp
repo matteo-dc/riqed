@@ -39,6 +39,7 @@ void oper_t::set_ins()
     qprop::set_ins();
     lprop::set_ins();
     gbil::set_ins();
+    jmeslep::set_ins();
     pr_meslep::set_ins();
 }
 
@@ -432,20 +433,6 @@ oper_t oper_t::chiral_extr()
     
     out.eff_mass = eff_mass;
     out.eff_mass_sea = eff_mass_sea;
-    
-   // vvvvd_t sigma_err = get<1>(ave_err(sigma));
-    vvvvvd_t G_err = get<1>(ave_err(jG));
-    vvvvvvd_t pr_meslep_err=get<1>(ave_err(jpr_meslep));
-    
-    //Sum of quark masses for the extrapolation
-//    vd_t mass_sum(0.0,10);
-//    int i_sum = 0;
-//    for (int i=0; i<nm; i++)
-//        for(int j=i;j<nm;j++)
-//        {
-//            mass_sum[i_sum] = mass_val[i]+mass_val[j];
-//            i_sum++;
-//        }
 
     // average of eff_mass
     vvd_t M_eff = get<0>(ave_err(eff_mass));
@@ -483,7 +470,6 @@ oper_t oper_t::chiral_extr()
                     vvd_t coord_sigma(vd_t(0.0,_nm),npar_sigma);
                     
                     vvd_t sigma_r(vd_t(0.0,_nm),njacks);
-                    
                     vd_t sig_ave_r(0.0,_nmr), sqr_sig_ave_r(0.0,_nmr), sig_err_r(0.0,_nmr);
                     
                     for(int m=0; m<_nm; m++)
@@ -502,7 +488,7 @@ oper_t oper_t::chiral_extr()
                         }
                         
                         // subtraction of mass correction
-                        if(ins==sigma::QED)
+                        if(ins==sigma::QED and UseEffMass)
                             for(int ijack=0;ijack<njacks;ijack++)
                             {
                                 double b0 = sigma_pars_QCD[1][ijack];
@@ -510,7 +496,6 @@ oper_t oper_t::chiral_extr()
                                 
                                 sigma[ilinmom][iproj][ins][ijack][mr] -= varb;
                             }
-                        
                         
                         for(int ijack=0;ijack<njacks;ijack++)
                         {
@@ -524,15 +509,15 @@ oper_t oper_t::chiral_extr()
                         sig_err_r[m] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_sig_ave_r[mr]-sig_ave_r[mr]*sig_ave_r[mr]));
                     }
                     
-                    vvd_t sigma_pars_mom_r = polyfit(coord_sigma,npar_sigma,sig_err_r,sigma_r,x_min_q,x_max_q);
+                    vvd_t sigma_pars = polyfit(coord_sigma,npar_sigma,sig_err_r,sigma_r,x_min_q,x_max_q);
                     
                     //save fit parameters to be used to subtract dM
                     if(ins==sigma::LO)
                         for(int ijack=0;ijack<njacks;ijack++)
-                            sigma_pars_QCD[ijack]=sigma_pars_mom_r[ijack];
+                            sigma_pars_QCD[ijack]=sigma_pars[ijack];
                     
                     for(int ijack=0; ijack<njacks; ijack++)
-                        (out.sigma)[ilinmom][iproj][ins][ijack][r]=sigma_pars_mom_r[ijack][0];
+                        (out.sigma)[ilinmom][iproj][ins][ijack][r]=sigma_pars[ijack][0];
                 }
     
     if(ntypes!=3)
@@ -543,19 +528,23 @@ oper_t oper_t::chiral_extr()
     
     out.compute_Zq();
     
-#warning add double pole subtraction
-    
     //extrapolate bilinears
-#pragma omp parallel for collapse(5)
+    
+    vvd_t gbil_pars_QCD(vd_t(0.0,npar_bil_max),njacks);
+    
+#pragma omp parallel for collapse(4)
     for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
         for(int r1=0; r1<_nr; r1++)
             for(int r2=0; r2<_nr; r2++)
-                for(int ins=0; ins<gbil::nins; ins++)
-                    for(int ibil=0;ibil<nbil;ibil++)
+                for(int ibil=0;ibil<nbil;ibil++)
+                    for(int ins=0; ins<gbil::nins; ins++) // not collapsed
                     {
                         vvd_t coord_bil(vd_t(0.0,_nm*(_nm+1)/2),npar_bil_max);
                         
                         vvd_t jG_r1_r2(vd_t(0.0,_nm*(_nm+1)/2),njacks);
+                        
+                        vd_t G_ave_r1_r2(0.0,_nm*(_nm+1)/2);
+                        vd_t sqr_G_ave_r1_r2(0.0,_nm*(_nm+1)/2);
                         vd_t G_err_r1_r2(0.0,_nm*(_nm+1)/2);
                         
                         int ieq=0;
@@ -582,15 +571,40 @@ oper_t oper_t::chiral_extr()
                                     coord_bil[2][ieq] = 1.0/coord_bil[1][ieq];
                                 }
                                 
-                                for(int ijack=0;ijack<njacks;ijack++)
-                                    jG_r1_r2[ijack][ieq] = jG[ibilmom][ins][ibil][ijack][mr1][mr2];
+                                // subtraction of mass correction
+                                if(ins==gbil::QED and UseEffMass)
+                                    for(int ijack=0;ijack<njacks;ijack++)
+                                    {
+                                        double b0 = gbil_pars_QCD[1][ijack];
+                                        double c0 = gbil_pars_QCD[2][ijack];
+                                        
+                                        double jM  = eff_mass[ijack][m1][m2];
+                                        double jdM = eff_mass_corr[ijack][m1][m2];
+                                        
+                                        double varb = 2.0*b0*jM*jdM;
+                                        double varc = -2.0*c0*jdM/(jM*jM*jM);
+                                        
+                                        jG[ibilmom][ins][ibil][ijack][mr1][mr2] -= varb + varc;
+                                    }
                                 
-                                G_err_r1_r2[ieq] = G_err[ibilmom][ins][ibil][mr1][mr2];
+                                for(int ijack=0;ijack<njacks;ijack++)
+                                {
+                                    jG_r1_r2[ijack][ieq] = jG[ibilmom][ins][ibil][ijack][mr1][mr2];
+                                    
+                                    G_ave_r1_r2[ieq] += jG_r1_r2[ijack][ieq]/njacks;
+                                    sqr_G_ave_r1_r2[ieq] += jG_r1_r2[ijack][ieq]*jG_r1_r2[ijack][ieq]/njacks;
+                                }
+                                G_err_r1_r2[ieq] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_G_ave_r1_r2[ieq]-G_ave_r1_r2[ieq]*G_ave_r1_r2[ieq]));
                                 
                                 ieq++;
                             }
                         
                         vvd_t jG_pars = polyfit(coord_bil,npar_bil[ibil],G_err_r1_r2,jG_r1_r2,x_min,x_max);
+                        
+                        //save fit parameters to be used to subtract dM
+                        if(ins==gbil::LO)
+                            for(int ijack=0;ijack<njacks;ijack++)
+                                gbil_pars_QCD[ijack]=jG_pars[ijack];
                     
                         for(int ijack=0;ijack<njacks;ijack++)
                             (out.jG)[ibilmom][ins][ibil][ijack][r1][r2] = jG_pars[ijack][0];
@@ -602,7 +616,10 @@ oper_t oper_t::chiral_extr()
     
     if(compute_4f)
     {
-        //extrapolate meslep
+        //extrapolate pr_meslep
+        
+        vvd_t pr_meslep_pars_QCD(vd_t(0.0,npar_meslep_max),njacks);
+        
 #pragma omp parallel for collapse(6)
         for(int imom=0;imom<_meslepmoms;imom++)
             for(int r1=0; r1<_nr; r1++)
@@ -614,6 +631,9 @@ oper_t oper_t::chiral_extr()
                                 vvd_t coord_meslep(vd_t(0.0,_nm*(_nm+1)/2),npar_meslep_max);
                                 
                                 vvd_t jpr_meslep_r1_r2(vd_t(0.0,_nm*(_nm+1)/2),njacks);
+                                
+                                vd_t pr_meslep_ave_r1_r2(0.0,_nm*(_nm+1)/2);
+                                vd_t sqr_pr_meslep_ave_r1_r2(0.0,_nm*(_nm+1)/2);
                                 vd_t pr_meslep_err_r1_r2(0.0,_nm*(_nm+1)/2);
                                 
                                 int ieq=0;
@@ -640,20 +660,50 @@ oper_t oper_t::chiral_extr()
                                             coord_meslep[2][ieq] = 1.0/coord_meslep[1][ieq];
                                         }
                                         
+                                        // subtraction of mass correction
+                                        if(ins==pr_meslep::QED and UseEffMass)
+                                            for(int ijack=0;ijack<njacks;ijack++)
+                                            {
+                                                double b0 = pr_meslep_pars_QCD[1][ijack];
+                                                double c0 = pr_meslep_pars_QCD[2][ijack];
+                                                
+                                                double jM  = eff_mass[ijack][m1][m2];
+                                                double jdM = eff_mass_corr[ijack][m1][m2];
+                                                
+                                                double varb = 2.0*b0*jM*jdM;
+                                                double varc = -2.0*c0*jdM/(jM*jM*jM);
+                                                
+                                                jpr_meslep[imom][ins][iop1][iop2][ijack][mr1][mr2] -= varb + varc;
+                                            }
+                                        
                                         for(int ijack=0;ijack<njacks;ijack++)
+                                        {
                                             jpr_meslep_r1_r2[ijack][ieq] =
                                                 jpr_meslep[imom][ins][iop1][iop2][ijack][mr1][mr2];
                                             
-                                        pr_meslep_err_r1_r2[ieq] = pr_meslep_err[imom][ins][iop1][iop2][mr1][mr2];
-                
+                                            pr_meslep_ave_r1_r2[ieq] +=
+                                                jpr_meslep_r1_r2[ijack][ieq]/njacks;
+                                            sqr_pr_meslep_ave_r1_r2[ieq] +=
+                                                jpr_meslep_r1_r2[ijack][ieq]*jpr_meslep_r1_r2[ijack][ieq]/njacks;
+                                        }
+                                        pr_meslep_err_r1_r2[ieq] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_pr_meslep_ave_r1_r2[ieq]-pr_meslep_ave_r1_r2[ieq]*pr_meslep_ave_r1_r2[ieq]));
+                                        
                                         ieq++;
                                     }
-    
-                                vvd_t jpr_meslep_pars = polyfit(coord_meslep,npar_meslep[iop1],pr_meslep_err_r1_r2,jpr_meslep_r1_r2,x_min,x_max);
+                                
+                                int npar_combined = max(npar_meslep[iop1],npar_meslep[iop2]);
+                                
+                                vvd_t jpr_meslep_pars = polyfit(coord_meslep,npar_combined,pr_meslep_err_r1_r2,jpr_meslep_r1_r2,x_min,x_max);
+                                
+                                //save fit parameters to be used to subtract dM
+                                if(ins==pr_meslep::LO)
+                                    for(int ijack=0;ijack<njacks;ijack++)
+                                        pr_meslep_pars_QCD[ijack]=jpr_meslep_pars[ijack];
             
                                 for(int ijack=0;ijack<njacks;ijack++)
                                    (out.jpr_meslep)[imom][ins][iop1][iop2][ijack][r1][r2] = jpr_meslep_pars[ijack][0];
                             }
+        
         out.compute_Z4f();
     }
 
