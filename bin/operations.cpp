@@ -528,6 +528,8 @@ oper_t oper_t::chiral_extr()
     
     out.compute_Zq();
     
+    cout<<"DEBUG"<<endl;
+    
     //extrapolate bilinears
     
     vvd_t gbil_pars_QCD(vd_t(0.0,npar_bil_max),njacks);
@@ -612,7 +614,6 @@ oper_t oper_t::chiral_extr()
     
     out.compute_Zbil();
     
-#warning add double pole subtraction (?)
     
     if(compute_4f)
     {
