@@ -461,7 +461,7 @@ oper_t oper_t::chiral_extr()
     
     vvd_t sigma_pars_QCD(vd_t(0.0,npar_sigma),njacks);
     
-#pragma omp parallel for collapse(3)
+#pragma omp parallel for collapse(2)
     for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
         for(int iproj=0; iproj<sigma::nproj; iproj++)
             for(int r=0; r<_nr; r++)
