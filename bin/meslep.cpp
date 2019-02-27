@@ -356,12 +356,13 @@ jvproj_meslep_t compute_pr_meslep(jprop_t &jpropOUT_inv, valarray<jmeslep_t> &jm
     }
     
     //    cout<<"---------  projected meslep 5x5 (QCD,IN,OUT) without charges  ----------"<<endl;
-#pragma omp parallel for collapse(6)
+#pragma omp parallel for collapse(5)
     for(int ijack=0;ijack<njacks;ijack++)
         for(int mr_fw=0;mr_fw<nmr;mr_fw++)
             for(int mr_bw=0;mr_bw<nmr;mr_bw++)
                 for(int iop1=0;iop1<nOp;iop1++)
                     for(int iop2=0;iop2<nOp;iop2++)
+                    {
                         for(int k=0;k<nloop;k++)
                         {
                             vector<size_t> iproj = iG_of_iop[iop2];
@@ -377,27 +378,29 @@ jvproj_meslep_t compute_pr_meslep(jprop_t &jpropOUT_inv, valarray<jmeslep_t> &jm
                                 
                                 jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw] += jGamma*op_norm[iop1]/proj_norm[iop2];
                             }
-                        
-                            if(k==0)
+                        }
+                        for(w=0;w<njmeslep;w++)
+                        {
+                            if(w==0)
                                 pr_meslep[pr_meslep::LO][iop1][iop2][ijack][mr_fw][mr_bw] =
-                                    jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw];
+                                    jG_op[im[w]][iop1][iop2][ijack][mr_fw][mr_bw];
                             else
                             {
-                                if(k<P11)
+                                if(w<P11)
                                     pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
-                                        jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw];
-                                if(k==P11)
+                                        jG_op[im[w]][iop1][iop2][ijack][mr_fw][mr_bw];
+                                if(w==P11)
                                     pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
-                                        jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_bw];
-                                if(k==P22)
+                                        jG_op[im[w]][iop1][iop2][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_bw];
+                                if(w==P22)
                                     pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
-                                        jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_fw];
-                                if(k==S11)
+                                        jG_op[im[w]][iop1][iop2][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_fw];
+                                if(w==S11)
                                     pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
-                                        jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_bw];
-                                if(k==S22)
+                                        jG_op[im[w]][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_bw];
+                                if(w==S22)
                                     pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
-                                        jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_fw];
+                                        jG_op[im[w]][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_fw];
                             }
                         }
     
