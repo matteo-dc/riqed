@@ -459,7 +459,7 @@ void oper_t::compute_Z4f()
                             jZ_4f[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = Z4f_LO(iop1,iop2);
                             jZ_4f_EM[ibilmom][iop1][iop2][ijack][mr_fw][mr_bw] = Z4f_EM(iop1,iop2);
                             
-                            if(iop1==0 and iop2==0) cout<<imom1<<" "<<jZ_4f_EM(iop1,iop2)<<endl;
+                            if(iop1==0 and iop2==0 and ijack==0) cout<<imom1<<" "<<Z4f_EM(iop1,iop2)<<endl;
                         }
                 }
         
