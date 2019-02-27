@@ -379,7 +379,7 @@ jvproj_meslep_t compute_pr_meslep(jprop_t &jpropOUT_inv, valarray<jmeslep_t> &jm
                                 jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw] += jGamma*op_norm[iop1]/proj_norm[iop2];
                             }
                         }
-                        for(w=0;w<njmeslep;w++)
+                        for(int w=0;w<njmeslep;w++)
                         {
                             if(w==0)
                                 pr_meslep[pr_meslep::LO][iop1][iop2][ijack][mr_fw][mr_bw] =
@@ -403,6 +403,7 @@ jvproj_meslep_t compute_pr_meslep(jprop_t &jpropOUT_inv, valarray<jmeslep_t> &jm
                                         jG_op[im[w]][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_fw];
                             }
                         }
+                    }
     
     
     
