@@ -383,21 +383,19 @@ jvproj_meslep_t compute_pr_meslep(jprop_t &jpropOUT_inv, valarray<jmeslep_t> &jm
                                     jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw];
                             else
                             {
-                                cout<<im[k]<<endl;
-                                
-                                if(im[k]<P11)
+                                if(k<P11)
                                     pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
                                         jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw];
-                                if(im[k]==P11)
+                                if(k==P11)
                                     pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
                                         jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_bw];
-                                if(im[k]==P22)
+                                if(k==P22)
                                     pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
                                         jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw]*deltam_cr[ijack][mr_fw];
-                                if(im[k]==S11)
+                                if(k==S11)
                                     pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
                                         jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_bw];
-                                if(im[k]==S22)
+                                if(k==S22)
                                     pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
                                         jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw]*deltamu[ijack][mr_fw];
                             }
