@@ -377,14 +377,14 @@ jvproj_meslep_t compute_pr_meslep(jprop_t &jpropOUT_inv, valarray<jmeslep_t> &jm
                                 
                                 jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw] += jGamma*op_norm[iop1]/proj_norm[iop2];
                             }
-                            
-                            cout<<im[k]<<endl;
                         
                             if(k==0)
                                 pr_meslep[pr_meslep::LO][iop1][iop2][ijack][mr_fw][mr_bw] =
                                     jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw];
                             else
                             {
+                                cout<<im[k]<<endl;
+                                
                                 if(im[k]<P11)
                                     pr_meslep[pr_meslep::QED][iop1][iop2][ijack][mr_fw][mr_bw] +=
                                         jG_op[im[k]][iop1][iop2][ijack][mr_fw][mr_bw];
