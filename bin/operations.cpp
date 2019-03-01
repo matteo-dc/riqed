@@ -606,8 +606,17 @@ oper_t oper_t::chiral_extr()
                         //save fit parameters to be used to subtract dM
                         if(ins==gbil::LO)
                             for(int ijack=0;ijack<njacks;ijack++)
-                                gbil_pars_QCD[ijack]=jG_pars[ijack];
-                    
+                            {
+                                gbil_pars_QCD[ijack][0]=jG_pars[ijack][0];
+                                gbil_pars_QCD[ijack][1]=jG_pars[ijack][1];
+                                
+                                if(npar_bil[ibil]<npar_bil_max)
+                                    gbil_pars_QCD[ijack][2]=0;
+                                else
+                                    gbil_pars_QCD[ijack][2]=jG_pars[ijack][2];
+                                
+                            }
+                        
                         for(int ijack=0;ijack<njacks;ijack++)
                             (out.jG)[ibilmom][ins][ibil][ijack][r1][r2] = jG_pars[ijack][0];
                     }
