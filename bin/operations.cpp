@@ -577,8 +577,8 @@ oper_t oper_t::chiral_extr()
                                 if(ins==gbil::QED and UseEffMass)
                                     for(int ijack=0;ijack<njacks;ijack++)
                                     {
-                                        double b0 = gbil_pars_QCD[1][ijack];
-                                        double c0 = gbil_pars_QCD[2][ijack];
+                                        double b0 = gbil_pars_QCD[ijack][1];
+                                        double c0 = gbil_pars_QCD[ijack][2];
                                         
                                         double jM  = eff_mass[ijack][m1][m2];
                                         double jdM = eff_mass_corr[ijack][m1][m2];
@@ -665,8 +665,8 @@ oper_t oper_t::chiral_extr()
                                         if(ins==pr_meslep::QED and UseEffMass)
                                             for(int ijack=0;ijack<njacks;ijack++)
                                             {
-                                                double b0 = pr_meslep_pars_QCD[1][ijack];
-                                                double c0 = pr_meslep_pars_QCD[2][ijack];
+                                                double b0 = pr_meslep_pars_QCD[ijack][1];
+                                                double c0 = pr_meslep_pars_QCD[ijack][2];
                                                 
                                                 double jM  = eff_mass[ijack][m1][m2];
                                                 double jdM = eff_mass_corr[ijack][m1][m2];
