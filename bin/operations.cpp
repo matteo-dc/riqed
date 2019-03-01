@@ -461,6 +461,8 @@ oper_t oper_t::chiral_extr()
     
     vvd_t sigma_pars_QCD(vd_t(0.0,npar_sigma),njacks);
     
+    cout<<"linmoms: "<<_linmoms<<" sigma::nproj: "<<sigma::nproj<<" nr: "<<_nr<<" sigma::nins "<<sigma::nins<<endl;
+    
 #pragma omp parallel for
     for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
         for(int iproj=0; iproj<sigma::nproj; iproj++)
