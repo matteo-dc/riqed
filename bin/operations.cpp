@@ -452,7 +452,7 @@ oper_t oper_t::chiral_extr()
     vvd_t M2_eff_err = get<1>(ave_err(eff_mass_sqr));
     
     for(int m=0; m<_nm; m++)
-        printf("m: %d \t M2_eff: %lg +- %lg\n",M2_eff[m][m],M2_eff_err[m][m]);
+        printf("m: %d \t M2_eff: %lg +- %lg\n",m,M2_eff[m][m],M2_eff_err[m][m]);
     
     //range for fit Zq
     int x_min_q=0;
