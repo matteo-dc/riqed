@@ -440,6 +440,20 @@ oper_t oper_t::chiral_extr()
     for(int m=0; m<_nm; m++)
         printf("m: %d \t M_eff: %lg \t dM_eff: %lg\n",m,M_eff[m][m],dM_eff[m][m]);
     
+    // printing the squared mass
+    vvvd_t eff_mass_sqr(vvd_t(vd_t(0.0,_nm),_nm),njacks);
+    
+    for(int ijack=0;ijack<njacks;ijack++)
+        for(int m1=0; m1<_nm; m1++)
+            for(int m2=0; m2<_nm; m2++)
+                eff_mass_sqr[ijack][m1][m2]=eff_mass[ijack][m1][m2]*eff_mass[ijack][m1][m2];
+    
+    vvd_t M2_eff = get<0>(ave_err(eff_mass_sqr));
+    vvd_t M2_eff_err = get<1>(ave_err(eff_mass_sqr));
+    
+    for(int m=0; m<_nm; m++)
+        printf("m: %d \t M2_eff: %lg +- %lg\n",M2_eff[m][m],M2_eff_err[m][m]);
+    
     //range for fit Zq
     int x_min_q=0;
     int x_max_q=_nm-1;
