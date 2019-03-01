@@ -509,8 +509,12 @@ oper_t oper_t::chiral_extr()
                         sig_err_r[m] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_sig_ave_r[mr]-sig_ave_r[mr]*sig_ave_r[mr]));
                     }
                     
+                    cout<<"***1***"<<endl;
+                    
                     vvd_t sigma_pars = polyfit(coord_sigma,npar_sigma,sig_err_r,sigma_r,x_min_q,x_max_q);
                     
+                    cout<<"***2***"<<endl;
+
                     //save fit parameters to be used to subtract dM
                     if(ins==sigma::LO)
                         for(int ijack=0;ijack<njacks;ijack++)
@@ -519,6 +523,8 @@ oper_t oper_t::chiral_extr()
                     for(int ijack=0; ijack<njacks; ijack++)
                         (out.sigma)[ilinmom][iproj][ins][ijack][r]=sigma_pars[ijack][0];
                 }
+    
+    cout<<"***3***"<<endl;
     
     if(ntypes!=3)
     {
