@@ -708,7 +708,14 @@ oper_t oper_t::chiral_extr()
                                 //save fit parameters to be used to subtract dM
                                 if(ins==pr_meslep::LO)
                                     for(int ijack=0;ijack<njacks;ijack++)
-                                        pr_meslep_pars_QCD[ijack]=jpr_meslep_pars[ijack];
+                                    {
+                                        pr_meslep_pars_QCD[ijack][0]=jpr_meslep_pars[ijack][0];
+                                        pr_meslep_pars_QCD[ijack][1]=jpr_meslep_pars[ijack][1];
+                                        if(npar_combined<npar_meslep_max)
+                                            pr_meslep_pars_QCD[ijack][2]=0;
+                                        else
+                                            pr_meslep_pars_QCD[ijack][2]=jpr_meslep_pars[ijack][2];
+                                    }
             
                                 for(int ijack=0;ijack<njacks;ijack++)
                                    (out.jpr_meslep)[imom][ins][iop1][iop2][ijack][r1][r2] = jpr_meslep_pars[ijack][0];
