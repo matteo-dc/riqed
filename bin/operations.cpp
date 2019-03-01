@@ -461,8 +461,6 @@ oper_t oper_t::chiral_extr()
     
     vvd_t sigma_pars_QCD(vd_t(0.0,npar_sigma),njacks);
     
-    cout<<"linmoms: "<<_linmoms<<" sigma::nproj: "<<sigma::nproj<<" nr: "<<_nr<<" sigma::nins "<<sigma::nins<<endl;
-    
 #pragma omp parallel for
     for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
         for(int iproj=0; iproj<sigma::nproj; iproj++)
@@ -493,7 +491,7 @@ oper_t oper_t::chiral_extr()
                         if(ins==sigma::QED and UseEffMass)
                             for(int ijack=0;ijack<njacks;ijack++)
                             {
-                                double b0 = sigma_pars_QCD[1][ijack];
+                                double b0 = sigma_pars_QCD[ijack][1];
                                 double varb = 2.0*b0*eff_mass[ijack][m][m]*eff_mass_corr[ijack][m][m];
                                 
                                 sigma[ilinmom][iproj][ins][ijack][mr] -= varb;
@@ -511,12 +509,8 @@ oper_t oper_t::chiral_extr()
                         sig_err_r[m] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_sig_ave_r[mr]-sig_ave_r[mr]*sig_ave_r[mr]));
                     }
                     
-                    cout<<"***1***"<<endl;
-                    
                     vvd_t sigma_pars = polyfit(coord_sigma,npar_sigma,sig_err_r,sigma_r,x_min_q,x_max_q);
                     
-                    cout<<"***2***"<<endl;
-
                     //save fit parameters to be used to subtract dM
                     if(ins==sigma::LO)
                         for(int ijack=0;ijack<njacks;ijack++)
@@ -525,8 +519,6 @@ oper_t oper_t::chiral_extr()
                     for(int ijack=0; ijack<njacks; ijack++)
                         (out.sigma)[ilinmom][iproj][ins][ijack][r]=sigma_pars[ijack][0];
                 }
-    
-    cout<<"***3***"<<endl;
     
     if(ntypes!=3)
     {
