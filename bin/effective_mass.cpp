@@ -299,6 +299,24 @@ void oper_t::compute_eff_mass()
                 mass_err[m_fw][m_bw][t] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_mass_ave[m_fw][m_bw][t]-mass_ave[m_fw][m_bw][t]*mass_ave[m_fw][m_bw][t]));
             }
     
+    for(int m_fw=0;m_fw<nm;m_fw++)
+        for(int m_bw=0;m_bw<nm;m_bw++)
+        {
+            ofstream outfile_m;
+            outfile_m.open(path_to_ens+"plots/eff_mass_"+to_string(m_fw)+"_"+to_string(m_bw)".txt");
+            
+            if (outfile_m.is_open())
+            {
+                for(int t=0;t<T/2;t++)
+                        {
+                            outfile_m<<t<<"\t"<<mass_ave[m_fw][m_bw][t]<<"\t"<<mass_err[m_fw][m_bw][t]<<endl;
+                        }
+                
+                outfile_m.close();
+            }
+            else cerr<<"Unable to create the output file \"plots/eff_mass_"<<m_fw<<"_"<<m_bw<<".txt"<<"\" "<<endl;
+        }
+    
     //t-range for the fit
     int t_min = delta_tmin;
     int t_max = delta_tmax;
