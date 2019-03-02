@@ -303,7 +303,7 @@ void oper_t::compute_eff_mass()
         for(int m_bw=0;m_bw<nm;m_bw++)
         {
             ofstream outfile_m;
-            outfile_m.open(path_to_ens+"plots/eff_mass_"+to_string(m_fw)+"_"+to_string(m_bw)".txt");
+            outfile_m.open(path_to_ens+"plots/eff_mass_"+to_string(m_fw)+"_"+to_string(m_bw)+".txt");
             
             if (outfile_m.is_open())
             {
