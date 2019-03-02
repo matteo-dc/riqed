@@ -475,7 +475,7 @@ oper_t oper_t::chiral_extr()
     
     vvd_t sigma_pars_QCD(vd_t(0.0,npar_sigma),njacks);
     
-#pragma omp parallel for
+//#pragma omp parallel for
     for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
         for(int iproj=0; iproj<sigma::nproj; iproj++)
             for(int r=0; r<_nr; r++)
@@ -547,7 +547,7 @@ oper_t oper_t::chiral_extr()
     
     vvd_t gbil_pars_QCD(vd_t(0.0,npar_bil_max),njacks);
     
-#pragma omp parallel for //collapse(4)
+//#pragma omp parallel for //collapse(4)
     for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
         for(int r1=0; r1<_nr; r1++)
             for(int r2=0; r2<_nr; r2++)
@@ -644,7 +644,7 @@ oper_t oper_t::chiral_extr()
         
         vvd_t pr_meslep_pars_QCD(vd_t(0.0,npar_meslep_max),njacks);
         
-#pragma omp parallel for //collapse(6)
+//#pragma omp parallel for //collapse(6)
         for(int imom=0;imom<_meslepmoms;imom++)
             for(int r1=0; r1<_nr; r1++)
                 for(int r2=0; r2<_nr; r2++)
