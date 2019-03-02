@@ -633,7 +633,7 @@ void oper_t::compute_eff_mass_sea()
 }
 
 double per_two_pts_corr_with_ins_ratio_fun(const double &M,const double &TH,const double &t)
-{return (t-TH)*tanh(M*(t-TH));}
+{return -(t-TH)*tanh(M*(t-TH));}
 
 vd_t oper_t::effective_slope(vd_t data, vd_t M, int TH)
 {
