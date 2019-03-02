@@ -717,6 +717,8 @@ oper_t oper_t::chiral_extr()
                                 
                                 int npar_combined = max(npar_meslep[iop1],npar_meslep[iop2]);
                                 
+                                cout<<"iop=["<<iop1<<","<<iop2<<"]  npar=["<<npar_meslep[iop1]<<","<<npar_meslep[iop2]<<"] -> "<<npar_combined<<endl;
+                                
                                 vvd_t jpr_meslep_pars = polyfit(coord_meslep,npar_combined,pr_meslep_err_r1_r2,jpr_meslep_r1_r2,x_min,x_max);
                                 
                                 //save fit parameters to be used to subtract dM
