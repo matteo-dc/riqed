@@ -452,7 +452,7 @@ void oper_t::compute_eff_mass_correction()
         for(int m_fw=0;m_fw<nm;m_fw++)
             for(int m_bw=0;m_bw<nm;m_bw++)
                 for(int ijack=0; ijack<njacks;ijack++)
-                    dM_eff[m_fw][m_bw][ijack] = effective_slope(jP5P5_QED_rave[m_fw][m_bw][ijack]/jP5P5_00_rave[m_fw][m_bw][ijack],M_eff[m_fw][m_bw][ijack],T/2);
+                    dM_eff[m_fw][m_bw][ijack] = - effective_slope(jP5P5_QED_rave[m_fw][m_bw][ijack]/jP5P5_00_rave[m_fw][m_bw][ijack],M_eff[m_fw][m_bw][ijack],T/2);
         
         vvvd_t dM_ave(vvd_t(vd_t(0.0,T/2),nm),nm);
         vvvd_t sqr_dM_ave = dM_ave;
@@ -633,7 +633,7 @@ void oper_t::compute_eff_mass_sea()
 }
 
 double per_two_pts_corr_with_ins_ratio_fun(const double &M,const double &TH,const double &t)
-{return (t-TH)*tanh(M*(t-TH));}
+{return -(t-TH)*tanh(M*(t-TH));}
 
 vd_t oper_t::effective_slope(vd_t data, vd_t M, int TH)
 {
