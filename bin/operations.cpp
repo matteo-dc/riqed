@@ -625,7 +625,7 @@ oper_t oper_t::chiral_extr()
                                 gbil_pars_QCD[ijack][1]=jG_pars[ijack][1];
                                 
                                 if(npar_bil[ibil]<npar_bil_max)
-                                    gbil_pars_QCD[ijack][2]=0;
+                                    gbil_pars_QCD[ijack][2]=0.0;
                                 else
                                     gbil_pars_QCD[ijack][2]=jG_pars[ijack][2];
                                 
@@ -717,8 +717,6 @@ oper_t oper_t::chiral_extr()
                                 
                                 int npar_combined = max(npar_meslep[iop1],npar_meslep[iop2]);
                                 
-                                cout<<"iop=["<<iop1<<","<<iop2<<"]  npar=["<<npar_meslep[iop1]<<","<<npar_meslep[iop2]<<"] -> "<<npar_combined<<endl;
-                                
                                 vvd_t jpr_meslep_pars = polyfit(coord_meslep,npar_combined,pr_meslep_err_r1_r2,jpr_meslep_r1_r2,x_min,x_max);
                                 
                                 //save fit parameters to be used to subtract dM
@@ -727,8 +725,9 @@ oper_t oper_t::chiral_extr()
                                     {
                                         pr_meslep_pars_QCD[ijack][0]=jpr_meslep_pars[ijack][0];
                                         pr_meslep_pars_QCD[ijack][1]=jpr_meslep_pars[ijack][1];
+                                        
                                         if(npar_combined<npar_meslep_max)
-                                            pr_meslep_pars_QCD[ijack][2]=0;
+                                            pr_meslep_pars_QCD[ijack][2]=0.0;
                                         else
                                             pr_meslep_pars_QCD[ijack][2]=jpr_meslep_pars[ijack][2];
                                     }
