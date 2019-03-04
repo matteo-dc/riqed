@@ -730,9 +730,10 @@ oper_t oper_t::chiral_extr()
                                 
                                 vvd_t jpr_meslep_pars = polyfit(coord_meslep,npar_combined,pr_meslep_err_r1_r2,jpr_meslep_r1_r2,x_min,x_max);
                                 
+                                cout<<"imom="<<imom<<" [r1,r2]=["<<r1<<","<<r2<<"] ins="<<(ins?"QED":"LO")<<" [iop1,iop2]=["<<iop1<<","<<iop2<<"] npar_combined="<<npar_combined<<endl;
                                 for(int ijack=0;ijack<njacks;ijack++)
                                 {
-                                    cout<<"imom="<<imom<<" [r1,r2]=["<<r1<<","<<r2<<"] ins="<<(ins?"QED":"LO")<<" [iop1,iop2]=["<<iop1<<","<<iop2<<"] npar_combined="<<npar_combined<<" ijack="<<ijack<<endl;
+                                    cout<<"  ijack="<<ijack;
                                     cout<<"\t A: "<<jpr_meslep_pars[ijack][0];
                                     cout<<"\t B: "<<jpr_meslep_pars[ijack][1];
                                     if(jpr_meslep_pars[ijack].size()==npar_meslep_max)
