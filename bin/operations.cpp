@@ -716,13 +716,6 @@ oper_t oper_t::chiral_extr()
                                         }
                                         pr_meslep_err_r1_r2[ieq] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_pr_meslep_ave_r1_r2[ieq]-pr_meslep_ave_r1_r2[ieq]*pr_meslep_ave_r1_r2[ieq]));
                                         
-                                        
-                                        if(imom==0)
-                                        {
-                                            cout.precision(16);
-                                            cout<<coord_meslep[1][ieq]<<"\t"<<jpr_meslep_r1_r2[0][ieq]<<"\t"<<pr_meslep_err_r1_r2[ieq]<<endl;
-                                        }
-                                        
                                         ieq++;
                                     }
                                 
@@ -730,16 +723,29 @@ oper_t oper_t::chiral_extr()
                                 
                                 vvd_t jpr_meslep_pars = polyfit(coord_meslep,npar_combined,pr_meslep_err_r1_r2,jpr_meslep_r1_r2,x_min,x_max);
                                 
-                                cout<<"imom="<<imom<<" [r1,r2]=["<<r1<<","<<r2<<"] ins="<<(ins?"QED":"LO")<<" [iop1,iop2]=["<<iop1<<","<<iop2<<"] npar_combined="<<npar_combined<<endl;
-                                for(int ijack=0;ijack<njacks;ijack++)
+                                if(imom==0)
                                 {
-                                    cout<<"  ijack="<<ijack;
-                                    cout<<"\t A: "<<jpr_meslep_pars[ijack][0];
-                                    cout<<"\t B: "<<jpr_meslep_pars[ijack][1];
-                                    if(jpr_meslep_pars[ijack].size()==npar_meslep_max)
-                                        cout<<"\t C: "<<jpr_meslep_pars[ijack][2]<<endl;
-                                    else
-                                        cout<<endl;
+                                    cout<<"imom="<<imom<<" [r1,r2]=["<<r1<<","<<r2<<"] ins="<<(ins?"QED":"LO")<<" [iop1,iop2]=["<<iop1<<","<<iop2<<"] npar_combined="<<npar_combined<<endl;
+                                    
+                                    for(int ijack=0;ijack<njacks;ijack++)
+                                    {
+                                        cout<<"------------------"<<endl;
+                                        cout<<"  ijack="<<ijack;
+                                        cout<<"------------------"<<endl;
+                                        
+                                        for(int ieq=0; ieq<=x_max ; ieq++)
+                                        {
+                                        cout.precision(16);
+                                        cout<<coord_meslep[1][ieq]<<"\t"<<jpr_meslep_r1_r2[0][ieq]<<"\t"<<pr_meslep_err_r1_r2[ieq]<<endl;
+                                        }
+                                        cout<<"------------------"<<endl;
+                                        cout<<"\t A: "<<jpr_meslep_pars[ijack][0];
+                                        cout<<"\t B: "<<jpr_meslep_pars[ijack][1];
+                                        if(jpr_meslep_pars[ijack].size()==npar_meslep_max)
+                                            cout<<"\t C: "<<jpr_meslep_pars[ijack][2]<<endl;
+                                        else
+                                            cout<<endl;
+                                        }
                                 }
 
                                 
