@@ -737,6 +737,8 @@ oper_t oper_t::chiral_extr()
                                     cout<<"\t B: "<<jpr_meslep_pars[ijack][1];
                                     if(jpr_meslep_pars[ijack].size()==npar_meslep_max)
                                         cout<<"\t C: "<<jpr_meslep_pars[ijack][2]<<endl;
+                                    else
+                                        cout<<endl;
                                 }
 
                                 
