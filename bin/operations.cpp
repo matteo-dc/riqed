@@ -660,8 +660,6 @@ oper_t oper_t::chiral_extr()
                                 vd_t sqr_pr_meslep_ave_r1_r2(0.0,_nm*(_nm+1)/2);
                                 vd_t pr_meslep_err_r1_r2(0.0,_nm*(_nm+1)/2);
                                 
-                                cout<<" [r1,r2]=["<<r1<<","<<r2<<"] ins="<<(ins?"QED":"LO")<<" [iop1,iop2]=["<<iop1<<","<<iop2<<"] npar_combined="<<npar_combined<<" ijack="<<ijack<<endl;
-                                
                                 int ieq=0;
                                 for(int m1=0; m1<_nm; m1++)
                                     for(int m2=m1; m2<_nm; m2++)
@@ -714,7 +712,10 @@ oper_t oper_t::chiral_extr()
                                         }
                                         pr_meslep_err_r1_r2[ieq] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_pr_meslep_ave_r1_r2[ieq]-pr_meslep_ave_r1_r2[ieq]*pr_meslep_ave_r1_r2[ieq]));
                                         
+                                        cout<<" ieq="<<ieq<<" [r1,r2]=["<<r1<<","<<r2<<"] ins="<<(ins?"QED":"LO")<<" [iop1,iop2]=["<<iop1<<","<<iop2<<"]"<<endl;
+                                        
                                         if(imom==0)
+                                        {
                                             cout<<" x["<<ieq<<"] = "<<coord_meslep[1][ieq]<<"\t y["<<ieq<<"] = "<<pr_meslep_ave_r1_r2[ieq]<<"\t dy["<<ieq<<"] = "<<pr_meslep_err_r1_r2[ieq]<<endl;
                                         
                                         ieq++;
