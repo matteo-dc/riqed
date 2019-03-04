@@ -712,10 +712,12 @@ oper_t oper_t::chiral_extr()
                                         }
                                         pr_meslep_err_r1_r2[ieq] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_pr_meslep_ave_r1_r2[ieq]-pr_meslep_ave_r1_r2[ieq]*pr_meslep_ave_r1_r2[ieq]));
                                         
-                                        cout<<" ieq="<<ieq<<" [r1,r2]=["<<r1<<","<<r2<<"] ins="<<(ins?"QED":"LO")<<" [iop1,iop2]=["<<iop1<<","<<iop2<<"]"<<endl;
                                         
                                         if(imom==0)
+                                        {
+                                            cout<<" ieq="<<ieq<<" [r1,r2]=["<<r1<<","<<r2<<"] ins="<<(ins?"QED":"LO")<<" [iop1,iop2]=["<<iop1<<","<<iop2<<"]"<<endl;
                                             cout<<" x["<<ieq<<"] = "<<coord_meslep[1][ieq]<<"\t y["<<ieq<<"] = "<<pr_meslep_ave_r1_r2[ieq]<<"\t dy["<<ieq<<"] = "<<pr_meslep_err_r1_r2[ieq]<<endl;
+                                        }
                                         
                                         ieq++;
                                     }
@@ -740,11 +742,11 @@ oper_t oper_t::chiral_extr()
                                 for(int ijack=0;ijack<njacks;ijack++)
                                    (out.jpr_meslep)[imom][ins][iop1][iop2][ijack][r1][r2] = jpr_meslep_pars[ijack][0];
                             
-                                for(int ijack=0;ijack<njacks;ijack++)
-                                {
-                                cout<<"imom="<<imom<<" [r1,r2]=["<<r1<<","<<r2<<"] ins="<<(ins?"QED":"LO")<<" [iop1,iop2]=["<<iop1<<","<<iop2<<"] npar_combined="<<npar_combined<<" ijack="<<ijack<<endl;
-                                    cout<<"\t A: "<<jpr_meslep_pars[ijack][0]<<"\t B: "<<jpr_meslep_pars[ijack][1]<<"\t C: "<<(npar_combined<npar_meslep_max?0.0:jpr_meslep_pars[ijack][2])<<endl;
-                                }
+//                                for(int ijack=0;ijack<njacks;ijack++)
+//                                {
+//                                cout<<"imom="<<imom<<" [r1,r2]=["<<r1<<","<<r2<<"] ins="<<(ins?"QED":"LO")<<" [iop1,iop2]=["<<iop1<<","<<iop2<<"] npar_combined="<<npar_combined<<" ijack="<<ijack<<endl;
+//                                    cout<<"\t A: "<<jpr_meslep_pars[ijack][0]<<"\t B: "<<jpr_meslep_pars[ijack][1]<<"\t C: "<<(npar_combined<npar_meslep_max?0.0:jpr_meslep_pars[ijack][2])<<endl;
+//                                }
                                 
                             }
         
