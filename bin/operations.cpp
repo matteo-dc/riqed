@@ -719,9 +719,8 @@ oper_t oper_t::chiral_extr()
                                         
                                         if(imom==0)
                                         {
-                                            cout<<" --- ijack = 0 ---"<<endl;
                                             cout.precision(16);
-                                            cout<<coord_meslep[1][ieq]<<jpr_meslep_r1_r2[0][ieq]<<pr_meslep_err_r1_r2[ieq]<<endl;
+                                            cout<<coord_meslep[1][ieq]<<"\t"<<jpr_meslep_r1_r2[0][ieq]<<"\t"<<pr_meslep_err_r1_r2[ieq]<<endl;
                                         }
                                         
                                         ieq++;
