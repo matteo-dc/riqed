@@ -738,7 +738,7 @@ oper_t oper_t::chiral_extr()
                                 for(int ijack=0;ijack<njacks;ijack++)
                                 {
                                 cout<<"imom="<<imom<<" [r1,r2]=["<<r1<<","<<r2<<"] ins="<<(ins?"QED":"LO")<<" [iop1,iop2]=["<<iop1<<","<<iop2<<"] npar_combined="<<npar_combined<<" ijack="<<ijack<<endl;
-                                cout<<"\t A: "<<jpr_meslep_pars[ijack][0]<<"\t B: "<<jpr_meslep_pars[ijack][1]<<"\t C: "<<jpr_meslep_pars[ijack][2]<<endl;
+                                    cout<<"\t A: "<<jpr_meslep_pars[ijack][0]<<"\t B: "<<jpr_meslep_pars[ijack][1]<<"\t C: "<<(npar_combined<npar_meslep_max?0.0:jpr_meslep_pars[ijack][2])<<endl;
                                 }
                                 
                             }
