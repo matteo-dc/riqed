@@ -719,6 +719,7 @@ oper_t oper_t::chiral_extr()
                                         
                                         if(imom==0)
                                         {
+                                            cout.precision(16);
                                             cout<<" x["<<ieq<<"] = "<<coord_meslep[1][ieq]<<"\t y["<<ieq<<"] = "<<pr_meslep_ave_r1_r2[ieq]<<"\t dy["<<ieq<<"] = "<<pr_meslep_err_r1_r2[ieq]<<endl;
                                         }
                                         
