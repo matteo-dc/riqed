@@ -423,14 +423,14 @@ oper_t oper_t::average_r()
             
             vector<double> p2t;
             
-            if(in._linmoms==moms)
+            if(out._linmoms==moms)
             {
-                p2t.resize(in._linmoms);
+                p2t.resize(out._linmoms);
                 read_vec(p2t,path_print+"p2_tilde.txt");
             }
             else
             {
-                p2t.resize(in._linmoms);
+                p2t.resize(out._linmoms);
                 read_vec(p2t,path_print+"p2_tilde_eqmoms.txt");
             }
             
