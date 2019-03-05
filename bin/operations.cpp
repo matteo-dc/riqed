@@ -421,6 +421,14 @@ oper_t oper_t::average_r()
             cout<<"r=[0,0] m=[1,0] pr_meslep "<<jpr_meslep[0][0][0][0][0][0+_nr*1][0+_nr*0]<<endl;
             cout<<"r=[1,1] m=[1,0] pr_meslep "<<jpr_meslep[0][0][0][0][0][1+_nr*1][1+_nr*0]<<endl;
             cout<<" --> "<<(out.jpr_meslep)[0][0][0][0][0][1][0]<<endl;
+            
+            cout<<"r=[0,1] m=[0,1] pr_meslep "<<jpr_meslep[0][0][0][0][0][0+_nr*0][1+_nr*1]<<endl;
+            cout<<"r=[1,0] m=[0,1] pr_meslep "<<jpr_meslep[0][0][0][0][0][1+_nr*0][0+_nr*1]<<endl;
+            //cout<<" --> "<<(out.jpr_meslep)[0][0][0][0][0][0][1]<<endl;
+            
+            cout<<"r=[0,1] m=[1,0] pr_meslep "<<jpr_meslep[0][0][0][0][0][0+_nr*1][1+_nr*0]<<endl;
+            cout<<"r=[1,0] m=[1,0] pr_meslep "<<jpr_meslep[0][0][0][0][0][1+_nr*1][0+_nr*0]<<endl;
+            //cout<<" --> "<<(out.jpr_meslep)[0][0][0][0][0][1][0]<<endl;
 
             
             cout<<endl;
