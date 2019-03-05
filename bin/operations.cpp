@@ -735,8 +735,8 @@ oper_t oper_t::chiral_extr()
                                         
                                         for(int ieq=0; ieq<=x_max ; ieq++)
                                         {
-                                        cout.precision(16);
-                                        cout<<coord_meslep[1][ieq]<<"\t"<<jpr_meslep_r1_r2[ijack][ieq]<<"\t"<<pr_meslep_err_r1_r2[ieq]<<endl;
+                                            cout.precision(16);
+                                            cout<<coord_meslep[1][ieq]<<"\t"<<jpr_meslep_r1_r2[ijack][ieq]<<"\t"<<pr_meslep_err_r1_r2[ieq]<<endl;
                                         }
                                         cout<<"------------------"<<endl;
                                         cout<<"\t A: "<<jpr_meslep_pars[ijack][0];
@@ -745,7 +745,8 @@ oper_t oper_t::chiral_extr()
                                             cout<<"\t C: "<<jpr_meslep_pars[ijack][2]<<endl;
                                         else
                                             cout<<endl;
-                                        }
+                                    }
+                                   cout<<"------------------"<<endl;
                                 }
 
                                 
