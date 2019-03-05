@@ -421,6 +421,19 @@ oper_t oper_t::average_r()
             vvvvvd_t Z_4f_err=get<1>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
             vvvvvd_t Z_4f_EM_err=get<1>(Z_4f_EM_ave_err);
             
+            vector<double> p2t;
+            
+            if(in._linmoms==moms)
+            {
+                p2t.resize(in._linmoms);
+                read_vec(p2t,path_print+"p2_tilde.txt");
+            }
+            else
+            {
+                p2t.resize(in._linmoms);
+                read_vec(p2t,path_print+"p2_tilde_eqmoms.txt");
+            }
+            
             for(int i=0;i<nbil*nbil;i++)
             {
                 int iop2=i%nbil;
