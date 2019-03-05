@@ -412,6 +412,8 @@ oper_t oper_t::average_r()
             
             out.compute_Z4f();
             
+            ///// DEBUG /////
+            
             Z4f_tup Z_4f_ave_err = ave_err_Z4f(out.jZ_4f);
             Z4f_tup Z_4f_EM_ave_err = ave_err_Z4f(out.jZ_4f_EM);
             
@@ -1339,6 +1341,60 @@ oper_t oper_t::average_equiv_moms()
                                                 jpr_meslep[imom][ins][iop1][iop2][ijack][mr1][mr2]/count_tag_bil_vector[tag];
         
         out.compute_Z4f();
+        
+        //// DEBUG /////
+        Z4f_tup Z_4f_ave_err = ave_err_Z4f(out.jZ_4f);
+        Z4f_tup Z_4f_EM_ave_err = ave_err_Z4f(out.jZ_4f_EM);
+        
+        vvvvvd_t Z_4f_ave=get<0>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
+        vvvvvd_t Z_4f_EM_ave=get<0>(Z_4f_EM_ave_err);
+        
+        vvvvvd_t Z_4f_err=get<1>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
+        vvvvvd_t Z_4f_EM_err=get<1>(Z_4f_EM_ave_err);
+        
+        vector<double> p2t;
+        
+        if(out._linmoms==moms)
+        {
+            p2t.resize(out._linmoms);
+            read_vec(p2t,path_print+"p2_tilde.txt");
+        }
+        else
+        {
+            p2t.resize(out._linmoms);
+            read_vec(p2t,path_print+"p2_tilde_eqmoms.txt");
+        }
+        
+        for(int i=0;i<nbil*nbil;i++)
+        {
+            int iop2=i%nbil;
+            int iop1=(i-iop2)/nbil;
+            
+            for(int m1=0; m1<_nm; m1++)
+                for(int m1=0; m1<_nm; m1++)
+                    for(int r1=0; r1<_nr; r1++)
+                        for(int r2=0; r2<_nr; r2++)
+                        {
+                            int mr1 = r1 + _nr*m1;
+                            int mr2 = r2 + _nr*m2;
+                            
+                            cout<<"------------------------"<<endl;
+                            cout<<"iop=["<<iop1<<","<<iop2<<"]  mass=["<<mA<<","<<mB<<"]  r=["<<r1<<","<<r2<<"] "<<endl;
+                            cout<<"------------------------"<<endl;
+                            
+                            for(int imom=0; imom<out._bilmoms; imom++)
+                            {
+                                //            int imomq = in.bilmoms[imom][0];
+                                //            cout<<"imomq: "<<imomq<<endl;
+                                //            int imomk = in.linmoms[imomq][0];
+                                int imomk = imom;   // NB: it works only for RIMOM!
+                                
+                                cout.precision(16);
+                                cout<<p2t[imomk]<<"\t"<<Z_4f_ave[imom][iop1][iop2][mr1][mr2]<<"\t"<<Z_4f_err[imom][iop1][iop2][mr1][mr2]<<endl;
+                            }
+                            
+                        }
+        
     }
 
     return out;
