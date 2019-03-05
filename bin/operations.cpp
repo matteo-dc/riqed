@@ -414,6 +414,10 @@ oper_t oper_t::average_r()
             
             ///// DEBUG /////
             
+            cout<<"r=[0,0] m=[0,1] pr_meslep "<<jpr_meslep[0][0][0][0][0][0+_nr*0][0+_nr*1]<<endl;
+            cout<<"r=[1,1] m=[0,1] pr_meslep "<<jpr_meslep[0][0][0][0][0][1+_nr*0][1+_nr*1]<<endl;
+            cout<<" --> "<<(out.jpr_meslep)[0][0][0][0][0][0][1]
+            
             Z4f_tup Z_4f_ave_err = ave_err_Z4f(out.jZ_4f);
             Z4f_tup Z_4f_EM_ave_err = ave_err_Z4f(out.jZ_4f_EM);
             
