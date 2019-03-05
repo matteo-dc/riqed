@@ -442,8 +442,9 @@ oper_t oper_t::average_r()
                 for(int mA=0; mA<_nm; mA++)
                     for(int mB=0; mB<_nm; mB++)
                     {
+                        cout<<"------------------------"<<endl;
                         cout<<"iop=["<<iop1<<","<<iop2<<"]  mass=["<<mA<<","<<mB<<"] "<<endl;
-                        cout<<"------------------"<<endl;
+                        cout<<"------------------------"<<endl;
                         
                         for(int imom=0; imom<out._bilmoms; imom++)
                         {
@@ -452,6 +453,7 @@ oper_t oper_t::average_r()
                             //            int imomk = in.linmoms[imomq][0];
                             int imomk = imom;   // NB: it works only for RIMOM!
                             
+                            cout.precision(16);
                             cout<<p2t[imomk]<<"\t"<<Z_4f_ave[imom][iop1][iop2][mA][mB]<<"\t"<<Z_4f_err[imom][iop1][iop2][mA][mB]<<endl;
                         }
                         
