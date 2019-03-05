@@ -59,8 +59,7 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
     
     for(int igam=0;igam<meslep::nGamma;igam++)
         for(int iproj=0;iproj<meslep::nGamma;iproj++)
-            for(int ijack=0;ijack<njacks;ijack++)
-                cout<<"igam "<<igam<<" iproj "<<iproj<<" ijack "<<ijack<<" mesloop "<<mesloop[lprop::LO][ijack][igam][iproj]<<endl;
+            cout<<"igam "<<igam<<" iproj "<<iproj<<" mesloop "<<mesloop[lprop::LO][0][igam][iproj]<<endl;
     
     return mesloop;
 }
