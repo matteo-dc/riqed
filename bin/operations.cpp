@@ -411,6 +411,45 @@ oper_t oper_t::average_r()
                                                 jpr_meslep[imeslepmom][ins][iop1][iop2][ijack][r+_nr*mA][r+_nr*mB]/_nr;
             
             out.compute_Z4f();
+            
+            Z4f_tup Z_4f_ave_err = ave_err_Z4f(out.jZ_4f);
+            Z4f_tup Z_4f_EM_ave_err = ave_err_Z4f(out.jZ_4f_EM);
+            
+            vvvvvd_t Z_4f_ave=get<0>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
+            vvvvvd_t Z_4f_EM_ave=get<0>(Z_4f_EM_ave_err);
+            
+            vvvvvd_t Z_4f_err=get<1>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
+            vvvvvd_t Z_4f_EM_err=get<1>(Z_4f_EM_ave_err);
+            
+            for(int i=0;i<nbil*nbil;i++)
+            {
+                int iop2=i%nbil;
+                int iop1=(i-iop2)/nbil;
+                
+                for(int mA=0; mA<_nm; mA++)
+                    for(int mB=0; mB<_nm; mB++)
+                    {
+                        cout<<"iop=["<<iop1<<","<<iop2<<"]  mass=["<<mA<<","<<mB<<"] "<<endl;
+                        cout<<"------------------"<<endl;
+                        
+                        for(int imom=0; imom<out._bilmoms; imom++)
+                        {
+                            //            int imomq = in.bilmoms[imom][0];
+                            //            cout<<"imomq: "<<imomq<<endl;
+                            //            int imomk = in.linmoms[imomq][0];
+                            int imomk = imom;   // NB: it works only for RIMOM!
+                            
+                            cout<<p2t[imomk]<<"\t"<<Z_4f_ave[imom][iop1][iop2][mA][mB]<<"\t"<<Z_4f_err[imom][iop1][iop2][mA][mB]<<endl;
+                        }
+                        
+                    }
+            }
+            
+           
+            
+            
+
+            
         }
     }
     
@@ -770,6 +809,7 @@ oper_t oper_t::chiral_extr()
                             }
         
         out.compute_Z4f();
+    
     }
 
     return out;
