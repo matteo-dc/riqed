@@ -1371,7 +1371,7 @@ oper_t oper_t::average_equiv_moms()
             int iop1=(i-iop2)/nbil;
             
             for(int m1=0; m1<_nm; m1++)
-                for(int m1=0; m1<_nm; m1++)
+                for(int m2=0; m2<_nm; m2++)
                     for(int r1=0; r1<_nr; r1++)
                         for(int r2=0; r2<_nr; r2++)
                         {
@@ -1379,7 +1379,7 @@ oper_t oper_t::average_equiv_moms()
                             int mr2 = r2 + _nr*m2;
                             
                             cout<<"------------------------"<<endl;
-                            cout<<"iop=["<<iop1<<","<<iop2<<"]  mass=["<<mA<<","<<mB<<"]  r=["<<r1<<","<<r2<<"] "<<endl;
+                            cout<<"iop=["<<iop1<<","<<iop2<<"]  mass=["<<m1<<","<<m2<<"]  r=["<<r1<<","<<r2<<"] "<<endl;
                             cout<<"------------------------"<<endl;
                             
                             for(int imom=0; imom<out._bilmoms; imom++)
@@ -1394,9 +1394,8 @@ oper_t oper_t::average_equiv_moms()
                             }
                             
                         }
-        
+        }
     }
-
     return out;
 }
 
