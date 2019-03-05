@@ -41,7 +41,7 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
     // nGamma*nProj=11*11=121 for LO and EM
     
     using namespace meslep;
-        
+    
 #pragma omp parallel for collapse (3)
     for(int ijack=0;ijack<njacks;ijack++)
         for(int igam=0;igam<meslep::nGamma;igam++)
@@ -56,6 +56,11 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
                 mesloop[lprop::LO][ijack][igam][iproj] = (op*pr).trace()/12.0;
                 mesloop[lprop::F ][ijack][igam][iproj] = (op*pF*amp*pr).trace()/12.0;
             }
+    
+    for(int igam=0;igam<meslep::nGamma;igam++)
+        for(int iproj=0;iproj<meslep::nGamma;iproj++)
+            for(int ijack=0;ijack<njacks;ijack++)
+                cout<<"igam "<<igam<<" iproj "iproj<<" ijack "<<ijack<<" mesloop "<<mesloop[lprop::LO][ijack][igam][iproj]<<endl;
     
     return mesloop;
 }
