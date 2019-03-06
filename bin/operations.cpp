@@ -396,6 +396,24 @@ oper_t oper_t::average_r()
         
         out.compute_Zbil();
         
+        cout<<"r=[0,0] m=[0,0] jG_V "<<jG[0][0][1][0][0+_nr*0][0+_nr*0]<<endl;
+        cout<<"r=[1,1] m=[0,0] jG_V "<<jG[0][0][1][0][1+_nr*0][1+_nr*0]<<endl;
+        cout<<" --> "<<(out.jG)[0][0][1][0][0][1]<<endl;
+        
+        cout<<"r=[0,0] m=[1,1] jG_V  "<<jG[0][0][1][0][0+_nr*1][0+_nr*1]<<endl;
+        cout<<"r=[1,1] m=[1,1] jG_V  "<<jG[0][0][1][0][1+_nr*1][1+_nr*1]<<endl;
+        cout<<" --> "<<(out.jG)[0][0][1][0][1][0]<<endl;
+        
+        cout<<"r=[0,0] m=[0,0] jG_A "<<jG[0][0][3][0][0+_nr*0][0+_nr*0]<<endl;
+        cout<<"r=[1,1] m=[0,0] jG_A "<<jG[0][0][3][0][1+_nr*0][1+_nr*0]<<endl;
+        cout<<" --> "<<(out.jG)[0][0][3][0][0][1]<<endl;
+        
+        cout<<"r=[0,0] m=[1,1] jG_A  "<<jG[0][0][3][0][0+_nr*1][0+_nr*1]<<endl;
+        cout<<"r=[1,1] m=[1,1] jG_A  "<<jG[0][0][3][0][1+_nr*1][1+_nr*1]<<endl;
+        cout<<" --> "<<(out.jG)[0][0][3][0][1][0]<<endl;
+
+        cout<<"--------"<<endl;
+        
         cout<<"r=[0,0] m=[0,1] jG_V "<<jG[0][0][1][0][0+_nr*0][0+_nr*1]<<endl;
         cout<<"r=[1,1] m=[0,1] jG_V "<<jG[0][0][1][0][1+_nr*0][1+_nr*1]<<endl;
         cout<<" --> "<<(out.jG)[0][0][1][0][0][1]<<endl;
@@ -430,6 +448,16 @@ oper_t oper_t::average_r()
             out.compute_Z4f();
             
             ///// DEBUG /////
+            
+            cout<<"r=[0,0] m=[0,0] pr_meslep "<<jpr_meslep[0][0][0][0][0][0+_nr*0][0+_nr*0]<<endl;
+            cout<<"r=[1,1] m=[0,0] pr_meslep "<<jpr_meslep[0][0][0][0][0][1+_nr*0][1+_nr*0]<<endl;
+            cout<<" --> "<<(out.jpr_meslep)[0][0][0][0][0][0][0]<<endl;
+            
+            cout<<"r=[0,0] m=[1,1] pr_meslep "<<jpr_meslep[0][0][0][0][0][0+_nr*1][0+_nr*1]<<endl;
+            cout<<"r=[1,1] m=[1,1] pr_meslep "<<jpr_meslep[0][0][0][0][0][1+_nr*1][1+_nr*1]<<endl;
+            cout<<" --> "<<(out.jpr_meslep)[0][0][0][0][0][1][1]<<endl;
+
+            cout<<"--------"<<endl;
             
             cout<<"r=[0,0] m=[0,1] pr_meslep "<<jpr_meslep[0][0][0][0][0][0+_nr*0][0+_nr*1]<<endl;
             cout<<"r=[1,1] m=[0,1] pr_meslep "<<jpr_meslep[0][0][0][0][0][1+_nr*0][1+_nr*1]<<endl;
@@ -1379,58 +1407,58 @@ oper_t oper_t::average_equiv_moms()
         out.compute_Z4f();
         
         //// DEBUG /////
-        Z4f_tup Z_4f_ave_err = ave_err_Z4f(out.jZ_4f);
-        Z4f_tup Z_4f_EM_ave_err = ave_err_Z4f(out.jZ_4f_EM);
-        
-        vvvvvd_t Z_4f_ave=get<0>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
-        vvvvvd_t Z_4f_EM_ave=get<0>(Z_4f_EM_ave_err);
-        
-        vvvvvd_t Z_4f_err=get<1>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
-        vvvvvd_t Z_4f_EM_err=get<1>(Z_4f_EM_ave_err);
-        
-        vector<double> p2t;
-        
-        if(out._linmoms==moms)
-        {
-            p2t.resize(out._linmoms);
-            read_vec(p2t,path_print+"p2_tilde.txt");
-        }
-        else
-        {
-            p2t.resize(out._linmoms);
-            read_vec(p2t,path_print+"p2_tilde_eqmoms.txt");
-        }
-        
-        for(int i=0;i<nbil*nbil;i++)
-        {
-            int iop2=i%nbil;
-            int iop1=(i-iop2)/nbil;
-            
-            for(int m1=0; m1<_nm; m1++)
-                for(int m2=0; m2<_nm; m2++)
-                    for(int r1=0; r1<_nr; r1++)
-                        for(int r2=0; r2<_nr; r2++)
-                        {
-                            int mr1 = r1 + _nr*m1;
-                            int mr2 = r2 + _nr*m2;
-                            
-                            cout<<"------------------------"<<endl;
-                            cout<<"iop=["<<iop1<<","<<iop2<<"]  mass=["<<m1<<","<<m2<<"]  r=["<<r1<<","<<r2<<"] "<<endl;
-                            cout<<"------------------------"<<endl;
-                            
-                            for(int imom=0; imom<out._bilmoms; imom++)
-                            {
-                                //            int imomq = in.bilmoms[imom][0];
-                                //            cout<<"imomq: "<<imomq<<endl;
-                                //            int imomk = in.linmoms[imomq][0];
-                                int imomk = imom;   // NB: it works only for RIMOM!
-                                
-                                cout.precision(16);
-                                cout<<p2t[imomk]<<"\t"<<Z_4f_ave[imom][iop1][iop2][mr1][mr2]<<"\t"<<Z_4f_err[imom][iop1][iop2][mr1][mr2]<<endl;
-                            }
-                            
-                        }
-        }
+//        Z4f_tup Z_4f_ave_err = ave_err_Z4f(out.jZ_4f);
+//        Z4f_tup Z_4f_EM_ave_err = ave_err_Z4f(out.jZ_4f_EM);
+//        
+//        vvvvvd_t Z_4f_ave=get<0>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
+//        vvvvvd_t Z_4f_EM_ave=get<0>(Z_4f_EM_ave_err);
+//        
+//        vvvvvd_t Z_4f_err=get<1>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
+//        vvvvvd_t Z_4f_EM_err=get<1>(Z_4f_EM_ave_err);
+//        
+//        vector<double> p2t;
+//        
+//        if(out._linmoms==moms)
+//        {
+//            p2t.resize(out._linmoms);
+//            read_vec(p2t,path_print+"p2_tilde.txt");
+//        }
+//        else
+//        {
+//            p2t.resize(out._linmoms);
+//            read_vec(p2t,path_print+"p2_tilde_eqmoms.txt");
+//        }
+//        
+//        for(int i=0;i<nbil*nbil;i++)
+//        {
+//            int iop2=i%nbil;
+//            int iop1=(i-iop2)/nbil;
+//            
+//            for(int m1=0; m1<_nm; m1++)
+//                for(int m2=0; m2<_nm; m2++)
+//                    for(int r1=0; r1<_nr; r1++)
+//                        for(int r2=0; r2<_nr; r2++)
+//                        {
+//                            int mr1 = r1 + _nr*m1;
+//                            int mr2 = r2 + _nr*m2;
+//                            
+//                            cout<<"------------------------"<<endl;
+//                            cout<<"iop=["<<iop1<<","<<iop2<<"]  mass=["<<m1<<","<<m2<<"]  r=["<<r1<<","<<r2<<"] "<<endl;
+//                            cout<<"------------------------"<<endl;
+//                            
+//                            for(int imom=0; imom<out._bilmoms; imom++)
+//                            {
+//                                //            int imomq = in.bilmoms[imom][0];
+//                                //            cout<<"imomq: "<<imomq<<endl;
+//                                //            int imomk = in.linmoms[imomq][0];
+//                                int imomk = imom;   // NB: it works only for RIMOM!
+//                                
+//                                cout.precision(16);
+//                                cout<<p2t[imomk]<<"\t"<<Z_4f_ave[imom][iop1][iop2][mr1][mr2]<<"\t"<<Z_4f_err[imom][iop1][iop2][mr1][mr2]<<endl;
+//                            }
+//                            
+//                        }
+//        } //end debug
     }
     return out;
 }
