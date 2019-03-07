@@ -800,9 +800,9 @@ oper_t oper_t::chiral_extr()
         for(int imom=0;imom<_meslepmoms;imom++)
             for(int r1=0; r1<_nr; r1++)
                 for(int r2=0; r2<_nr; r2++)
-                    for(int ins=0; ins<pr_meslep::nins; ins++)
-                        for(int iop1=0;iop1<nbil;iop1++)
-                            for(int iop2=0;iop2<nbil;iop2++)
+                    for(int iop1=0;iop1<nbil;iop1++)
+                        for(int iop2=0;iop2<nbil;iop2++)
+                            for(int ins=0; ins<pr_meslep::nins; ins++)
                             {
                                 vvd_t coord_meslep(vd_t(0.0,_nm*(_nm+1)/2),npar_meslep_max);
                                 
@@ -856,6 +856,9 @@ oper_t oper_t::chiral_extr()
 //                                                jpr_meslep[imom][ins][iop1][iop2][ijack][mr1][mr2] -= varb + varc;
                                                 jpr_meslep_r1_r2[ijack][ieq] -= varb + varc;
                                             }
+                                        
+                                        // C'E' UN ERRORE FORSE NEL SALVATAGGIO DEI PARAMETRI DI QCD. NON DIPENDONO DA iop1 E iop2. CHE STO COMBINANDO?
+                                        // IL LOOP PIU' INTERNO DEVE ESSERE SULL'INSERZIONE!!!
                                         
                                         for(int ijack=0;ijack<njacks;ijack++)
                                         {
