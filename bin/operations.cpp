@@ -853,13 +853,15 @@ oper_t oper_t::chiral_extr()
                                                 double varb = 2.0*b0*jM*jdM;
                                                 double varc = -2.0*c0*jdM/(jM*jM*jM);
                                                 
-                                                jpr_meslep[imom][ins][iop1][iop2][ijack][mr1][mr2] -= varb + varc;
+//                                                jpr_meslep[imom][ins][iop1][iop2][ijack][mr1][mr2] -= varb + varc;
+                                                jpr_meslep_r1_r2[ijack][ieq] -= varb + varc;
                                             }
                                         
                                         for(int ijack=0;ijack<njacks;ijack++)
                                         {
                                             // the average on the masses restores parity
-                                            jpr_meslep_r1_r2[ijack][ieq] =
+                                            jpr_meslep_r1_r2[ijack][ieq] +=
+//                                                    jpr_meslep[imom][ins][iop1][iop2][ijack][mr1][mr2];
                                                 (jpr_meslep[imom][ins][iop1][iop2][ijack][mr1][mr2]+
                                                  jpr_meslep[imom][ins][iop1][iop2][ijack][mr2][mr1])/2.0;
                                             
