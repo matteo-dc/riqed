@@ -55,17 +55,21 @@ vvvvdcompl_t build_mesloop(const vvprop_t &L)
                 // In the LO mesloop the external leptonic propagator is fully amputated (must be 1 if igam==iproj)
                 mesloop[lprop::LO][ijack][igam][iproj] = (op*pr).trace()/12.0;
                 mesloop[lprop::F ][ijack][igam][iproj] = (op*pF*amp*pr).trace()/12.0;
+                
+                // Solve the problem in tensor sector: the mesloop gives -1 for [igam,iproj]=[{5,6,7},{8,9,10}]!
             }
+#warning aggiustare!
     
-    for(int igam=0;igam<meslep::nGamma;igam++)
-        for(int iproj=0;iproj<meslep::nGamma;iproj++)
-        {
-            if(mesloop[lprop::LO][0][igam][iproj].real()==-1)
-            {
-                cout<<"igam "<<igam<<"\t iproj "<<iproj<<"\t mesloop "<<mesloop[lprop::LO][0][igam][iproj];
-                cout<<"\t iG[igam] "<<iG[igam]<<"\t iG[iproj] "<<iG[iproj]<<"\t g5L_sign[igam] "<<g5L_sign[igam]<<"\t g5L_sign[iproj] "<<g5L_sign[iproj]<<endl;
-            }
-        }
+// DEBUG
+//    for(int igam=0;igam<meslep::nGamma;igam++)
+//        for(int iproj=0;iproj<meslep::nGamma;iproj++)
+//        {
+//            if(mesloop[lprop::LO][0][igam][iproj].real()==-1)
+//            {
+//                cout<<"igam "<<igam<<"\t iproj "<<iproj<<"\t mesloop "<<mesloop[lprop::LO][0][igam][iproj];
+//                cout<<"\t iG[igam] "<<iG[igam]<<"\t iG[iproj] "<<iG[iproj]<<"\t g5L_sign[igam] "<<g5L_sign[igam]<<"\t g5L_sign[iproj] "<<g5L_sign[iproj]<<endl;
+//            }
+//        }
     
     return mesloop;
 }
