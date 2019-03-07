@@ -858,8 +858,10 @@ oper_t oper_t::chiral_extr()
                                         
                                         for(int ijack=0;ijack<njacks;ijack++)
                                         {
+                                            // the average on the masses restores parity
                                             jpr_meslep_r1_r2[ijack][ieq] =
-                                                jpr_meslep[imom][ins][iop1][iop2][ijack][mr1][mr2];
+                                                (jpr_meslep[imom][ins][iop1][iop2][ijack][mr1][mr2]+
+                                                 jpr_meslep[imom][ins][iop1][iop2][ijack][mr2][mr1])/2.0;
                                             
                                             pr_meslep_ave_r1_r2[ieq] +=
                                                 jpr_meslep_r1_r2[ijack][ieq]/njacks;
