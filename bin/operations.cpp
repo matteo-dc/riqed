@@ -1345,7 +1345,7 @@ oper_t compute_eta(voper_t in) // in[loop]
     for(int imom=0;imom<out._linmoms;imom++)
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mr=0;mr<out._nmr;mr++)
-                (out.jZq)[imom][ijack][mr] =
+                (out.jZq_EM)[imom][ijack][mr] =
                     (in[0].jZq_EM)[imom][ijack][mr] -
                     (in[1].jZq_EM)[imom][ijack][mr];
     // Zbil
