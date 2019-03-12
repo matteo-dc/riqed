@@ -183,14 +183,14 @@ int main(int narg,char **arg)
         
     } //close nloop
     
-//    if(eta_analysis)
-//        for(int b=0; b<nbeta; b++)
-//            for(int th=0; th<ntheta; th++)
-//                for(int m=0; m<nm_Sea[b]; m++)
-//                {
-//                    eta[b][th][m] = compute_eta(oper_for_eta[b][th][m]);
-//                    eta[b][th][m].plot("eta");
-//                }
+    if(eta_analysis)
+        for(int b=0; b<nbeta; b++)
+            for(int th=0; th<ntheta; th++)
+                for(int m=0; m<nm_Sea[b]; m++)
+                {
+                    eta[b][th][m] = compute_eta(oper_for_eta[b][th][m]);
+                    eta[b][th][m].plot("eta");
+                }
     
 
 //    if(nbeta>1 and only_basic==0)
