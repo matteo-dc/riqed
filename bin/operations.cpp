@@ -1402,29 +1402,32 @@ void oper_t::load(const string suffix)
     }
     else
     {
-        cout<<"Cannot open files of averaged quantities."<<endl;
+        cout<<"Cannot open files of "<<suffix<<" quantities."<<endl;
         exit(0);
     }
     
-    ifstream jZq_data(path_print+"jZq_"+suffix), jZq_EM_data(path_print+"jZq_EM_"+suffix);
-    ifstream jZ_data(path_print+"jZ_"+suffix),  jZ_EM_data(path_print+"jZ_EM_"+suffix);
-    ifstream jZ_4f_data(path_print+"jZ_4f_"+suffix),  jZ_4f_EM_data(path_print+"jZ_4f_EM_"+suffix);
-    
-    if(jZq_data.good() and jZ_data.good() and jZ_4f_data.good() and
-       jZq_EM_data.good() and jZ_EM_data.good() and jZ_4f_EM_data.good())
+    if(suffix.compare("chir")==1)
     {
-        cout<<"Loading averaged quantities from files."<<endl;
-        read_vec_bin(jZq,path_print+"jZq_"+suffix);
-        read_vec_bin(jZ,path_print+"jZ_"+suffix);
-        read_vec_bin(jZ_4f,path_print+"jZ_4f_"+suffix);
-        read_vec_bin(jZq_EM,path_print+"jZq_EM_"+suffix);
-        read_vec_bin(jZ_EM,path_print+"jZ_EM_"+suffix);
-        read_vec_bin(jZ_4f_EM,path_print+"jZ_4f_EM_"+suffix);
-    }
-    else
-    {
-        cout<<"Cannot open files of extrapolated RCs."<<endl;
-        exit(0);
+        ifstream jZq_data(path_print+"jZq_"+suffix), jZq_EM_data(path_print+"jZq_EM_"+suffix);
+        ifstream jZ_data(path_print+"jZ_"+suffix),  jZ_EM_data(path_print+"jZ_EM_"+suffix);
+        ifstream jZ_4f_data(path_print+"jZ_4f_"+suffix),  jZ_4f_EM_data(path_print+"jZ_4f_EM_"+suffix);
+        
+        if(jZq_data.good() and jZ_data.good() and jZ_4f_data.good() and
+           jZq_EM_data.good() and jZ_EM_data.good() and jZ_4f_EM_data.good())
+        {
+            cout<<"Loading averaged quantities from files."<<endl;
+            read_vec_bin(jZq,path_print+"jZq_"+suffix);
+            read_vec_bin(jZ,path_print+"jZ_"+suffix);
+            read_vec_bin(jZ_4f,path_print+"jZ_4f_"+suffix);
+            read_vec_bin(jZq_EM,path_print+"jZq_EM_"+suffix);
+            read_vec_bin(jZ_EM,path_print+"jZ_EM_"+suffix);
+            read_vec_bin(jZ_4f_EM,path_print+"jZ_4f_EM_"+suffix);
+        }
+        else
+        {
+            cout<<"Cannot open files of "<<suffix<<" RCs."<<endl;
+            exit(0);
+        }
     }
 }
 
