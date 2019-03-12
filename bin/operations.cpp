@@ -1434,6 +1434,10 @@ void oper_t::load(const string suffix)
             exit(0);
         }
     }
+    
+    (*this).compute_Zq();
+    (*this).compute_Zbil();
+    (*this).compute_Z4f();
 }
 
 //voper_t a2p2_extr(voper_t in /*, const int LO_or_EM*/)  // M1 method
