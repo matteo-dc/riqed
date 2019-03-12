@@ -1339,7 +1339,7 @@ oper_t compute_eta(voper_t in) // in[loop]
     out.allocate_val();
     out.allocate();
     
-    out.path_to_ens = in[1].path_to_beta;
+    out.path_to_ens = in[1].path_to_beta + in[1].ensemble_name + "/";
     
     // Zq
     for(int imom=0;imom<out._linmoms;imom++)
