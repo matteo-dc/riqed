@@ -297,14 +297,14 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     set_ins();
     
     allocate_val();
-    if(!load_ave) allocate();
+    /*if(!load_ave) */ allocate();
     
     if(compute_mpcac)
     {
         compute_mPCAC("");
         if(!free_analysis) compute_mPCAC("sea");
     }
-    if(UseEffMass)
+    if(UseEffMass and !free_analysis and !recompute_basic)
     {
         eff_mass=read_eff_mass(path_to_ens+"eff_mass_array");
         eff_mass_corr=read_eff_mass_corr(path_to_ens+"eff_mass_corr_array");
@@ -312,7 +312,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
         eff_mass_time=read_eff_mass_time(path_to_ens+"eff_mass_array_time");
         eff_mass_corr_time=read_eff_mass_corr_time(path_to_ens+"eff_mass_corr_array_time");
         
-        if(_nm_Sea>1 and !free_analysis)
+        if(_nm_Sea>1 and !free_analysis and !recompute_basic)
             eff_mass_sea=read_eff_mass_sea(path_to_ens+"eff_mass_sea_array");
     }
     
@@ -362,9 +362,10 @@ oper_t oper_t::average_r()
     out.eff_mass=eff_mass;
     out.eff_mass_sea=eff_mass_sea;
     
+    out.allocate();
+    
     if(!load_ave)
     {
-        out.allocate();
         
 #pragma omp parallel for collapse(5)
         for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
@@ -1392,7 +1393,7 @@ void oper_t::printZ(const string suffix)
 
 void oper_t::load(const string suffix)
 {
-    (*this).allocate();
+    /*(*this).allocate();*/
     
     ifstream sigma_data(path_print+"sigmas_"+suffix);
     ifstream jG_data(path_print+"jG_"+suffix);
