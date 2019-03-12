@@ -1395,14 +1395,14 @@ void oper_t::load(const string suffix)
     
     if(sigma_data.good() and jG_data.good() and jpr_meslep_data.good())
     {
-        cout<<"Loading averaged quantities from files."<<endl;
+        cout<<"Loading averaged quantities from files in \""<<path_print<<"\"."<<endl;
         read_vec_bin(sigma,path_print+"sigmas_"+suffix);
         read_vec_bin(jG,path_print+"jG_"+suffix);
         read_vec_bin(jpr_meslep,path_print+"jpr_meslep_"+suffix);
     }
     else
     {
-        cout<<"Cannot open files of "<<suffix<<" quantities."<<endl;
+        cout<<"Cannot open files of "<<suffix<<" quantities in \""<<path_print<<"\"."<<endl;
         exit(0);
     }
     
@@ -1415,7 +1415,7 @@ void oper_t::load(const string suffix)
         if(jZq_data.good() and jZ_data.good() and jZ_4f_data.good() and
            jZq_EM_data.good() and jZ_EM_data.good() and jZ_4f_EM_data.good())
         {
-            cout<<"Loading averaged quantities from files."<<endl;
+            cout<<"Loading Z from files in \""<<path_print<<"\"."<<endl;
             read_vec_bin(jZq,path_print+"jZq_"+suffix);
             read_vec_bin(jZ,path_print+"jZ_"+suffix);
             read_vec_bin(jZ_4f,path_print+"jZ_4f_"+suffix);
@@ -1425,7 +1425,7 @@ void oper_t::load(const string suffix)
         }
         else
         {
-            cout<<"Cannot open files of "<<suffix<<" RCs."<<endl;
+            cout<<"Cannot open files of "<<suffix<<" Z in \""<<path_print<<"\"."<<endl;
             exit(0);
         }
     }

@@ -48,10 +48,15 @@ int main(int narg,char **arg)
     if(eta_analysis)
         nloop=2;
     
-//    int nm_Sea_max = max_element(nm_Sea.begin(),nm_Sea.end());
-    
-//    vvvvoper_t oper_for_eta(vvvoper_t(vvoper_t(voper_t(nloop),nm_Sea_max),ntheta),nbeta);
+    vvvvoper_t oper_for_eta(vvvoper_t(vvoper_t(voper_t(nloop),nm_Sea_max),ntheta),nbeta);
 //    vvvoper_t eta(vvoper_t(voper_t(nm_Sea_max),ntheta),nbeta);
+    
+    cout<<" oper_for_eta = ["<<oper_for_eta.size()<<"]["<<oper_for_eta[0].size()<<"]["<<oper_for_eta[0][0].size()<<"]["<<oper_for_eta[0][0][0].size()<<endl;
+    oper_for_eta[0][0].resize(1);
+    cout<<" oper_for_eta = ["<<oper_for_eta.size()<<"]["<<oper_for_eta[0].size()<<"]["<<oper_for_eta[0][0].size()<<"]["<<oper_for_eta[0][0][0].size()<<endl;
+
+    exit(0);
+    
     recompute_basic = false;
         
     for(int loop=0;loop<nloop;loop++)
@@ -103,32 +108,38 @@ int main(int narg,char **arg)
                         if(load_ave) rave[th][m].load("rave");
                         
                         /*  valence chiral extr  */
-                        
-                        if(free_analysis or recompute_basic)
+                        if(!load_chir)
                         {
-                            val_chir[th][m] = rave[th][m];
-                            val_chir[th][m].plot("chir");
-                            
-                            /* store extrapolated ingredients */
-                            if(!load_ave) val_chir[th][m].printZ("chir");
+                            if(free_analysis or recompute_basic)
+                            {
+                                val_chir[th][m] = rave[th][m];
+                                val_chir[th][m].plot("chir");
+                                
+                                /* store extrapolated ingredients */
+                                if(!load_ave) val_chir[th][m].printZ("chir");
+                            }
+                            else
+                            {
+                                val_chir[th][m] = rave[th][m].chiral_extr();
+                                val_chir[th][m].plot("chir");
+                                
+                                /* store extrapolated ingredients */
+                                if(!load_ave) val_chir[th][m].printZ("chir");
+                            }
                         }
                         else
                         {
-                            val_chir[th][m] = rave[th][m].chiral_extr();
-                            val_chir[th][m].plot("chir");
-                            
-                            /* store extrapolated ingredients */
-                            if(!load_ave) val_chir[th][m].printZ("chir");
+                            val_chir[th][m].load("chir");
                         }
                         
 //                        /* interpolation to p2ref (M2 method) */
 //                        
 //                        interpol_M2[th][m] = val_chir[th][m].interpolate_to_p2ref(b);
 //                        interpol_M2[th][m].plot("interpol_M2");
-                    }
+                   
+                    } //close if(!only_basic)
                     
-//                    oper_for_eta[b][th]
-//                    
+//
 //                    if(eta_analysis)
 //                        oper_for_eta[b][th][m][loop] = val_chir[th][m];
 

@@ -9,10 +9,11 @@
 #define DEFAULT_DOUBLE_VAL 1.2345
 
 // define global variables
-int nconfs, njacks, nr, ntypes, nhits, Nf, Nc, UseSigma1, UseEffMass, nbeta, ntheta, compute_4f,only_basic, compute_mpcac, load_ave;
+int nconfs, njacks, nr, ntypes, nhits, Nf, Nc, UseSigma1, UseEffMass, nbeta, ntheta, compute_4f,only_basic, compute_mpcac, load_ave, load_chir, load;
 int clust_size, nbil, combo, combo_lep, ntypes_lep;
 vector<double> beta;
 vector<int> nm_Sea;
+int nm_Sea_max;
 vector<vector<int>> SeaMasses_label; // SeaMasses_label[Nbeta][NSeaMass]
 int L, T;
 vector<double> ainv;
@@ -79,6 +80,7 @@ TK_glb_t get_TK_glb(FILE *fin)
     if(strcasecmp(tok,analysis_tag)==0) return ANALYSIS_TK;
     if(strcasecmp(tok,p2ref_tag)==0) return P2REF_TK;
     if(strcasecmp(tok,load_ave_tag)==0) return LOAD_AVE_TK;
+    if(strcasecmp(tok,load_chir_tag)==0) return LOAD_CHIR_TK;
     if(strcasecmp(tok,an_suffix_tag)==0) return SUFFIX_TK;
     
     return VALUE_GLB_TK;
@@ -264,6 +266,7 @@ void read_input_glb(const char path[])
     analysis=DEFAULT_STR_VAL;
     p2ref=DEFAULT_DOUBLE_VAL;
     load_ave=DEFAULT_INT_VAL;
+    load_chir=DEFAULT_INT_VAL;
     an_suffix=DEFAULT_STR_VAL;
     
 //    for(auto &bl : beta_label) bl=DEFAULT_STR_VAL;
@@ -397,6 +400,9 @@ void read_input_glb(const char path[])
             case LOAD_AVE_TK:
                 get_value(fin,load_ave);
                 break;
+            case LOAD_CHIR_TK:
+                get_value(fin,load_chir);
+                break;
             case SUFFIX_TK:
                 get_value(fin,an_suffix);
                 break;
@@ -439,6 +445,7 @@ void read_input_glb(const char path[])
     check_str_par(analysis,analysis_tag);
     check_double_par(p2ref,p2ref_tag);
     check_int_par(load_ave,load_ave_tag);
+    check_int_par(load_chir,load_chir_tag);
     check_str_par(an_suffix,an_suffix_tag);
     
     fclose(fin);
@@ -473,14 +480,19 @@ void read_input_glb(const char path[])
         nr=1;
     }
     
-    if(load_ave and only_basic)
+    load = (load_ave or load_chir);
+    
+    if(load and only_basic)
     {
-        cout<<"Cannot load averaged quantities in the only_basic mode."<<endl;
+        cout<<"Cannot load saved quantities in the only_basic mode."<<endl;
         exit(0);
     }
     
     // this is the path to the directory which contains 'print', 'plots', ecc.
     string full_path = path_folder+path_analysis[0]+"/";
+    
+    // evaluate max number of sea masses for the ensembles
+    nm_Sea_max = *max_element(nm_Sea.begin(),nm_Sea.end());
     
     //print input parameters
     printf("*------------------------------------------------------*\n");

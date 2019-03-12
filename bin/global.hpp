@@ -60,6 +60,8 @@ extern vector<string> theta_label;
 extern double kappa;
 // number of sea masses
 extern vector<int> nm_Sea;
+// max number of sea masses
+extern int nm_Sea_max;
 // sea masses label
 extern vector<vector<int>> SeaMasses_label;
 // sea masses label
@@ -129,4 +131,6 @@ extern bool recompute_basic;
 extern double p2ref;
 // load averaged quantities
 extern int load_ave;
+// load chiral extrapolated quantities
+extern int load_chir;
 #endif
