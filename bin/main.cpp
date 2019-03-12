@@ -49,7 +49,7 @@ int main(int narg,char **arg)
         nloop=2;
     
     vvvvoper_t oper_for_eta(vvvoper_t(vvoper_t(voper_t(nloop),nm_Sea_max),ntheta),nbeta);
-//    vvvoper_t eta(vvoper_t(voper_t(nm_Sea_max),ntheta),nbeta);
+    vvvoper_t eta(vvoper_t(voper_t(nm_Sea_max),ntheta),nbeta);
     
     recompute_basic = false;
         
