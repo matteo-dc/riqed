@@ -95,7 +95,6 @@ int main(int narg,char **arg)
                     
                     rave[th][m] = ave[th][m].average_r();
                     if(!load_ave) rave[th][m].plot("rave");
-                    if(load_ave) rave[th][m].plot("rave_test");
                     
                     /* store averaged ingredients */
                     if(!load_ave) rave[th][m].print("rave");
@@ -104,6 +103,7 @@ int main(int narg,char **arg)
                     {
                         /* load averaged ingredients if needed */
                         if(load_ave) rave[th][m].load("rave");
+                        if(load_ave) rave[th][m].plot("rave_test");
                         
                         /*  valence chiral extr  */
                         if(free_analysis or recompute_basic)
