@@ -51,12 +51,6 @@ int main(int narg,char **arg)
     vvvvoper_t oper_for_eta(vvvoper_t(vvoper_t(voper_t(nloop),nm_Sea_max),ntheta),nbeta);
 //    vvvoper_t eta(vvoper_t(voper_t(nm_Sea_max),ntheta),nbeta);
     
-    cout<<" oper_for_eta = ["<<oper_for_eta.size()<<"]["<<oper_for_eta[0].size()<<"]["<<oper_for_eta[0][0].size()<<"]["<<oper_for_eta[0][0][0].size()<<"]["<<oper_for_eta[0][0][0][0].size()<<"]"<<endl;
-    oper_for_eta[0][0].resize(1);
-    cout<<" oper_for_eta = ["<<oper_for_eta.size()<<"]["<<oper_for_eta[0].size()<<"]["<<oper_for_eta[0][0].size()<<"]["<<oper_for_eta[0][0][0].size()<<"]["<<oper_for_eta[0][0][0][0].size()<<"]"<<endl;
-
-    exit(0);
-    
     recompute_basic = false;
         
     for(int loop=0;loop<nloop;loop++)
@@ -139,9 +133,9 @@ int main(int narg,char **arg)
                    
                     } //close if(!only_basic)
                     
-//
-//                    if(eta_analysis)
-//                        oper_for_eta[b][th][m][loop] = val_chir[th][m];
+
+                    if(eta_analysis)
+                        oper_for_eta[b][th][m][loop] = val_chir[th][m];
 
                     
                 } //close nm_sea
