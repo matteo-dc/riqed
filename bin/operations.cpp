@@ -396,57 +396,6 @@ oper_t oper_t::average_r()
         
         out.compute_Zbil();
         
-//        cout<<"r=[0,0] m=[0,0] jG_S "<<jG[0][0][0][0][0+_nr*0][0+_nr*0]<<endl;
-//        cout<<"r=[1,1] m=[0,0] jG_S "<<jG[0][0][0][0][1+_nr*0][1+_nr*0]<<endl;
-//        cout<<" --> "<<(out.jG)[0][0][0][0][0][0]<<endl;
-//        
-//        cout<<"r=[0,0] m=[1,1] jG_S  "<<jG[0][0][0][0][0+_nr*1][0+_nr*1]<<endl;
-//        cout<<"r=[1,1] m=[1,1] jG_S  "<<jG[0][0][0][0][1+_nr*1][1+_nr*1]<<endl;
-//        cout<<" --> "<<(out.jG)[0][0][0][0][1][1]<<endl;
-//        
-//        cout<<"r=[0,0] m=[0,0] jG_V "<<jG[0][0][1][0][0+_nr*0][0+_nr*0]<<endl;
-//        cout<<"r=[1,1] m=[0,0] jG_V "<<jG[0][0][1][0][1+_nr*0][1+_nr*0]<<endl;
-//        cout<<" --> "<<(out.jG)[0][0][1][0][0][0]<<endl;
-//        
-//        cout<<"r=[0,0] m=[1,1] jG_V  "<<jG[0][0][1][0][0+_nr*1][0+_nr*1]<<endl;
-//        cout<<"r=[1,1] m=[1,1] jG_V  "<<jG[0][0][1][0][1+_nr*1][1+_nr*1]<<endl;
-//        cout<<" --> "<<(out.jG)[0][0][1][0][1][1]<<endl;
-//        
-//        cout<<"r=[0,0] m=[0,0] jG_A "<<jG[0][0][3][0][0+_nr*0][0+_nr*0]<<endl;
-//        cout<<"r=[1,1] m=[0,0] jG_A "<<jG[0][0][3][0][1+_nr*0][1+_nr*0]<<endl;
-//        cout<<" --> "<<(out.jG)[0][0][3][0][0][0]<<endl;
-//        
-//        cout<<"r=[0,0] m=[1,1] jG_A  "<<jG[0][0][3][0][0+_nr*1][0+_nr*1]<<endl;
-//        cout<<"r=[1,1] m=[1,1] jG_A  "<<jG[0][0][3][0][1+_nr*1][1+_nr*1]<<endl;
-//        cout<<" --> "<<(out.jG)[0][0][3][0][1][1]<<endl;
-//
-//        cout<<"--------"<<endl;
-//        
-//        cout<<"r=[0,0] m=[0,1] jG_S "<<jG[0][0][0][0][0+_nr*0][0+_nr*1]<<endl;
-//        cout<<"r=[1,1] m=[0,1] jG_S "<<jG[0][0][0][0][1+_nr*0][1+_nr*1]<<endl;
-//        cout<<" --> "<<(out.jG)[0][0][0][0][0][1]<<endl;
-//        
-//        cout<<"r=[0,0] m=[1,0] jG_S  "<<jG[0][0][0][0][0+_nr*1][0+_nr*0]<<endl;
-//        cout<<"r=[1,1] m=[1,0] jG_S  "<<jG[0][0][0][0][1+_nr*1][1+_nr*0]<<endl;
-//        cout<<" --> "<<(out.jG)[0][0][0][0][1][0]<<endl;
-//        
-//        cout<<"r=[0,0] m=[0,1] jG_V "<<jG[0][0][1][0][0+_nr*0][0+_nr*1]<<endl;
-//        cout<<"r=[1,1] m=[0,1] jG_V "<<jG[0][0][1][0][1+_nr*0][1+_nr*1]<<endl;
-//        cout<<" --> "<<(out.jG)[0][0][1][0][0][1]<<endl;
-//        
-//        cout<<"r=[0,0] m=[1,0] jG_V  "<<jG[0][0][1][0][0+_nr*1][0+_nr*0]<<endl;
-//        cout<<"r=[1,1] m=[1,0] jG_V  "<<jG[0][0][1][0][1+_nr*1][1+_nr*0]<<endl;
-//        cout<<" --> "<<(out.jG)[0][0][1][0][1][0]<<endl;
-//        
-//        cout<<"r=[0,0] m=[0,1] jG_A "<<jG[0][0][3][0][0+_nr*0][0+_nr*1]<<endl;
-//        cout<<"r=[1,1] m=[0,1] jG_A "<<jG[0][0][3][0][1+_nr*0][1+_nr*1]<<endl;
-//        cout<<" --> "<<(out.jG)[0][0][3][0][0][1]<<endl;
-//        
-//        cout<<"r=[0,0] m=[1,0] jG_A  "<<jG[0][0][3][0][0+_nr*1][0+_nr*0]<<endl;
-//        cout<<"r=[1,1] m=[1,0] jG_A  "<<jG[0][0][3][0][1+_nr*1][1+_nr*0]<<endl;
-//        cout<<" --> "<<(out.jG)[0][0][3][0][1][0]<<endl;
-
-        
         if(compute_4f)
         {
 #pragma omp parallel for collapse(7)
@@ -463,101 +412,6 @@ oper_t oper_t::average_r()
             
             out.compute_Z4f();
             
-            ///// DEBUG /////
-//            
-//            cout<<"iop=[0,0] r=[0,0] m=[0,0] pr_meslep "<<jpr_meslep[0][0][0][0][0][0+_nr*0][0+_nr*0]<<endl;
-//            cout<<"iop=[0,0] r=[1,1] m=[0,0] pr_meslep "<<jpr_meslep[0][0][0][0][0][1+_nr*0][1+_nr*0]<<endl;
-//            cout<<" --> "<<(out.jpr_meslep)[0][0][0][0][0][0][0]<<endl;
-//            
-//            cout<<"iop=[0,0] r=[0,0] m=[1,1] pr_meslep "<<jpr_meslep[0][0][0][0][0][0+_nr*1][0+_nr*1]<<endl;
-//            cout<<"iop=[0,0] r=[1,1] m=[1,1] pr_meslep "<<jpr_meslep[0][0][0][0][0][1+_nr*1][1+_nr*1]<<endl;
-//            cout<<" --> "<<(out.jpr_meslep)[0][0][0][0][0][1][1]<<endl;
-//            
-//            cout<<"iop=[1,1] r=[0,0] m=[0,0] pr_meslep "<<jpr_meslep[0][0][1][1][0][0+_nr*0][0+_nr*0]<<endl;
-//            cout<<"iop=[1,1] r=[1,1] m=[0,0] pr_meslep "<<jpr_meslep[0][0][1][1][0][1+_nr*0][1+_nr*0]<<endl;
-//            cout<<" --> "<<(out.jpr_meslep)[0][0][1][1][0][0][0]<<endl;
-//            
-//            cout<<"iop=[1,1] r=[0,0] m=[1,1] pr_meslep "<<jpr_meslep[0][0][1][1][0][0+_nr*1][0+_nr*1]<<endl;
-//            cout<<"iop=[1,1] r=[1,1] m=[1,1] pr_meslep "<<jpr_meslep[0][0][1][1][0][1+_nr*1][1+_nr*1]<<endl;
-//            cout<<" --> "<<(out.jpr_meslep)[0][0][1][1][0][1][1]<<endl;
-//
-//            cout<<"--------"<<endl;
-//            
-//            cout<<"iop=[0,0] r=[0,0] m=[0,1] pr_meslep "<<jpr_meslep[0][0][0][0][0][0+_nr*0][0+_nr*1]<<endl;
-//            cout<<"iop=[0,0] r=[1,1] m=[0,1] pr_meslep "<<jpr_meslep[0][0][0][0][0][1+_nr*0][1+_nr*1]<<endl;
-//            cout<<" --> "<<(out.jpr_meslep)[0][0][0][0][0][0][1]<<endl;
-//            
-//            cout<<"iop=[0,0] r=[0,0] m=[1,0] pr_meslep "<<jpr_meslep[0][0][0][0][0][0+_nr*1][0+_nr*0]<<endl;
-//            cout<<"iop=[0,0] r=[1,1] m=[1,0] pr_meslep "<<jpr_meslep[0][0][0][0][0][1+_nr*1][1+_nr*0]<<endl;
-//            cout<<" --> "<<(out.jpr_meslep)[0][0][0][0][0][1][0]<<endl;
-//
-//            cout<<"iop=[1,1] r=[0,0] m=[0,1] pr_meslep "<<jpr_meslep[0][0][1][1][0][0+_nr*0][0+_nr*1]<<endl;
-//            cout<<"iop=[1,1] r=[1,1] m=[0,1] pr_meslep "<<jpr_meslep[0][0][1][1][0][1+_nr*0][1+_nr*1]<<endl;
-//            cout<<" --> "<<(out.jpr_meslep)[0][0][1][1][0][0][1]<<endl;
-//            
-//            cout<<"iop=[1,1] r=[0,0] m=[1,0] pr_meslep "<<jpr_meslep[0][0][1][1][0][0+_nr*1][0+_nr*0]<<endl;
-//            cout<<"iop=[1,1] r=[1,1] m=[1,0] pr_meslep "<<jpr_meslep[0][0][1][1][0][1+_nr*1][1+_nr*0]<<endl;
-//            cout<<" --> "<<(out.jpr_meslep)[0][0][1][1][0][1][0]<<endl;
-
-//            cout<<"r=[0,1] m=[0,1] pr_meslep "<<jpr_meslep[0][0][0][0][0][0+_nr*0][1+_nr*1]<<endl;
-//            cout<<"r=[1,0] m=[0,1] pr_meslep "<<jpr_meslep[0][0][0][0][0][1+_nr*0][0+_nr*1]<<endl;
-//            //cout<<" --> "<<(out.jpr_meslep)[0][0][0][0][0][0][1]<<endl;
-//            
-//            cout<<"r=[0,1] m=[1,0] pr_meslep "<<jpr_meslep[0][0][0][0][0][0+_nr*1][1+_nr*0]<<endl;
-//            cout<<"r=[1,0] m=[1,0] pr_meslep "<<jpr_meslep[0][0][0][0][0][1+_nr*1][0+_nr*0]<<endl;
-//            //cout<<" --> "<<(out.jpr_meslep)[0][0][0][0][0][1][0]<<endl;
-
-            
-//            cout<<endl;
-//            
-//            Z4f_tup Z_4f_ave_err = ave_err_Z4f(out.jZ_4f);
-//            Z4f_tup Z_4f_EM_ave_err = ave_err_Z4f(out.jZ_4f_EM);
-//            
-//            vvvvvd_t Z_4f_ave=get<0>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
-//            vvvvvd_t Z_4f_EM_ave=get<0>(Z_4f_EM_ave_err);
-//            
-//            vvvvvd_t Z_4f_err=get<1>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
-//            vvvvvd_t Z_4f_EM_err=get<1>(Z_4f_EM_ave_err);
-//            
-//            vector<double> p2t;
-//            
-//            if(out._linmoms==moms)
-//            {
-//                p2t.resize(out._linmoms);
-//                read_vec(p2t,path_print+"p2_tilde.txt");
-//            }
-//            else
-//            {
-//                p2t.resize(out._linmoms);
-//                read_vec(p2t,path_print+"p2_tilde_eqmoms.txt");
-//            }
-//            
-//            for(int i=0;i<nbil*nbil;i++)
-//            {
-//                int iop2=i%nbil;
-//                int iop1=(i-iop2)/nbil;
-//                
-//                for(int mA=0; mA<_nm; mA++)
-//                    for(int mB=0; mB<_nm; mB++)
-//                    {
-//                        cout<<"------------------------"<<endl;
-//                        cout<<"iop=["<<iop1<<","<<iop2<<"]  mass=["<<mA<<","<<mB<<"] "<<endl;
-//                        cout<<"------------------------"<<endl;
-//                        
-//                        for(int imom=0; imom<out._bilmoms; imom++)
-//                        {
-//                            //            int imomq = in.bilmoms[imom][0];
-//                            //            cout<<"imomq: "<<imomq<<endl;
-//                            //            int imomk = in.linmoms[imomq][0];
-//                            int imomk = imom;   // NB: it works only for RIMOM!
-//                            
-//                            cout.precision(16);
-//                            cout<<p2t[imomk]<<"\t"<<Z_4f_ave[imom][iop1][iop2][mA][mB]<<"\t"<<Z_4f_err[imom][iop1][iop2][mA][mB]<<endl;
-//                        }
-//                        
-//                    }
-//            }
-    
         }
     }
     
@@ -809,9 +663,6 @@ oper_t oper_t::chiral_extr()
                                 
                                 int ieq=0;
                                 
-//                                if(imom==0)
-//                                    cout<<" [r1,r2]=["<<r1<<","<<r2<<"] ins="<<(ins?"QED":"LO")<<" [iop1,iop2]=["<<iop1<<","<<iop2<<"]"<<endl;
-                                
                                 for(int m1=0; m1<_nm; m1++)
                                     for(int m2=m1; m2<_nm; m2++)
                                     {
@@ -874,33 +725,6 @@ oper_t oper_t::chiral_extr()
                                 int npar_combined = max(npar_meslep[iop1],npar_meslep[iop2]);
                                 
                                 vvd_t jpr_meslep_pars = polyfit(coord_meslep,npar_combined,pr_meslep_err_r1_r2,jpr_meslep_r1_r2,x_min,x_max);
-                                
-//                                if(imom==0)
-//                                {
-//                                    cout<<"imom="<<imom<<" [r1,r2]=["<<r1<<","<<r2<<"] ins="<<(ins?"QED":"LO")<<" [iop1,iop2]=["<<iop1<<","<<iop2<<"] npar_combined="<<npar_combined<<endl;
-//                                    
-//                                    for(int ijack=0;ijack<njacks;ijack++)
-//                                    {
-//                                        cout<<"------------------"<<endl;
-//                                        cout<<"  ijack="<<ijack<<endl;
-//                                        cout<<"------------------"<<endl;
-//                                        
-//                                        for(int ieq=0; ieq<=x_max ; ieq++)
-//                                        {
-//                                            cout.precision(16);
-//                                            cout<<coord_meslep[1][ieq]<<"\t"<<jpr_meslep_r1_r2[ijack][ieq]<<"\t"<<pr_meslep_err_r1_r2[ieq]<<endl;
-//                                        }
-//                                        cout<<"------------------"<<endl;
-//                                        cout<<"\t A: "<<jpr_meslep_pars[ijack][0];
-//                                        cout<<"\t B: "<<jpr_meslep_pars[ijack][1];
-//                                        if(jpr_meslep_pars[ijack].size()==npar_meslep_max)
-//                                            cout<<"\t C: "<<jpr_meslep_pars[ijack][2]<<endl;
-//                                        else
-//                                            cout<<endl;
-//                                    }
-//                                   cout<<"------------------"<<endl;
-//                                }
-
                                 
                                 //save fit parameters to be used to subtract dM
                                 if(ins==pr_meslep::LO)
@@ -1551,6 +1375,16 @@ void oper_t::print(const string suffix)
     print_vec_bin(jpr_meslep,path_print+"jpr_meslep_"+suffix);
 }
 
+void oper_t::printZ(const string suffix)
+{
+    print_vec_bin(jZq,path_print+"jZq_"+suffix);
+    print_vec_bin(jZ,path_print+"jZ_"+suffix);
+    print_vec_bin(jZ_4f,path_print+"jZ_4f_"+suffix);
+    print_vec_bin(jZq_EM,path_print+"jZq_EM_"+suffix);
+    print_vec_bin(jZ_EM,path_print+"jZ_EM_"+suffix);
+    print_vec_bin(jZ_4f_EM,path_print+"jZ_4f_EM_"+suffix);
+}
+
 void oper_t::load(const string suffix)
 {
     (*this).allocate();
@@ -1569,6 +1403,27 @@ void oper_t::load(const string suffix)
     else
     {
         cout<<"Cannot open files of averaged quantities."<<endl;
+        exit(0);
+    }
+    
+    ifstream jZq_data(path_print+"jZq_"+suffix), jZq_EM_data(path_print+"jZq_EM_"+suffix);
+    ifstream jZ_data(path_print+"jZ_"+suffix),  jZ_EM_data(path_print+"jZ_EM_"+suffix);
+    ifstream jZ_4f_data(path_print+"jZ_4f_"+suffix),  jZ_4f_EM_data(path_print+"jZ_4f_EM_"+suffix);
+    
+    if(jZq_data.good() and jZ_data.good() and jZ_4f_data.good() and
+       jZq_EM_data.good() and jZ_EM_data.good() and jZ_4f_EM_data.good())
+    {
+        cout<<"Loading averaged quantities from files."<<endl;
+        read_vec_bin(jZq,path_print+"jZq_"+suffix);
+        read_vec_bin(jZ,path_print+"jZ_"+suffix);
+        read_vec_bin(jZ_4f,path_print+"jZ_4f_"+suffix);
+        read_vec_bin(jZq_EM,path_print+"jZq_EM_"+suffix);
+        read_vec_bin(jZ_EM,path_print+"jZ_EM_"+suffix);
+        read_vec_bin(jZ_4f_EM,path_print+"jZ_4f_EM_"+suffix);
+    }
+    else
+    {
+        cout<<"Cannot open files of extrapolated RCs."<<endl;
         exit(0);
     }
 }

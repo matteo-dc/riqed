@@ -141,7 +141,10 @@ struct oper_t
     // print averaged quantities
     void print(const string suffix);
     
-    // load averaged quantities
+    // print extrapolated Z
+    void printZ(const string suffix);
+    
+    // load averaged quantities and extrapolated Z
     void load(const string suffix);
     
     // definition of sigmas: trace of propagator
@@ -213,6 +216,8 @@ struct oper_t
 using voper_t=valarray<oper_t>;
 using vvoper_t=valarray<voper_t>;
 using vvvoper_t=valarray<vvoper_t>;
+using vvvvoper_t=valarray<vvvoper_t>;
+using vvvvvoper_t=valarray<vvvvoper_t>;
 
 // chiral sea extrapolation
 oper_t chiral_sea_extr(valarray<oper_t> in);

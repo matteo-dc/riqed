@@ -48,8 +48,10 @@ int main(int narg,char **arg)
     if(eta_analysis)
         nloop=2;
     
-    vvoper_t oper_for_eta(voper_t(nloop),nbeta);
-    voper_t eta(nbeta);
+//    int nm_Sea_max = max_element(nm_Sea.begin(),nm_Sea.end());
+    
+//    vvvvoper_t oper_for_eta(vvvoper_t(vvoper_t(voper_t(nloop),nm_Sea_max),ntheta),nbeta);
+//    vvvoper_t eta(vvoper_t(voper_t(nm_Sea_max),ntheta),nbeta);
     recompute_basic = false;
         
     for(int loop=0;loop<nloop;loop++)
@@ -70,7 +72,8 @@ int main(int narg,char **arg)
             vvoper_t rave(voper_t(nm_Sea[b]),ntheta);
             
             vvoper_t val_chir(voper_t(nm_Sea[b]),ntheta);
-            vvoper_t interpol_M2(voper_t(nm_Sea[b]),ntheta);
+//            vvoper_t interpol_M2(voper_t(nm_Sea[b]),ntheta);
+            
             
             for(int th=0; th<ntheta; th++)
             {
@@ -102,11 +105,20 @@ int main(int narg,char **arg)
                         /*  valence chiral extr  */
                         
                         if(free_analysis or recompute_basic)
+                        {
                             val_chir[th][m] = rave[th][m];
+                            val_chir[th][m].plot("chir");
+                            
+                            /* store extrapolated ingredients */
+                            if(!load_ave) val_chir[th][m].printZ("chir");
+                        }
                         else
                         {
                             val_chir[th][m] = rave[th][m].chiral_extr();
                             val_chir[th][m].plot("chir");
+                            
+                            /* store extrapolated ingredients */
+                            if(!load_ave) val_chir[th][m].printZ("chir");
                         }
                         
 //                        /* interpolation to p2ref (M2 method) */
@@ -115,55 +127,65 @@ int main(int narg,char **arg)
 //                        interpol_M2[th][m].plot("interpol_M2");
                     }
                     
+//                    oper_for_eta[b][th]
+//                    
+//                    if(eta_analysis)
+//                        oper_for_eta[b][th][m][loop] = val_chir[th][m];
+
+                    
                 } //close nm_sea
                 
-                /*  sea chiral extr  */
-                
-                if(!only_basic)
-                {
-                    if(nm_Sea[b]>1 and (!free_analysis or !recompute_basic))
-                    {
-                        sea_chir[b][th] = chiral_sea_extr(val_chir[th]);
-                        sea_chir[b][th].plot(theta_label[th]+"/sea");
-                    }
-                    else
-                        sea_chir[b][th] = val_chir[th][0];
-                }
+//                /*  sea chiral extr  */
+//                
+//                if(!only_basic)
+//                {
+//                    if(nm_Sea[b]>1 and (!free_analysis or !recompute_basic))
+//                    {
+//                        sea_chir[b][th] = chiral_sea_extr(val_chir[th]);
+//                        sea_chir[b][th].plot(theta_label[th]+"/sea");
+//                    }
+//                    else
+//                        sea_chir[b][th] = val_chir[th][0];
+//                }
+
             } //close ntheta
             
-            if(!only_basic)
-            {
-                if(ntheta>1)
-                {
-                    /*  theta average  */
-                    
-                    theta_ave[b] = theta_average(sea_chir[b]);
-                    theta_ave[b].plot("theta");
-                    
-                    /*  evolution to 1/a  */
-                    
-//                    rave_ave_chir_sub_sea_theta_evo[b] = rave_ave_chir_sub_sea_theta[b].evolve(b);
-//                    rave_ave_chir_sub_sea_theta_evo[b].plot("rave_ave_chir_sub_sea_theta_evo");
-                }
-                else
-                    theta_ave[b] = sea_chir[b][0];
-            }
+//            if(!only_basic)
+//            {
+//                if(ntheta>1)
+//                {
+//                    /*  theta average  */
+//                    
+//                    theta_ave[b] = theta_average(sea_chir[b]);
+//                    theta_ave[b].plot("theta");
+//                    
+//                    /*  evolution to 1/a  */
+//                    
+////                    rave_ave_chir_sub_sea_theta_evo[b] = rave_ave_chir_sub_sea_theta[b].evolve(b);
+////                    rave_ave_chir_sub_sea_theta_evo[b].plot("rave_ave_chir_sub_sea_theta_evo");
+//                }
+//                else
+//                    theta_ave[b] = sea_chir[b][0];
+//            }
             
             /* store for eta */
             
-            if(eta_analysis)
-                oper_for_eta[b][loop] = theta_ave[b];
-            
+//            if(eta_analysis)
+//                oper_for_eta[b][loop] = theta_ave[b];
+
+         
         } //close nbeta
         
     } //close nloop
     
-    if(eta_analysis)
-        for(int b=0; b<nbeta; b++)
-        {
-            eta[b] = compute_eta(oper_for_eta[b]);
-            eta[b].plot("eta");
-        }
+//    if(eta_analysis)
+//        for(int b=0; b<nbeta; b++)
+//            for(int th=0; th<ntheta; th++)
+//                for(int m=0; m<nm_Sea[b]; m++)
+//                {
+//                    eta[b][th][m] = compute_eta(oper_for_eta[b][th][m]);
+//                    eta[b][th][m].plot("eta");
+//                }
     
 
 //    if(nbeta>1 and only_basic==0)
