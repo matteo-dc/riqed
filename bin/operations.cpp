@@ -297,7 +297,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     set_ins();
     
     allocate_val();
-    /*if(!load_ave) */ allocate();
+    if(!load_ave) allocate();
     
     if(compute_mpcac)
     {
@@ -362,10 +362,9 @@ oper_t oper_t::average_r()
     out.eff_mass=eff_mass;
     out.eff_mass_sea=eff_mass_sea;
     
-    out.allocate();
-    
     if(!load_ave)
     {
+        out.allocate();
         
 #pragma omp parallel for collapse(5)
         for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
@@ -1393,7 +1392,7 @@ void oper_t::printZ(const string suffix)
 
 void oper_t::load(const string suffix)
 {
-    /*(*this).allocate();*/
+    (*this).allocate();
     
     ifstream sigma_data(path_print+"sigmas_"+suffix);
     ifstream jG_data(path_print+"jG_"+suffix);
