@@ -55,6 +55,9 @@ int main(int narg,char **arg)
         
     for(int loop=0;loop<nloop;loop++)
     {
+        if(nloop>1)
+            cout<<" ********** LOOP "<<loop<<" ********** "<<endl;
+        
         vvoper_t sea_chir(voper_t(ntheta),nbeta);
         voper_t  theta_ave(nbeta);
         voper_t  p2extr(nbeta);
