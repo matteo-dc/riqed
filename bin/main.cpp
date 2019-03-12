@@ -105,29 +105,23 @@ int main(int narg,char **arg)
                         if(load_ave) rave[th][m].load("rave");
                         
                         /*  valence chiral extr  */
-                        if(!load_chir)
+                        if(free_analysis or recompute_basic)
                         {
-                            if(free_analysis or recompute_basic)
-                            {
-                                val_chir[th][m] = rave[th][m];
-                                val_chir[th][m].plot("chir");
-                                
-                                /* store extrapolated ingredients */
-                                if(!load_ave) val_chir[th][m].printZ("chir");
-                            }
-                            else
-                            {
-                                val_chir[th][m] = rave[th][m].chiral_extr();
-                                val_chir[th][m].plot("chir");
-                                
-                                /* store extrapolated ingredients */
-                                if(!load_ave) val_chir[th][m].printZ("chir");
-                            }
+                            val_chir[th][m] = rave[th][m];
+                            val_chir[th][m].plot("chir");
+                            
+                            /* store extrapolated ingredients */
+                            if(!load_chir) val_chir[th][m].printZ("chir");
                         }
                         else
                         {
-                            val_chir[th][m].load("chir");
+                            val_chir[th][m] = rave[th][m].chiral_extr();
+                            val_chir[th][m].plot("chir");
+                            
+                            /* store extrapolated ingredients */
+                            if(!load_chir) val_chir[th][m].printZ("chir");
                         }
+                        
                         
 //                        /* interpolation to p2ref (M2 method) */
 //                        
