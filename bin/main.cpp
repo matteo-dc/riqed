@@ -182,12 +182,25 @@ int main(int narg,char **arg)
     
     if(eta_analysis)
         for(int b=0; b<nbeta; b++)
+        {
             for(int th=0; th<ntheta; th++)
+            {
                 for(int m=0; m<nm_Sea[b]; m++)
                 {
                     eta[b][th][m] = compute_eta(oper_for_eta[b][th][m]);
                     eta[b][th][m].plot("eta");
-                }
+                    
+                    eta[b][th][m].evolve_mixed();
+                    eta[b][th][m].plot("eta_evo");
+                    
+//                    etaM2[b][th][m] = eta[b][th][m].interpolate_to_p2ref(b); /* (b) !?*/
+//                    etaM2[b][th][m].plot("eta_M2");
+//                    etaM1[b][th][m] = eta[b][th][m].a2p2_extrapolation();
+//                    etaM1[b][th][m].plot("eta_M1");
+                
+                } //close nm_sea
+            } //close theta
+        } //close beta
     
 
 //    if(nbeta>1 and only_basic==0)
