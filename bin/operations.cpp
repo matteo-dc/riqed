@@ -820,7 +820,7 @@ oper_t oper_t::evolve_mixed()
             for(int mr=0;mr<out._nmr;mr++)
                 (out.jZq_EM)[imom][ijack][mr] =
                     jZq_EM[imom][ijack][mr]
-                    + alphas/pow(4*M_PI,3.0)*0.5*gamma_q*log(p2[imom]);
+                    + alphas/pow(4*M_PI,3.0)*0.5*gamma_q*log(p2_tilde[imom]);
     
     // Zbil
     for(int imom=0;imom<out._bilmoms;imom++)
@@ -830,7 +830,7 @@ oper_t oper_t::evolve_mixed()
                     for(int mr2=0;mr2<out._nmr;mr2++)
                         (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] =
                             jZ_EM[imom][ibil][ijack][mr1][mr2]
-                            + alphas/pow(4*M_PI,3.0)*0.5*gamma_bil[ibil]*log(p2[imom]);
+                            + alphas/pow(4*M_PI,3.0)*0.5*gamma_bil[ibil]*log(p2_tilde[imom]);
     
     
     // Z4f
@@ -843,7 +843,7 @@ oper_t oper_t::evolve_mixed()
                             if(iop1==iop2)
                                 (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] =
                                     jZ_4f_EM[imom][iop1][iop2][ijack][mr1][mr2]
-                                    + alphas/pow(4*M_PI,3.0)*0.5*gamma_meslep[iop1]*log(p2[imom]);
+                                    + alphas/pow(4*M_PI,3.0)*0.5*gamma_meslep[iop1]*log(p2_tilde[imom]);
  
     
     return out;
