@@ -45,6 +45,6 @@ main_SOURCES  =	 main.cpp \
 		 ave_err.cpp \
 		 subtraction.cpp \
 		 evolution.cpp \
-		 meslep.cpp
-#		 interpolate.cpp
+		 meslep.cpp \
+		 interpolate.cpp
 

@@ -50,6 +50,8 @@ int main(int narg,char **arg)
     
     vvvvoper_t oper_for_eta(vvvoper_t(vvoper_t(voper_t(nloop),nm_Sea_max),ntheta),nbeta);
     vvvoper_t eta(vvoper_t(voper_t(nm_Sea_max),ntheta),nbeta);
+    vvvoper_t etaM1(vvoper_t(voper_t(nm_Sea_max),ntheta),nbeta);
+    vvvoper_t etaM2(vvoper_t(voper_t(nm_Sea_max),ntheta),nbeta);
     
     recompute_basic = false;
         
@@ -193,7 +195,7 @@ int main(int narg,char **arg)
                     eta[b][th][m] = eta[b][th][m].evolve_mixed();
                     eta[b][th][m].plot("eta_evo");
                     
-//                    etaM2[b][th][m] = eta[b][th][m].interpolate_to_p2ref(b); /* (b) !?*/
+                    etaM2[b][th][m] = eta[b][th][m].interpolate_to_p2ref(b); /* (b) !?*/
 //                    etaM2[b][th][m].plot("eta_M2");
 //                    etaM1[b][th][m] = eta[b][th][m].a2p2_extrapolation();
 //                    etaM1[b][th][m].plot("eta_M1");

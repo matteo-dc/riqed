@@ -4,6 +4,7 @@
 #include "allocate.hpp"
 #include "interpolate.hpp"
 #include "ave_err.hpp"
+#include "fit.hpp"
 
 //! returns the range in which x is contained
 pair<double,double> oper_t::get_a2p2tilde_range(const int size,const double a2p2_ref,const size_t N) const
@@ -29,31 +30,32 @@ pair<double,double> oper_t::get_a2p2tilde_range(const int size,const double a2p2
     return {a2p2min,a2p2max};
 }
 
-vector<jZq_t> oper_t::interpolate_to_p2ref_Zq(const double a2p2_ref,const int LO_or_EM)
-{
-    vector<jZq_t> out;
-    int moms=(*this)._linmoms;
-    
-    allocate_vec(out,{1,njacks,(*this)._nmr});
-    
-    pair<double,double> a2p2minmax=(*this).get_a2p2tilde_range(moms,a2p2);
-    p2min=a2p2minmax.first*ainv2;
-    p2max=a2p2minmax.second*ainv2;
-    cout<<"p2 range:   "<<p2min<<" - "<<p2max<<endl;
-    
-    int npar=3;
-    vvd_t coord(vd_t(0.0,_linmoms),npar);
-    for(int j=0; j<_linmoms; j++)
-    {
-        // parabolic fit in lattice units
-        coord[0][j] = 1.0;
-        coord[1][j] = p2_tilde[j];
-        coord[2][j] = coord[1][j]*coord[1][j];
-    }
-
-    
-    return out;
-}
+//vector<jZq_t> oper_t::interpolate_to_p2ref_Zq(const double a2p2_ref,const int LO_or_EM)
+//{
+//    vector<jZq_t> out;
+//    int moms=(*this)._linmoms;
+//    
+//    allocate_vec(out,{1,njacks,(*this)._nmr});
+//    
+//    pair<double,double> a2p2minmax=(*this).get_a2p2tilde_range(moms,a2p2);
+//    p2min=a2p2minmax.first*ainv2;
+//    p2max=a2p2minmax.second*ainv2;
+//    cout<<"p2 range:   "<<p2min<<" - "<<p2max<<endl;
+//    
+//    int npar=3;
+//    vvd_t coord(vd_t(0.0,_linmoms),npar);
+//    for(int j=0; j<_linmoms; j++)
+//    {
+//        // parabolic fit in lattice units
+//        coord[0][j] = 1.0;
+//        coord[1][j] = p2_tilde[j];
+//        coord[2][j] = coord[1][j]*coord[1][j];
+//    }
+//
+//    
+//    
+//    return out;
+//}
 
 oper_t oper_t::interpolate_to_p2ref(int b)
 {
@@ -61,8 +63,8 @@ oper_t oper_t::interpolate_to_p2ref(int b)
     cout<<"----- interpolation to p2 = "<<p2ref<<" Gev^2 -----"<<endl<<endl;
     
     double ainv2 = ainv[b]*ainv[b];
-    double a2p2 = p2ref/ainv2; // p2ref in lattice units
-    double p2min,p2max;
+    double a2p2ref = p2ref/ainv2; // p2ref in lattice units
+//    double p2min,p2max;
     
     oper_t out=(*this);
     
@@ -76,9 +78,52 @@ oper_t oper_t::interpolate_to_p2ref(int b)
     
     out.allocate();
     
+    pair<double,double> a2p2minmax=(*this).get_a2p2tilde_range(_linmoms,a2p2ref);
+    double p2_min=a2p2minmax.first*ainv2;
+    double p2_max=a2p2minmax.second*ainv2;
+    cout<<"p2 range (physical units):   "<<p2_min<<" - "<<p2_max<<endl;
+    
+    int npar=3;
+    vvd_t coord(vd_t(0.0,_linmoms),npar);
+    for(int j=0; j<_linmoms; j++)
+    {
+        // parabolic fit in lattice units
+        coord[0][j] = 1.0;
+        coord[1][j] = p2_tilde[j]*ainv2;
+        coord[2][j] = coord[1][j]*coord[1][j];
+    }
+    
     // Interpolating Zq
-    out.jZq=(*this).interpolate_to_p2ref_Zq(a2p2,LO);
-    out.jZq_EM=(*this).interpolate_to_p2ref_Zq(a2p2,EM);
+    vvd_t y_Zq(vd_t(0.0,_linmoms),njacks);       // [njacks][moms]
+    vd_t  dy_Zq(0.0,_linmoms);                   // [moms]
+    vvd_t Zq_EM_err_tmp = get<1>(ave_err_Zq((*this).jZq_EM)); // [moms][nmr]
+    
+    for(int imom=0;imom<_linmoms;imom++)
+    {
+        for(int ijack=0;ijack<njacks;ijack++)
+            y_Zq[ijack][imom] = jZq_EM[imom][ijack][0];
+        dy_Zq[imom] = Zq_EM_err_tmp[imom][0];
+    }
+    
+    vvd_t jZq_pars = polyfit(coord,npar,dy_Zq,y_Zq,p2_min,p2_max); // [ijack][ipar]
+    
+    cout<<"%%%%%% TEST p2 interpol %%%%%%%%"<<endl;
+    for(int ijack=0;ijack<njacks;ijack++)
+    {
+        (out.jZq_EM)[0][ijack][0] = jZq_pars[ijack][0] +
+                                    jZq_pars[ijack][1]*p2ref +
+                                    jZq_pars[ijack][2]*p2ref*p2ref;
+    
+        cout<<"(out.jZq_EM)[0]["<<ijack<<"][0] \t"<<(out.jZq_EM)[0][ijack][0]<<endl;
+    }
+    
+//    out.jZq_EM=(*this).interpolate_to_p2ref_Zq(a2p2,EM);
+    
+    
+    
+    // Interpolating Zbil
+    
+    // Interpolating Z4f
     
     
     //////////////
