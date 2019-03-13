@@ -96,13 +96,13 @@ oper_t oper_t::interpolate_to_p2ref(int b)
     // Interpolating Zq
     vvd_t y_Zq(vd_t(0.0,_linmoms),njacks);       // [njacks][moms]
     vd_t  dy_Zq(0.0,_linmoms);                   // [moms]
-    vvd_t Zq_EM_err_tmp = get<1>(ave_err_Zq((*this).jZq_EM)); // [moms][nmr]
+    vvd_t dy_Zq_tmp = get<1>(ave_err_Zq((*this).jZq_EM)); // [moms][nmr]
     
     for(int imom=0;imom<_linmoms;imom++)
     {
         for(int ijack=0;ijack<njacks;ijack++)
             y_Zq[ijack][imom] = jZq_EM[imom][ijack][0];
-        dy_Zq[imom] = Zq_EM_err_tmp[imom][0];
+        dy_Zq[imom] = dy_Zq_tmp[imom][0];
     }
     
     vvd_t jZq_pars = polyfit(coord,npar,dy_Zq,y_Zq,p2_min,p2_max); // [ijack][ipar]
@@ -117,11 +117,33 @@ oper_t oper_t::interpolate_to_p2ref(int b)
         cout<<"(out.jZq_EM)[0]["<<ijack<<"][0] \t"<<(out.jZq_EM)[0][ijack][0]<<endl;
     }
     
-//    out.jZq_EM=(*this).interpolate_to_p2ref_Zq(a2p2,EM);
-    
-    
-    
     // Interpolating Zbil
+    vvd_t y_Zbil(vd_t(0.0,_bilmoms),njacks);       // [njacks][moms]
+    vd_t  dy_Zbil(0.0,_linmoms);                   // [moms]
+    vvvvd_t dy_Zbil_tmp = get<1>(ave_err_Z((*this).jZ_EM)); // [moms][nbil][nmr][nmr]
+    
+    for(int ibil=0;ibil<nbil;ibil++)
+    {
+        
+        for(int imom=0;imom<_bilmoms;imom++)
+        {
+            for(int ijack=0;ijack<njacks;ijack++)
+                y_Zbil[ijack][imom] = jZ_EM[imom][ibil][ijack][0][0];
+            dy_Zbil[imom] = dy_Zbil_tmp[imom][ibil][0][0];
+        }
+        
+        vvd_t jZ_pars = polyfit(coord,npar,dy_Zbil,y_Zbil,p2_min,p2_max); // [ijack][ipar]
+        
+        for(int ijack=0;ijack<njacks;ijack++)
+        {
+            (out.jZ_EM)[0][ibil][ijack][0][0] = jZq_pars[ijack][0] +
+                                                jZq_pars[ijack][1]*p2ref +
+                                                jZq_pars[ijack][2]*p2ref*p2ref;
+            
+            cout<<"(out.jZ_EM)[ibil="<<ibil<<"][ijack="<<ijack<<"] \t"<<(out.jZ_EM)[0][ibil][ijack][0][0]<<endl;
+        }
+        
+    }
     
     // Interpolating Z4f
     
