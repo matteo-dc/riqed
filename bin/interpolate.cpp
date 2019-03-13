@@ -108,17 +108,14 @@ oper_t oper_t::interpolate_to_p2ref(int b)
     vvd_t jZq_pars = polyfit(coord,npar,dy_Zq,y_Zq,p2_min,p2_max); // [ijack][ipar]
     
     for(int ijack=0;ijack<njacks;ijack++)
-    {
         (out.jZq_EM)[0][ijack][0] = jZq_pars[ijack][0] +
                                     jZq_pars[ijack][1]*p2ref +
                                     jZq_pars[ijack][2]*p2ref*p2ref;
-    
-//        cout<<"(out.jZq_EM)[0]["<<ijack<<"][0] \t"<<(out.jZq_EM)[0][ijack][0]<<endl;
-    }
+
     
     // Interpolating Zbil
     vvd_t y_Zbil(vd_t(0.0,_bilmoms),njacks);       // [njacks][moms]
-    vd_t  dy_Zbil(0.0,_linmoms);                   // [moms]
+    vd_t  dy_Zbil(0.0,_bilmoms);                   // [moms]
     vvvvd_t dy_Zbil_tmp = get<1>(ave_err_Z((*this).jZ_EM)); // [moms][nbil][nmr][nmr]
     
     for(int ibil=0;ibil<nbil;ibil++)
@@ -134,18 +131,35 @@ oper_t oper_t::interpolate_to_p2ref(int b)
         vvd_t jZ_pars = polyfit(coord,npar,dy_Zbil,y_Zbil,p2_min,p2_max); // [ijack][ipar]
         
         for(int ijack=0;ijack<njacks;ijack++)
-        {
             (out.jZ_EM)[0][ibil][ijack][0][0] = jZ_pars[ijack][0] +
                                                 jZ_pars[ijack][1]*p2ref +
                                                 jZ_pars[ijack][2]*p2ref*p2ref;
             
-//            cout<<"(out.jZ_EM)[ibil="<<ibil<<"][ijack="<<ijack<<"] \t"<<(out.jZ_EM)[0][ibil][ijack][0][0]<<endl;
-        }
-        
     }
     
     // Interpolating Z4f
+    vvd_t y_Z4f(vd_t(0.0,_meslepmoms),njacks);       // [njacks][moms]
+    vd_t  dy_Z4f(0.0,_meslepmoms);                   // [moms]
+    vvvvvd_t dy_Z4f_tmp = get<1>(ave_err_Z4f((*this).jZ_4f_EM)); // [moms][nbil][nbil][nmr][nmr]
     
+    for(int iop1=0;iop1<nbil;iop1++)
+        for(int iop2=0;iop2<nbil;iop2++)
+        {
+            for(int imom=0;imom<_meslepmoms;imom++)
+            {
+                for(int ijack=0;ijack<njacks;ijack++)
+                    y_Z4f[ijack][imom] = jZ_4f_EM[imom][iop1][iop2][ijack][0][0];
+                dy_Z4f[imom] = dy_Z4f_tmp[imom][iop1][iop2][0][0];
+            }
+            
+            vvd_t jZ4f_pars = polyfit(coord,npar,dy_Z4f,y_Z4f,p2_min,p2_max); // [ijack][ipar]
+            
+            for(int ijack=0;ijack<njacks;ijack++)
+                (out.jZ_4f_EM)[0][iop1][iop2][ijack][0][0] = jZ4f_pars[ijack][0] +
+                                                             jZ4f_pars[ijack][1]*p2ref +
+                                                             jZ4f_pars[ijack][2]*p2ref*p2ref;
+        }
+
     
     //////////////
     
