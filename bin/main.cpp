@@ -190,7 +190,7 @@ int main(int narg,char **arg)
                     eta[b][th][m] = compute_eta(oper_for_eta[b][th][m]);
                     eta[b][th][m].plot("eta");
                     
-                    eta[b][th][m].evolve_mixed();
+                    eta[b][th][m] = eta[b][th][m].evolve_mixed();
                     eta[b][th][m].plot("eta_evo");
                     
 //                    etaM2[b][th][m] = eta[b][th][m].interpolate_to_p2ref(b); /* (b) !?*/
