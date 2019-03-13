@@ -136,9 +136,9 @@ oper_t oper_t::interpolate_to_p2ref(int b)
         
         for(int ijack=0;ijack<njacks;ijack++)
         {
-            (out.jZ_EM)[0][ibil][ijack][0][0] = jZq_pars[ijack][0] +
-                                                jZq_pars[ijack][1]*p2ref +
-                                                jZq_pars[ijack][2]*p2ref*p2ref;
+            (out.jZ_EM)[0][ibil][ijack][0][0] = jZ_pars[ijack][0] +
+                                                jZ_pars[ijack][1]*p2ref +
+                                                jZ_pars[ijack][2]*p2ref*p2ref;
             
             cout<<"(out.jZ_EM)[ibil="<<ibil<<"][ijack="<<ijack<<"] \t"<<(out.jZ_EM)[0][ibil][ijack][0][0]<<endl;
         }
