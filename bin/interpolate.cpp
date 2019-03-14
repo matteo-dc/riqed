@@ -30,32 +30,6 @@ pair<double,double> oper_t::get_a2p2tilde_range(const int size,const double a2p2
     return {a2p2min,a2p2max};
 }
 
-//vector<jZq_t> oper_t::interpolate_to_p2ref_Zq(const double a2p2_ref,const int LO_or_EM)
-//{
-//    vector<jZq_t> out;
-//    int moms=(*this)._linmoms;
-//    
-//    allocate_vec(out,{1,njacks,(*this)._nmr});
-//    
-//    pair<double,double> a2p2minmax=(*this).get_a2p2tilde_range(moms,a2p2);
-//    p2min=a2p2minmax.first*ainv2;
-//    p2max=a2p2minmax.second*ainv2;
-//    cout<<"p2 range:   "<<p2min<<" - "<<p2max<<endl;
-//    
-//    int npar=3;
-//    vvd_t coord(vd_t(0.0,_linmoms),npar);
-//    for(int j=0; j<_linmoms; j++)
-//    {
-//        // parabolic fit in lattice units
-//        coord[0][j] = 1.0;
-//        coord[1][j] = p2_tilde[j];
-//        coord[2][j] = coord[1][j]*coord[1][j];
-//    }
-//
-//    
-//    
-//    return out;
-//}
 
 oper_t oper_t::interpolate_to_p2ref(int b)
 {
@@ -64,7 +38,6 @@ oper_t oper_t::interpolate_to_p2ref(int b)
     
     double ainv2 = ainv[b]*ainv[b];
     double a2p2ref = p2ref/ainv2; // p2ref in lattice units
-//    double p2min,p2max;
     
     oper_t out=(*this);
     
@@ -160,11 +133,6 @@ oper_t oper_t::interpolate_to_p2ref(int b)
                                                              jZ4f_pars[ijack][2]*p2ref*p2ref;
         }
 
-    
-    //////////////
-    
-    vvvvd_t Z_err = get<1>(ave_err_Z(jZ));
-    vvvvvd_t Z4f_err=get<1>(ave_err(jZ_4f));
     
     return out;
 }
