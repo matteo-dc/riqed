@@ -1445,7 +1445,7 @@ void oper_t::load(const string suffix)
     (*this).compute_Z4f();
 }
 
-//voper_t a2p2_extr(voper_t in /*, const int LO_or_EM*/)  // M1 method
+//voper_t a2p2_extr_combined_on_betas(voper_t in /*, const int LO_or_EM*/)  // M1 method
 //{
 //    voper_t out;
 //
@@ -1642,6 +1642,100 @@ void oper_t::load(const string suffix)
 //    }// close beta loop
 //    return out;
 //}
+
+
+oper_t oper_t::a2p2_extr()
+{
+    cout<<endl;
+    cout<<"----- extrapolation to p2 = 0 -----"<<endl<<endl;
+    
+    oper_t out=(*this);
+    
+    out.linmoms=vector<array<int,1>>{{0}};
+    out.bilmoms=vector<array<int,3>>{{0,0,0}};
+    out.meslepmoms=out.bilmoms;
+    
+    out._linmoms=1;
+    out._bilmoms=1;
+    out._meslepmoms=1;
+    
+    out.allocate();
+    
+    cout<<"p2 range (lattice units):   "<<p2min<<" - "<<p2max<<endl;
+    
+    int npar=2;
+    vvd_t coord(vd_t(0.0,_linmoms),npar);
+    for(int j=0; j<_linmoms; j++)
+    {
+        // parabolic fit in lattice units
+        coord[0][j] = 1.0;
+        coord[1][j] = p2_tilde[j];
+    }
+    
+    // Interpolating Zq
+    vvd_t y_Zq(vd_t(0.0,_linmoms),njacks);       // [njacks][moms]
+    vd_t  dy_Zq(0.0,_linmoms);                   // [moms]
+    vvd_t dy_Zq_tmp = get<1>(ave_err_Zq((*this).jZq_EM)); // [moms][nmr]
+    
+    for(int imom=0;imom<_linmoms;imom++)
+    {
+        for(int ijack=0;ijack<njacks;ijack++)
+            y_Zq[ijack][imom] = jZq_EM[imom][ijack][0];
+        dy_Zq[imom] = dy_Zq_tmp[imom][0];
+    }
+    
+    vvd_t jZq_pars = polyfit(coord,npar,dy_Zq,y_Zq,p2min,p2max); // [ijack][ipar]
+    
+    for(int ijack=0;ijack<njacks;ijack++)
+        (out.jZq_EM)[0][ijack][0] = jZq_pars[ijack][0];
+    
+    
+    // Interpolating Zbil
+    vvd_t y_Zbil(vd_t(0.0,_bilmoms),njacks);       // [njacks][moms]
+    vd_t  dy_Zbil(0.0,_bilmoms);                   // [moms]
+    vvvvd_t dy_Zbil_tmp = get<1>(ave_err_Z((*this).jZ_EM)); // [moms][nbil][nmr][nmr]
+    
+    for(int ibil=0;ibil<nbil;ibil++)
+    {
+        for(int imom=0;imom<_bilmoms;imom++)
+        {
+            for(int ijack=0;ijack<njacks;ijack++)
+                y_Zbil[ijack][imom] = jZ_EM[imom][ibil][ijack][0][0];
+            dy_Zbil[imom] = dy_Zbil_tmp[imom][ibil][0][0];
+        }
+        
+        vvd_t jZ_pars = polyfit(coord,npar,dy_Zbil,y_Zbil,p2min,p2max); // [ijack][ipar]
+        
+        for(int ijack=0;ijack<njacks;ijack++)
+            (out.jZ_EM)[0][ibil][ijack][0][0] = jZ_pars[ijack][0];
+    }
+    
+    // Interpolating Z4f
+    vvd_t y_Z4f(vd_t(0.0,_meslepmoms),njacks);       // [njacks][moms]
+    vd_t  dy_Z4f(0.0,_meslepmoms);                   // [moms]
+    vvvvvd_t dy_Z4f_tmp = get<1>(ave_err_Z4f((*this).jZ_4f_EM)); // [moms][nbil][nbil][nmr][nmr]
+    
+    for(int iop1=0;iop1<nbil;iop1++)
+        for(int iop2=0;iop2<nbil;iop2++)
+        {
+            for(int imom=0;imom<_meslepmoms;imom++)
+            {
+                for(int ijack=0;ijack<njacks;ijack++)
+                    y_Z4f[ijack][imom] = jZ_4f_EM[imom][iop1][iop2][ijack][0][0];
+                dy_Z4f[imom] = dy_Z4f_tmp[imom][iop1][iop2][0][0];
+            }
+            
+            vvd_t jZ4f_pars = polyfit(coord,npar,dy_Z4f,y_Z4f,p2min,p2max); // [ijack][ipar]
+            
+            for(int ijack=0;ijack<njacks;ijack++)
+                (out.jZ_4f_EM)[0][iop1][iop2][ijack][0][0] = jZ4f_pars[ijack][0];
+        }
+    
+    
+    return out;
+}
+
+
 
 void oper_t::plot(const string suffix)
 {
