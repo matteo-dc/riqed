@@ -1764,7 +1764,7 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
         {
             x[iel] = get<0>(ave_err(in[b][msea].eff_mass_sea));
             
-            if(iel<b*in[b].size())
+            if(iel>b*in[b].size())
                 xb[b][iel] = 1;
             
             cout<<"xb["<<b<<"]["<<iel<<"] = "<<xb[b][iel]<<endl;
