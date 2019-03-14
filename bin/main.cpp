@@ -197,8 +197,8 @@ int main(int narg,char **arg)
                     
                     etaM2[b][th][m] = eta[b][th][m].interpolate_to_p2ref(b); /* (b) !?*/
                     etaM2[b][th][m].plot("eta_M2");
-//                    etaM1[b][th][m] = eta[b][th][m].a2p2_extrapolation();
-//                    etaM1[b][th][m].plot("eta_M1");
+                    etaM1[b][th][m] = eta[b][th][m].a2p2_extr();
+                    etaM1[b][th][m].plot("eta_M1");
                 
                 } //close nm_sea
             } //close theta
