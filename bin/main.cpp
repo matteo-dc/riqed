@@ -192,8 +192,8 @@ int main(int narg,char **arg)
             for(int th=0; th<ntheta; th++)
             {
                 eta[b][th].resize(nm_Sea[b]);
-                etaM1[b][th].resize(nm_Sea[b]);
-                etaM2[b][th].resize(nm_Sea[b]);
+                etaM1[th][b].resize(nm_Sea[b]);
+                etaM2[th][b].resize(nm_Sea[b]);
                 
                 for(int m=0; m<nm_Sea[b]; m++)
                 {
