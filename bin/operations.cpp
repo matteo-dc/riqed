@@ -1759,18 +1759,19 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     vvd_t y(vd_t(0.0,njacks),nm_Sea_tot);     //[nmseatot][ijack]
     
     int iel=0;
+    
     for(int b=0; b<in.size(); b++)
         for(int msea=0; msea<in[b].size(); msea++)
         {
             x[iel] = get<0>(ave_err(in[b][msea].eff_mass_sea));
             
-            if(iel>b*in[b].size())
-                xb[b][iel] = 1;
-            
-            cout<<"xb["<<b<<"]["<<iel<<"] = "<<xb[b][iel]<<endl;
-            
-            iel++;
+            if(iel<(b+1)*in[b].size())
+                xb[b][iel]=1;
         }
+
+    for(int b=0; b<in.size(); b++)
+        for(int iel=0;iel<nm_Sea_tot;iel++)
+            cout<<"xb["<<b<<"]["<<iel<<"] = "<<xb[b][iel]<<endl;
     
 //        
 //    // extrapolate Zq
