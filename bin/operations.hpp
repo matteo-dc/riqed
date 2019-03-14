@@ -213,6 +213,9 @@ struct oper_t
     // plot sigmas
     void plot_sigmas();
     
+    // a2p2->0 extrapolation
+    oper_t a2p2_extr();
+    
 };
 
 // valarray of oper_t struct;
@@ -232,9 +235,8 @@ oper_t theta_average(valarray<oper_t> in);
 oper_t compute_eta(voper_t oper_for_eta);
 
 
-// a2p2 extrapolation
-//void a2p2_extr();
-voper_t a2p2_extr(voper_t in);
+// a2p2->0 extrapolation combined on betas
+voper_t a2p2_extr_combined_on_betas(voper_t in);
 
 #endif
 
