@@ -1771,6 +1771,8 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
             
             if(iel>=iel_tmp1 and iel<iel_tmp2)
                 xb[b][iel]=1;
+            
+            iel++;
         }
         iel_tmp1 += in[b].size();
     }
