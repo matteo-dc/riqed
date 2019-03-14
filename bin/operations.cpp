@@ -1643,7 +1643,6 @@ void oper_t::load(const string suffix)
 //    return out;
 //}
 
-
 oper_t oper_t::a2p2_extr()
 {
     cout<<endl;
@@ -1730,6 +1729,91 @@ oper_t oper_t::a2p2_extr()
             for(int ijack=0;ijack<njacks;ijack++)
                 (out.jZ_4f_EM)[0][iop1][iop2][ijack][0][0] = jZ4f_pars[ijack][0];
         }
+    
+    
+    return out;
+}
+
+voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
+{
+    cout<<endl;
+    cout<<"----- combined chiral sea extrapolation -----"<<endl<<endl;
+    
+    voper_t out(nbeta);  //out
+    
+    for(auto &iout : out)
+    {
+        iout = in[0][0];
+        iout.allocate_val();
+        iout.allocate();
+    }
+    
+    int nm_Sea_tot=0;
+    for(int b=0; b<in.size(); b++)
+        for(int msea=0; msea<in[b].size(); msea++)
+            nm_Sea_tot++;
+    cout<<"total number of sea masses: "<<nm_Sea_tot<<endl;
+    
+    vd_t  x(0.0,nm_Sea_tot);                  //[nmseatot]
+    vvd_t xb(vd_t(0.0,nm_Sea_tot),in.size()); //[beta][nmseatot]
+    vvd_t y(vd_t(0.0,njacks),nm_Sea_tot);     //[nmseatot][ijack]
+    
+    int iel=0;
+    for(int b=0; b<in.size(); b++)
+        for(int msea=0; msea<in[b].size(); msea++)
+        {
+            x[iel] = get<0>(ave_err(in[b][msea].eff_mass_sea));
+            
+            if(iel<b*in[b].size())
+                xb[b][iel] = 1;
+            
+            cout<<"xb["<<b<<"]["<<iel<<"] = "<<xb[b][iel]<<endl;
+            
+            iel++;
+        }
+    
+//        
+//    // extrapolate Zq
+//    vd_t   x_all_beta_Zq(0.0,in[0].size());                // [msea]
+//    vvd_t  y_all_beta_Zq(vd_t(0.0,njacks),in[0].size());   // [msea][njacks]
+//    vd_t  y_ave_all_beta_Zq(0.0,in[0].size());             // [msea]
+//    vd_t  y2_ave_all_beta_Zq(0.0,in[0].size());            // [msea]
+//    vd_t  dy_all_beta_Zq(0.0,in[0].size());                // [msea]
+//    
+//    int npar=2;
+//    vvd_t coord(vd_t(0.0,in[0].size()),npar);
+//    for(int j=0; j<in[0].size(); j++)
+//    {
+//        // parabolic fit in lattice units
+//        coord[0][j] = 1.0;
+//        coord[1][j] = p2_tilde[j];
+//    }
+//    
+//    for(int msea=0; msea<in[0].size(); msea++)
+//    {
+//        
+//        for(int b=0; b<in.size(); b++)
+//            x_all_beta_Zq[msea] += x[b][msea]
+//            
+//            for(int ijack=0;ijack<njacks;ijack++)
+//            {
+//                for(int b=0; b<in.size(); b++)
+//                    y_all_beta_Zq[msea][ijack]  += in[b][msea].jZq_EM[0][ijack][0];
+//                
+//                y_ave_all_beta_Zq[msea] += y_all_beta_Zq[msea][ijack]/njacks;
+//                y2_ave_all_beta_Zq[msea]+= y_all_beta_Zq[msea][ijack]*y_all_beta_Zq[msea][ijack]/njacks;
+//            }
+//        
+//        dy_all_beta_Zq[msea] = sqrt((double)(njacks-1))*sqrt(fabs(y2_ave_all_beta_Zq[msea]-y_ave_all_beta_Zq[msea]*y_ave_all_beta_Zq[msea]));
+//    }
+    
+    
+    
+    
+    // extrapolate Zbil
+    
+    // extrapolate Z4f
+    
     
     
     return out;

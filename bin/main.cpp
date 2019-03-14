@@ -50,8 +50,10 @@ int main(int narg,char **arg)
     
     vvvvoper_t oper_for_eta(vvvoper_t(vvoper_t(voper_t(nloop),nm_Sea_max),ntheta),nbeta);
     vvvoper_t eta(vvoper_t(voper_t(nm_Sea_max),ntheta),nbeta);
-    vvvoper_t etaM1(vvoper_t(voper_t(nm_Sea_max),ntheta),nbeta);
-    vvvoper_t etaM2(vvoper_t(voper_t(nm_Sea_max),ntheta),nbeta);
+    vvvoper_t etaM1(vvoper_t(voper_t(nm_Sea_max),nbeta),ntheta);
+    vvvoper_t etaM2(vvoper_t(voper_t(nm_Sea_max),nbeta),ntheta);
+    vvoper_t etaM1_sea(voper_t(nbeta),ntheta);
+    vvoper_t etaM2_sea(voper_t(nbeta),ntheta);
     
     recompute_basic = false;
         
@@ -183,10 +185,16 @@ int main(int narg,char **arg)
     } //close nloop
     
     if(eta_analysis)
+    {
+        
         for(int b=0; b<nbeta; b++)
         {
             for(int th=0; th<ntheta; th++)
             {
+                eta[b][th].resize(nm_Sea[b]);
+                etaM1[b][th].resize(nm_Sea[b]);
+                etaM2[b][th].resize(nm_Sea[b]);
+                
                 for(int m=0; m<nm_Sea[b]; m++)
                 {
                     eta[b][th][m] = compute_eta(oper_for_eta[b][th][m]);
@@ -195,14 +203,28 @@ int main(int narg,char **arg)
                     eta[b][th][m] = eta[b][th][m].evolve_mixed();
                     eta[b][th][m].plot("eta_evo");
                     
-                    etaM2[b][th][m] = eta[b][th][m].interpolate_to_p2ref(b); /* (b) !?*/
-                    etaM2[b][th][m].plot("eta_M2");
-                    etaM1[b][th][m] = eta[b][th][m].a2p2_extr();
-                    etaM1[b][th][m].plot("eta_M1");
-                
+                    etaM2[th][b][m] = eta[b][th][m].interpolate_to_p2ref(b); /* (b) !?*/
+                    etaM2[th][b][m].plot("eta_M2");
+                    etaM1[th][b][m] = eta[b][th][m].a2p2_extr();
+                    etaM1[th][b][m].plot("eta_M1");
+                    
                 } //close nm_sea
             } //close theta
         } //close beta
+        
+        for(int b=0; b<nbeta; b++)
+        {
+            for(int th=0; th<ntheta; th++)
+            {
+                etaM2_sea[th] = combined_chiral_sea_extr(etaM2[th]);
+                etaM1_sea[th] = combined_chiral_sea_extr(etaM1[th]);
+            }
+            
+//            etaM2_sea[th][b].plot("?");
+//            etaM1_sea[th][b].plot("?");
+        }
+
+    }
     
 
 //    if(nbeta>1 and only_basic==0)
