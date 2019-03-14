@@ -97,13 +97,13 @@ void oper_t::compute_deltam_from_prop()
             coord[3][j] = p2[j]*p2[j]*p2[j];
         }
         
-        double p2min = 0.01;
-        double p2max = 2.0;
+        double p2_min = 0.01;
+        double p2_max = 2.0;
         
         for(int mr=0;mr<_nmr;mr++)
         {
-            vvd_t deltamc_tmp = polyfit(coord,npar,error_mc[mr],v_deltamc[mr],p2min,p2max);
-            vvd_t deltamu_tmp = polyfit(coord,npar,error_mu[mr],v_deltamu[mr],p2min,p2max);
+            vvd_t deltamc_tmp = polyfit(coord,npar,error_mc[mr],v_deltamc[mr],p2_min,p2_max);
+            vvd_t deltamu_tmp = polyfit(coord,npar,error_mu[mr],v_deltamu[mr],p2_min,p2_max);
             
             for(int ijack=0;ijack<njacks;ijack++)
             {

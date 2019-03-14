@@ -18,7 +18,7 @@ vector<vector<int>> SeaMasses_label; // SeaMasses_label[Nbeta][NSeaMass]
 int L, T;
 vector<double> ainv;
 int conf_init, conf_step, nm, neq, neq2, nmr, delta_tmin, delta_tmax;
-double kappa, mu_sea, plaquette, LambdaQCD, p2min, thresh, p2ref;
+double kappa, mu_sea, plaquette, LambdaQCD, p2min, p2max, thresh, p2ref;
 vector<double> mass_val;
 string mom_path, action, path_folder, scheme, BC, out_hadr, out_lep, analysis, path_ensemble, an_suffix;
 vector<string> path_analysis;
@@ -71,6 +71,7 @@ TK_glb_t get_TK_glb(FILE *fin)
     if(strcasecmp(tok,LambdaQCD_tag)==0) return LAMBDAQCD_TK;
     if(strcasecmp(tok,BC_tag)==0) return BC_TK;
     if(strcasecmp(tok,p2min_tag)==0) return P2MIN_TK;
+    if(strcasecmp(tok,p2max_tag)==0) return P2MAX_TK;
     if(strcasecmp(tok,thresh_tag)==0) return THRESH_TK;
     if(strcasecmp(tok,compute_meslep_tag)==0) return COMPUTE_MESLEP_TK;
     if(strcasecmp(tok,out_hadr_tag)==0) return OUT_HADR_TK;
@@ -257,6 +258,7 @@ void read_input_glb(const char path[])
     UseEffMass=DEFAULT_INT_VAL;
     LambdaQCD=DEFAULT_DOUBLE_VAL;
     p2min=DEFAULT_DOUBLE_VAL;
+    p2max=DEFAULT_DOUBLE_VAL;
     thresh=DEFAULT_DOUBLE_VAL;
     compute_4f=DEFAULT_INT_VAL;
     out_hadr=DEFAULT_STR_VAL;
@@ -373,6 +375,9 @@ void read_input_glb(const char path[])
             case P2MIN_TK:
                 get_value_glb(fin,p2min);
                 break;
+            case P2MAX_TK:
+                get_value_glb(fin,p2max);
+                break;
             case THRESH_TK:
                 get_value_glb(fin,thresh);
                 break;
@@ -436,6 +441,7 @@ void read_input_glb(const char path[])
     for(auto &t : theta_label) check_str_par(t.c_str(),theta_label_tag);
     check_double_par(LambdaQCD,LambdaQCD_tag);
     check_double_par(p2min,p2min_tag);
+    check_double_par(p2max,p2max_tag);
     check_double_par(thresh,thresh_tag);
     check_int_par(compute_4f,compute_meslep_tag);
     check_str_par(out_hadr,out_hadr_tag);
@@ -505,7 +511,7 @@ void read_input_glb(const char path[])
     printf("    with BC: %s \n\n",BC.c_str());
     
     printf(" %s = %.2lf\n",thresh_tag,thresh);
-    printf(" Continuum limit range: a2p2 > %.1lf\n\n",p2min);
+    printf(" Continuum limit range: a2p2 = [%.1lf,%.1lf]\n\n",p2min,p2max);
     
     printf(" %s = %s  --  %s = %d  -- %s = %d -- %s = %.3lf \n",act_tag,action.c_str(),Nf_tag,Nf,Nc_tag,Nc,LambdaQCD_tag,LambdaQCD);
     printf(" %s = %d  (%d njacks) \n",nconfs_tag,nconfs,njacks);

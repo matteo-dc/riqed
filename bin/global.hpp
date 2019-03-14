@@ -103,8 +103,10 @@ extern int delta_tmax;
 // boundary conditions
 //extern string BC_str;
 extern string BC;
-// minimum p2 value for continuum limit
+// minimum p2 value of a2p2->0 limit range
 extern double p2min;
+// maximum p2 value of a2p2->0 limit range
+extern double p2max;
 // filtered yes/no
 extern vector<bool> filt_moms;
 // filter threshold
