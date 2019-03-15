@@ -1800,7 +1800,6 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     // extrapolate Zq
     vvd_t y_Zq(vd_t(0.0,nm_Sea_tot),njacks); // [njacks][nmseatot]
     vd_t  dy_Zq(0.0,nm_Sea_tot);             // [nmseatot]
-    vd_t  dy_Zq_tmp(0.0,nm_Sea_tot);         // [nmseatot]
     
     iel=0;
     for(int b=0; b<nb; b++)
@@ -1822,9 +1821,55 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     
     
     // extrapolate Zbil
+    vvd_t y_Z(vd_t(0.0,nm_Sea_tot),njacks); // [njacks][nmseatot]
+    vd_t  dy_Z(0.0,nm_Sea_tot);             // [nmseatot]
     
+    for(int ibil=0; ibil<nbil;ibil++)
+    {
+        iel=0;
+        for(int b=0; b<nb; b++)
+            for(int msea=0; msea<nm[b]; msea++)
+            {
+                for(int ijack=0;ijack<njacks;ijack++)
+                    y_Z[ijack][iel] = in[b][msea].jZ_EM[0][ibil][ijack][0][0];
+                
+                dy_Z[iel] = (get<1>(ave_err_Z(in[b][msea].jZ_EM)))[0][ibil][0][0];
+                
+                iel++;
+            }
+        
+        vvd_t jZ_pars = polyfit(coord,npar,dy_Z,y_Z,0,nm_Sea_tot-1); // [ijack][ipar]
+        
+        for(int b=0; b<nb; b++)
+            for(int ijack=0;ijack<njacks;ijack++)
+                (out[b].jZ_EM)[0][ibil][ijack][0][0] = jZ_pars[ijack][b];
+    }
+
     // extrapolate Z4f
+    vvd_t y_Z4f(vd_t(0.0,nm_Sea_tot),njacks); // [njacks][nmseatot]
+    vd_t  dy_Z4f(0.0,nm_Sea_tot);             // [nmseatot]
     
+    for(int iop1=0; iop1<nbil;iop1++)
+        for(int iop2=0; iop2<nbil;iop2++)
+        {
+            iel=0;
+            for(int b=0; b<nb; b++)
+                for(int msea=0; msea<nm[b]; msea++)
+                {
+                    for(int ijack=0;ijack<njacks;ijack++)
+                        y_Z4f[ijack][iel] = in[b][msea].jZ_4f_EM[0][iop1][iop2][ijack][0][0];
+                    
+                    dy_Z4f[iel] = (get<1>(ave_err_Z4f(in[b][msea].jZ_4f_EM)))[0][iop1][iop2][0][0];
+                    
+                    iel++;
+                }
+            
+            vvd_t jZ4f_pars = polyfit(coord,npar,dy_Z4f,y_Z4f,0,nm_Sea_tot-1); // [ijack][ipar]
+            
+            for(int b=0; b<nb; b++)
+                for(int ijack=0;ijack<njacks;ijack++)
+                    (out[b].jZ_4f_EM)[0][iop1][iop2][ijack][0][0] = jZ4f_pars[ijack][b];
+        }
     
     
     return out;
