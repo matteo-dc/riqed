@@ -1789,12 +1789,15 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     
     int npar = nb+1;                   //nbeta+1
     vvd_t coord(vd_t(0.0,nm_Sea_tot),npar);
+    
+    cout<<"Squared sea masses:"<<endl;
     for(iel=0; iel<nm_Sea_tot;iel++)
     {
         for(int b=0; b<nb; b++)
             coord[b][iel] = xb[b][iel];
 
         coord[nb][iel] = pow(x[iel],2.0);
+        cout<<coord[nb][iel]<<endl;
     }
     
     // extrapolate Zq
