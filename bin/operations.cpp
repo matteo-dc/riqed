@@ -1015,6 +1015,10 @@ oper_t chiral_sea_extr(voper_t in)
 
 voper_t theta_average(vvoper_t in) // in[th][b]
 {
+    
+    cout<<endl;
+    cout<<"----- theta average -----"<<endl<<endl;
+    
     int nb  = (int)in[0].size();
     
     voper_t out(nb);
@@ -1044,6 +1048,8 @@ voper_t theta_average(vvoper_t in) // in[th][b]
                         0.5*((in[0][b].jZ_4f_EM)[0][iop1][iop2][ijack][0][0] +
                              (in[1][b].jZ_4f_EM)[0][iop1][iop2][ijack][0][0]);
         }
+        
+        cout<<"path_to_ens: "<<out[b].path_to_ens<<endl;
     }
     
     return out;
