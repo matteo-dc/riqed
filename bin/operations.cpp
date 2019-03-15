@@ -1775,12 +1775,17 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     int iel_tmp1=0;
     int iel_tmp2=0;
     
+    vd_t a_tmp(nb);
+    a_tmp[0]=0.44856;
+    a_tmp[1]=0.41322;
+    a_tmp[2]=0.31348;
+    
     for(int b=0; b<nb; b++)
     {
         iel_tmp2 += in[b].size();
         for(int msea=0; msea<nm[b]; msea++)
         {
-            x[iel] = get<0>(ave_err(in[b][msea].eff_mass_sea))*ainv[b];
+            x[iel] = get<0>(ave_err(in[b][msea].eff_mass_sea))/a_tmp[b]/**ainv[b]*/;
             
             if(iel>=iel_tmp1 and iel<iel_tmp2)
                 xb[b][iel]=1;
