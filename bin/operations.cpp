@@ -1741,32 +1741,37 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     
     voper_t out(nbeta);  //out
     
-    for(int b=0; b<in.size(); b++)
+    int nb=(int)in.size();
+    valarray<int> nm(nbeta);
+    
+    for(int b=0; b<nb; b++)
     {
         out[b] = in[b][0];
         out[b].allocate_val();
         out[b].allocate();
         
         out[b].path_to_ens = in[b][0].path_to_beta + in[b][0]._beta_label + in[b][0]._theta_label+"/";
+        
+        nm[b]=(int)in[b].size();
     }
     
     int nm_Sea_tot=0;
-    for(int b=0; b<in.size(); b++)
-        for(int msea=0; msea<in[b].size(); msea++)
+    for(int b=0; b<nb; b++)
+        for(int msea=0; msea<nm[b]; msea++)
             nm_Sea_tot++;
     cout<<"total number of sea masses: "<<nm_Sea_tot<<endl;
     
     vd_t  x(0.0,nm_Sea_tot);                  //[nmseatot]
-    vvd_t xb(vd_t(0.0,nm_Sea_tot),in.size()); //[beta][nmseatot]
+    vvd_t xb(vd_t(0.0,nm_Sea_tot),nb); //[beta][nmseatot]
     
     int iel=0;
     int iel_tmp1=0;
     int iel_tmp2=0;
     
-    for(int b=0; b<in.size(); b++)
+    for(int b=0; b<nb; b++)
     {
         iel_tmp2 += in[b].size();
-        for(int msea=0; msea<in[b].size(); msea++)
+        for(int msea=0; msea<nm[b]; msea++)
         {
             x[iel] = get<0>(ave_err(in[b][msea].eff_mass_sea));
             
@@ -1782,14 +1787,14 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
 //        for(int iel=0;iel<nm_Sea_tot;iel++)
 //            cout<<"xb["<<b<<"]["<<iel<<"] = "<<xb[b][iel]<<endl;
     
-    int npar = in.size()+1;                   //nbeta+1
+    int npar = nb+1;                   //nbeta+1
     vvd_t coord(vd_t(0.0,nm_Sea_tot),npar);
     for(iel=0; iel<nm_Sea_tot;iel++)
     {
-        for(int b=0; b<in.size(); b++)
+        for(int b=0; b<nb; b++)
             coord[b][iel] = xb[b][iel];
 
-        coord[in.size()][iel] = pow(x[iel],2.0);
+        coord[nb][iel] = pow(x[iel],2.0);
     }
     
     // extrapolate Zq
@@ -1798,11 +1803,11 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     vd_t  dy_Zq_tmp(0.0,nm_Sea_tot);         // [nmseatot]
     
     iel=0;
-    for(int b=0; b<in.size(); b++)
-        for(int msea=0; msea<in[b].size(); msea++)
+    for(int b=0; b<nb; b++)
+        for(int msea=0; msea<nm[b]; msea++)
         {
             for(int ijack=0;ijack<njacks;ijack++)
-                y[ijack][iel] = in[b][msea].jZq_EM[0][ijack][0];
+                y_Zq[ijack][iel] = in[b][msea].jZq_EM[0][ijack][0];
             
             dy_Zq[iel] = (get<1>(ave_err_Zq(in[b][msea].jZq_EM)))[0][0];
             
@@ -1811,7 +1816,7 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     
     vvd_t jZq_pars = polyfit(coord,npar,dy_Zq,y_Zq,0,nm_Sea_tot-1); // [ijack][ipar]
     
-    for(int b=0; b<in.size(); b++)
+    for(int b=0; b<nb; b++)
         for(int ijack=0;ijack<njacks;ijack++)
             (out[b].jZq_EM)[0][ijack][0] = jZq_pars[ijack][b];
     
