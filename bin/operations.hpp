@@ -229,7 +229,8 @@ using vvvvvoper_t=valarray<vvvvoper_t>;
 oper_t chiral_sea_extr(valarray<oper_t> in);
 
 // theta average
-oper_t theta_average(valarray<oper_t> in);
+voper_t theta_average(vvoper_t in);
+//oper_t theta_average(valarray<oper_t> in);
 
 // difference between interacting and free theory
 oper_t compute_eta(voper_t oper_for_eta);

@@ -54,6 +54,8 @@ int main(int narg,char **arg)
     vvvoper_t etaM2(vvoper_t(voper_t(nm_Sea_max),nbeta),ntheta);
     vvoper_t etaM1_sea(voper_t(nbeta),ntheta);
     vvoper_t etaM2_sea(voper_t(nbeta),ntheta);
+    voper_t etaM1_theta(nbeta);
+    voper_t etaM2_theta(nbeta);
     
     recompute_basic = false;
         
@@ -223,9 +225,16 @@ int main(int narg,char **arg)
                 etaM2_sea[th][b].plot("eta_M2_sea");
                 etaM1_sea[th][b].plot("eta_M1_sea");
             }
-            
         }
 
+        etaM2_theta = theta_average(etaM2_sea);
+        etaM1_theta = theta_average(etaM1_sea);
+        
+        for(int b=0; b<nbeta; b++)
+        {
+            etaM2_theta[b].plot("eta_M2_theta");
+            etaM1_theta[b].plot("eta_M1_theta");
+        }
     }
     
 

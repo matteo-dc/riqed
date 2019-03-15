@@ -1013,50 +1013,86 @@ oper_t chiral_sea_extr(voper_t in)
     return out;
 }
 
-oper_t theta_average( voper_t in)
+voper_t theta_average(vvoper_t in) // in[th][b]
 {
-    cout<<endl;
-    cout<<"----- theta average -----"<<endl<<endl;
+    int nb  = (int)in[0].size();
     
-    oper_t out=in[0];  //?
+    voper_t out(nb);
     
-    int _linmoms = in[0]._linmoms;
-    int _bilmoms = in[0]._bilmoms;
-    int _meslepmoms = in[0]._meslepmoms;
-    
-    out.allocate_val();
-    out.allocate();
-    
-    out.path_to_ens = in[0].path_to_beta;
-    
-    for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
+    for(int b=0; b<nb; b++)
+    {
+        out[b] = in[0][b];
+        out[b].allocate_val();
+        out[b].allocate();
+        
+        out[b].path_to_ens = in[0][b].path_to_beta + in[b][0]._beta_label +"/";
+        
         for(int ijack=0;ijack<njacks;ijack++)
         {
-            out.jZq[ilinmom][ijack][0] = 0.5*(in[0].jZq[ilinmom][ijack][0] + in[1].jZq[ilinmom][ijack][0]);
-            out.jZq_EM[ilinmom][ijack][0] = 0.5*(in[0].jZq_EM[ilinmom][ijack][0] + in[1].jZq_EM[ilinmom][ijack][0]);
+            (out[b].jZq_EM)[0][ijack][0] =
+                0.5*((in[0][b].jZq_EM)[0][ijack][0] +
+                     (in[1][b].jZq_EM)[0][ijack][0]);
+            
+            for(int ibil=0;ibil<nbil;ibil++)
+                (out[b].jZ_EM)[0][ibil][ijack][0][0] =
+                    0.5*((in[0][b].jZ_EM)[0][ibil][ijack][0][0] +
+                         (in[1][b].jZ_EM)[0][ibil][ijack][0][0]);
+            
+            for(int iop1=0;iop1<nbil;iop1++)
+                for(int iop2=0;iop2<nbil;iop2++)
+                    (out[b].jZ_4f_EM)[0][iop1][iop2][ijack][0][0] =
+                        0.5*((in[0][b].jZ_4f_EM)[0][iop1][iop2][ijack][0][0] +
+                             (in[1][b].jZ_4f_EM)[0][iop1][iop2][ijack][0][0]);
         }
-    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
-        for(int ibil=0;ibil<nbil;ibil++)
-            for(int ijack=0;ijack<njacks;ijack++)
-            {
-                out.jZ[ibilmom][ibil][ijack][0][0] =
-                    0.5*(in[0].jZ[ibilmom][ibil][ijack][0][0] + in[1].jZ[ibilmom][ibil][ijack][0][0]);
-                out.jZ_EM[ibilmom][ibil][ijack][0][0] =
-                    0.5*(in[0].jZ_EM[ibilmom][ibil][ijack][0][0] + in[1].jZ_EM[ibilmom][ibil][ijack][0][0]);
-            }
-    for(int imom=0;imom<_meslepmoms;imom++)
-        for(int iop1=0;iop1<nbil;iop1++)
-            for(int iop2=0;iop2<nbil;iop2++)
-            for(int ijack=0;ijack<njacks;ijack++)
-            {
-                out.jZ_4f[imom][iop1][iop2][ijack][0][0] =
-                    0.5*(in[0].jZ_4f[imom][iop1][iop2][ijack][0][0] + in[1].jZ_4f[imom][iop1][iop2][ijack][0][0]);
-                out.jZ_4f_EM[imom][iop1][iop2][ijack][0][0] =
-                    0.5*(in[0].jZ_4f_EM[imom][iop1][iop2][ijack][0][0] + in[1].jZ_4f_EM[imom][iop1][iop2][ijack][0][0]);
-            }
-
+    }
+    
     return out;
 }
+
+//oper_t theta_average( voper_t in)
+//{
+//    cout<<endl;
+//    cout<<"----- theta average -----"<<endl<<endl;
+//    
+//    oper_t out=in[0];  //?
+//    
+//    int _linmoms = in[0]._linmoms;
+//    int _bilmoms = in[0]._bilmoms;
+//    int _meslepmoms = in[0]._meslepmoms;
+//    
+//    out.allocate_val();
+//    out.allocate();
+//    
+//    out.path_to_ens = in[0].path_to_beta;
+//    
+//    for(int ilinmom=0;ilinmom<_linmoms;ilinmom++)
+//        for(int ijack=0;ijack<njacks;ijack++)
+//        {
+//            out.jZq[ilinmom][ijack][0] = 0.5*(in[0].jZq[ilinmom][ijack][0] + in[1].jZq[ilinmom][ijack][0]);
+//            out.jZq_EM[ilinmom][ijack][0] = 0.5*(in[0].jZq_EM[ilinmom][ijack][0] + in[1].jZq_EM[ilinmom][ijack][0]);
+//        }
+//    for(int ibilmom=0;ibilmom<_bilmoms;ibilmom++)
+//        for(int ibil=0;ibil<nbil;ibil++)
+//            for(int ijack=0;ijack<njacks;ijack++)
+//            {
+//                out.jZ[ibilmom][ibil][ijack][0][0] =
+//                    0.5*(in[0].jZ[ibilmom][ibil][ijack][0][0] + in[1].jZ[ibilmom][ibil][ijack][0][0]);
+//                out.jZ_EM[ibilmom][ibil][ijack][0][0] =
+//                    0.5*(in[0].jZ_EM[ibilmom][ibil][ijack][0][0] + in[1].jZ_EM[ibilmom][ibil][ijack][0][0]);
+//            }
+//    for(int imom=0;imom<_meslepmoms;imom++)
+//        for(int iop1=0;iop1<nbil;iop1++)
+//            for(int iop2=0;iop2<nbil;iop2++)
+//            for(int ijack=0;ijack<njacks;ijack++)
+//            {
+//                out.jZ_4f[imom][iop1][iop2][ijack][0][0] =
+//                    0.5*(in[0].jZ_4f[imom][iop1][iop2][ijack][0][0] + in[1].jZ_4f[imom][iop1][iop2][ijack][0][0]);
+//                out.jZ_4f_EM[imom][iop1][iop2][ijack][0][0] =
+//                    0.5*(in[0].jZ_4f_EM[imom][iop1][iop2][ijack][0][0] + in[1].jZ_4f_EM[imom][iop1][iop2][ijack][0][0]);
+//            }
+//
+//    return out;
+//}
 
 
 //oper_t oper_t::evolve(const int b)
