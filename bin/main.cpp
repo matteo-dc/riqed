@@ -217,10 +217,12 @@ int main(int narg,char **arg)
             for(int th=0; th<ntheta; th++)
             {
                 etaM2_sea[th] = combined_chiral_sea_extr(etaM2[th]);
-                etaM1_sea[th] = combined_chiral_sea_extr(etaM1[th]);
+//                etaM1_sea[th] = combined_chiral_sea_extr(etaM1[th]);
             }
             
-//            etaM2_sea[th][b].plot("?");
+            cout<<etaM2_sea[th][b].path_to_ens<<endl;
+            
+            etaM2_sea[th][b].plot("?");
 //            etaM1_sea[th][b].plot("?");
         }
 
