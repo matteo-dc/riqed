@@ -578,7 +578,7 @@ void oper_t::compute_eff_mass_sea()
                 jP5P5_00_rave[ijack][t]+=jP5P5_00[r][ijack][t]/nr;
     
     // define effective mass array
-    vvd_t M_eff(vd_t(T/2),njacks);
+    vvd_t M_eff(vd_t(T/2+1),njacks);
     
 #pragma omp parallel for collapse(2)
     for(int ijack=0; ijack<njacks;ijack++)
