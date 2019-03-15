@@ -1666,7 +1666,7 @@ oper_t oper_t::a2p2_extr()
     vvd_t coord(vd_t(0.0,_linmoms),npar);
     for(int j=0; j<_linmoms; j++)
     {
-        // parabolic fit in lattice units
+        // linear fit in lattice units
         coord[0][j] = 1.0;
         coord[1][j] = p2_tilde[j];
     }
@@ -1741,11 +1741,13 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     
     voper_t out(nbeta);  //out
     
-    for(auto &iout : out)
+    for(int b=0; b<in.size(); b++)
     {
-        iout = in[0][0];
-        iout.allocate_val();
-        iout.allocate();
+        out[b] = in[b][0];
+        out[b].allocate_val();
+        out[b].allocate();
+        
+        out[b].path_to_ens = in[b][0].path_to_beta + in[b][0]._beta_label + in[b][0]._theta_label+"/";
     }
     
     int nm_Sea_tot=0;
@@ -1756,7 +1758,6 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     
     vd_t  x(0.0,nm_Sea_tot);                  //[nmseatot]
     vvd_t xb(vd_t(0.0,nm_Sea_tot),in.size()); //[beta][nmseatot]
-    vvd_t y(vd_t(0.0,njacks),nm_Sea_tot);     //[nmseatot][ijack]
     
     int iel=0;
     int iel_tmp1=0;
@@ -1777,46 +1778,42 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
         iel_tmp1 += in[b].size();
     }
 
+//    for(int b=0; b<in.size(); b++)
+//        for(int iel=0;iel<nm_Sea_tot;iel++)
+//            cout<<"xb["<<b<<"]["<<iel<<"] = "<<xb[b][iel]<<endl;
+    
+    int npar = in.size()+1;                   //nbeta+1
+    vvd_t coord(vd_t(0.0,nm_Sea_tot),npar);
+    for(iel=0; iel<nm_Sea_tot;iel++)
+    {
+        for(int b=0; b<in.size(); b++)
+            coord[b][iel] = xb[b][iel];
+
+        coord[in.size()][iel] = pow(x[iel],2.0);
+    }
+    
+    // extrapolate Zq
+    vvd_t y_Zq(vd_t(0.0,nm_Sea_tot),njacks); // [njacks][nmseatot]
+    vd_t  dy_Zq(0.0,nm_Sea_tot);             // [nmseatot]
+    vd_t  dy_Zq_tmp(0.0,nm_Sea_tot);         // [nmseatot]
+    
+    iel=0;
     for(int b=0; b<in.size(); b++)
-        for(int iel=0;iel<nm_Sea_tot;iel++)
-            cout<<"xb["<<b<<"]["<<iel<<"] = "<<xb[b][iel]<<endl;
+        for(int msea=0; msea<in[b].size(); msea++)
+        {
+            for(int ijack=0;ijack<njacks;ijack++)
+                y[ijack][iel] = in[b][msea].jZq_EM[0][ijack][0];
+            
+            dy_Zq[iel] = (get<1>(ave_err_Zq(in[b][msea].jZq_EM)))[0][0];
+            
+            iel++;
+        }
     
-//        
-//    // extrapolate Zq
-//    vd_t   x_all_beta_Zq(0.0,in[0].size());                // [msea]
-//    vvd_t  y_all_beta_Zq(vd_t(0.0,njacks),in[0].size());   // [msea][njacks]
-//    vd_t  y_ave_all_beta_Zq(0.0,in[0].size());             // [msea]
-//    vd_t  y2_ave_all_beta_Zq(0.0,in[0].size());            // [msea]
-//    vd_t  dy_all_beta_Zq(0.0,in[0].size());                // [msea]
-//    
-//    int npar=2;
-//    vvd_t coord(vd_t(0.0,in[0].size()),npar);
-//    for(int j=0; j<in[0].size(); j++)
-//    {
-//        // parabolic fit in lattice units
-//        coord[0][j] = 1.0;
-//        coord[1][j] = p2_tilde[j];
-//    }
-//    
-//    for(int msea=0; msea<in[0].size(); msea++)
-//    {
-//        
-//        for(int b=0; b<in.size(); b++)
-//            x_all_beta_Zq[msea] += x[b][msea]
-//            
-//            for(int ijack=0;ijack<njacks;ijack++)
-//            {
-//                for(int b=0; b<in.size(); b++)
-//                    y_all_beta_Zq[msea][ijack]  += in[b][msea].jZq_EM[0][ijack][0];
-//                
-//                y_ave_all_beta_Zq[msea] += y_all_beta_Zq[msea][ijack]/njacks;
-//                y2_ave_all_beta_Zq[msea]+= y_all_beta_Zq[msea][ijack]*y_all_beta_Zq[msea][ijack]/njacks;
-//            }
-//        
-//        dy_all_beta_Zq[msea] = sqrt((double)(njacks-1))*sqrt(fabs(y2_ave_all_beta_Zq[msea]-y_ave_all_beta_Zq[msea]*y_ave_all_beta_Zq[msea]));
-//    }
+    vvd_t jZq_pars = polyfit(coord,npar,dy_Zq,y_Zq,0,nm_Sea_tot-1); // [ijack][ipar]
     
-    
+    for(int b=0; b<in.size(); b++)
+        for(int ijack=0;ijack<njacks;ijack++)
+            (out[b].jZq_EM)[0][ijack][0] = jZq_pars[ijack][b];
     
     
     // extrapolate Zbil
