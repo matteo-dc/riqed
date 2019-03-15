@@ -1780,7 +1780,7 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
         iel_tmp2 += in[b].size();
         for(int msea=0; msea<nm[b]; msea++)
         {
-            x[iel] = get<0>(ave_err(in[b][msea].eff_mass_sea));
+            x[iel] = get<0>(ave_err(in[b][msea].eff_mass_sea))*ainv[b];
             
             if(iel>=iel_tmp1 and iel<iel_tmp2)
                 xb[b][iel]=1;
@@ -1797,7 +1797,7 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     int npar = nb+1;                   //nbeta+1
     vvd_t coord(vd_t(0.0,nm_Sea_tot),npar);
     
-    cout<<"Squared sea masses:"<<endl;
+    cout<<"Squared sea masses (physical basis):"<<endl;
     for(iel=0; iel<nm_Sea_tot;iel++)
     {
         for(int b=0; b<nb; b++)
