@@ -1344,6 +1344,9 @@ oper_t compute_eta(voper_t in) // in[loop]
     out.allocate_val();
     out.allocate();
     
+    out.eff_mass=in[0].eff_mass;
+    out.eff_mass_sea=in[0].eff_mass_sea;
+    
     out.path_to_ens = in[0].path_to_beta + in[0].ensemble_name + "/";
     
     // Zq
@@ -1658,7 +1661,11 @@ oper_t oper_t::a2p2_extr()
     out._bilmoms=1;
     out._meslepmoms=1;
     
+    out.allocate_val();
     out.allocate();
+    
+    out.eff_mass=(*this).eff_mass;
+    out.eff_mass_sea=(*this).eff_mass_sea;
     
     cout<<"p2 range (lattice units):   "<<p2min<<" - "<<p2max<<endl;
     
