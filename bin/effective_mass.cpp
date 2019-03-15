@@ -571,10 +571,10 @@ void oper_t::compute_eff_mass_sea()
     
     // define jackknife P5P5 correlators
     vvd_t jP5P5_00_rave(vd_t(0.0,T/2+1),njacks);
-#pragma omp parallel for collapse(3)
-    for(int r=0;r<nr;r++)
-        for(int ijack=0; ijack<njacks;ijack++)
-            for(int t=0;t<T/2;t++)
+#pragma omp parallel for collapse(2)
+    for(int ijack=0; ijack<njacks;ijack++)
+        for(int t=0;t<T/2;t++)
+            for(int r=0;r<nr;r++)
                 jP5P5_00_rave[ijack][t]+=jP5P5_00[r][ijack][t]/nr;
     
     // define effective mass array
