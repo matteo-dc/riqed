@@ -1029,7 +1029,7 @@ voper_t theta_average(vvoper_t in) // in[th][b]
         out[b].allocate_val();
         out[b].allocate();
         
-        out[b].path_to_ens = in[0][b].path_to_beta + in[b][0]._beta_label +"/";
+        out[b].path_to_ens = in[0][b].path_to_beta + in[0][b]._beta_label +"/";
         
         for(int ijack=0;ijack<njacks;ijack++)
         {
@@ -1048,8 +1048,6 @@ voper_t theta_average(vvoper_t in) // in[th][b]
                         0.5*((in[0][b].jZ_4f_EM)[0][iop1][iop2][ijack][0][0] +
                              (in[1][b].jZ_4f_EM)[0][iop1][iop2][ijack][0][0]);
         }
-        
-        cout<<"path_to_ens: "<<out[b].path_to_ens<<endl;
     }
     
     return out;
