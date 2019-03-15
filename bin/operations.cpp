@@ -1334,17 +1334,17 @@ oper_t compute_eta(voper_t in) // in[loop]
     cout<<endl;
     cout<<"----- eta -----"<<endl<<endl;
     
-    oper_t out=in[1]; // out
+    oper_t out=in[0]; // out
     
-    out._nmr = in[1]._nmr;
-    out._linmoms = in[1]._linmoms;
-    out._bilmoms = in[1]._bilmoms;
-    out._meslepmoms = in[1]._meslepmoms;
+    out._nmr = in[0]._nmr;
+    out._linmoms = in[0]._linmoms;
+    out._bilmoms = in[0]._bilmoms;
+    out._meslepmoms = in[0]._meslepmoms;
     
     out.allocate_val();
     out.allocate();
     
-    out.path_to_ens = in[1].path_to_beta + in[1].ensemble_name + "/";
+    out.path_to_ens = in[0].path_to_beta + in[0].ensemble_name + "/";
     
     // Zq
     for(int imom=0;imom<out._linmoms;imom++)
