@@ -1835,9 +1835,9 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
         iel_tmp1 += in[b].size();
     }
 
-//    for(int b=0; b<in.size(); b++)
-//        for(int iel=0;iel<nm_Sea_tot;iel++)
-//            cout<<"xb["<<b<<"]["<<iel<<"] = "<<xb[b][iel]<<endl;
+    for(int b=0; b<in.size(); b++)
+        for(int iel=0;iel<nm_Sea_tot;iel++)
+            cout<<"xb["<<b<<"]["<<iel<<"] = "<<xb[b][iel]<<endl;
     
     int npar = nb+1;                   //nbeta+1
     vvd_t coord(vd_t(0.0,nm_Sea_tot),npar);
