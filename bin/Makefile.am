@@ -30,6 +30,7 @@ main_SOURCES  =	 main.cpp \
 		 rotate.cpp \
 		 allocate.cpp \
 		 prop.cpp \
+		 evolution.cpp \
 		 operations.cpp \
 		 sigmas.cpp \
 		 vertices.cpp \
@@ -44,7 +45,6 @@ main_SOURCES  =	 main.cpp \
 		 Zbil.cpp \
 		 ave_err.cpp \
 		 subtraction.cpp \
-		 evolution.cpp \
 		 meslep.cpp \
 		 interpolate.cpp
 
