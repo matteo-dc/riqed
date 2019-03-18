@@ -806,7 +806,7 @@ oper_t oper_t::evolve_mixed()
     vector<double> gamma_bil(nbil);
     vector<double> gamma_meslep(nbil);
     
-    gamma_q = -8.0;
+    gamma_q = 0.0;/*-8.0;*/
     gamma_bil =    {-8.0,+0.0,-8.0,+0.0,-152.0/3.0};
     gamma_meslep = {+4.0,-4.0,+0.0,+0.0,+0.0}; // to be updated
     
