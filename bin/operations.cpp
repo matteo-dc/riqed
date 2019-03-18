@@ -1835,9 +1835,9 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
         iel_tmp1 += in[b].size();
     }
 
-    for(int b=0; b<in.size(); b++)
-        for(int iel=0;iel<nm_Sea_tot;iel++)
-            cout<<"xb["<<b<<"]["<<iel<<"] = "<<xb[b][iel]<<endl;
+//    for(int b=0; b<in.size(); b++)
+//        for(int iel=0;iel<nm_Sea_tot;iel++)
+//            cout<<"xb["<<b<<"]["<<iel<<"] = "<<xb[b][iel]<<endl;
     
     int npar = nb+1;                   //nbeta+1
     vvd_t coord(vd_t(0.0,nm_Sea_tot),npar);
@@ -1870,6 +1870,13 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     
     vvd_t jZq_pars = polyfit(coord,npar,dy_Zq,y_Zq,0,nm_Sea_tot-1); // [ijack][ipar]
     
+    cout<<"---ZQ---"<<endl;
+    for(iel=0;iel<nm_Sea_tot;iel++)
+    {
+        cout<<coord[nb][iel]<<"  "<<y_Zq[0][iel]<<" "<<dy_Zq[iel]<<endl;
+    }
+    cout<<"A1 = "<<jZq_pars[0][0]<<" ; A2 = "<<jZq_pars[0][1]<<" ; A3 = "<<jZq_pars[0][2]<<" ; B = "<<jZq_pars[0][2]<<endl;
+    
     for(int b=0; b<nb; b++)
         for(int ijack=0;ijack<njacks;ijack++)
             (out[b].jZq_EM)[0][ijack][0] = jZq_pars[ijack][b];
@@ -1894,6 +1901,13 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
             }
         
         vvd_t jZ_pars = polyfit(coord,npar,dy_Z,y_Z,0,nm_Sea_tot-1); // [ijack][ipar]
+        
+        cout<<"---ZBIL_"<<ibil<<"---"<<endl;
+        for(iel=0;iel<nm_Sea_tot;iel++)
+        {
+            cout<<coord[nb][iel]<<"  "<<y_Z[0][iel]<<" "<<dy_Z[iel]<<endl;
+        }
+        cout<<"A1 = "<<jZ_pars[0][0]<<" ; A2 = "<<jZ_pars[0][1]<<" ; A3 = "<<jZ_pars[0][2]<<" ; B = "<<jZ_pars[0][2]<<endl;
         
         for(int b=0; b<nb; b++)
             for(int ijack=0;ijack<njacks;ijack++)
@@ -1920,6 +1934,13 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
                 }
             
             vvd_t jZ4f_pars = polyfit(coord,npar,dy_Z4f,y_Z4f,0,nm_Sea_tot-1); // [ijack][ipar]
+            
+            cout<<"---Z4f_"<<iop1<<","<<iop2<<"---"<<endl;
+            for(iel=0;iel<nm_Sea_tot;iel++)
+            {
+                cout<<coord[nb][iel]<<"  "<<y_Z4f[0][iel]<<" "<<dy_Z4f[iel]<<endl;
+            }
+            cout<<"A1 = "<<jZ4f_pars[0][0]<<" ; A2 = "<<jZ4f_pars[0][1]<<" ; A3 = "<<jZ4f_pars[0][2]<<" ; B = "<<jZ4f_pars[0][2]<<endl;
             
             for(int b=0; b<nb; b++)
                 for(int ijack=0;ijack<njacks;ijack++)
