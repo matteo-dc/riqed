@@ -795,7 +795,7 @@ oper_t oper_t::chiral_extr()
 //    return out;
 //}
 
-oper_t oper_t::evolve_mixed()
+oper_t oper_t::evolve_mixed(double ainv)
 {
     cout<<endl;
     cout<<"----- mixed evolution of the eta -----"<<endl<<endl;
@@ -806,13 +806,11 @@ oper_t oper_t::evolve_mixed()
     vector<double> gamma_bil(nbil);
     vector<double> gamma_meslep(nbil);
     
-    gamma_q = 0.0;/*-8.0;*/
+    gamma_q = -8.0;
     gamma_bil =    {-8.0,+0.0,-8.0,+0.0,-152.0/3.0};
     gamma_meslep = {+4.0,-4.0,+0.0,+0.0,+0.0}; // to be updated
     
 #warning update gamma_meslep with iop>1
-    
-    double alphas = 0.3;
     
     // Zq
     for(int imom=0;imom<out._linmoms;imom++)
@@ -820,7 +818,7 @@ oper_t oper_t::evolve_mixed()
             for(int mr=0;mr<out._nmr;mr++)
                 (out.jZq_EM)[imom][ijack][mr] =
                     jZq_EM[imom][ijack][mr]
-                    + alphas/pow(4*M_PI,3.0)*0.5*gamma_q*log(p2[imom]);
+                    + alphas(Nf,pow(ainv,2.0)*p2[imom])/pow(4*M_PI,3.0)*0.5*gamma_q*log(p2[imom]);
     
     // Zbil
     for(int imom=0;imom<out._bilmoms;imom++)
@@ -830,7 +828,7 @@ oper_t oper_t::evolve_mixed()
                     for(int mr2=0;mr2<out._nmr;mr2++)
                         (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] =
                             jZ_EM[imom][ibil][ijack][mr1][mr2]
-                            + alphas/pow(4*M_PI,3.0)*0.5*gamma_bil[ibil]*log(p2[imom]);
+                            + alphas(Nf,pow(ainv,2.0)*p2[imom])/pow(4*M_PI,3.0)*0.5*gamma_bil[ibil]*log(p2[imom]);
     
     
     // Z4f
@@ -843,7 +841,7 @@ oper_t oper_t::evolve_mixed()
                             if(iop1==iop2)
                                 (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] =
                                     jZ_4f_EM[imom][iop1][iop2][ijack][mr1][mr2]
-                                    + alphas/pow(4*M_PI,3.0)*0.5*gamma_meslep[iop1]*log(p2[imom]);
+                                    + alphas(Nf,pow(ainv,2.0)*p2[imom])/pow(4*M_PI,3.0)*0.5*gamma_meslep[iop1]*log(p2[imom]);
  
     
     return out;
@@ -1815,17 +1813,17 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     int iel_tmp1=0;
     int iel_tmp2=0;
     
-    vd_t a_tmp(nb);
-    a_tmp[0]=0.44856;
-    a_tmp[1]=0.41322;
-    a_tmp[2]=0.31348;
+//    vd_t a_tmp(nb);
+//    a_tmp[0]=0.44856;
+//    a_tmp[1]=0.41322;
+//    a_tmp[2]=0.31348;
     
     for(int b=0; b<nb; b++)
     {
         iel_tmp2 += in[b].size();
         for(int msea=0; msea<nm[b]; msea++)
         {
-            x[iel] = get<0>(ave_err(in[b][msea].eff_mass_sea))/a_tmp[b]/**ainv[b]*/;
+            x[iel] = get<0>(ave_err(in[b][msea].eff_mass_sea))*ainv[b];
             
             if(iel>=iel_tmp1 and iel<iel_tmp2)
                 xb[b][iel]=1;

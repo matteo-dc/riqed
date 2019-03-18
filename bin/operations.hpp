@@ -193,7 +193,7 @@ struct oper_t
     oper_t evolve(const int b);
     
     // evolution to 1/a scale of mixed eta
-    oper_t evolve_mixed();
+    oper_t evolve_mixed(double ainv);
     
     // average of equivalent momenta
     oper_t average_equiv_moms();

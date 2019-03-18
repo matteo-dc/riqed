@@ -6,11 +6,11 @@
 
 #define Z3 1.2020569031595942
 
-double alphas(int Nf,double ainv,double mu2)
+// ainv is the inverse lattice spacing, mu2 is in physical units
+double alphas(int Nf,double mu2)
 {
     
-    int CF;
-    CF = (Nc*Nc-1.)/(2.*Nc);
+    double CF = (Nc*Nc-1.)/(2.*Nc);
     
     double lam0,L2,LL2,b1,b2,b3;
     double als0, als1, als2, als3;
@@ -39,7 +39,7 @@ double alphas(int Nf,double ainv,double mu2)
     b2=beta_2/beta_0/16./pow(M_PI,2);
     b3=beta_3/beta_0/64./pow(M_PI,3);
     
-    lam0=LambdaQCD/ainv;
+    lam0=LambdaQCD;
     
     L2   = log( mu2/(pow(lam0,2) ) );
     LL2  = log( L2 );
@@ -60,144 +60,144 @@ double alphas(int Nf,double ainv,double mu2)
 // -> Z(mu=1/a) = Z(mu) /c
 //////////////////////////////////
 
-double q_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
-{
-    double cmu=0.0, cmu0=0.0; // c=cmu/cmu0
-    //mu_2=a2*p2 (adimensional quantity)
-    //mu0_2=a2*(1/a^2)=1
-    double mu0_2=1;
-    
-    // alphas @ NNLO
-    double alm, al0;
-    alm=alphas(Nf,ainv,mu_2)/(4*M_PI);
-    al0=alphas(Nf,ainv,mu0_2)/(4*M_PI);
-    
-    ////////////////////////////////
-    // N3LO FORMULA
-    // Assuming landau gauge
-    ///////////////////////////////////
-    if(Nf==2){
-        cmu = 1. + 2.03448 * alm + 35.9579 * pow(alm,2) + 1199.16 * pow(alm,3);
-        cmu0 = 1. + 2.03448 * al0 + 35.9579 * pow(al0,2) + 1199.16 * pow(al0,3);
-    }if(Nf==0){
-        cmu = 1. + 2.0303 * alm + 42.1268 * pow(alm,2) + 1728.43 * pow(alm,3);
-        cmu0 = 1. + 2.0303 * al0 + 42.1268 * pow(al0,2) + 1728.43 * pow(al0,3);
-    }if(Nf==4){
-        cmu = 1. + 2.4000 * alm + 29.6724 * pow(alm,2) + 719.141 * pow(alm,3);
-        cmu0 = 1. + 2.4000 * al0 + 29.6724 * pow(al0,2) + 719.141 * pow(al0,3);
-    }
-    
-    return cmu/cmu0;
-}
-double S_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
-{
-    double cmu=0.0, cmu0=0.0; // c=cmu/cmu0
-    //mu_2=a2*p2 (adimensional quantity)
-    //mu0_2=a2*(1/a^2)=1
-    double mu0_2=1;
-    
-    // alphas @ NNLO
-    double alm, al0;
-    alm=alphas(Nf,ainv,mu_2)/(4*M_PI);
-    al0=alphas(Nf,ainv,mu0_2)/(4*M_PI);
-    
-    ////////////////////////////////
-    // N3LO FORMULA
-    // Assuming landau gauge
-    ///////////////////////////////////
-    
-    if(Nf==2){
-        cmu = pow(alm,-12./29) * (1. - 8.55727 * alm - 125.423 * pow(alm,2) -
-                                  3797.71 * pow(alm,3));
-        
-        cmu0 = pow(al0,-12./29) * (1. - 8.55727 * al0 - 125.423 * pow(al0,2) -
-                                   3797.71 * pow(al0,3));
-    }if(Nf==0){
-        cmu = pow(alm,-4./11) * (1. - 8.08264 * alm - 151.012 * pow(alm,2) -
-                                 5247.93 * pow(alm,3));
-        
-        cmu0 = pow(al0,-4./11) * (1. - 8.08264 * al0 - 151.012 * pow(al0,2) -
-                                  5247.93 * pow(al0,3));
-    }if(Nf==4){
-        cmu = pow(alm,-12./25) * (1. - 9.38987 * alm - 96.2883 * pow(alm,2) -
-                                  2403.82 * pow(alm,3));
-        
-        cmu0 = pow(al0,-12./25) * (1. - 9.38987 * al0 - 96.2883 * pow(al0,2) -
-                                   2403.82 * pow(al0,3));
-    }
-    
-    return cmu/cmu0;
-}
+//double q_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
+//{
+//    double cmu=0.0, cmu0=0.0; // c=cmu/cmu0
+//    //mu_2=a2*p2 (adimensional quantity)
+//    //mu0_2=a2*(1/a^2)=1
+//    double mu0_2=1;
+//    
+//    // alphas @ NNLO
+//    double alm, al0;
+//    alm=alphas(Nf,ainv,mu_2)/(4*M_PI);
+//    al0=alphas(Nf,ainv,mu0_2)/(4*M_PI);
+//    
+//    ////////////////////////////////
+//    // N3LO FORMULA
+//    // Assuming landau gauge
+//    ///////////////////////////////////
+//    if(Nf==2){
+//        cmu = 1. + 2.03448 * alm + 35.9579 * pow(alm,2) + 1199.16 * pow(alm,3);
+//        cmu0 = 1. + 2.03448 * al0 + 35.9579 * pow(al0,2) + 1199.16 * pow(al0,3);
+//    }if(Nf==0){
+//        cmu = 1. + 2.0303 * alm + 42.1268 * pow(alm,2) + 1728.43 * pow(alm,3);
+//        cmu0 = 1. + 2.0303 * al0 + 42.1268 * pow(al0,2) + 1728.43 * pow(al0,3);
+//    }if(Nf==4){
+//        cmu = 1. + 2.4000 * alm + 29.6724 * pow(alm,2) + 719.141 * pow(alm,3);
+//        cmu0 = 1. + 2.4000 * al0 + 29.6724 * pow(al0,2) + 719.141 * pow(al0,3);
+//    }
+//    
+//    return cmu/cmu0;
+//}
+//double S_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
+//{
+//    double cmu=0.0, cmu0=0.0; // c=cmu/cmu0
+//    //mu_2=a2*p2 (adimensional quantity)
+//    //mu0_2=a2*(1/a^2)=1
+//    double mu0_2=1;
+//    
+//    // alphas @ NNLO
+//    double alm, al0;
+//    alm=alphas(Nf,ainv,mu_2)/(4*M_PI);
+//    al0=alphas(Nf,ainv,mu0_2)/(4*M_PI);
+//    
+//    ////////////////////////////////
+//    // N3LO FORMULA
+//    // Assuming landau gauge
+//    ///////////////////////////////////
+//    
+//    if(Nf==2){
+//        cmu = pow(alm,-12./29) * (1. - 8.55727 * alm - 125.423 * pow(alm,2) -
+//                                  3797.71 * pow(alm,3));
+//        
+//        cmu0 = pow(al0,-12./29) * (1. - 8.55727 * al0 - 125.423 * pow(al0,2) -
+//                                   3797.71 * pow(al0,3));
+//    }if(Nf==0){
+//        cmu = pow(alm,-4./11) * (1. - 8.08264 * alm - 151.012 * pow(alm,2) -
+//                                 5247.93 * pow(alm,3));
+//        
+//        cmu0 = pow(al0,-4./11) * (1. - 8.08264 * al0 - 151.012 * pow(al0,2) -
+//                                  5247.93 * pow(al0,3));
+//    }if(Nf==4){
+//        cmu = pow(alm,-12./25) * (1. - 9.38987 * alm - 96.2883 * pow(alm,2) -
+//                                  2403.82 * pow(alm,3));
+//        
+//        cmu0 = pow(al0,-12./25) * (1. - 9.38987 * al0 - 96.2883 * pow(al0,2) -
+//                                   2403.82 * pow(al0,3));
+//    }
+//    
+//    return cmu/cmu0;
+//}
 
-double P_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
-{
-    double cmu=0.0, cmu0=0.0; // c=cmu/cmu0
-    //mu_2=a2*p2 (adimensional quantity)
-    //mu0_2=a2*(1/a^2)=1
-    double mu0_2=1;
-    
-    // alphas @ NNLO
-    double alm, al0;
-    alm=alphas(Nf,ainv,mu_2)/(4*M_PI);
-    al0=alphas(Nf,ainv,mu0_2)/(4*M_PI);
-    
-    ////////////////////////////////
-    // N3LO FORMULA
-    // Assuming landau gauge
-    ///////////////////////////////////
-    if(Nf==2){
-        cmu = pow(alm,-12./29) * (1. - 8.55727 * alm - 125.423 * pow(alm,2) -
-                                  3797.71 * pow(alm,3));
-        
-        cmu0 = pow(al0,-12./29) * (1. - 8.55727 * al0 - 125.423 * pow(al0,2) -
-                                   3797.71 * pow(al0,3));
-    }if(Nf==0){
-        cmu = pow(alm,-4./11) * (1. - 8.08264 * alm - 151.012 * pow(alm,2) -
-                                 5247.93 * pow(alm,3));
-        
-        cmu0 = pow(al0,-4./11) * (1. - 8.08264 * al0 - 151.012 * pow(al0,2) -
-                                  5247.93 * pow(al0,3));
-    }if(Nf==4){
-        cmu = pow(alm,-12./25) * (1. - 9.38987 * alm - 96.2883 * pow(alm,2) -
-                                  2403.82 * pow(alm,3));
-        
-        cmu0 = pow(al0,-12./25) * (1. - 9.38987 * al0 - 96.2883 * pow(al0,2) -
-                                   2403.82 * pow(al0,3));
-    }
-    
-    return cmu/cmu0;
-}
+//double P_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
+//{
+//    double cmu=0.0, cmu0=0.0; // c=cmu/cmu0
+//    //mu_2=a2*p2 (adimensional quantity)
+//    //mu0_2=a2*(1/a^2)=1
+//    double mu0_2=1;
+//    
+//    // alphas @ NNLO
+//    double alm, al0;
+//    alm=alphas(Nf,ainv,mu_2)/(4*M_PI);
+//    al0=alphas(Nf,ainv,mu0_2)/(4*M_PI);
+//    
+//    ////////////////////////////////
+//    // N3LO FORMULA
+//    // Assuming landau gauge
+//    ///////////////////////////////////
+//    if(Nf==2){
+//        cmu = pow(alm,-12./29) * (1. - 8.55727 * alm - 125.423 * pow(alm,2) -
+//                                  3797.71 * pow(alm,3));
+//        
+//        cmu0 = pow(al0,-12./29) * (1. - 8.55727 * al0 - 125.423 * pow(al0,2) -
+//                                   3797.71 * pow(al0,3));
+//    }if(Nf==0){
+//        cmu = pow(alm,-4./11) * (1. - 8.08264 * alm - 151.012 * pow(alm,2) -
+//                                 5247.93 * pow(alm,3));
+//        
+//        cmu0 = pow(al0,-4./11) * (1. - 8.08264 * al0 - 151.012 * pow(al0,2) -
+//                                  5247.93 * pow(al0,3));
+//    }if(Nf==4){
+//        cmu = pow(alm,-12./25) * (1. - 9.38987 * alm - 96.2883 * pow(alm,2) -
+//                                  2403.82 * pow(alm,3));
+//        
+//        cmu0 = pow(al0,-12./25) * (1. - 9.38987 * al0 - 96.2883 * pow(al0,2) -
+//                                   2403.82 * pow(al0,3));
+//    }
+//    
+//    return cmu/cmu0;
+//}
 
-double T_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
-{
-    double cmu=0.0, cmu0=0.0; // c=cmu/cmu0
-    //mu_2=a2*p2 (adimensional quantity)
-    //mu0_2=a2*(1/a^2)=1
-    double mu0_2=1;
-    
-    // alphas @ NNLO
-    double alm, al0;
-    alm=alphas(Nf,ainv,mu_2)/(4*M_PI);
-    al0=alphas(Nf,ainv,mu0_2)/(4*M_PI);
-    
-    ////////////////////////////////
-    // N2LO FORMULA
-    // Assuming landau gauge
-    ///////////////////////////////////
-    
-    if(Nf==2){
-        cmu = pow(alm,4./29) * (1. + 2.66852 * alm + 47.9701 * pow(alm,2));
-        
-        cmu0 = pow(al0,4./29) * (1. + 2.66852 * al0 + 47.9701 * pow(al0,2));
-    }if(Nf==0){
-        cmu = pow(alm,4./33) * (1. + 2.53260 * alm + 57.8740 * pow(alm,2));
-        
-        cmu0 = pow(al0,4./33) * (1. + 2.53260 * al0 + 57.8740 * pow(al0,2));
-    }if(Nf==4){
-        cmu = pow(alm,4./25) * (1. + 2.91662 * alm + 37.9471 * pow(alm,2));
-        
-        cmu0 = pow(al0,4./25) * (1. + 2.91662 * al0 + 37.9471 * pow(al0,2));
-    }
-    
-    return cmu/cmu0;
-}
+//double T_evolution_to_RIp_ainv(int Nf,double ainv,double mu_2)
+//{
+//    double cmu=0.0, cmu0=0.0; // c=cmu/cmu0
+//    //mu_2=a2*p2 (adimensional quantity)
+//    //mu0_2=a2*(1/a^2)=1
+//    double mu0_2=1;
+//    
+//    // alphas @ NNLO
+//    double alm, al0;
+//    alm=alphas(Nf,ainv,mu_2)/(4*M_PI);
+//    al0=alphas(Nf,ainv,mu0_2)/(4*M_PI);
+//    
+//    ////////////////////////////////
+//    // N2LO FORMULA
+//    // Assuming landau gauge
+//    ///////////////////////////////////
+//    
+//    if(Nf==2){
+//        cmu = pow(alm,4./29) * (1. + 2.66852 * alm + 47.9701 * pow(alm,2));
+//        
+//        cmu0 = pow(al0,4./29) * (1. + 2.66852 * al0 + 47.9701 * pow(al0,2));
+//    }if(Nf==0){
+//        cmu = pow(alm,4./33) * (1. + 2.53260 * alm + 57.8740 * pow(alm,2));
+//        
+//        cmu0 = pow(al0,4./33) * (1. + 2.53260 * al0 + 57.8740 * pow(al0,2));
+//    }if(Nf==4){
+//        cmu = pow(alm,4./25) * (1. + 2.91662 * alm + 37.9471 * pow(alm,2));
+//        
+//        cmu0 = pow(al0,4./25) * (1. + 2.91662 * al0 + 37.9471 * pow(al0,2));
+//    }
+//    
+//    return cmu/cmu0;
+//}
