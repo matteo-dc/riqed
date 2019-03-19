@@ -9,7 +9,7 @@
 #define DEFAULT_DOUBLE_VAL 1.2345
 
 // define global variables
-int nconfs, njacks, nr, ntypes, nhits, Nf, Nc, UseSigma1, UseEffMass, nbeta, ntheta, compute_4f,only_basic, compute_mpcac, load_ave, load_chir, load;
+int nconfs, njacks, nr, ntypes, nhits, Nf, Nc, UseSigma1, UseEffMass, nbeta, ntheta, compute_4f,only_basic, compute_mpcac, load_ave, load_chir, load, QCD_on_the_right;
 int clust_size, nbil, combo, combo_lep, ntypes_lep;
 vector<double> beta;
 vector<int> nm_Sea;
@@ -83,7 +83,8 @@ TK_glb_t get_TK_glb(FILE *fin)
     if(strcasecmp(tok,load_ave_tag)==0) return LOAD_AVE_TK;
     if(strcasecmp(tok,load_chir_tag)==0) return LOAD_CHIR_TK;
     if(strcasecmp(tok,an_suffix_tag)==0) return SUFFIX_TK;
-    
+    if(strcasecmp(tok,QCD_on_the_right_tag)==0) return QCDONTHERIGHT_TK;
+
     return VALUE_GLB_TK;
 }
 
@@ -270,6 +271,8 @@ void read_input_glb(const char path[])
     load_ave=DEFAULT_INT_VAL;
     load_chir=DEFAULT_INT_VAL;
     an_suffix=DEFAULT_STR_VAL;
+    QCD_on_the_right=DEFAULT_INT_VAL;
+
     
 //    for(auto &bl : beta_label) bl=DEFAULT_STR_VAL;
 //    //        for(auto &l : L) l=DEFAULT_INT_VAL;
@@ -411,6 +414,9 @@ void read_input_glb(const char path[])
             case SUFFIX_TK:
                 get_value(fin,an_suffix);
                 break;
+            case QCDONTHERIGHT_TK:
+                get_value(fin,QCD_on_the_right);
+                break;
                 
             case FEOF_GLB_TK:
                 break;
@@ -453,7 +459,8 @@ void read_input_glb(const char path[])
     check_int_par(load_ave,load_ave_tag);
     check_int_par(load_chir,load_chir_tag);
     check_str_par(an_suffix,an_suffix_tag);
-    
+    check_int_par(QCD_on_the_right,QCD_on_the_right_tag);
+
     fclose(fin);
     
     free_analysis=false;
@@ -530,6 +537,10 @@ void read_input_glb(const char path[])
             printf("%s%d ",beta_label[b].c_str(),SeaMasses_label[b][m]);
         printf("\n");
     }
+    
+    printf(" Using Z^{QCD} factorized on the ");
+    if(QCD_on_the_right) printf("RIGHT. \n");
+    else printf("LEFT. \n");
     
     if(only_basic)
         printf(" Computing only basic quantities. \n");

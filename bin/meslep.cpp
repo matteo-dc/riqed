@@ -447,7 +447,7 @@ void oper_t::compute_Z4f()
             for(int mr_fw=0;mr_fw<_nmr;mr_fw++)
                 for(int mr_bw=0;mr_bw<_nmr;mr_bw++)
                 {
-                    O4f_t G4f_LO(O4f_t::Zero()), G4f_EM(O4f_t::Zero());
+                    O4f_t G4f_LO(O4f_t::Zero()), G4f_EM(O4f_t::Zero()), G4f_EM_rel(O4f_t::Zero());
                     
                     for(int iop1=0;iop1<nbil;iop1++)
                         for(int iop2=0;iop2<nbil;iop2++)
@@ -462,7 +462,12 @@ void oper_t::compute_Z4f()
                     
                     O4f_t G4f_LO_inv = G4f_LO.inverse();
                     
-                    O4f_t G4f_EM_rel = G4f_EM*G4f_LO_inv;
+                    
+                    
+                    if(QCD_on_the_right)
+                        G4f_EM_rel = G4f_LO_inv*G4f_EM;   // if Z = (1+alphaem*deltaZ)ZQCD
+                    else
+                        G4f_EM_rel = G4f_EM*G4f_LO_inv;   // if Z = ZQCD(1+alphaem*deltaZ)
                     
                     O4f_t Z4f_LO = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])*G4f_LO_inv;
                     

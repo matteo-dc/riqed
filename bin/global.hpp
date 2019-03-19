@@ -127,6 +127,8 @@ extern int compute_mpcac;
 extern bool free_analysis;
 extern bool inte_analysis;
 extern bool eta_analysis;
+// bool for QCD factorized on the RIGHT
+extern int QCD_on_the_right;
 // bool for recomputing basic
 extern bool recompute_basic;
 // reference p2

@@ -477,6 +477,8 @@ oper_t oper_t::chiral_extr()
     int npar_meslep[5]={2,2,3,3,2};
     int npar_meslep_max=3;
     
+#warning Goldstone: forse va solo quando iproj=2,3 e non iop!
+    
     //extrapolate sigma
     
     vvd_t sigma_pars_QCD(vd_t(0.0,npar_sigma),njacks);
