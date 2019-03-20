@@ -92,6 +92,8 @@ int main(int narg,char **arg)
                     basic[th][m].create_basic(b,th,m);
                     if(!load_ave) basic[th][m].plot("");
                     
+                    test_gamma();
+                    
                     /*  average over equivalent momenta  */
                     
                     ave[th][m] = basic[th][m].average_equiv_moms();

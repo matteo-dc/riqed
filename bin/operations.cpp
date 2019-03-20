@@ -18,6 +18,7 @@
 #include "prop.hpp"
 #include "sigmas.hpp"
 #include "allocate.hpp"
+#include "Dirac.hpp"
 
 //#define EXTERN_OPER
  #include "operations.hpp"
@@ -2062,3 +2063,55 @@ void oper_t::plot(const string suffix)
     
     
 }
+
+void test_gamma()
+{
+    ////////////////////////// DEBUG //////////////////////////////////////////////
+    vvprop_t   jmeslep_test(vprop_t(prop_t::Zero(),meslep::nGamma),meslep::nOp);
+    vvdcompl_t mesloop_test(vdcompl_t(0.0,meslep::nGamma),meslep::nGamma);
+    vvd_t      jG_test(vd_t(0.0,meslep::nOp),meslep::nOp);
+    
+    for(int igam=0;igam<meslep::nGamma;igam++)
+        for(int iproj=0;iproj<meslep::nGamma;iproj++)
+        {
+            prop_t op=GAMMA[meslep::iG[igam]]*(GAMMA[0]+meslep::g5L_sign[igam]*GAMMA[5]);
+            prop_t pr=(GAMMA[meslep::iG[iproj]]*(GAMMA[0]+meslep::g5L_sign[iproj]*GAMMA[5])).adjoint()/2.0;
+            // In the LO mesloop the external leptonic propagator is fully amputated (must be 1 if igam==iproj)
+            mesloop_test[igam][iproj] = (op*pr).trace()/12.0;
+        }
+    
+    for(int iop=0;iop<meslep::nOp;iop++)
+        for(int iproj=0;iproj<meslep::nGamma;iproj++)
+        {
+            vector<size_t> igam = meslep::iG_of_iop[iop];
+            
+            for(auto &ig : igam)
+            {
+                jmeslep_test[iop][iproj] += GAMMA[meslep::iG[ig]]*(GAMMA[0]+meslep::g5_sign[iop]*GAMMA[5])*mesloop_test[ig][iproj];
+            }
+        }
+    cout<<"Gamma TEST "<<endl;
+    for(int iop1=0;iop1<meslep::nOp;iop1++)
+    {
+        for(int iop2=0;iop2<meslep::nOp;iop2++)
+        {
+            vector<size_t> iproj = meslep::iG_of_iop[iop2];
+            
+            for(auto &ip : iproj)
+            {
+                prop_t jLambda = jmeslep_test[iop1][ip];
+                
+                double jGamma = (jLambda*(GAMMA[meslep::iG[ip]]*(GAMMA[0]+meslep::g5_sign[iop2]*GAMMA[5])).adjoint()).trace().real()/12.0/2.0;
+                // the factor 2.0 is to normalize the projector with (1+-g5)
+                
+                jG_test[iop1][iop2] += jGamma/**meslep::op_norm[iop1]/meslep::proj_norm[iop2]*/;
+            }
+            
+            cout<<jG_test[iop1][iop2]<<"\t";
+        }
+        cout<<endl;
+    }
+    ///////////////////////////////////////////////////////////////////////////////////
+    exit(0);
+}
+

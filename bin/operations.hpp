@@ -241,5 +241,8 @@ voper_t a2p2_extr_combined_on_betas(voper_t in);
 // combined chiral sea extrapolation;
 voper_t combined_chiral_sea_extr(vvoper_t in);
 
+// test tree level projection
+void test_gamma();
+
 #endif
 
