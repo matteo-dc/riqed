@@ -2101,10 +2101,10 @@ void test_gamma()
             {
                 prop_t jLambda = jmeslep_test[iop1][ip];
                 
-                double jGamma = (jLambda*(GAMMA[meslep::iG[ip]]*(GAMMA[0]+meslep::g5_sign[iop2]*GAMMA[5])).adjoint()).trace().real()/12.0/2.0;
+                double jGamma = (jLambda*(GAMMA[meslep::iG[ip]]*(GAMMA[0]+meslep::g5_sign[iop2]*GAMMA[5])).adjoint()).trace().real()/3.0/*/12.0/2.0*/;
                 // the factor 2.0 is to normalize the projector with (1+-g5)
                 
-                jG_test[iop1][iop2] += jGamma*meslep::op_norm[iop1]/meslep::proj_norm[iop2];
+                jG_test[iop1][iop2] += jGamma*meslep::op_norm[iop1]/*/meslep::proj_norm[iop2]*/;
             }
             
             cout<<jG_test[iop1][iop2]<<"\t";
