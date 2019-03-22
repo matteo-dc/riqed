@@ -2079,7 +2079,7 @@ void test_gamma()
             // In the LO mesloop the external leptonic propagator is fully amputated (must be 1 if igam==iproj)
             mesloop_test[igam][iproj] = (op*pr).trace()/3.0/*/12.0*/;
             
-            cout<<"["<<igam<<","<<iproj<<"]  "<<mesloop_test[igam][iproj];
+            cout<<"["<<igam<<","<<iproj<<"]  "<<mesloop_test[igam][iproj]<<endl;
         }
     
     for(int iop=0;iop<meslep::nOp;iop++)
