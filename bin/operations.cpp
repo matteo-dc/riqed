@@ -2075,7 +2075,7 @@ void test_gamma()
         for(int iproj=0;iproj<meslep::nGamma;iproj++)
         {
             prop_t op=GAMMA[meslep::iG[igam]]*(GAMMA[0]+meslep::g5L_sign[igam]*GAMMA[5]);
-            prop_t pr=(GAMMA[meslep::iG[iproj]]*(GAMMA[0]+meslep::g5L_sign[iproj]*GAMMA[5])).adjoint()/2.0;
+            prop_t pr=(GAMMA[meslep::iG[iproj]]*(GAMMA[0]+meslep::g5L_sign[iproj]*GAMMA[5])).adjoint()/*/2.0*/;
             // In the LO mesloop the external leptonic propagator is fully amputated (must be 1 if igam==iproj)
             mesloop_test[igam][iproj] = (op*pr).trace()/3.0/*/12.0*/;
         }
