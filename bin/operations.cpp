@@ -1394,18 +1394,28 @@ oper_t compute_eta(voper_t in) // in[loop]
     for(int imom=0;imom<out._linmoms;imom++)
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mr=0;mr<out._nmr;mr++)
+            {
+                (out.jZq)[imom][ijack][mr] =
+                    (in[0].jZq)[imom][ijack][mr];
+                
                 (out.jZq_EM)[imom][ijack][mr] =
                     (in[0].jZq_EM)[imom][ijack][mr] -
                     (in[1].jZq_EM)[imom][ijack][mr];
+            }
     // Zbil
     for(int imom=0;imom<out._bilmoms;imom++)
         for(int ibil=0;ibil<nbil;ibil++)
             for(int ijack=0;ijack<njacks;ijack++)
                 for(int mr1=0;mr1<out._nmr;mr1++)
                     for(int mr2=0;mr2<out._nmr;mr2++)
+                    {
+                        (out.jZ)[imom][ibil][ijack][mr1][mr2] =
+                            (in[0].jZ)[imom][ibil][ijack][mr1][mr2];
+                        
                         (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] =
                             (in[0].jZ_EM)[imom][ibil][ijack][mr1][mr2] -
                             (in[1].jZ_EM)[imom][ibil][ijack][mr1][mr2];
+                    }
     
     // Z4f
     for(int imom=0;imom<out._meslepmoms;imom++)
@@ -1414,9 +1424,14 @@ oper_t compute_eta(voper_t in) // in[loop]
                 for(int ijack=0;ijack<njacks;ijack++)
                     for(int mr1=0;mr1<out._nmr;mr1++)
                         for(int mr2=0;mr2<out._nmr;mr2++)
+                        {
+                            (out.jZ_4f)[imom][iop1][iop2][ijack][mr1][mr2] =
+                                (in[0].jZ_4f)[imom][iop1][iop2][ijack][mr1][mr2];
+                            
                             (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] =
                                 (in[0].jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] -
                                 (in[1].jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2];
+                        }
     
     
     return out;
