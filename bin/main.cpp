@@ -142,7 +142,9 @@ int main(int narg,char **arg)
 
                     
                 } //close nm_sea
-
+                
+            } //close ntheta
+         
         } //close nbeta
         
     } //close nloop
