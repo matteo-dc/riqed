@@ -177,29 +177,32 @@ int main(int narg,char **arg)
             } //close theta
         } //close beta
         
-        
-        for(int th=0; th<ntheta; th++)
+        if(nm_Sea_max>1)
+            for(int th=0; th<ntheta; th++)
+            {
+                etaM2_sea[th] = combined_chiral_sea_extr(etaM2[th]);
+                etaM1_sea[th] = combined_chiral_sea_extr(etaM1[th]);
+                
+                for(int b=0; b<nbeta; b++)
+                {
+                    etaM2_sea[th][b].plot("eta_M2_sea");
+                    etaM1_sea[th][b].plot("eta_M1_sea");
+                }
+            }
+
+        if(ntheta>1)
         {
-            etaM2_sea[th] = combined_chiral_sea_extr(etaM2[th]);
-            etaM1_sea[th] = combined_chiral_sea_extr(etaM1[th]);
+            etaM2_theta = theta_average(etaM2_sea);
+            etaM1_theta = theta_average(etaM1_sea);
             
             for(int b=0; b<nbeta; b++)
             {
-                etaM2_sea[th][b].plot("eta_M2_sea");
-                etaM1_sea[th][b].plot("eta_M1_sea");
+                etaM2_theta[b].plot("eta_M2_theta");
+                etaM1_theta[b].plot("eta_M1_theta");
             }
         }
-
-        etaM2_theta = theta_average(etaM2_sea);
-        etaM1_theta = theta_average(etaM1_sea);
-        
-        for(int b=0; b<nbeta; b++)
-        {
-            etaM2_theta[b].plot("eta_M2_theta");
-            etaM1_theta[b].plot("eta_M1_theta");
-        }
     }
-    
+
 
 //    if(nbeta>1 and only_basic==0)
 //    {
