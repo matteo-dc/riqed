@@ -121,7 +121,7 @@ int main(int narg,char **arg)
                         }
                         else
                         {
-                            val_chir[th][m] = rave[th][m]/*.chiral_extr()*/;
+                            val_chir[th][m] = rave[th][m].chiral_extr();
                             val_chir[th][m].plot("chir");
                             
                             /* store extrapolated ingredients */
