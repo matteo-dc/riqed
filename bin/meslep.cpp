@@ -464,9 +464,9 @@ void oper_t::compute_Z4f()
                     
                     
                     
-                    if(QCD_on_the_right)
+                    if(QCD_on_the_right==1)
                         G4f_EM_rel = G4f_LO_inv*G4f_EM;   // if Z = (1+alphaem*deltaZ)ZQCD
-                    else
+                    else if(QCD_on_the_right==0)
                         G4f_EM_rel = G4f_EM*G4f_LO_inv;   // if Z = ZQCD(1+alphaem*deltaZ)
                     
                     O4f_t Z4f_LO = sqrt(jZq[imom1][ijack][mr_fw]*jZq[imom2][ijack][mr_bw])*G4f_LO_inv;
@@ -475,6 +475,24 @@ void oper_t::compute_Z4f()
                         0.5*(qOU*qOU*jZq_EM[imom1][ijack][mr_fw]+
                              qIN*qIN*jZq_EM[imom2][ijack][mr_bw])*O4f_t::Identity()
                         - G4f_EM_rel;
+                    
+                    if(QCD_on_the_right==2)
+                    {
+                        G4f_EM_rel = G4f_EM;
+                        Z4f_LO = G4f_LO_inv;
+                        Z4f_EM = G4f_EM_rel;
+                    }
+                    if(QCD_on_the_right==3)
+                    {
+                        Z4f_LO = (1.0/jZq[imom1][ijack][mr_fw])*O4f_t::Identity();
+                        Z4f_EM = qOU*qOU*jZq_EM[imom1][ijack][mr_fw]*jZq[imom1][ijack][mr_fw]*O4f_t::Identity();
+                    }
+                    if(QCD_on_the_right==4)
+                    {
+                        Z4f_LO = (1.0/jZq[imom2][ijack][mr_bw])*O4f_t::Identity();
+                        Z4f_EM = qIN*qIN*jZq_EM[imom2][ijack][mr_bw]*jZq[imom2][ijack][mr_bw]*O4f_t::Identity();
+                    }
+                    
                     
                     for(int iop1=0;iop1<nbil;iop1++)
                         for(int iop2=0;iop2<nbil;iop2++)
