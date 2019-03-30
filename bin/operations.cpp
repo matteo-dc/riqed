@@ -232,7 +232,7 @@ void oper_t::create_basic(const int b, const int th, const int msea)
         path_ensemble = path_folder + path_analysis[0]+"/";
         
         // e.g. /.../matteo/free_matching/B/
-        path_to_beta = path_ensemble + _beta_label + "/";
+        path_to_beta = path_ensemble;
         
         // e.g. B1m
         ensemble_name = _beta_label + _SeaMasses_label + _theta_label;
