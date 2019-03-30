@@ -1737,45 +1737,69 @@ oper_t oper_t::a2p2_extr()
     // Interpolating Zq
     vvd_t y_Zq(vd_t(0.0,_linmoms),njacks);       // [njacks][moms]
     vd_t  dy_Zq(0.0,_linmoms);                   // [moms]
-    vvd_t dy_Zq_tmp = get<1>(ave_err_Zq((*this).jZq_EM)); // [moms][nmr]
+    vvd_t dy_Zq_tmp = get<1>(ave_err_Zq((*this).jZq)); // [moms][nmr]
+    vvd_t y_Zq_EM(vd_t(0.0,_linmoms),njacks);       // [njacks][moms]
+    vd_t  dy_Zq_EM(0.0,_linmoms);                   // [moms]
+    vvd_t dy_Zq_EM_tmp = get<1>(ave_err_Zq((*this).jZq_EM)); // [moms][nmr]
     
     for(int imom=0;imom<_linmoms;imom++)
     {
         for(int ijack=0;ijack<njacks;ijack++)
-            y_Zq[ijack][imom] = jZq_EM[imom][ijack][0];
+        {
+            y_Zq[ijack][imom] = jZq[imom][ijack][0];
+            y_Zq_EM[ijack][imom] = jZq_EM[imom][ijack][0];
+        }
         dy_Zq[imom] = dy_Zq_tmp[imom][0];
+        dy_Zq_EM[imom] = dy_Zq_EM_tmp[imom][0];
     }
     
     vvd_t jZq_pars = polyfit(coord,npar,dy_Zq,y_Zq,p2min,p2max); // [ijack][ipar]
+    vvd_t jZq_EM_pars = polyfit(coord,npar,dy_Zq_EM,y_Zq_EM,p2min,p2max); // [ijack][ipar]
     
     for(int ijack=0;ijack<njacks;ijack++)
-        (out.jZq_EM)[0][ijack][0] = jZq_pars[ijack][0];
-    
+    {
+        (out.jZq)[0][ijack][0] = jZq_pars[ijack][0];
+        (out.jZq_EM)[0][ijack][0] = jZq_EM_pars[ijack][0];
+    }
     
     // Interpolating Zbil
     vvd_t y_Zbil(vd_t(0.0,_bilmoms),njacks);       // [njacks][moms]
     vd_t  dy_Zbil(0.0,_bilmoms);                   // [moms]
-    vvvvd_t dy_Zbil_tmp = get<1>(ave_err_Z((*this).jZ_EM)); // [moms][nbil][nmr][nmr]
+    vvvvd_t dy_Zbil_tmp = get<1>(ave_err_Z((*this).jZ)); // [moms][nbil][nmr][nmr]
+    vvd_t y_Zbil_EM(vd_t(0.0,_bilmoms),njacks);       // [njacks][moms]
+    vd_t  dy_Zbil_EM(0.0,_bilmoms);                   // [moms]
+    vvvvd_t dy_Zbil_EM_tmp = get<1>(ave_err_Z((*this).jZ_EM)); // [moms][nbil][nmr][nmr]
     
     for(int ibil=0;ibil<nbil;ibil++)
     {
         for(int imom=0;imom<_bilmoms;imom++)
         {
             for(int ijack=0;ijack<njacks;ijack++)
-                y_Zbil[ijack][imom] = jZ_EM[imom][ibil][ijack][0][0];
+            {
+                y_Zbil[ijack][imom] = jZ[imom][ibil][ijack][0][0];
+                y_EM_Zbil[ijack][imom] = jZ_EM[imom][ibil][ijack][0][0];
+            }
             dy_Zbil[imom] = dy_Zbil_tmp[imom][ibil][0][0];
+            dy_Zbil_EM[imom] = dy_Zbil_EM_tmp[imom][ibil][0][0];
         }
         
         vvd_t jZ_pars = polyfit(coord,npar,dy_Zbil,y_Zbil,p2min,p2max); // [ijack][ipar]
+        vvd_t jZ_EM_pars = polyfit(coord,npar,dy_Zbil_EM,y_Zbil_EM,p2min,p2max); // [ijack][ipar]
         
         for(int ijack=0;ijack<njacks;ijack++)
-            (out.jZ_EM)[0][ibil][ijack][0][0] = jZ_pars[ijack][0];
+        {
+            (out.jZ)[0][ibil][ijack][0][0] = jZ_pars[ijack][0];
+            (out.jZ_EM)[0][ibil][ijack][0][0] = jZ_EM_pars[ijack][0];
+        }
     }
     
     // Interpolating Z4f
     vvd_t y_Z4f(vd_t(0.0,_meslepmoms),njacks);       // [njacks][moms]
     vd_t  dy_Z4f(0.0,_meslepmoms);                   // [moms]
-    vvvvvd_t dy_Z4f_tmp = get<1>(ave_err_Z4f((*this).jZ_4f_EM)); // [moms][nbil][nbil][nmr][nmr]
+    vvvvvd_t dy_Z4f_tmp = get<1>(ave_err_Z4f((*this).jZ_4f)); // [moms][nbil][nbil][nmr][nmr]
+    vvd_t y_Z4f_EM(vd_t(0.0,_meslepmoms),njacks);       // [njacks][moms]
+    vd_t  dy_Z4f_EM(0.0,_meslepmoms);                   // [moms]
+    vvvvvd_t dy_Z4f_EM_tmp = get<1>(ave_err_Z4f((*this).jZ_4f_EM)); // [moms][nbil][nbil][nmr][nmr]
     
     for(int iop1=0;iop1<nbil;iop1++)
         for(int iop2=0;iop2<nbil;iop2++)
@@ -1783,16 +1807,23 @@ oper_t oper_t::a2p2_extr()
             for(int imom=0;imom<_meslepmoms;imom++)
             {
                 for(int ijack=0;ijack<njacks;ijack++)
-                    y_Z4f[ijack][imom] = jZ_4f_EM[imom][iop1][iop2][ijack][0][0];
+                {
+                    y_Z4f[ijack][imom] = jZ_4f[imom][iop1][iop2][ijack][0][0];
+                    y_Z4f_EM[ijack][imom] = jZ_4f_EM[imom][iop1][iop2][ijack][0][0];
+                }
                 dy_Z4f[imom] = dy_Z4f_tmp[imom][iop1][iop2][0][0];
+                dy_Z4f_EM[imom] = dy_Z4f_EM_tmp[imom][iop1][iop2][0][0];
             }
             
             vvd_t jZ4f_pars = polyfit(coord,npar,dy_Z4f,y_Z4f,p2min,p2max); // [ijack][ipar]
+            vvd_t jZ4f_EM_pars = polyfit(coord,npar,dy_Z4f_EM,y_Z4f_EM,p2min,p2max); // [ijack][ipar]
             
             for(int ijack=0;ijack<njacks;ijack++)
-                (out.jZ_4f_EM)[0][iop1][iop2][ijack][0][0] = jZ4f_pars[ijack][0];
+            {
+                (out.jZ_4f)[0][iop1][iop2][ijack][0][0] = jZ4f_pars[ijack][0];
+                (out.jZ_4f_EM)[0][iop1][iop2][ijack][0][0] = jZ4f_EM_pars[ijack][0];
+            }
         }
-    
     
     return out;
 }
