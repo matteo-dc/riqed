@@ -62,7 +62,7 @@ double subZq(const int imom, const vector<double> a2p2_vec, const vector<double>
             }
             else                                //Landau
             {
-                out<<" - Subtracting QED to Z_EM: Plaquette/Landau"<<endl;
+                cout<<" - Subtracting QED to Z_EM: Plaquette/Landau"<<endl;
                 
                 Zq_sub =  0.009529331412677406*a2p2 + (0.0127208492759996*a4p4)/a2p2 +
                             (-0.001556757769504669*a2p2 - (0.005329916431185477*a4p4)/a2p2)*log(a2p2);
