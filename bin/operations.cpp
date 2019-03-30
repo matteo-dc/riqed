@@ -1034,20 +1034,36 @@ voper_t theta_average(vvoper_t in) // in[th][b]
         
         for(int ijack=0;ijack<njacks;ijack++)
         {
+            (out[b].jZq)[0][ijack][0] =
+            0.5*((in[0][b].jZq)[0][ijack][0] +
+                 (in[1][b].jZq)[0][ijack][0]);
+            
             (out[b].jZq_EM)[0][ijack][0] =
                 0.5*((in[0][b].jZq_EM)[0][ijack][0] +
                      (in[1][b].jZq_EM)[0][ijack][0]);
             
             for(int ibil=0;ibil<nbil;ibil++)
+            {
+                (out[b].jZ)[0][ibil][ijack][0][0] =
+                0.5*((in[0][b].jZ)[0][ibil][ijack][0][0] +
+                     (in[1][b].jZ)[0][ibil][ijack][0][0]);
+                
                 (out[b].jZ_EM)[0][ibil][ijack][0][0] =
                     0.5*((in[0][b].jZ_EM)[0][ibil][ijack][0][0] +
                          (in[1][b].jZ_EM)[0][ibil][ijack][0][0]);
+            }
             
             for(int iop1=0;iop1<nbil;iop1++)
                 for(int iop2=0;iop2<nbil;iop2++)
+                {
+                    (out[b].jZ_4f)[0][iop1][iop2][ijack][0][0] =
+                    0.5*((in[0][b].jZ_4f)[0][iop1][iop2][ijack][0][0] +
+                         (in[1][b].jZ_4f)[0][iop1][iop2][ijack][0][0]);
+                    
                     (out[b].jZ_4f_EM)[0][iop1][iop2][ijack][0][0] =
                         0.5*((in[0][b].jZ_4f_EM)[0][iop1][iop2][ijack][0][0] +
                              (in[1][b].jZ_4f_EM)[0][iop1][iop2][ijack][0][0]);
+                }
         }
     }
     
