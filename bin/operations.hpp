@@ -189,7 +189,7 @@ struct oper_t
     double subtraction(const int imom, const int ibil, const int LO_or_EM);
     double subtraction_q(const int imom, const int LO_or_EM);
     
-    oper_t subOa2();
+    oper_t subOa2(const int b);
 
 
     // evolution to 1/a scale
