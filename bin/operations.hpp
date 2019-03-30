@@ -188,6 +188,9 @@ struct oper_t
     oper_t subtract();
     double subtraction(const int imom, const int ibil, const int LO_or_EM);
     double subtraction_q(const int imom, const int LO_or_EM);
+    
+    oper_t subOa2();
+
 
     // evolution to 1/a scale
     oper_t evolve(const int b);
@@ -215,7 +218,6 @@ struct oper_t
     
     // a2p2->0 extrapolation
     oper_t a2p2_extr();
-    
 };
 
 // valarray of oper_t struct;
@@ -238,7 +240,7 @@ oper_t compute_eta(voper_t oper_for_eta);
 // a2p2->0 extrapolation combined on betas
 voper_t a2p2_extr_combined_on_betas(voper_t in);
 
-// combined chiral sea extrapolation;
+// combined chiral sea extrapolation
 voper_t combined_chiral_sea_extr(vvoper_t in);
 
 // test tree level projection
