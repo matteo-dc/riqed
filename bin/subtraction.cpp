@@ -306,7 +306,7 @@ double subZ4f(const int imom, const vector<double> a2p2_vec, const vector<double
     return Z4f_sub[iop1][iop2];
 }
 
-oper_t oper_t::subOa2()
+oper_t oper_t::subOa2(const int b)
 {
     cout<<endl;
     cout<<"----- subtraction of O(a2) effects -----"<<endl<<endl;
@@ -314,13 +314,14 @@ oper_t oper_t::subOa2()
     oper_t out=(*this);
     
     double CF = 4.0/3.0;
+    double g2b = 6.0/beta[b]/plaquette;
     
         // Zq
         for(int imom=0;imom<out._linmoms;imom++)
             for(int ijack=0;ijack<njacks;ijack++)
                 for(int mr=0;mr<out._nmr;mr++)
                 {
-                    (out.jZq)[imom][ijack][mr] -= CF*subZq(imom,p2_tilde,p4_tilde,0);
+                    (out.jZq)[imom][ijack][mr] -= CF*g2b*subZq(imom,p2_tilde,p4_tilde,0);
                     (out.jZq_EM)[imom][ijack][mr] -= subZq(imom,p2_tilde,p4_tilde,1);
                 }
     
@@ -331,7 +332,7 @@ oper_t oper_t::subOa2()
                     for(int mr1=0;mr1<out._nmr;mr1++)
                         for(int mr2=0;mr2<out._nmr;mr2++)
                         {
-                            (out.jZ)[imom][ibil][ijack][mr1][mr2] -= CF*subZ(imom,p2_tilde,p4_tilde,ibil,0);
+                            (out.jZ)[imom][ibil][ijack][mr1][mr2] -= CF*g2b*subZ(imom,p2_tilde,p4_tilde,ibil,0);
                             (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] -= subZ(imom,p2_tilde,p4_tilde,ibil,1);
                         }
     
@@ -343,7 +344,7 @@ oper_t oper_t::subOa2()
                         for(int mr1=0;mr1<out._nmr;mr1++)
                             for(int mr2=0;mr2<out._nmr;mr2++)
                             {
-                                (out.jZ_4f)[imom][iop1][iop2][ijack][mr1][mr2] -= CF*subZ4f(imom,p2_tilde,p4_tilde,iop1,iop2,0);
+                                (out.jZ_4f)[imom][iop1][iop2][ijack][mr1][mr2] -= CF*g2b*subZ4f(imom,p2_tilde,p4_tilde,iop1,iop2,0);
                                 (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] -= subZ4f(imom,p2_tilde,p4_tilde,iop1,iop2,1);
                             }
     
