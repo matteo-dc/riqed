@@ -1793,7 +1793,7 @@ oper_t oper_t::a2p2_extr()
             for(int ijack=0;ijack<njacks;ijack++)
             {
                 y_Zbil[ijack][imom] = jZ[imom][ibil][ijack][0][0];
-                y_EM_Zbil[ijack][imom] = jZ_EM[imom][ibil][ijack][0][0];
+                y_Zbil_EM[ijack][imom] = jZ_EM[imom][ibil][ijack][0][0];
             }
             dy_Zbil[imom] = dy_Zbil_tmp[imom][ibil][0][0];
             dy_Zbil_EM[imom] = dy_Zbil_EM_tmp[imom][ibil][0][0];
