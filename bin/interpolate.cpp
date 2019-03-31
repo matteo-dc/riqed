@@ -37,7 +37,7 @@ oper_t oper_t::interpolate_to_p2ref(int b)
     cout<<"----- interpolation to p2 = "<<p2ref<<" Gev^2 -----"<<endl<<endl;
     
     double ainv2 = ainv[b]*ainv[b];
-    double a2p2ref = 1.0;/*p2ref/ainv2; */// p2ref in lattice units
+    double a2p2ref = 0.92;/*p2ref/ainv2; */// p2ref in lattice units //this is p2tilde
     
     oper_t out=(*this);
     
