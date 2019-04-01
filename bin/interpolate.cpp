@@ -79,7 +79,7 @@ oper_t oper_t::interpolate_to_ainv(int b)
     pair<double,double> a2p2minmax=(*this).get_a2p2_range(_linmoms,a2p2ref);
     double a2p2_min=a2p2minmax.first;
     double a2p2_max=a2p2minmax.second;
-    cout<<"a2p2 range (physical units):   "<<a2p2_min<<" - "<<a2p2_max<<endl;
+    cout<<"a2p2 range (lattice units):   "<<a2p2_min<<" - "<<a2p2_max<<endl;
     
     int npar=3;
     vvd_t coord(vd_t(0.0,_linmoms),npar);
