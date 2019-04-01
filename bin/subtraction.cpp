@@ -19,14 +19,14 @@ double subZq(const int imom, const vector<double> a2p2_vec, const vector<double>
         {
             if(strcmp(an_suffix.c_str(),"")==0) //Feynman
             {
-                cout<<" - Subtracting QED to Zq_EM: Plaquette/Feynman"<<endl;
+//                cout<<" - Subtracting QED to Zq_EM: Plaquette/Feynman"<<endl;
 
                 Zq_sub = - 0.00007117813150874176*a2p2 + (0.015227459368423301*a4p4)/a2p2 +
                         (0.0008179574721126228*a2p2 - (0.005329916431185478*a4p4)/a2p2)*log(a2p2);
             }
             else                                //Landau
             {
-                cout<<" - Subtracting QED to Zq_EM: Plaquette/Landau"<<endl;
+//                cout<<" - Subtracting QED to Zq_EM: Plaquette/Landau"<<endl;
 
                 Zq_sub =  0.009529331412677406*a2p2 + (0.0127208492759996*a4p4)/a2p2 +
                         (-0.001556757769504669*a2p2 - (0.005329916431185477*a4p4)/a2p2)*log(a2p2);
@@ -45,7 +45,7 @@ double subZq(const int imom, const vector<double> a2p2_vec, const vector<double>
             }
             else                                //Landau
             {
-                cout<<" - Subtracting QCD to Zq: Iwasaki/Landau"<<endl;
+//                cout<<" - Subtracting QCD to Zq: Iwasaki/Landau"<<endl;
 
                 Zq_sub =  0.003927646025581469*a2p2 + (0.011737083908572275*a4p4)/a2p2 +
                             (-0.0004737841872855492*a2p2 - (0.006098477715414467*a4p4)/a2p2)*log(a2p2);
@@ -55,14 +55,14 @@ double subZq(const int imom, const vector<double> a2p2_vec, const vector<double>
         {
             if(strcmp(an_suffix.c_str(),"")==0) //Feynman
             {
-                cout<<" - Subtracting QED to Z_EM: Plaquette/Feynman"<<endl;
+//                cout<<" - Subtracting QED to Z_EM: Plaquette/Feynman"<<endl;
 
                 Zq_sub = - 0.00007117813150874176*a2p2 + (0.015227459368423301*a4p4)/a2p2 +
                             (0.0008179574721126228*a2p2 - (0.005329916431185478*a4p4)/a2p2)*log(a2p2);
             }
             else                                //Landau
             {
-                cout<<" - Subtracting QED to Z_EM: Plaquette/Landau"<<endl;
+//                cout<<" - Subtracting QED to Z_EM: Plaquette/Landau"<<endl;
                 
                 Zq_sub =  0.009529331412677406*a2p2 + (0.0127208492759996*a4p4)/a2p2 +
                             (-0.001556757769504669*a2p2 - (0.005329916431185477*a4p4)/a2p2)*log(a2p2);
@@ -88,7 +88,7 @@ double subZ(const int imom, const vector<double> a2p2_vec, const vector<double> 
         {
             if(strcmp(an_suffix.c_str(),"")==0) //Feynman
             {
-                cout<<" - Subtracting QED to Z_EM: Plaquette/Feynman"<<endl;
+//                cout<<" - Subtracting QED to Z_EM: Plaquette/Feynman"<<endl;
                 
                 Z_sub[0] = - 0.002140808956604977*a2p2 + (0.012588884766879431*a4p4)/a2p2 +
                             (- 0.002348329516710433*a2p2 - (0.005329916431185476*a4p4)/a2p2)*log(a2p2);
@@ -103,7 +103,7 @@ double subZ(const int imom, const vector<double> a2p2_vec, const vector<double> 
             }
             else                                //Landau
             {
-                cout<<" - Subtracting QED to Z_EM: Plaquette/Landau"<<endl;
+//                cout<<" - Subtracting QED to Z_EM: Plaquette/Landau"<<endl;
                 
                 Z_sub[0] = - 0.006938001612551163*a2p2 + (0.009290702927249964*a4p4)/a2p2 +
                             (0.000026385724906858877*a2p2 - (0.005329916431185477*a4p4)/a2p2)*log(a2p2);
@@ -130,7 +130,7 @@ double subZ(const int imom, const vector<double> a2p2_vec, const vector<double> 
             }
             else                                //Landau
             {
-                cout<<" - Subtracting QCD to Z: Iwasaki/Landau"<<endl;
+//                cout<<" - Subtracting QCD to Z: Iwasaki/Landau"<<endl;
                 
                 Z_sub[0] = - 0.008872018466143912*a2p2 + (0.009354978553123072*a4p4)/a2p2 +
                             (0.0011093593071259786*a2p2 - (0.006098477715414468*a4p4)/a2p2)*log(a2p2);
@@ -148,7 +148,7 @@ double subZ(const int imom, const vector<double> a2p2_vec, const vector<double> 
         {
             if(strcmp(an_suffix.c_str(),"")==0) //Feynman
             {
-                cout<<" - Subtracting QED to Z_EM: Plaquette/Feynman"<<endl;
+//                cout<<" - Subtracting QED to Z_EM: Plaquette/Feynman"<<endl;
                 
                 Z_sub[0] = - 0.002140808956604977*a2p2 + (0.012588884766879431*a4p4)/a2p2 +
                 (- 0.002348329516710433*a2p2 - (0.005329916431185476*a4p4)/a2p2)*log(a2p2);
@@ -163,7 +163,7 @@ double subZ(const int imom, const vector<double> a2p2_vec, const vector<double> 
             }
             else                                //Landau
             {
-                cout<<" - Subtracting QED to Z_EM: Plaquette/Landau"<<endl;
+//                cout<<" - Subtracting QED to Z_EM: Plaquette/Landau"<<endl;
 
                 Z_sub[0] = - 0.006938001612551163*a2p2 + (0.009290702927249964*a4p4)/a2p2 +
                 (0.000026385724906858877*a2p2 - (0.005329916431185477*a4p4)/a2p2)*log(a2p2);
@@ -195,7 +195,7 @@ double subZ4f(const int imom, const vector<double> a2p2_vec, const vector<double
         {
             if(strcmp(an_suffix.c_str(),"")==0) //Feynman
             {
-                cout<<" - Subtracting QED to Z4f_EM: Plaquette/Feynman"<<endl;
+//                cout<<" - Subtracting QED to Z4f_EM: Plaquette/Feynman"<<endl;
                 
                 Z4f_sub[0][0] = - (0.005017237851226561*a4p4)/a2p2 + a2p2*(-0.0021075326875911096 - 0.000784242379176081*log(a2p2))- (0.0014805323419959657*a4p4*log(a2p2))/a2p2;
                 Z4f_sub[1][1] = - (0.004104872255397198*a4p4)/a2p2 + a2p2*(0.013796511549751856 - 0.0027631717471904905*log(a2p2)) - (0.0014805323419959657*a4p4*log(a2p2))/a2p2;
@@ -223,7 +223,7 @@ double subZ4f(const int imom, const vector<double> a2p2_vec, const vector<double
             }
             else                                //Landau
             {
-                cout<<" - Subtracting QED to Z4f_EM: Plaquette/Landau"<<endl;
+//                cout<<" - Subtracting QED to Z4f_EM: Plaquette/Landau"<<endl;
                 
                 Z4f_sub[0][0] = - (0.0047937725734647245*a4p4)/a2p2 + a2p2*(-0.0021178665687984636 - 0.0012240044609570608*log(a2p2))  - (0.0014805323419959657*a4p4*log(a2p2))/a2p2;
                 Z4f_sub[1][1] = - (0.0038685349655967977*a4p4)/a2p2 + a2p2*(0.009981613661650554 - 0.0020155762081628245*log(a2p2))  - (0.0014805323419959657*a4p4*log(a2p2))/a2p2;
@@ -263,7 +263,7 @@ double subZ4f(const int imom, const vector<double> a2p2_vec, const vector<double
             }
             else                                //Landau
             {
-                cout<<" - Subtracting QCD to Z4f: Iwasaki/Landau"<<endl;
+//                cout<<" - Subtracting QCD to Z4f: Iwasaki/Landau"<<endl;
                 
                 Z4f_sub[0][0] = (0.015008383971666636*a4p4)/a2p2 + a2p2*(-0.00003638063750157662 + 0.0008528900610313113*log(a2p2)) - (0.006098477715414467*a4p4*log(a2p2))/a2p2;
                 Z4f_sub[1][1] = Z4f_sub[0][0];
@@ -280,7 +280,7 @@ double subZ4f(const int imom, const vector<double> a2p2_vec, const vector<double
         {
             if(strcmp(an_suffix.c_str(),"")==0) //Feynman
             {
-                cout<<" - Subtracting QED to Z4f_EM: Plaquette/Feynman"<<endl;
+//                cout<<" - Subtracting QED to Z4f_EM: Plaquette/Feynman"<<endl;
                 
                 Z4f_sub[0][0] = - (0.005017237851226561*a4p4)/a2p2 + a2p2*(-0.0021075326875911096 - 0.000784242379176081*log(a2p2))- (0.0014805323419959657*a4p4*log(a2p2))/a2p2;
                 Z4f_sub[1][1] = - (0.004104872255397198*a4p4)/a2p2 + a2p2*(0.013796511549751856 - 0.0027631717471904905*log(a2p2)) - (0.0014805323419959657*a4p4*log(a2p2))/a2p2;
@@ -308,7 +308,7 @@ double subZ4f(const int imom, const vector<double> a2p2_vec, const vector<double
             }
             else                                //Landau
             {
-                cout<<" - Subtracting QED to Z4f_EM: Plaquette/Landau"<<endl;
+//                cout<<" - Subtracting QED to Z4f_EM: Plaquette/Landau"<<endl;
                 
                 Z4f_sub[0][0] = - (0.0047937725734647245*a4p4)/a2p2 + a2p2*(-0.0021178665687984636 - 0.0012240044609570608*log(a2p2))  - (0.0014805323419959657*a4p4*log(a2p2))/a2p2;
                 Z4f_sub[1][1] = - (0.0038685349655967977*a4p4)/a2p2 + a2p2*(0.009981613661650554 - 0.0020155762081628245*log(a2p2))  - (0.0014805323419959657*a4p4*log(a2p2))/a2p2;
