@@ -150,8 +150,8 @@ int main(int narg,char **arg)
                             
                             M1[th][b][m] = sub[th][m].a2p2_extr();
                             M1[th][b][m].plot("M1");
-//                            M2[th][b][m] = sub[th][m].interpolate_to_p2ref(b);
-                            M2[th][b][m] = sub[th][m].interpolate_to_ainv(b);
+                            M2[th][b][m] = sub[th][m].interpolate_to_p2ref(b);
+//                            M2[th][b][m] = sub[th][m].interpolate_to_ainv(b);
                             M2[th][b][m].plot("M2");
                         }
                         
@@ -184,8 +184,8 @@ int main(int narg,char **arg)
                     eta[b][th][m] = eta[b][th][m].evolve_mixed(ainv[b]);
                     eta[b][th][m].plot("eta_evo");
                     
-//                    etaM2[th][b][m] = eta[b][th][m].interpolate_to_p2ref(b);
-                    etaM2[th][b][m] = eta[b][th][m].interpolate_to_ainv(b);
+                    etaM2[th][b][m] = eta[b][th][m].interpolate_to_p2ref(b);
+//                    etaM2[th][b][m] = eta[b][th][m].interpolate_to_ainv(b);
                     etaM2[th][b][m].plot("eta_M2");
                     etaM1[th][b][m] = eta[b][th][m].a2p2_extr();
                     etaM1[th][b][m].plot("eta_M1");
