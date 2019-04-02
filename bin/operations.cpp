@@ -1393,7 +1393,7 @@ oper_t compute_eta(voper_t in) // in[loop]
     
     oper_t out=in[0]; // out
     
-    out._nmr = in[0]._nmr;
+    out._nmr = in[1]._nmr;  // using nmr of free theory
     out._linmoms = in[0]._linmoms;
     out._bilmoms = in[0]._bilmoms;
     out._meslepmoms = in[0]._meslepmoms;
