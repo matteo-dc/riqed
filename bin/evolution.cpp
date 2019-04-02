@@ -3,6 +3,7 @@
 
 #include "global.hpp"
 #include "aliases.hpp"
+#include "operations.hpp"
 
 #define Z3 1.2020569031595942
 
@@ -51,6 +52,92 @@ double alphas(int Nf,double mu2)
                                3.*b1*b2*LL2 + b3/2.);
     
     return als3;
+}
+
+oper_t oper_t::evolveToAinv()
+{
+    cout<<endl;
+    cout<<"----- evolution to the scale 1/a -----"<<endl<<endl;
+    
+    oper_t out=(*this);
+    
+    double gamma_q=0.0;
+    double gamma_bil[5]={0.0};
+    double gamma_meslep[5][5]={0.0};
+    
+    if(free_analysis)
+    {
+        //  pure QED anomalous dimensions
+        
+        if(strcmp(an_suffix.c_str(),"")==0) //Feynman
+        {
+            gamma_q = 2.0;
+            gamma_bil[0] = -6.0; /* S */
+            gamma_bil[1] =  0.0; /* V */
+            gamma_bil[2] = -6.0; /* P */
+            gamma_bil[3] =  0.0; /* A */
+            gamma_bil[4] =  2.0; /* T */
+            gamma_meslep[0][0] = -4.0;
+            gamma_meslep[1][1] = -2.0;
+            gamma_meslep[2][2] = +4.0/3.0;
+            gamma_meslep[3][3] = +4.0/3.0;
+            gamma_meslep[4][4] = -40.0/9.0;
+            gamma_meslep[3][4] = -1.0/6.0;
+            gamma_meslep[4][3] = -8.0;
+        }
+        else                                //Landau
+        {
+            gamma_q = 0.0;  //no Zq an. dim. in Landau gauge!
+            gamma_bil[0] = -6.0; /* S */
+            gamma_bil[1] =  0.0; /* V */
+            gamma_bil[2] = -6.0; /* P */
+            gamma_bil[3] =  0.0; /* A */
+            gamma_bil[4] =  2.0; /* T */
+            gamma_meslep[0][0] = -4.0;
+            gamma_meslep[1][1] = -2.0;
+            gamma_meslep[2][2] = +4.0/3.0;
+            gamma_meslep[3][3] = +4.0/3.0;
+            gamma_meslep[4][4] = -40.0/9.0;
+            gamma_meslep[3][4] = -1.0/6.0;
+            gamma_meslep[4][3] = -8.0;
+        }
+        
+        
+        // Zq
+        for(int imom=0;imom<out._linmoms;imom++)
+            for(int ijack=0;ijack<njacks;ijack++)
+                for(int mr=0;mr<out._nmr;mr++)
+                    (out.jZq_EM)[imom][ijack][mr] =
+                        jZq_EM[imom][ijack][mr] + 1.0/pow(4*M_PI,2.0)*0.5*gamma_q*log(p2[imom]);
+        
+        // Zbil
+        for(int imom=0;imom<out._bilmoms;imom++)
+            for(int ibil=0;ibil<nbil;ibil++)
+                for(int ijack=0;ijack<njacks;ijack++)
+                    for(int mr1=0;mr1<out._nmr;mr1++)
+                        for(int mr2=0;mr2<out._nmr;mr2++)
+                            (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] =
+                                jZ_EM[imom][ibil][ijack][mr1][mr2] + 1.0/pow(4*M_PI,2.0)*0.5*gamma_bil[ibil]*log(p2[imom]);
+        
+        
+        // Z4f
+        for(int imom=0;imom<out._meslepmoms;imom++)
+            for(int iop1=0;iop1<nbil;iop1++)
+                for(int iop2=0;iop2<nbil;iop2++)
+                    for(int ijack=0;ijack<njacks;ijack++)
+                        for(int mr1=0;mr1<out._nmr;mr1++)
+                            for(int mr2=0;mr2<out._nmr;mr2++)
+                                if(iop1==iop2)
+                                    (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] =
+                                        jZ_4f_EM[imom][iop1][iop2][ijack][mr1][mr2] + 1.0/pow(4*M_PI,2.0)*0.5*gamma_meslep[iop1][iop2]*log(p2[imom]);
+        
+    }
+    else if(inte_analysis)
+    {
+        cout<<"QCD evolution not yet implemented."<<endl;
+    }
+    
+    
 }
 
 ///////////////////////////////////
