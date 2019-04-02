@@ -137,7 +137,7 @@ oper_t oper_t::evolveToAinv()
         cout<<"QCD evolution not yet implemented."<<endl;
     }
     
-    
+    return out;
 }
 
 ///////////////////////////////////
