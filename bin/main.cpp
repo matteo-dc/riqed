@@ -109,7 +109,7 @@ int main(int narg,char **arg)
                     
                     /*  average r  */
                     
-                    rave[th][m] = ave[th][m]/*.average_r()*/;
+                    rave[th][m] = ave[th][m].average_r();
                     if(!load_ave) rave[th][m].plot("rave");
                     
                     /* store averaged ingredients */
