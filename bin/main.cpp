@@ -143,7 +143,7 @@ int main(int narg,char **arg)
                             oper_for_eta[b][th][m][loop] = val_chir[th][m];
                         else
                         {
-                            evo[th][m] = val_chir[th][m].evolveToAinv();
+                            evo[th][m] = val_chir[th][m].evolveToAinv(ainv[b]);
                             evo[th][m].plot("evo");
                             sub[th][m] = evo[th][m].subOa2(b);
                             sub[th][m].plot("sub");
