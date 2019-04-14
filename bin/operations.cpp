@@ -798,60 +798,6 @@ oper_t oper_t::chiral_extr()
 //    return out;
 //}
 
-oper_t oper_t::evolve_mixed(double ainv)
-{
-    cout<<endl;
-    cout<<"----- mixed evolution of the eta -----"<<endl<<endl;
-    
-    oper_t out=(*this);
-    
-    double gamma_q;
-    vector<double> gamma_bil(nbil);
-    vector<double> gamma_meslep(nbil);
-    
-    gamma_q = -8.0;
-    gamma_bil =    {-8.0,+0.0,-8.0,+0.0,-152.0/3.0};
-    gamma_meslep = {+4.0,-4.0,+0.0,+0.0,+0.0}; // to be updated
-    
-#warning update gamma_meslep with iop>1
-    
-    // Zq
-    for(int imom=0;imom<out._linmoms;imom++)
-        for(int ijack=0;ijack<njacks;ijack++)
-            for(int mr=0;mr<out._nmr;mr++)
-                (out.jZq_EM)[imom][ijack][mr] =
-                    jZq_EM[imom][ijack][mr]
-                    + alphas(Nf,pow(ainv,2.0)*p2[imom])/pow(4*M_PI,3.0)*0.5*gamma_q*log(p2[imom]);
-    
-    // Zbil
-    for(int imom=0;imom<out._bilmoms;imom++)
-        for(int ibil=0;ibil<nbil;ibil++)
-            for(int ijack=0;ijack<njacks;ijack++)
-                for(int mr1=0;mr1<out._nmr;mr1++)
-                    for(int mr2=0;mr2<out._nmr;mr2++)
-                        (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] =
-                            jZ_EM[imom][ibil][ijack][mr1][mr2]
-                            + alphas(Nf,pow(ainv,2.0)*p2[imom])/pow(4*M_PI,3.0)*0.5*gamma_bil[ibil]*log(p2[imom]);
-    
-    
-    // Z4f
-    for(int imom=0;imom<out._meslepmoms;imom++)
-        for(int iop1=0;iop1<nbil;iop1++)
-            for(int iop2=0;iop2<nbil;iop2++)
-                for(int ijack=0;ijack<njacks;ijack++)
-                    for(int mr1=0;mr1<out._nmr;mr1++)
-                        for(int mr2=0;mr2<out._nmr;mr2++)
-                            if(iop1==iop2)
-                                (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] =
-                                    jZ_4f_EM[imom][iop1][iop2][ijack][mr1][mr2]
-                                    + alphas(Nf,pow(ainv,2.0)*p2[imom])/pow(4*M_PI,3.0)*0.5*gamma_meslep[iop1]*log(p2[imom]);
- 
-    
-    return out;
-    
-}
-
-
 
 oper_t chiral_sea_extr(voper_t in)
 {

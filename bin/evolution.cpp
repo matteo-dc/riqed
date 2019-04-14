@@ -345,3 +345,108 @@ oper_t oper_t::evolveToAinv(const double ainv)
     return out;
 }
 
+
+
+oper_t oper_t::evolve_mixed(double ainv)
+{
+    cout<<endl;
+    cout<<"----- mixed evolution of the eta -----"<<endl<<endl;
+    
+    oper_t out=(*this);
+    
+    double gamma_q_se1 = -8.0;
+    double gamma_bil_se1[5] =  {-8.0,+0.0,-8.0,+0.0,-152.0/3.0};
+    
+#warning update gamma_meslep with iop>1
+    
+    // eta_q
+    for(int imom=0;imom<out._linmoms;imom++)
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mr=0;mr<out._nmr;mr++)
+                (out.jZq_EM)[imom][ijack][mr] =
+                jZq_EM[imom][ijack][mr]
+                + alphas(Nf,pow(ainv,2.0)*p2[imom])/pow(4*M_PI,3.0)*0.5*gamma_q_se1*log(p2[imom]);
+    
+    // eta_bil
+    for(int imom=0;imom<out._bilmoms;imom++)
+        for(int ibil=0;ibil<nbil;ibil++)
+            for(int ijack=0;ijack<njacks;ijack++)
+                for(int mr1=0;mr1<out._nmr;mr1++)
+                    for(int mr2=0;mr2<out._nmr;mr2++)
+                        (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] =
+                        jZ_EM[imom][ibil][ijack][mr1][mr2]
+                        + alphas(Nf,pow(ainv,2.0)*p2[imom])/pow(4*M_PI,3.0)*0.5*gamma_bil_se1[ibil]*log(p2[imom]);
+    
+    
+    O4f_t UQCD(O4f_t::Zero()), UQCDinv(O4f_t::Zero());
+    O4f_t ZQCD(O4f_t::Zero()), ZQCDinv(O4f_t::Zero());
+    O4f_t UQED2(O4f_t::Zero());
+    O4f_t eta(O4f_t::Zero());
+
+    double gamma_se1[5][5] = {
+        {+4.0,+0.0,+0.0,+0.0,+0.0},
+        {+0.0,-4.0,+0.0,+0.0,+0.0},
+        {+0.0,+0.0,+484.0/9.0,+0.0,+0.0},
+        {+0.0,+0.0,+0.0,+412.0/9.0,-38.0/9.0},
+        {+0.0,+0.0,+0.0,+0.0,+0.0}}; // to be updated
+    double gamma_e0[5][5] = {
+        {-4.0,+0.0,+0.0,+0.0,+0.0},
+        {+0.0,-2.0,+0.0,+0.0,+0.0},
+        {+0.0,+0.0,+4.0/3.0,+0.0,+0.0},
+        {+0.0,+0.0,+0.0,+4.0/3.0,-1.0/6.0},
+        {+0.0,+0.0,+0.0,-8.0,-40.0/9.0}};
+    double gamma_s0[5] = {0.0,0.0,-3.0*(Nc*Nc-1.0)/Nc,-3.0*(Nc*Nc-1.0)/Nc,(Nc*Nc-1.0)/Nc};
+    
+    for(int imom=0;imom<out._meslepmoms;imom++)
+    {
+        UQCD(0,0)=1.0;
+        UQCD(1,1)=1.0;
+        UQCD(2,2)=1.0/P_evolution_to_RIp_ainv(Nf,ainv,p2[imom]);
+        UQCD(3,3)=1.0/P_evolution_to_RIp_ainv(Nf,ainv,p2[imom]);
+        UQCD(4,4)=1.0/T_evolution_to_RIp_ainv(Nf,ainv,p2[imom]);
+        
+        UQCDinv = UQCD.inverse();
+        
+        double al0 = alphas(Nf,pow(ainv,2.0)*p2[imom])/pow(4*M_PI,3.0);
+        
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mr1=0;mr1<out._nmr;mr1++)
+                for(int mr2=0;mr2<out._nmr;mr2++)
+                {
+                    for(int iop1=0;iop1<nbil;iop1++)
+                        for(int iop2=0;iop2<nbil;iop2++)
+                        {
+                            ZQCD(iop1,iop2) = jZ_4f[imom][iop1][iop2][ijack][mr1][mr2];
+                            eta(iop1,iop2)  = jZ_4f_EM[imom][iop1][iop2][ijack][mr1][mr2];
+                            
+                            /* gamma_se1 and gamma_e0 enter the equation as transposed matrices */
+                            UQED2(iop1,iop2) = 0.5*gamma_se1[iop2][iop1]*log(p2[imom]) +
+                                               0.125*pow(log(p2[imom]),2.0)*gamma_e0[iop2][iop1]*(gamma_s0[iop1]+gamma_s0[iop2]);
+                        }
+                    
+                    ZQCDinv = ZQCD.inverse();
+                    
+                    if(!QCD_on_the_right)
+                    {
+                        // eta_OLD_4f
+                        for(int iop1=0;iop1<nbil;iop1++)
+                            for(int iop2=0;iop2<nbil;iop2++)
+                                (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] =
+                                eta(iop1,iop2) + al0*(ZQCDinv*UQCDinv*UQED2*ZQCD)(iop1,iop2);
+                        
+                    }
+                    else if(QCD_on_the_right)
+                    {
+                        // eta_NEW_4f
+                        for(int iop1=0;iop1<nbil;iop1++)
+                            for(int iop2=0;iop2<nbil;iop2++)
+                                (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] =
+                                (UQCD*eta*UQCDinv)(iop1,iop2) + al0*(UQED2*UQCDinv)(iop1,iop2);
+                        
+                    }
+                }
+    }
+    
+    return out;
+    
+}
