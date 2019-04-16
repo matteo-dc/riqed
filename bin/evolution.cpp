@@ -345,7 +345,20 @@ oper_t oper_t::evolveToAinv(const double ainv)
     return out;
 }
 
-
+O4f_t evaluate_Carrasco(double a2p2)
+{
+    double LL=log(a2p2);
+    
+    O4f_t ZQED;
+    /* The factor 1/(16*Pi^2) is included */
+    ZQED << -0.0242556 + 0.0158314*LL, 0.00339251, 0.0101775, -0.0203551, -0.00508877,
+            +0.00339251, -0.0486754 + 0.00949886*LL, -0.0203551, 0.0101775, -0.00254439,
+            +0.00254439, -0.00508877, -0.0308496 - 0.00105543*LL, -0.00678503, 0.0,
+            -0.00508877, 0.00254439, -0.00678503, -0.0308496 - 0.00105543*LL, 0.00203498 + 0.000527714*LL,
+            -0.0610652, -0.0305326, 0.0, 0.0976791 + 0.0253303*LL, -0.0383375 + 0.0172387*LL;
+    
+    return ZQED;
+}
 
 oper_t oper_t::evolve_mixed(double ainv)
 {
@@ -380,21 +393,32 @@ oper_t oper_t::evolve_mixed(double ainv)
     
     O4f_t UQCD(O4f_t::Zero()), UQCDinv(O4f_t::Zero());
     O4f_t ZQCD(O4f_t::Zero()), ZQCDinv(O4f_t::Zero());
-    O4f_t UQED2(O4f_t::Zero());
+    O4f_t UQED1(O4f_t::Zero()),UQED2(O4f_t::Zero());
     O4f_t eta(O4f_t::Zero());
-
+    
+    O4f_t ZQEDan;
+    
     double gamma_se1[5][5] = {
         {+4.0,+0.0,+0.0,+0.0,+0.0},
         {+0.0,-4.0,+0.0,+0.0,+0.0},
         {+0.0,+0.0,+484.0/9.0,+0.0,+0.0},
         {+0.0,+0.0,+0.0,+412.0/9.0,-38.0/9.0},
         {+0.0,+0.0,+0.0,+0.0,+0.0}}; // to be updated
+    /* including the lepton */
+//    double gamma_e0[5][5] = {
+//        {-4.0,+0.0,+0.0,+0.0,+0.0},
+//        {+0.0,-2.0,+0.0,+0.0,+0.0},
+//        {+0.0,+0.0,+4.0/3.0,+0.0,+0.0},
+//        {+0.0,+0.0,+0.0,+4.0/3.0,-1.0/6.0},
+//        {+0.0,+0.0,+0.0,-8.0,-40.0/9.0}};
+    /* without the lepton contribution */
     double gamma_e0[5][5] = {
-        {-4.0,+0.0,+0.0,+0.0,+0.0},
-        {+0.0,-2.0,+0.0,+0.0,+0.0},
-        {+0.0,+0.0,+4.0/3.0,+0.0,+0.0},
-        {+0.0,+0.0,+0.0,+4.0/3.0,-1.0/6.0},
-        {+0.0,+0.0,+0.0,-8.0,-40.0/9.0}};
+        {-5.0,+0.0,+0.0,+0.0,+0.0},
+        {+0.0,-3.0,+0.0,+0.0,+0.0},
+        {+0.0,+0.0,+1.0/3.0,+0.0,+0.0},
+        {+0.0,+0.0,+0.0,+1.0/3.0,-1.0/6.0},
+        {+0.0,+0.0,+0.0,-8.0,-49.0/9.0}};
+    
     double gamma_s0[5] = {0.0,0.0,-3.0*(Nc*Nc-1.0)/Nc,-3.0*(Nc*Nc-1.0)/Nc,(Nc*Nc-1.0)/Nc};
     
     for(int imom=0;imom<out._meslepmoms;imom++)
@@ -407,7 +431,9 @@ oper_t oper_t::evolve_mixed(double ainv)
         
         UQCDinv = UQCD.inverse();
         
-        double al0 = alphas(Nf,pow(ainv,2.0)*p2[imom])/pow(4*M_PI,3.0);
+        ZQEDan = evaluate_Carrasco(p2[imom]);
+        
+        double al0 = alphas(Nf,pow(ainv,2.0)*p2[imom])/(4.0*M_PI);
         
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mr1=0;mr1<out._nmr;mr1++)
@@ -420,8 +446,9 @@ oper_t oper_t::evolve_mixed(double ainv)
                             eta(iop1,iop2)  = jZ_4f_EM[imom][iop1][iop2][ijack][mr1][mr2];
                             
                             /* gamma_se1 and gamma_e0 enter the equation as transposed matrices */
-                            UQED2(iop1,iop2) = 0.5*gamma_se1[iop2][iop1]*log(p2[imom]) +
-                                               0.125*pow(log(p2[imom]),2.0)*gamma_e0[iop2][iop1]*(gamma_s0[iop1]+gamma_s0[iop2]);
+                            UQED1(iop1,iop2) = 0.5*gamma_e0[iop2][iop1]*log(p2[imom])/pow(4.0*M_PI,2.0);
+                            UQED2(iop1,iop2) = 0.5*gamma_se1[iop2][iop1]*log(p2[imom])/pow(4.0*M_PI,2.0) +
+                                               0.125*pow(log(p2[imom]),2.0)*gamma_e0[iop2][iop1]*(gamma_s0[iop1]+gamma_s0[iop2])/pow(4.0*M_PI,2.0);
                         }
                     
                     ZQCDinv = ZQCD.inverse();
@@ -432,7 +459,8 @@ oper_t oper_t::evolve_mixed(double ainv)
                         for(int iop1=0;iop1<nbil;iop1++)
                             for(int iop2=0;iop2<nbil;iop2++)
                                 (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] =
-                                eta(iop1,iop2) + al0*(ZQCDinv*UQCDinv*UQED2*ZQCD)(iop1,iop2);
+                                    eta(iop1,iop2) + al0*(ZQCDinv*UQCDinv*UQED2*ZQCD)(iop1,iop2) + (ZQCDinv*UQCDinv*UQED1*ZQCD)(iop1,iop2)
+                                    - UQED1(iop1,iop2);
                         
                     }
                     else if(QCD_on_the_right)
@@ -441,7 +469,8 @@ oper_t oper_t::evolve_mixed(double ainv)
                         for(int iop1=0;iop1<nbil;iop1++)
                             for(int iop2=0;iop2<nbil;iop2++)
                                 (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] =
-                                (UQCD*eta*UQCDinv)(iop1,iop2) + al0*(UQED2*UQCDinv)(iop1,iop2);
+                                    (UQCD*eta*UQCDinv)(iop1,iop2) + al0*(UQED2*UQCDinv)(iop1,iop2) + (UQCD*ZQEDan*UQCDinv)(iop1,iop2) +
+                                    (UQED1*UQCDinv)(iop1,iop2) - ZQEDan(iop1,iop2) - UQED1(iop1,iop2);
                         
                     }
                 }
