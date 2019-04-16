@@ -238,13 +238,14 @@ oper_t oper_t::evolveToAinv(const double ainv)
             gamma_bil[2] = -6.0; /* P */
             gamma_bil[3] =  0.0; /* A */
             gamma_bil[4] =  2.0; /* T */
-            gamma_meslep[0][0] = -4.0;
-            gamma_meslep[1][1] = -2.0;
-            gamma_meslep[2][2] = +4.0/3.0;
-            gamma_meslep[3][3] = +4.0/3.0;
-            gamma_meslep[4][4] = -40.0/9.0;
-            gamma_meslep[3][4] = -1.0/6.0;
-            gamma_meslep[4][3] = -8.0;
+#warning to be substituted with the ones without lepton contribution
+//            gamma_meslep[0][0] = -4.0;
+//            gamma_meslep[1][1] = -2.0;
+//            gamma_meslep[2][2] = +4.0/3.0;
+//            gamma_meslep[3][3] = +4.0/3.0;
+//            gamma_meslep[4][4] = -40.0/9.0;
+//            gamma_meslep[3][4] = -1.0/6.0;
+//            gamma_meslep[4][3] = -8.0;
         }
         else                                //Landau
         {
@@ -254,13 +255,14 @@ oper_t oper_t::evolveToAinv(const double ainv)
             gamma_bil[2] = -6.0; /* P */
             gamma_bil[3] =  0.0; /* A */
             gamma_bil[4] =  2.0; /* T */
-            gamma_meslep[0][0] = -4.0;
-            gamma_meslep[1][1] = -2.0;
-            gamma_meslep[2][2] = +4.0/3.0;
-            gamma_meslep[3][3] = +4.0/3.0;
-            gamma_meslep[4][4] = -40.0/9.0;
-            gamma_meslep[3][4] = -1.0/6.0;
-            gamma_meslep[4][3] = -8.0;
+#warning to be substituted with the ones without lepton contribution
+//            gamma_meslep[0][0] = -4.0;
+//            gamma_meslep[1][1] = -2.0;
+//            gamma_meslep[2][2] = +4.0/3.0;
+//            gamma_meslep[3][3] = +4.0/3.0;
+//            gamma_meslep[4][4] = -40.0/9.0;
+//            gamma_meslep[3][4] = -1.0/6.0;
+//            gamma_meslep[4][3] = -8.0;
         }
         
         
@@ -367,29 +369,56 @@ oper_t oper_t::evolve_mixed(double ainv)
     
     oper_t out=(*this);
     
+    double CF=(Nc*Nc-1.0)/(2.0*Nc);
+    
+    double gamma_q_s0 = 0.0; /* in the Landau gauge the one-loop strong an. dim. is zero */
+    double gamma_q_e0 = 2.0;
     double gamma_q_se1 = -8.0;
-    double gamma_bil_se1[5] =  {-8.0,+0.0,-8.0,+0.0,-152.0/3.0};
     
-#warning update gamma_meslep with iop>1
+    double gamma_bil_s0[5] =   {-6.0*CF,0.0,-6.0*CF,0.0,+2.0*CF};
+    double gamma_bil_e0[5] =   {-6.0,   0.0,-6.0,   0.0,+2.0};
+    double gamma_bil_se1[5] =  {-8.0,   0.0,-8.0,   0.0,-152.0/3.0};
     
-    // eta_q
     for(int imom=0;imom<out._linmoms;imom++)
+    {
+        // eta_q
+
+        double al0 = alphas(Nf,pow(ainv,2.0)*p2[imom])/(4.0*M_PI);
+        
+        double UQCD_q    = 1.0/q_evolution_to_RIp_ainv(Nf,ainv,p2[imom]);
+        double UQCDinv_q = 1.0/UQCD_q;
+        double UQED1_q = 0.5*gamma_q_e0*log(p2[imom])/pow(4.0*M_PI,2.0);
+        double UQED2_q = 0.5*gamma_q_se1*log(p2[imom])/pow(4.0*M_PI,2.0) +
+                         0.25*pow(log(p2[imom]),2.0)*gamma_q_e0*gamma_q_s0/pow(4.0*M_PI,2.0);
+        
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mr=0;mr<out._nmr;mr++)
                 (out.jZq_EM)[imom][ijack][mr] =
-                jZq_EM[imom][ijack][mr]
-                + alphas(Nf,pow(ainv,2.0)*p2[imom])/pow(4*M_PI,3.0)*0.5*gamma_q_se1*log(p2[imom]);
+                    jZq_EM[imom][ijack][mr] + al0*UQCDinv_q*UQED2_q + UQCDinv_q*UQED1_q - UQED1_q;
     
-    // eta_bil
-    for(int imom=0;imom<out._bilmoms;imom++)
+        // eta_bil
+        double UQCD_bil[5] = {
+            1.0/S_evolution_to_RIp_ainv(Nf,ainv,p2[imom]),
+            1.0,
+            1.0/P_evolution_to_RIp_ainv(Nf,ainv,p2[imom]),
+            1.0,
+            1.0/T_evolution_to_RIp_ainv(Nf,ainv,p2[imom])};
+
         for(int ibil=0;ibil<nbil;ibil++)
+        {
+            double UQCDinv_bil = 1.0/UQCD_bil[ibil];
+            double UQED1_bil = 0.5*gamma_bil_e0[ibil]*log(p2[imom])/pow(4.0*M_PI,2.0);
+            double UQED2_bil = 0.5*gamma_bil_se1[ibil]*log(p2[imom])/pow(4.0*M_PI,2.0) +
+                               0.25*pow(log(p2[imom]),2.0)*gamma_bil_e0[ibil]*gamma_bil_s0[ibil]/pow(4.0*M_PI,2.0);
+            
             for(int ijack=0;ijack<njacks;ijack++)
                 for(int mr1=0;mr1<out._nmr;mr1++)
                     for(int mr2=0;mr2<out._nmr;mr2++)
                         (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] =
-                        jZ_EM[imom][ibil][ijack][mr1][mr2]
-                        + alphas(Nf,pow(ainv,2.0)*p2[imom])/pow(4*M_PI,3.0)*0.5*gamma_bil_se1[ibil]*log(p2[imom]);
-    
+                            jZ_EM[imom][ibil][ijack][mr1][mr2]  + al0*UQCDinv_bil*UQED2_bil +  UQCDinv_bil*UQED1_bil - UQED1_bil;
+        }
+        
+    }
     
     O4f_t UQCD(O4f_t::Zero()), UQCDinv(O4f_t::Zero());
     O4f_t ZQCD(O4f_t::Zero()), ZQCDinv(O4f_t::Zero());
@@ -397,6 +426,8 @@ oper_t oper_t::evolve_mixed(double ainv)
     O4f_t eta(O4f_t::Zero());
     
     O4f_t ZQEDan;
+    
+#warning update gamma_meslep with iop=5
     
     double gamma_se1[5][5] = {
         {+4.0,+0.0,+0.0,+0.0,+0.0},
@@ -419,7 +450,7 @@ oper_t oper_t::evolve_mixed(double ainv)
         {+0.0,+0.0,+0.0,+1.0/3.0,-1.0/6.0},
         {+0.0,+0.0,+0.0,-8.0,-49.0/9.0}};
     
-    double gamma_s0[5] = {0.0,0.0,-3.0*(Nc*Nc-1.0)/Nc,-3.0*(Nc*Nc-1.0)/Nc,(Nc*Nc-1.0)/Nc};
+    double gamma_s0[5] = {0.0,0.0,-6.0*CF,-6.0*CF,+2.0*CF};
     
     for(int imom=0;imom<out._meslepmoms;imom++)
     {
