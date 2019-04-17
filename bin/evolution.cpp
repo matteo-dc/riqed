@@ -211,6 +211,47 @@ double T_evolution_to_RIp_ainv(int Nf,double ainv,double a2p2)
     return cmu/cmu0;
 }
 
+double P_evolution_to_RIp_two_GeV(int Nf,double ainv,double a2p2)
+{
+    double cmu=0.0, cmu0=0.0; // c=cmu/cmu0
+    //mu_2=(a2p2)*(1/a^2) (dimensional quantity)
+    //mu0_2=(1/a^2)
+    
+    double mu_2 = a2p2*pow(ainv,2.0);    // p2
+    double mu0_2= pow(2.0,2.0);          // (2GeV)^2
+    
+    // alphas @ NNLO
+    double alm, al0;
+    alm=alphas(Nf,mu_2)/(4*M_PI);
+    al0=alphas(Nf,mu0_2)/(4*M_PI);
+    
+    ////////////////////////////////
+    // N3LO FORMULA
+    // Assuming landau gauge
+    ///////////////////////////////////
+    if(Nf==2){
+        cmu = pow(alm,-12./29) * (1. - 8.55727 * alm - 125.423 * pow(alm,2) -
+                                  3797.71 * pow(alm,3));
+        
+        cmu0 = pow(al0,-12./29) * (1. - 8.55727 * al0 - 125.423 * pow(al0,2) -
+                                   3797.71 * pow(al0,3));
+    }if(Nf==0){
+        cmu = pow(alm,-4./11) * (1. - 8.08264 * alm - 151.012 * pow(alm,2) -
+                                 5247.93 * pow(alm,3));
+        
+        cmu0 = pow(al0,-4./11) * (1. - 8.08264 * al0 - 151.012 * pow(al0,2) -
+                                  5247.93 * pow(al0,3));
+    }if(Nf==4){
+        cmu = pow(alm,-12./25) * (1. - 9.38987 * alm - 96.2883 * pow(alm,2) -
+                                  2403.82 * pow(alm,3));
+        
+        cmu0 = pow(al0,-12./25) * (1. - 9.38987 * al0 - 96.2883 * pow(al0,2) -
+                                   2403.82 * pow(al0,3));
+    }
+    
+    return cmu/cmu0;
+}
+
 
 oper_t oper_t::evolveToAinv(const double ainv)
 {
@@ -400,16 +441,22 @@ oper_t oper_t::evolve_mixed(double ainv)
         double UQCD_bil[5] = {
             1.0/S_evolution_to_RIp_ainv(Nf,ainv,p2[imom]),
             1.0,
-            1.0/P_evolution_to_RIp_ainv(Nf,ainv,p2[imom]),
+//            1.0/P_evolution_to_RIp_ainv(Nf,ainv,p2[imom]),
+            1.0/P_evolution_to_RIp_two_GeV(Nf,ainv,p2[imom]),
             1.0,
             1.0/T_evolution_to_RIp_ainv(Nf,ainv,p2[imom])};
 
         for(int ibil=0;ibil<nbil;ibil++)
         {
             double UQCDinv_bil = 1.0/UQCD_bil[ibil];
-            double UQED1_bil = 0.5*gamma_bil_e0[ibil]*log(p2[imom])/pow(4.0*M_PI,2.0);
-            double UQED2_bil = 0.5*gamma_bil_se1[ibil]*log(p2[imom])/pow(4.0*M_PI,2.0) +
-                               0.25*pow(log(p2[imom]),2.0)*gamma_bil_e0[ibil]*gamma_bil_s0[ibil]/pow(4.0*M_PI,2.0);
+//            double UQED1_bil = 0.5*gamma_bil_e0[ibil]*log(p2[imom])/pow(4.0*M_PI,2.0);
+//            double UQED2_bil = 0.5*gamma_bil_se1[ibil]*log(p2[imom])/pow(4.0*M_PI,2.0) +
+//                               0.25*pow(log(p2[imom]),2.0)*gamma_bil_e0[ibil]*gamma_bil_s0[ibil]/pow(4.0*M_PI,2.0);
+
+            double UQED1_bil = 0.5*gamma_bil_e0[ibil]*log(p2[imom]*pow(ainv,2.0)/4.0)/pow(4.0*M_PI,2.0);
+            double UQED2_bil = 0.5*gamma_bil_se1[ibil]*log(p2[imom]*pow(ainv,2.0)/4.0)/pow(4.0*M_PI,2.0) +
+                               0.25*pow(log(p2[imom]*pow(ainv,2.0)/4.0),2.0)*gamma_bil_e0[ibil]*gamma_bil_s0[ibil]/pow(4.0*M_PI,2.0);
+
             
             for(int ijack=0;ijack<njacks;ijack++)
                 for(int mr1=0;mr1<out._nmr;mr1++)
