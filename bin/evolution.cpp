@@ -476,10 +476,9 @@ oper_t oper_t::evolve_mixed(double ainv)
                             ZQCD(iop1,iop2) = jZ_4f[imom][iop1][iop2][ijack][mr1][mr2];
                             eta(iop1,iop2)  = jZ_4f_EM[imom][iop1][iop2][ijack][mr1][mr2];
                             
-                            /* gamma_se1 and gamma_e0 enter the equation as transposed matrices */
-                            UQED1(iop1,iop2) = 0.5*gamma_e0[iop2][iop1]*log(p2[imom])/pow(4.0*M_PI,2.0);
-                            UQED2(iop1,iop2) = 0.5*gamma_se1[iop2][iop1]*log(p2[imom])/pow(4.0*M_PI,2.0) +
-                                               0.125*pow(log(p2[imom]),2.0)*gamma_e0[iop2][iop1]*(gamma_s0[iop1]+gamma_s0[iop2])/pow(4.0*M_PI,2.0);
+                            UQED1(iop1,iop2) = 0.5*gamma_e0[iop1][iop2]*log(p2[imom])/pow(4.0*M_PI,2.0);
+                            UQED2(iop1,iop2) = 0.5*gamma_se1[iop1][iop2]*log(p2[imom])/pow(4.0*M_PI,2.0) +
+                                               0.125*pow(log(p2[imom]),2.0)*gamma_e0[iop1][iop2]*(gamma_s0[iop1]+gamma_s0[iop2])/pow(4.0*M_PI,2.0);
                         }
                     
                     ZQCDinv = ZQCD.inverse();
