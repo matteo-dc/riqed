@@ -441,21 +441,22 @@ oper_t oper_t::evolve_mixed(double ainv)
         double UQCD_bil[5] = {
             1.0/S_evolution_to_RIp_ainv(Nf,ainv,p2[imom]),
             1.0,
-//            1.0/P_evolution_to_RIp_ainv(Nf,ainv,p2[imom]),
-            1.0/P_evolution_to_RIp_two_GeV(Nf,ainv,p2[imom]),
+            1.0/P_evolution_to_RIp_ainv(Nf,ainv,p2[imom]),
+//            1.0/P_evolution_to_RIp_two_GeV(Nf,ainv,p2[imom]),
             1.0,
             1.0/T_evolution_to_RIp_ainv(Nf,ainv,p2[imom])};
 
         for(int ibil=0;ibil<nbil;ibil++)
         {
             double UQCDinv_bil = 1.0/UQCD_bil[ibil];
-//            double UQED1_bil = 0.5*gamma_bil_e0[ibil]*log(p2[imom])/pow(4.0*M_PI,2.0);
-//            double UQED2_bil = 0.5*gamma_bil_se1[ibil]*log(p2[imom])/pow(4.0*M_PI,2.0) +
-//                               0.25*pow(log(p2[imom]),2.0)*gamma_bil_e0[ibil]*gamma_bil_s0[ibil]/pow(4.0*M_PI,2.0);
-
-            double UQED1_bil = 0.5*gamma_bil_e0[ibil]*log(p2[imom]*pow(ainv,2.0)/4.0)/pow(4.0*M_PI,2.0);
-            double UQED2_bil = 0.5*gamma_bil_se1[ibil]*log(p2[imom]*pow(ainv,2.0)/4.0)/pow(4.0*M_PI,2.0) +
-                               0.25*pow(log(p2[imom]*pow(ainv,2.0)/4.0),2.0)*gamma_bil_e0[ibil]*gamma_bil_s0[ibil]/pow(4.0*M_PI,2.0);
+            double UQED1_bil = 0.5*gamma_bil_e0[ibil]*log(p2[imom])/pow(4.0*M_PI,2.0);
+            double UQED2_bil = 0.5*gamma_bil_se1[ibil]*log(p2[imom])/pow(4.0*M_PI,2.0) +
+                               0.25*pow(log(p2[imom]),2.0)*gamma_bil_e0[ibil]*gamma_bil_s0[ibil]/pow(4.0*M_PI,2.0);
+            
+/* evolution of ZP to 2GeV*/
+//            double UQED1_bil = 0.5*gamma_bil_e0[ibil]*log(p2[imom]*pow(ainv,2.0)/4.0)/pow(4.0*M_PI,2.0);
+//            double UQED2_bil = 0.5*gamma_bil_se1[ibil]*log(p2[imom]*pow(ainv,2.0)/4.0)/pow(4.0*M_PI,2.0) +
+//                               0.25*pow(log(p2[imom]*pow(ainv,2.0)/4.0),2.0)*gamma_bil_e0[ibil]*gamma_bil_s0[ibil]/pow(4.0*M_PI,2.0);
 
             
             for(int ijack=0;ijack<njacks;ijack++)
@@ -473,15 +474,13 @@ oper_t oper_t::evolve_mixed(double ainv)
     O4f_t eta(O4f_t::Zero());
     
     O4f_t ZQEDan;
-    
-#warning update gamma_meslep with iop=5
-    
+        
     double gamma_se1[5][5] = {
         {+4.0,+0.0,+0.0,+0.0,+0.0},
         {+0.0,-4.0,+0.0,+0.0,+0.0},
         {+0.0,+0.0,+484.0/9.0,+0.0,+0.0},
         {+0.0,+0.0,+0.0,+412.0/9.0,-38.0/9.0},
-        {+0.0,+0.0,+0.0,+0.0,+0.0}}; // to be updated
+        {+0.0,+0.0,+0.0,-928.0/9.0,-428.0/27.0}}; // to be updated
     /* including the lepton */
 //    double gamma_e0[5][5] = {
 //        {-4.0,+0.0,+0.0,+0.0,+0.0},
