@@ -980,6 +980,7 @@ voper_t theta_average(vvoper_t in) // in[th][b]
         
         for(int ijack=0;ijack<njacks;ijack++)
         {
+            // Zq
             (out[b].jZq)[0][ijack][0] =
             0.5*((in[0][b].jZq)[0][ijack][0] +
                  (in[1][b].jZq)[0][ijack][0]);
@@ -988,6 +989,7 @@ voper_t theta_average(vvoper_t in) // in[th][b]
                 0.5*((in[0][b].jZq_EM)[0][ijack][0] +
                      (in[1][b].jZq_EM)[0][ijack][0]);
             
+            // Zbil
             for(int ibil=0;ibil<nbil;ibil++)
             {
                 (out[b].jZ)[0][ibil][ijack][0][0] =
@@ -999,6 +1001,15 @@ voper_t theta_average(vvoper_t in) // in[th][b]
                          (in[1][b].jZ_EM)[0][ibil][ijack][0][0]);
             }
             
+            // ZV/ZA and ZP/ZS
+            (out[b].jZVoverZA)[0][0][ijack][0][0] =
+            0.5*((in[0][b].jZVoverZA)[0][0][ijack][0][0] +
+                 (in[1][b].jZVoverZA)[0][0][ijack][0][0]);
+            (out[b].jZPoverZS)[0][0][ijack][0][0] =
+            0.5*((in[0][b].jZPoverZS)[0][0][ijack][0][0] +
+                 (in[1][b].jZPoverZS)[0][0][ijack][0][0]);
+            
+            // Z4f
             for(int iop1=0;iop1<nbil;iop1++)
                 for(int iop2=0;iop2<nbil;iop2++)
                 {
@@ -1755,6 +1766,34 @@ oper_t oper_t::a2p2_extr()
         }
     }
     
+    // Interpolating ZVoverZA and ZPoverZS
+    vvd_t y_ZVovZA(vd_t(0.0,_bilmoms),njacks);       // [njacks][moms]
+    vd_t  dy_ZVovZA(0.0,_bilmoms);                   // [moms]
+    vvvvd_t dy_ZVovZA_tmp = get<1>(ave_err_Z((*this).jZVoverZA)); // [moms][nbil][nmr][nmr]
+    vvd_t y_ZPovZS(vd_t(0.0,_bilmoms),njacks);       // [njacks][moms]
+    vd_t  dy_ZPovZS(0.0,_bilmoms);                   // [moms]
+    vvvvd_t dy_ZPovZS_tmp = get<1>(ave_err_Z((*this).jZPoverZS)); // [moms][nbil][nmr][nmr]
+    
+    for(int imom=0;imom<_bilmoms;imom++)
+    {
+        for(int ijack=0;ijack<njacks;ijack++)
+        {
+            y_ZVovZA[ijack][imom] = jZVoverZA[imom][0][ijack][0][0];
+            y_ZPovZS[ijack][imom] = jZPoverZS[imom][0][ijack][0][0];
+        }
+        dy_ZVovZA[imom] = dy_ZVovZA_tmp[imom][0][0][0];
+        dy_ZPovZS[imom] = dy_ZPovZS_tmp[imom][0][0][0];
+    }
+    
+    vvd_t jZVovZA_pars = polyfit(coord,npar,dy_ZVovZA,y_ZVovZA,p2min,p2max); // [ijack][ipar]
+    vvd_t jZPovZS_pars = polyfit(coord,npar,dy_ZPovZS,y_ZPovZS,p2min,p2max); // [ijack][ipar]
+    
+    for(int ijack=0;ijack<njacks;ijack++)
+    {
+        (out.jZVoverZA)[0][0][ijack][0][0] = jZVovZA_pars[ijack][0];
+        (out.jZPoverZS)[0][0][ijack][0][0] = jZPovZS_pars[ijack][0];
+    }
+
     // Interpolating Z4f
     vvd_t y_Z4f(vd_t(0.0,_meslepmoms),njacks);       // [njacks][moms]
     vd_t  dy_Z4f(0.0,_meslepmoms);                   // [moms]
@@ -1824,11 +1863,6 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     int iel_tmp1=0;
     int iel_tmp2=0;
     
-//    vd_t a_tmp(nb);
-//    a_tmp[0]=0.44856;
-//    a_tmp[1]=0.41322;
-//    a_tmp[2]=0.31348;
-    
     for(int b=0; b<nb; b++)
     {
         iel_tmp2 += in[b].size();
@@ -1844,10 +1878,6 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
         iel_tmp1 += in[b].size();
     }
 
-//    for(int b=0; b<in.size(); b++)
-//        for(int iel=0;iel<nm_Sea_tot;iel++)
-//            cout<<"xb["<<b<<"]["<<iel<<"] = "<<xb[b][iel]<<endl;
-    
     int npar = nb+1;                   //nbeta+1
     vvd_t coord(vd_t(0.0,nm_Sea_tot),npar);
     
@@ -1886,13 +1916,6 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     vvd_t jZq_pars = polyfit(coord,npar,dy_Zq,y_Zq,0,nm_Sea_tot-1); // [ijack][ipar]
     vvd_t jZq_EM_pars = polyfit(coord,npar,dy_Zq_EM,y_Zq_EM,0,nm_Sea_tot-1); // [ijack][ipar]
     
-//    cout<<"---ZQ---"<<endl;
-//    for(iel=0;iel<nm_Sea_tot;iel++)
-//    {
-//        cout<<coord[nb][iel]<<"  "<<y_Zq[0][iel]<<" "<<dy_Zq[iel]<<endl;
-//    }
-//    cout<<"A1 = "<<jZq_pars[0][0]<<" ; A2 = "<<jZq_pars[0][1]<<" ; A3 = "<<jZq_pars[0][2]<<" ; B = "<<jZq_pars[0][2]<<endl;
-    
     for(int b=0; b<nb; b++)
         for(int ijack=0;ijack<njacks;ijack++)
         {
@@ -1928,13 +1951,6 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
         vvd_t jZ_pars = polyfit(coord,npar,dy_Z,y_Z,0,nm_Sea_tot-1); // [ijack][ipar]
         vvd_t jZ_EM_pars = polyfit(coord,npar,dy_Z_EM,y_Z_EM,0,nm_Sea_tot-1); // [ijack][ipar]
         
-//        cout<<"---ZBIL_"<<ibil<<"---"<<endl;
-//        for(iel=0;iel<nm_Sea_tot;iel++)
-//        {
-//            cout<<coord[nb][iel]<<"  "<<y_Z[0][iel]<<" "<<dy_Z[iel]<<endl;
-//        }
-//        cout<<"A1 = "<<jZ_pars[0][0]<<" ; A2 = "<<jZ_pars[0][1]<<" ; A3 = "<<jZ_pars[0][2]<<" ; B = "<<jZ_pars[0][2]<<endl;
-        
         for(int b=0; b<nb; b++)
             for(int ijack=0;ijack<njacks;ijack++)
             {
@@ -1943,6 +1959,38 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
             }
     }
 
+    // extrapolate ZV/ZA and ZP/ZS
+    vvd_t y_ZVovZA(vd_t(0.0,nm_Sea_tot),njacks); // [njacks][nmseatot]
+    vd_t  dy_ZVovZA(0.0,nm_Sea_tot);             // [nmseatot]
+    vvd_t y_ZPovZS(vd_t(0.0,nm_Sea_tot),njacks); // [njacks][nmseatot]
+    vd_t  dy_ZPovZS(0.0,nm_Sea_tot);             // [nmseatot]
+    
+    iel=0;
+    for(int b=0; b<nb; b++)
+        for(int msea=0; msea<nm[b]; msea++)
+        {
+            for(int ijack=0;ijack<njacks;ijack++)
+            {
+                y_ZVovZA[ijack][iel] = in[b][msea].jZVoverZA[0][0][ijack][0][0];
+                y_ZPovZS[ijack][iel] = in[b][msea].jZPoverZS[0][0][ijack][0][0];
+            }
+            
+            dy_ZVovZA[iel] = (get<1>(ave_err_Z(in[b][msea].jZVoverZA)))[0][0][0][0];
+            dy_ZPovZS[iel] = (get<1>(ave_err_Z(in[b][msea].jZPoverZS)))[0][0][0][0];
+            
+            iel++;
+        }
+    
+    vvd_t jZVovZA_pars = polyfit(coord,npar,dy_ZVovZA,y_ZVovZA,0,nm_Sea_tot-1); // [ijack][ipar]
+    vvd_t jZPovZS_pars = polyfit(coord,npar,dy_ZPovZS,y_ZPovZS,0,nm_Sea_tot-1); // [ijack][ipar]
+    
+    for(int b=0; b<nb; b++)
+        for(int ijack=0;ijack<njacks;ijack++)
+        {
+            (out[b].jZVoverZA)[0][0][ijack][0][0] = jZVovZA_pars[ijack][b];
+            (out[b].jZPoverZS)[0][0][ijack][0][0] = jZPovZS_pars[ijack][b];
+        }
+    
     // extrapolate Z4f
     vvd_t y_Z4f(vd_t(0.0,nm_Sea_tot),njacks); // [njacks][nmseatot]
     vd_t  dy_Z4f(0.0,nm_Sea_tot);             // [nmseatot]
@@ -1971,13 +2019,6 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
             vvd_t jZ4f_pars = polyfit(coord,npar,dy_Z4f,y_Z4f,0,nm_Sea_tot-1); // [ijack][ipar]
             vvd_t jZ4f_EM_pars = polyfit(coord,npar,dy_Z4f_EM,y_Z4f_EM,0,nm_Sea_tot-1); // [ijack][ipar]
             
-//            cout<<"---Z4f_"<<iop1<<","<<iop2<<"---"<<endl;
-//            for(iel=0;iel<nm_Sea_tot;iel++)
-//            {
-//                cout<<coord[nb][iel]<<"  "<<y_Z4f[0][iel]<<" "<<dy_Z4f[iel]<<endl;
-//            }
-//            cout<<"A1 = "<<jZ4f_pars[0][0]<<" ; A2 = "<<jZ4f_pars[0][1]<<" ; A3 = "<<jZ4f_pars[0][2]<<" ; B = "<<jZ4f_pars[0][2]<<endl;
-            
             for(int b=0; b<nb; b++)
                 for(int ijack=0;ijack<njacks;ijack++)
                 {
@@ -1996,30 +2037,35 @@ void oper_t::plot(const string suffix)
 {
     oper_t in=(*this);
     
+    // Zq
     Zq_tup Zq_ave_err = ave_err_Zq(in.jZq);
     Zq_tup Zq_EM_ave_err = ave_err_Zq(in.jZq_EM);
-    
     vvd_t Zq_ave = get<0>(Zq_ave_err);        //[imom][mr]
     vvd_t Zq_EM_ave = get<0>(Zq_EM_ave_err);
-    
     vvd_t Zq_err = get<1>(Zq_ave_err);        //[imom][mr]
     vvd_t Zq_EM_err = get<1>(Zq_EM_ave_err);
     
+    // Zbil
     Zbil_tup Zbil_ave_err = ave_err_Z(in.jZ);
     Zbil_tup Zbil_EM_ave_err = ave_err_Z(in.jZ_EM);
-    
     vvvvd_t Z_ave = get<0>(Zbil_ave_err);    //[imom][ibil][mr1][mr2]
     vvvvd_t Z_EM_ave = get<0>(Zbil_EM_ave_err);
-    
     vvvvd_t Z_err = get<1>(Zbil_ave_err);    //[imom][ibil][mr1][mr2]
     vvvvd_t Z_EM_err = get<1>(Zbil_EM_ave_err);
     
+    // ZV/ZA and ZP/ZS
+    Zbil_tup ZVovZA_ave_err = ave_err_Z(in.jZVoverZA);
+    Zbil_tup ZPovZS_ave_err = ave_err_Z(in.jZPoverZS);
+    vvvvd_t ZVovZA_ave = get<0>(ZVovZA_ave_err);    //[imom][0][mr1][mr2]
+    vvvvd_t ZPovZS_ave = get<0>(ZPovZS_ave_err);
+    vvvvd_t ZVovZA_err = get<1>(ZVovZA_ave_err);    //[imom][0][mr1][mr2]
+    vvvvd_t ZPovZS_err = get<1>(ZPovZS_ave_err);
+    
+    // Z4f
     Z4f_tup Z_4f_ave_err = ave_err_Z4f(in.jZ_4f);
     Z4f_tup Z_4f_EM_ave_err = ave_err_Z4f(in.jZ_4f_EM);
-
     vvvvvd_t Z_4f_ave=get<0>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
     vvvvvd_t Z_4f_EM_ave=get<0>(Z_4f_EM_ave_err);
-    
     vvvvvd_t Z_4f_err=get<1>(Z_4f_ave_err);  //[imom][iop1][iop2][mr1][mr2];
     vvvvvd_t Z_4f_EM_err=get<1>(Z_4f_EM_ave_err);
     
@@ -2028,6 +2074,7 @@ void oper_t::plot(const string suffix)
     
     ofstream Zq_data, Zq_EM_data;
     vector<ofstream> Zbil_data(nbil), Zbil_EM_data(nbil);
+    ofstream ZVovZA_data, ZPovZS_data;
     vector<ofstream> Z_4f_data(nbil*nbil), Z_4f_EM_data(nbil*nbil);
     
     Zq_data.open(path_to_ens+"plots/Zq"+(suffix!=""?("_"+suffix):string(""))+".txt");
@@ -2069,6 +2116,21 @@ void oper_t::plot(const string suffix)
             Zbil_data[ibil]<<p2t[imomk]<<"\t"<<Z_ave[imom][ibil][0][0]<<"\t"<<Z_err[imom][ibil][0][0]<<endl;
             Zbil_EM_data[ibil]<<p2t[imomk]<<"\t"<<Z_EM_ave[imom][ibil][0][0]<<"\t"<<Z_EM_err[imom][ibil][0][0]<<endl;
         }
+    }
+    
+    cout<<", ZV/ZA, ZP/ZS";
+    ZVovZA_data.open(path_to_ens+"plots/ZVovZA"+(suffix!=""?("_"+suffix):string(""))+".txt");
+    ZPovZS_data.open(path_to_ens+"plots/ZPovZS"+(suffix!=""?("_"+suffix):string(""))+".txt");
+    
+    for(int imom=0; imom<in._bilmoms; imom++)
+    {
+        //            int imomq = in.bilmoms[imom][0];
+        //            cout<<"imomq: "<<imomq<<endl;
+        //            int imomk = in.linmoms[imomq][0];
+        int imomk = imom;   // NB: it works only for RIMOM!
+        
+        ZVovZA_data<<p2t[imomk]<<"\t"<<ZVovZA_ave[imom][0][0][0]<<"\t"<<ZVovZA_err[imom][0][0][0]<<endl;
+        ZPovZS_data<<p2t[imomk]<<"\t"<<ZPovZS_ave[imom][0][0][0]<<"\t"<<ZPovZS_err[imom][0][0][0]<<endl;
     }
     
     if(compute_4f)

@@ -350,37 +350,49 @@ oper_t oper_t::subOa2(const int b)
     double CF = 4.0/3.0;
     double g2b = 6.0/beta[b]/plaquette;
     
-        // Zq
-        for(int imom=0;imom<out._linmoms;imom++)
+    // Zq
+    for(int imom=0;imom<out._linmoms;imom++)
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mr=0;mr<out._nmr;mr++)
+            {
+                (out.jZq)[imom][ijack][mr] -= CF*g2b*subZq(imom,p2_tilde,p4_tilde,0);
+                (out.jZq_EM)[imom][ijack][mr] -= subZq(imom,p2_tilde,p4_tilde,1);
+            }
+    
+    // Zbil
+    for(int imom=0;imom<out._bilmoms;imom++)
+        for(int ibil=0;ibil<nbil;ibil++)
             for(int ijack=0;ijack<njacks;ijack++)
-                for(int mr=0;mr<out._nmr;mr++)
+                for(int mr1=0;mr1<out._nmr;mr1++)
+                    for(int mr2=0;mr2<out._nmr;mr2++)
+                    {
+                        (out.jZ)[imom][ibil][ijack][mr1][mr2] -= CF*g2b*subZ(imom,p2_tilde,p4_tilde,ibil,0);
+                        (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] -= subZ(imom,p2_tilde,p4_tilde,ibil,1);
+                    }
+    
+    
+    // ZV/ZA and ZP/ZS
+    for(int imom=0;imom<out._bilmoms;imom++)
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mr1=0;mr1<out._nmr;mr1++)
+                for(int mr2=0;mr2<out._nmr;mr2++)
                 {
-                    (out.jZq)[imom][ijack][mr] -= CF*g2b*subZq(imom,p2_tilde,p4_tilde,0);
-                    (out.jZq_EM)[imom][ijack][mr] -= subZq(imom,p2_tilde,p4_tilde,1);
+                    (out.jZVoverZA)[imom][0][ijack][mr1][mr2] = (out.jZ)[imom][1][ijack][mr1][mr2]/(out.jZ)[imom][3][ijack][mr1][mr2];
+                    (out.jZPoverZS)[imom][0][ijack][mr1][mr2] = (out.jZ)[imom][2][ijack][mr1][mr2]/(out.jZ)[imom][0][ijack][mr1][mr2];
                 }
     
-        // Zbil
-        for(int imom=0;imom<out._bilmoms;imom++)
-            for(int ibil=0;ibil<nbil;ibil++)
+    
+    // Z4f
+    for(int imom=0;imom<out._meslepmoms;imom++)
+        for(int iop1=0;iop1<nbil;iop1++)
+            for(int iop2=0;iop2<nbil;iop2++)
                 for(int ijack=0;ijack<njacks;ijack++)
                     for(int mr1=0;mr1<out._nmr;mr1++)
                         for(int mr2=0;mr2<out._nmr;mr2++)
                         {
-                            (out.jZ)[imom][ibil][ijack][mr1][mr2] -= CF*g2b*subZ(imom,p2_tilde,p4_tilde,ibil,0);
-                            (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] -= subZ(imom,p2_tilde,p4_tilde,ibil,1);
+                            (out.jZ_4f)[imom][iop1][iop2][ijack][mr1][mr2] -= CF*g2b*subZ4f(imom,p2_tilde,p4_tilde,iop1,iop2,0);
+                            (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] -= subZ4f(imom,p2_tilde,p4_tilde,iop1,iop2,1);
                         }
-    
-        // Z4f
-        for(int imom=0;imom<out._meslepmoms;imom++)
-            for(int iop1=0;iop1<nbil;iop1++)
-                for(int iop2=0;iop2<nbil;iop2++)
-                    for(int ijack=0;ijack<njacks;ijack++)
-                        for(int mr1=0;mr1<out._nmr;mr1++)
-                            for(int mr2=0;mr2<out._nmr;mr2++)
-                            {
-                                (out.jZ_4f)[imom][iop1][iop2][ijack][mr1][mr2] -= CF*g2b*subZ4f(imom,p2_tilde,p4_tilde,iop1,iop2,0);
-                                (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] -= subZ4f(imom,p2_tilde,p4_tilde,iop1,iop2,1);
-                            }
     
     return out;
 }
@@ -388,7 +400,7 @@ oper_t oper_t::subOa2(const int b)
 //vvd_t pr_bil_Oa2(const int LO_or_EM)
 //{
 //    vd_t c_v(3), c_a(3), c_s(3), c_p(3), c_t(3);
-//    
+//
 //    // Coefficients from the Mathematica file 'O(g2a2).nb'
 //    
 //    // We divide the following coefficients by 4 (or 6 for T)

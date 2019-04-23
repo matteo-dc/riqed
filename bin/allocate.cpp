@@ -42,6 +42,12 @@ void oper_t::clear_all()
     jZ_4f.shrink_to_fit();
     jZ_4f_EM.clear();
     jZ_4f_EM.shrink_to_fit();
+
+    jZVoverZA.clear();
+    jZVoverZA.shrink_to_fit();
+    jZPoverZS.clear();
+    jZPoverZS.shrink_to_fit();
+
 }
 
 void oper_t::allocate_val()
@@ -91,6 +97,11 @@ void oper_t::allocate()
     // allocate Z4f
     allocate_vec(jZ_4f,{_meslepmoms,nbil,nbil,njacks,_nmr,_nmr});
     allocate_vec(jZ_4f_EM,{_meslepmoms,nbil,nbil,njacks,_nmr,_nmr});
+    
+    // allocate ZV/ZA
+    allocate_vec(jZVoverZA,{_bilmoms,1,njacks,_nmr,_nmr});
+    // allocate ZP/ZS
+    allocate_vec(jZPoverZS,{_bilmoms,1,njacks,_nmr,_nmr});
     
     check_allocation();
 }

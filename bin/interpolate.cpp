@@ -319,7 +319,41 @@ oper_t oper_t::interpolate_to_p2ref(int b)
             jZ_EM_pars[ijack][1]*p2ref +
             jZ_EM_pars[ijack][2]*p2ref*p2ref;
         }
+    }
+    
+    // Interpolating ZV/ZA and ZP/ZS
+    vvd_t y_ZVovZA(vd_t(0.0,_bilmoms),njacks);       // [njacks][moms]
+    vd_t  dy_ZVovZA(0.0,_bilmoms);                   // [moms]
+    vvvvd_t dy_ZVovZA_tmp = get<1>(ave_err_Z((*this).jZVoverZA)); // [moms][nbil][nmr][nmr]
+    
+    vvd_t y_ZPovZS(vd_t(0.0,_bilmoms),njacks);       // [njacks][moms]
+    vd_t  dy_ZPovZS(0.0,_bilmoms);                   // [moms]
+    vvvvd_t dy_ZPovZS_tmp = get<1>(ave_err_Z((*this).jZPoverZS)); // [moms][nbil][nmr][nmr]
+    
+    for(int imom=0;imom<_bilmoms;imom++)
+    {
+        for(int ijack=0;ijack<njacks;ijack++)
+        {
+            y_ZVovZA[ijack][imom] = jZVoverZA[imom][0][ijack][0][0];
+            y_ZPovZS[ijack][imom] = jZPoverZS[imom][0][ijack][0][0];
+        }
         
+        dy_ZVovZA[imom] = dy_ZVovZA_tmp[imom][0][0][0];
+        dy_ZPovZS[imom] = dy_ZPovZS_tmp[imom][0][0][0];
+    }
+    
+    vvd_t jZVovZA_pars = polyfit(coord,npar,dy_ZVovZA,y_ZVovZA,p2_min,p2_max); // [ijack][ipar]
+    vvd_t jZPovZS_pars = polyfit(coord,npar,dy_ZPovZS,y_ZPovZS,p2_min,p2_max); // [ijack][ipar]
+    
+    for(int ijack=0;ijack<njacks;ijack++)
+    {
+        (out.jZVoverZA)[0][0][ijack][0][0] = jZVovZA_pars[ijack][0] +
+        jZVovZA_pars[ijack][1]*p2ref +
+        jZVovZA_pars[ijack][2]*p2ref*p2ref;
+        
+        (out.jZPoverZS)[0][0][ijack][0][0] = jZPovZS_pars[ijack][0] +
+        jZPovZS_pars[ijack][1]*p2ref +
+        jZPovZS_pars[ijack][2]*p2ref*p2ref;
     }
     
     // Interpolating Z4f

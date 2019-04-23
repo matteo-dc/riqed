@@ -170,6 +170,9 @@ struct oper_t
     
     // definition of Z
     vector<jZbil_t> jZ, jZ_EM;
+    // definition of ZV/ZA and ZP/ZS
+    vector<jZbil_t> jZVoverZA;
+    vector<jZbil_t> jZPoverZS;
     // compute Zbils
     void compute_Zbil();
     

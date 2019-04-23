@@ -279,7 +279,6 @@ oper_t oper_t::evolveToAinv(const double ainv)
             gamma_bil[2] = -6.0; /* P */
             gamma_bil[3] =  0.0; /* A */
             gamma_bil[4] =  2.0; /* T */
-#warning to be substituted with the ones without lepton contribution
 //            gamma_meslep[0][0] = -4.0;
 //            gamma_meslep[1][1] = -2.0;
 //            gamma_meslep[2][2] = +4.0/3.0;
@@ -287,6 +286,13 @@ oper_t oper_t::evolveToAinv(const double ainv)
 //            gamma_meslep[4][4] = -40.0/9.0;
 //            gamma_meslep[3][4] = -1.0/6.0;
 //            gamma_meslep[4][3] = -8.0;
+            gamma_meslep[0][0] = -5.0;
+            gamma_meslep[1][1] = -3.0;
+            gamma_meslep[2][2] = +1.0/3.0;
+            gamma_meslep[3][3] = +1.0/3.0;
+            gamma_meslep[4][4] = -49.0/9.0;
+            gamma_meslep[3][4] = -1.0/6.0;
+            gamma_meslep[4][3] = -8.0;
         }
         else                                //Landau
         {
@@ -296,7 +302,6 @@ oper_t oper_t::evolveToAinv(const double ainv)
             gamma_bil[2] = -6.0; /* P */
             gamma_bil[3] =  0.0; /* A */
             gamma_bil[4] =  2.0; /* T */
-#warning to be substituted with the ones without lepton contribution
 //            gamma_meslep[0][0] = -4.0;
 //            gamma_meslep[1][1] = -2.0;
 //            gamma_meslep[2][2] = +4.0/3.0;
@@ -304,6 +309,13 @@ oper_t oper_t::evolveToAinv(const double ainv)
 //            gamma_meslep[4][4] = -40.0/9.0;
 //            gamma_meslep[3][4] = -1.0/6.0;
 //            gamma_meslep[4][3] = -8.0;
+            gamma_meslep[0][0] = -5.0;
+            gamma_meslep[1][1] = -3.0;
+            gamma_meslep[2][2] = +1.0/3.0;
+            gamma_meslep[3][3] = +1.0/3.0;
+            gamma_meslep[4][4] = -49.0/9.0;
+            gamma_meslep[3][4] = -1.0/6.0;
+            gamma_meslep[4][3] = -8.0;
         }
         
         
@@ -474,7 +486,7 @@ oper_t oper_t::evolve_mixed(double ainv)
     O4f_t eta(O4f_t::Zero());
     
     O4f_t ZQEDan;
-        
+    
     double gamma_se1[5][5] = {
         {+4.0,+0.0,+0.0,+0.0,+0.0},
         {+0.0,-4.0,+0.0,+0.0,+0.0},
