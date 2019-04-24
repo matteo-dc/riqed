@@ -378,10 +378,10 @@ oper_t oper_t::subOa2(const int b)
             for(int mr1=0;mr1<out._nmr;mr1++)
                 for(int mr2=0;mr2<out._nmr;mr2++)
                 {
-                    (out.jZVoverZA)[imom][0][ijack][mr1][mr2] = jZVoverZA[imom][0][ijack][mr1][mr2];
-                    (out.jZPoverZS)[imom][0][ijack][mr1][mr2] = jZPoverZS[imom][0][ijack][mr1][mr2];
-//                    (out.jZVoverZA)[imom][0][ijack][mr1][mr2] = (out.jZ)[imom][1][ijack][mr1][mr2]/(out.jZ)[imom][3][ijack][mr1][mr2];
-//                    (out.jZPoverZS)[imom][0][ijack][mr1][mr2] = (out.jZ)[imom][2][ijack][mr1][mr2]/(out.jZ)[imom][0][ijack][mr1][mr2];
+//                    (out.jZVoverZA)[imom][0][ijack][mr1][mr2] = jZVoverZA[imom][0][ijack][mr1][mr2];
+//                    (out.jZPoverZS)[imom][0][ijack][mr1][mr2] = jZPoverZS[imom][0][ijack][mr1][mr2];
+                    (out.jZVoverZA)[imom][0][ijack][mr1][mr2] = (out.jZ)[imom][1][ijack][mr1][mr2]/(out.jZ)[imom][3][ijack][mr1][mr2];
+                    (out.jZPoverZS)[imom][0][ijack][mr1][mr2] = (out.jZ)[imom][2][ijack][mr1][mr2]/(out.jZ)[imom][0][ijack][mr1][mr2];
                 }
     
     
