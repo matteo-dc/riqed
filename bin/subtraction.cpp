@@ -367,7 +367,7 @@ oper_t oper_t::subOa2(const int b)
                 for(int mr1=0;mr1<out._nmr;mr1++)
                     for(int mr2=0;mr2<out._nmr;mr2++)
                     {
-                        (out.jZ)[imom][ibil][ijack][mr1][mr2] -= CF*g2*subZ(imom,p2_tilde,p4_tilde,ibil,0);
+                        (out.jZ)[imom][ibil][ijack][mr1][mr2] -= CF*g2b*subZ(imom,p2,p4,ibil,0);
                         (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] -= subZ(imom,p2_tilde,p4_tilde,ibil,1);
                     }
     
