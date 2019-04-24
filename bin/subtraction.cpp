@@ -132,8 +132,8 @@ double subZ(const int imom, const vector<double> a2p2_vec, const vector<double> 
             {
 //                cout<<" - Subtracting QCD to Z: Iwasaki/Landau"<<endl;
                 
-//                Z_sub[0] = - 0.008872018466143912*a2p2 + (0.009354978553123072*a4p4)/a2p2 +
-//                            (0.0011093593071259786*a2p2 - (0.006098477715414468*a4p4)/a2p2)*log(a2p2);
+                Z_sub[0] = - 0.008872018466143912*a2p2 + (0.009354978553123072*a4p4)/a2p2 +
+                            (0.0011093593071259786*a2p2 - (0.006098477715414468*a4p4)/a2p2)*log(a2p2);
                 Z_sub[1] = 0.0021029591619405857*a2p2 + (0.015008383971666636*a4p4)/a2p2 +
                             (0.000852890061031311*a2p2 - (0.006098477715414467*a4p4)/a2p2)*log(a2p2);
                 Z_sub[2] = - 0.0003146592683752582*a2p2 + (0.009354978553123072*a4p4)/a2p2 +
@@ -348,7 +348,8 @@ oper_t oper_t::subOa2(const int b)
     oper_t out=(*this);
     
     double CF = 4.0/3.0;
-    double g2b = 6.0/beta[b]/plaquette;
+    double g2 = 6.0/beta[b];
+    double g2b = g2/plaquette;
     
     // Zq
     for(int imom=0;imom<out._linmoms;imom++)
@@ -366,7 +367,7 @@ oper_t oper_t::subOa2(const int b)
                 for(int mr1=0;mr1<out._nmr;mr1++)
                     for(int mr2=0;mr2<out._nmr;mr2++)
                     {
-                        (out.jZ)[imom][ibil][ijack][mr1][mr2] -= CF*g2b*subZ(imom,p2_tilde,p4_tilde,ibil,0);
+                        (out.jZ)[imom][ibil][ijack][mr1][mr2] -= CF*g2*subZ(imom,p2_tilde,p4_tilde,ibil,0);
                         (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] -= subZ(imom,p2_tilde,p4_tilde,ibil,1);
                     }
     
