@@ -2073,31 +2073,45 @@ void oper_t::plot(const string suffix)
     vector<string> bil={"S","V","P","A","T"};
     
     ofstream Zq_data, Zq_EM_data;
+    ofstream Zq_p2_data, Zq_EM_p2_data;
+    
     vector<ofstream> Zbil_data(nbil), Zbil_EM_data(nbil);
+    vector<ofstream> Zbil_p2_data(nbil), Zbil_EM_p2_data(nbil);
+    
     ofstream ZVovZA_data, ZPovZS_data;
     vector<ofstream> Z_4f_data(nbil*nbil), Z_4f_EM_data(nbil*nbil);
     
-    Zq_data.open(path_to_ens+"plots/Zq"+(suffix!=""?("_"+suffix):string(""))+".txt");
-    Zq_EM_data.open(path_to_ens+"plots/Zq_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
-    
+    vector<double> p2;
     vector<double> p2t;
     
     if(in._linmoms==moms)
     {
+        p2.resize(in._linmoms);
+        read_vec(p2,path_print+"p2.txt");
         p2t.resize(in._linmoms);
         read_vec(p2t,path_print+"p2_tilde.txt");
     }
     else
     {
+        p2.resize(in._linmoms);
+        read_vec(p2,path_print+"p2_eqmoms.txt");
         p2t.resize(in._linmoms);
         read_vec(p2t,path_print+"p2_tilde_eqmoms.txt");
     }
+    
+    Zq_data.open(path_to_ens+"plots/Zq"+(suffix!=""?("_"+suffix):string(""))+".txt");
+    Zq_EM_data.open(path_to_ens+"plots/Zq_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
+    Zq_p2_data.open(path_to_ens+"plots/Zq"+(suffix!=""?("_"+suffix):string(""))+"_p2.txt");
+    Zq_EM_p2_data.open(path_to_ens+"plots/Zq_EM"+(suffix!=""?("_"+suffix):string(""))+"_p2.txt");
     
     cout<<"Plotting Zq";
     for(int imom=0; imom<in._linmoms; imom++)
     {
         Zq_data<<p2t[imom]<<"\t"<<Zq_ave[imom][0]<<"\t"<<Zq_err[imom][0]<<endl;
         Zq_EM_data<<p2t[imom]<<"\t"<<Zq_EM_ave[imom][0]<<"\t"<<Zq_EM_err[imom][0]<<endl;
+        
+        Zq_p2_data<<p2[imom]<<"\t"<<Zq_ave[imom][0]<<"\t"<<Zq_err[imom][0]<<endl;
+        Zq_EM_p2_data<<p2[imom]<<"\t"<<Zq_EM_ave[imom][0]<<"\t"<<Zq_EM_err[imom][0]<<endl;
     }
     
     cout<<", Zbil";
@@ -2105,6 +2119,8 @@ void oper_t::plot(const string suffix)
     {
         Zbil_data[ibil].open(path_to_ens+"plots/Z"+bil[ibil]+(suffix!=""?("_"+suffix):string(""))+".txt");
         Zbil_EM_data[ibil].open(path_to_ens+"plots/Z"+bil[ibil]+"_EM"+(suffix!=""?("_"+suffix):string(""))+".txt");
+        Zbil_p2_data[ibil].open(path_to_ens+"plots/Z"+bil[ibil]+(suffix!=""?("_"+suffix):string(""))+"_p2.txt");
+        Zbil_EM_p2_data[ibil].open(path_to_ens+"plots/Z"+bil[ibil]+"_EM"+(suffix!=""?("_"+suffix):string(""))+"_p2.txt");
         
         for(int imom=0; imom<in._bilmoms; imom++)
         {
@@ -2115,6 +2131,9 @@ void oper_t::plot(const string suffix)
             
             Zbil_data[ibil]<<p2t[imomk]<<"\t"<<Z_ave[imom][ibil][0][0]<<"\t"<<Z_err[imom][ibil][0][0]<<endl;
             Zbil_EM_data[ibil]<<p2t[imomk]<<"\t"<<Z_EM_ave[imom][ibil][0][0]<<"\t"<<Z_EM_err[imom][ibil][0][0]<<endl;
+
+            Zbil_p2_data[ibil]<<p2[imomk]<<"\t"<<Z_ave[imom][ibil][0][0]<<"\t"<<Z_err[imom][ibil][0][0]<<endl;
+            Zbil_EM_p2_data[ibil]<<p2[imomk]<<"\t"<<Z_EM_ave[imom][ibil][0][0]<<"\t"<<Z_EM_err[imom][ibil][0][0]<<endl;
         }
     }
     
