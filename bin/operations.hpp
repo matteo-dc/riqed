@@ -220,6 +220,7 @@ struct oper_t
     
     // plot Zq and Z
     void plot(const string suffix);
+    void plot(const string suffix, int b);
     
     // plot sigmas
     void plot_sigmas();
