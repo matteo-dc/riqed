@@ -145,7 +145,7 @@ int main(int narg,char **arg)
                         {
                             evo[th][m] = val_chir[th][m].evolveToAinv(ainv[b]);
                             evo[th][m].plot("evo");
-                            sub[th][m] = evo[th][m].subOa2(b);
+                            sub[th][m] = evo[th][m]/*.subOa2(b)*/;
                             sub[th][m].plot("sub");
                             
                             M1[th][b][m] = sub[th][m].a2p2_extr();
