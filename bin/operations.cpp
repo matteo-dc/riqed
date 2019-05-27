@@ -541,6 +541,7 @@ oper_t oper_t::chiral_extr()
                     
                     for(int ijack=0; ijack<njacks; ijack++)
                         (out.sigma)[ilinmom][iproj][ins][ijack][r]=sigma_pars[ijack][0];
+                
                 }
     
     if(ntypes!=3)
@@ -642,6 +643,12 @@ oper_t oper_t::chiral_extr()
                         
                         for(int ijack=0;ijack<njacks;ijack++)
                             (out.jG)[ibilmom][ins][ibil][ijack][r1][r2] = jG_pars[ijack][0];
+                    
+                        if(ibilmom%100==0 and r1==0 and r2==0)
+                        {
+                            plot_bil_chir_extr(ibilmom,ins,ibil,coord_bil[1],G_ave_r1_r2,G_err_r1_r2,jG_pars);   /* (mom,ins,bil,x,y,dy,jpars) */
+                        }
+                        
                     }
     
     out.compute_Zbil();
@@ -2031,7 +2038,42 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     return out;
 }
 
-
+void oper_t::plot_bil_chir_extr(double mom, double i_ins, double ibil, vd_t x, vd_t y, vd_t dy, vvd_t jpars)
+{
+    // this choice is relative to the twisted basis
+    vector<string> bil={"S","V","P","A","T"};
+    vector<string> ins_str={"LO","EM"}; /* valid only if ntypes=3 */
+    
+    if(ntypes!=3)
+        exit(0);
+    
+    ofstream plot_data;
+    ofstream pars_data;
+    
+    plot_data.open(path_to_ens+"plots/chir_extr_Gbil_"+bil[ibil]+"_"+ins_str[i_ins]+"_mom_"+to_string(mom)+".txt");
+    pars_data.open(path_to_ens+"plots/chir_extr_Gbil_"+bil[ibil]+"_"+ins_str[i_ins]+"_mom_"+to_string(mom)+"_pars.txt");
+    
+    for(int i=0; i<(int)x.size(); i++)
+        plot_data<<x[i]<<"\t"<<y[i]<<"\t"<<dy[i]<<endl;
+    
+    int npar=(int)jpars[0].size();
+    
+    vd_t pars_ave(0.0,npar);
+    vd_t sqr_pars_ave(0.0,npar);
+    vd_t pars_err(0.0,npar);
+    
+    for(int ipar=0;ipar<npar;ipar++)
+    {
+        for(int ijack=0;ijack<njacks;ijack++)
+        {
+            pars_ave[ipar] += jpars[ijack][ipar]/njacks;
+            sqr_pars_ave[ipar] += jpars[ijack][ipar]*jpars[ijack][ipar]/njacks;
+        }
+        pars_err[ipar] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_pars_ave[ipar]-pars_ave[ipar]*pars_ave[ipar]));
+        
+        pars_data<<pars_ave[ipar]<<"\t"<<pars_err[ipar]<<endl;
+    }
+}
 
 void oper_t::plot(const string suffix)
 {
