@@ -757,7 +757,10 @@ oper_t oper_t::chiral_extr()
                                 for(int ijack=0;ijack<njacks;ijack++)
                                    (out.jpr_meslep)[imom][ins][iop1][iop2][ijack][r1][r2] = jpr_meslep_pars[ijack][0];
                             
-                                
+                                if(imom%20==0 and r1==0 and r2==0)
+                                {
+                                    plot_meslep_chir_extr(imom,ins,iop1,iop2,coord_meslep[1],pr_meslep_ave_r1_r2,pr_meslep_err_r1_r2,jpr_meslep_pars);   /* (mom,ins,iop1,iop2,x,y,dy,jpars) */
+                                }
                             }
         
         out.compute_Z4f();
@@ -2052,6 +2055,41 @@ void oper_t::plot_bil_chir_extr(int mom, int i_ins, int ibil, vd_t x, vd_t y, vd
     
     plot_data.open(path_to_ens+"plots/chir_extr_Gbil_"+bil[ibil]+"_"+ins_str[i_ins]+"_mom_"+to_string(mom)+".txt");
     pars_data.open(path_to_ens+"plots/chir_extr_Gbil_"+bil[ibil]+"_"+ins_str[i_ins]+"_mom_"+to_string(mom)+"_pars.txt");
+    
+    for(int i=0; i<(int)x.size(); i++)
+        plot_data<<x[i]<<"\t"<<y[i]<<"\t"<<dy[i]<<endl;
+    
+    int npar=(int)jpars[0].size();
+    
+    vd_t pars_ave(0.0,npar);
+    vd_t sqr_pars_ave(0.0,npar);
+    vd_t pars_err(0.0,npar);
+    
+    for(int ipar=0;ipar<npar;ipar++)
+    {
+        for(int ijack=0;ijack<njacks;ijack++)
+        {
+            pars_ave[ipar] += jpars[ijack][ipar]/njacks;
+            sqr_pars_ave[ipar] += jpars[ijack][ipar]*jpars[ijack][ipar]/njacks;
+        }
+        pars_err[ipar] = sqrt((double)(njacks-1))*sqrt(fabs(sqr_pars_ave[ipar]-pars_ave[ipar]*pars_ave[ipar]));
+        
+        pars_data<<pars_ave[ipar]<<"\t"<<pars_err[ipar]<<endl;
+    }
+}
+
+void oper_t::plot_meslep_chir_extr(int mom, int i_ins, int iop1, int iop2, vd_t x, vd_t y, vd_t dy, vvd_t jpars)
+{
+    vector<string> ins_str={"LO","EM"}; /* valid only if ntypes=3 */
+    
+    if(ntypes!=3)
+        exit(0);
+    
+    ofstream plot_data;
+    ofstream pars_data;
+    
+    plot_data.open(path_to_ens+"plots/chir_extr_G4f_"+to_string(iop1)+"_"+to_string(iop2)+"_"+ins_str[i_ins]+"_mom_"+to_string(mom)+".txt");
+    pars_data.open(path_to_ens+"plots/chir_extr_G4f_"+to_string(iop1)+"_"+to_string(iop2)+"_"+ins_str[i_ins]+"_mom_"+to_string(mom)+"_pars.txt");
     
     for(int i=0; i<(int)x.size(); i++)
         plot_data<<x[i]<<"\t"<<y[i]<<"\t"<<dy[i]<<endl;

@@ -221,7 +221,9 @@ struct oper_t
     // plot Zq and Z
     void plot(const string suffix);
     void plot(const string suffix, int b);
+    // plot chiral extrapolations
     void plot_bil_chir_extr(int mom, int ins, int ibil, vd_t x, vd_t y, vd_t dy, vvd_t jpars);
+    void plot_meslep_chir_extr(int mom, int ins, int iop1, int iop2, vd_t x, vd_t y, vd_t dy, vvd_t jpars);
     
     // plot sigmas
     void plot_sigmas();
