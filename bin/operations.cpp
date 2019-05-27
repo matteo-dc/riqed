@@ -2038,7 +2038,7 @@ voper_t combined_chiral_sea_extr(vvoper_t in)  //  in[beta][msea]
     return out;
 }
 
-void oper_t::plot_bil_chir_extr(double mom, double i_ins, double ibil, vd_t x, vd_t y, vd_t dy, vvd_t jpars)
+void oper_t::plot_bil_chir_extr(int mom, int i_ins, int ibil, vd_t x, vd_t y, vd_t dy, vvd_t jpars)
 {
     // this choice is relative to the twisted basis
     vector<string> bil={"S","V","P","A","T"};
