@@ -2056,9 +2056,6 @@ void oper_t::plot_bil_chir_extr(int mom, int i_ins, int ibil, vd_t x, vd_t y, vd
     plot_data.open(path_to_ens+"plots/chir_extr_Gbil_"+bil[ibil]+"_"+ins_str[i_ins]+"_mom_"+to_string(mom)+".txt");
     pars_data.open(path_to_ens+"plots/chir_extr_Gbil_"+bil[ibil]+"_"+ins_str[i_ins]+"_mom_"+to_string(mom)+"_pars.txt");
     
-    for(int i=0; i<(int)x.size(); i++)
-        plot_data<<x[i]<<"\t"<<y[i]<<"\t"<<dy[i]<<endl;
-    
     int npar=(int)jpars[0].size();
     
     vd_t pars_ave(0.0,npar);
@@ -2076,6 +2073,10 @@ void oper_t::plot_bil_chir_extr(int mom, int i_ins, int ibil, vd_t x, vd_t y, vd
         
         pars_data<<pars_ave[ipar]<<"\t"<<pars_err[ipar]<<endl;
     }
+    
+    plot_data<<"0.0\t"<<pars_ave[0]<<"\t"<<pars_err[0]<<endl;
+    for(int i=0; i<(int)x.size(); i++)
+        plot_data<<x[i]<<"\t"<<y[i]<<"\t"<<dy[i]<<endl;
 }
 
 void oper_t::plot_meslep_chir_extr(int mom, int i_ins, int iop1, int iop2, vd_t x, vd_t y, vd_t dy, vvd_t jpars)
@@ -2091,9 +2092,6 @@ void oper_t::plot_meslep_chir_extr(int mom, int i_ins, int iop1, int iop2, vd_t 
     plot_data.open(path_to_ens+"plots/chir_extr_G4f_"+to_string(iop1)+"_"+to_string(iop2)+"_"+ins_str[i_ins]+"_mom_"+to_string(mom)+".txt");
     pars_data.open(path_to_ens+"plots/chir_extr_G4f_"+to_string(iop1)+"_"+to_string(iop2)+"_"+ins_str[i_ins]+"_mom_"+to_string(mom)+"_pars.txt");
     
-    for(int i=0; i<(int)x.size(); i++)
-        plot_data<<x[i]<<"\t"<<y[i]<<"\t"<<dy[i]<<endl;
-    
     int npar=(int)jpars[0].size();
     
     vd_t pars_ave(0.0,npar);
@@ -2111,6 +2109,10 @@ void oper_t::plot_meslep_chir_extr(int mom, int i_ins, int iop1, int iop2, vd_t 
         
         pars_data<<pars_ave[ipar]<<"\t"<<pars_err[ipar]<<endl;
     }
+    
+    plot_data<<"0.0\t"<<pars_ave[0]<<"\t"<<pars_err[0]<<endl;
+    for(int i=0; i<(int)x.size(); i++)
+        plot_data<<x[i]<<"\t"<<y[i]<<"\t"<<dy[i]<<endl;
 }
 
 void oper_t::plot(const string suffix)
