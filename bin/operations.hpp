@@ -248,6 +248,7 @@ voper_t theta_average(vvoper_t in);
 
 // difference between interacting and free theory
 oper_t compute_eta(voper_t oper_for_eta);
+oper_t compute_eta_uncorr(voper_t oper_for_eta1,voper_t oper_for_eta2);
 
 // a2p2->0 extrapolation combined on betas
 voper_t a2p2_extr_combined_on_betas(voper_t in);

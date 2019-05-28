@@ -1420,6 +1420,73 @@ oper_t compute_eta(voper_t in) // in[loop]
     return out;
 }
 
+oper_t compute_eta_uncorr(voper_t in1,voper_t in2)
+{
+    cout<<endl;
+    cout<<"----- eta **uncorrelated photons** -----"<<endl<<endl;
+    
+    oper_t out=in1[0]; // out
+    
+    out._nmr = in1[1]._nmr;  // using nmr of free theory
+    out._linmoms = in1[0]._linmoms;
+    out._bilmoms = in1[0]._bilmoms;
+    out._meslepmoms = in1[0]._meslepmoms;
+    
+    out.allocate_val();
+    out.allocate();
+    
+    out.eff_mass=in1[0].eff_mass;
+    out.eff_mass_sea=in1[0].eff_mass_sea;
+    
+    out.path_to_ens = in1[0].path_to_beta + in1[0].ensemble_name + "/";
+    
+    // Zq
+    for(int imom=0;imom<out._linmoms;imom++)
+        for(int ijack=0;ijack<njacks;ijack++)
+            for(int mr=0;mr<out._nmr;mr++)
+            {
+                (out.jZq)[imom][ijack][mr] =
+                (in1[0].jZq)[imom][ijack][mr];
+                
+                (out.jZq_EM)[imom][ijack][mr] =
+                (in1[0].jZq_EM)[imom][ijack][mr] -
+                (in2[1].jZq_EM)[imom][ijack][mr];
+            }
+    // Zbil
+    for(int imom=0;imom<out._bilmoms;imom++)
+        for(int ibil=0;ibil<nbil;ibil++)
+            for(int ijack=0;ijack<njacks;ijack++)
+                for(int mr1=0;mr1<out._nmr;mr1++)
+                    for(int mr2=0;mr2<out._nmr;mr2++)
+                    {
+                        (out.jZ)[imom][ibil][ijack][mr1][mr2] =
+                        (in1[0].jZ)[imom][ibil][ijack][mr1][mr2];
+                        
+                        (out.jZ_EM)[imom][ibil][ijack][mr1][mr2] =
+                        (in1[0].jZ_EM)[imom][ibil][ijack][mr1][mr2] -
+                        (in2[1].jZ_EM)[imom][ibil][ijack][mr1][mr2];
+                    }
+    
+    // Z4f
+    for(int imom=0;imom<out._meslepmoms;imom++)
+        for(int iop1=0;iop1<nbil;iop1++)
+            for(int iop2=0;iop2<nbil;iop2++)
+                for(int ijack=0;ijack<njacks;ijack++)
+                    for(int mr1=0;mr1<out._nmr;mr1++)
+                        for(int mr2=0;mr2<out._nmr;mr2++)
+                        {
+                            (out.jZ_4f)[imom][iop1][iop2][ijack][mr1][mr2] =
+                            (in1[0].jZ_4f)[imom][iop1][iop2][ijack][mr1][mr2];
+                            
+                            (out.jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] =
+                            (in1[0].jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2] -
+                            (in2[1].jZ_4f_EM)[imom][iop1][iop2][ijack][mr1][mr2];
+                        }
+    
+    
+    return out;
+}
+
 void oper_t::print(const string suffix)
 {
     print_vec_bin(sigma,path_print+"sigmas_"+suffix);
