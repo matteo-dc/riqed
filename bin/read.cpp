@@ -34,8 +34,7 @@ void oper_t::read_mom_list(const string &path)
         for(int mu=0;mu<4;mu++)
         {
             input>>mom[mu];
-#warning changing shift!
-            p_array[mu]=2*M_PI*(mom[mu]-shift[mu])/size[mu];
+            p_array[mu]=2*M_PI*(mom[mu]+shift[mu])/size[mu];
             p_sqr+=p_array[mu]*p_array[mu];
             p_4+=p_array[mu]*p_array[mu]*p_array[mu]*p_array[mu];
 
