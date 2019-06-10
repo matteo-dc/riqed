@@ -91,6 +91,7 @@ double q_evolution_to_RIp_ainv(int Nf,double ainv,double a2p2)
     }
     
     //DEBUG
+    cout<<mu_2<<"\t"<<LambdaQCD<<"\t"<<(pow(LambdaQCD,2)<<"\t"<<log( mu_2/(pow(LambdaQCD,2) ) )<<endl;
     cout<<mu_2<<"\t"<<alm<<"\t"<<mu0_2<<"\t"<<al0<<"\t"<<cmu<<"\t"<<cmu0<<endl;
     
     return cmu/cmu0;
