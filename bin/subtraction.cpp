@@ -352,23 +352,12 @@ oper_t oper_t::subOa2(const int b)
     double g2b = g2/plaquette;
     
     // Zq
-    
-    // DEBUG
-    cout<<"DEBUG"<<endl;
-    
     for(int imom=0;imom<out._linmoms;imom++)
         for(int ijack=0;ijack<njacks;ijack++)
             for(int mr=0;mr<out._nmr;mr++)
             {
-                
-                // DEBUG
-                cout<<ijack<<"\t "<<p2_tilde[imom]<<"\t "<<p4_tilde[imom]<<"\t "<<((*this).jZq)[imom][ijack][mr]<<"\t "<<(out.jZq)[imom][ijack][mr]<<"\t "<<g2b<<"\t "<<subZq(imom,p2_tilde,p4_tilde,0)<<"\t ";
-                
                 (out.jZq)[imom][ijack][mr] -= CF*g2b*subZq(imom,p2_tilde,p4_tilde,0);
                 (out.jZq_EM)[imom][ijack][mr] -= subZq(imom,p2_tilde,p4_tilde,1);
-                
-                // DEBUG
-                cout<<(out.jZq)[imom][ijack][mr]<<endl;
             }
     
     // Zbil
