@@ -90,10 +90,6 @@ double q_evolution_to_RIp_ainv(int Nf,double ainv,double a2p2)
         cmu0 = 1. + 2.4000 * al0 + 29.6724 * pow(al0,2) + 719.141 * pow(al0,3);
     }
     
-    //DEBUG
-    cout<<mu_2<<"\t"<<LambdaQCD<<"\t"<<pow(LambdaQCD,2)<<"\t"<<log( mu_2/(pow(LambdaQCD,2) ) )<<"\t"<<alphas(Nf,mu_2)<<endl;
-    cout<<mu_2<<"\t"<<alm<<"\t"<<mu0_2<<"\t"<<al0<<"\t"<<cmu<<"\t"<<cmu0<<endl;
-    
     return cmu/cmu0;
 }
 double S_evolution_to_RIp_ainv(int Nf,double ainv,double a2p2)
@@ -362,9 +358,6 @@ oper_t oper_t::evolveToAinv(const double ainv)
             for(int ijack=0;ijack<njacks;ijack++)
                 for(int mr=0; mr<out._nmr; mr++)
                     (out.jZq)[imom][ijack][mr] = jZq[imom][ijack][mr]/cq;
-            
-            //DEBUG
-            cout<<imom<<"\t "<<p2[imom]<<"\t "<<Nf<<"\t "<<ainv<<"\t "<<cq<<endl;
         }
         
         // Zbil
