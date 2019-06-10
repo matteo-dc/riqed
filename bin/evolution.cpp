@@ -90,6 +90,9 @@ double q_evolution_to_RIp_ainv(int Nf,double ainv,double a2p2)
         cmu0 = 1. + 2.4000 * al0 + 29.6724 * pow(al0,2) + 719.141 * pow(al0,3);
     }
     
+    //DEBUG
+    cout<<mu_2<<"\t"<<alm<<"\t"<<mu0_2<<"\t"<<al0<<"\t"<<cmu<<"\t"<<cmu0<<endl;
+    
     return cmu/cmu0;
 }
 double S_evolution_to_RIp_ainv(int Nf,double ainv,double a2p2)
