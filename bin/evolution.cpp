@@ -50,6 +50,10 @@ double alphas(int Nf,double mu2) // mu2 is in physical units (dimensional quanti
     als3 = als2 + pow(als0,4)*(pow(b1,3)*(-pow(LL2,3)+5./2.*pow(LL2,2)+2*LL2-1./2.)-
                                3.*b1*b2*LL2 + b3/2.);
     
+    
+    //DEBUG
+    cout<<beta_0<<"\t"<<beta_1<<"\t"<<beta_2<<"\t"<<beta_3<<"\t"<<L2<<"\t"<<als0<<"\t"<<als1<<"\t"<<als2<<"\t"<<als3<<endl;
+    
     return als3;
 }
 
