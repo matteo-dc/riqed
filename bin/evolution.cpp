@@ -358,6 +358,9 @@ oper_t oper_t::evolveToAinv(const double ainv)
             for(int ijack=0;ijack<njacks;ijack++)
                 for(int mr=0; mr<out._nmr; mr++)
                     (out.jZq)[imom][ijack][mr] = jZq[imom][ijack][mr]/cq;
+            
+            //DEBUG
+            cout<<imom<<"\t "<<p2[imom]<<"\t "<<Nf<<"\t "<<ainv<<"\t "<<cq<<endl;
         }
         
         // Zbil
