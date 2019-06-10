@@ -362,7 +362,7 @@ oper_t oper_t::subOa2(const int b)
             {
                 
                 // DEBUG
-                cout<<ijack<<"\t "<<p2_tilde[imom]<<"\t "<<p4_tilde[imom]<<"\t "<<(out.jZq)[imom][ijack][mr]<<"\t "<<g2b<<"\t "<<subZq(imom,p2_tilde,p4_tilde,0)<<"\t ";
+                cout<<ijack<<"\t "<<p2_tilde[imom]<<"\t "<<p4_tilde[imom]<<"\t "<<((*this).jZq)[imom][ijack][mr]<<"\t "<<(out.jZq)[imom][ijack][mr]<<"\t "<<g2b<<"\t "<<subZq(imom,p2_tilde,p4_tilde,0)<<"\t ";
                 
                 (out.jZq)[imom][ijack][mr] -= CF*g2b*subZq(imom,p2_tilde,p4_tilde,0);
                 (out.jZq_EM)[imom][ijack][mr] -= subZq(imom,p2_tilde,p4_tilde,1);
