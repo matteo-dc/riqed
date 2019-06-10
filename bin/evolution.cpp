@@ -52,7 +52,7 @@ double alphas(int Nf,double mu2) // mu2 is in physical units (dimensional quanti
     
     
     //DEBUG
-    cout<<beta_0<<"\t"<<beta_1<<"\t"<<beta_2<<"\t"<<beta_3<<"\t"<<L2<<"\t"<<als0<<"\t"<<als1<<"\t"<<als2<<"\t"<<als3<<endl;
+    cout<<L2<<"\t"<<LL2<<"\t"<<pow(als0,2)<<"\t"<<pow(als0,2.)<<"\t"<<als0<<"\t"<<als1<<"\t"<<als2<<"\t"<<als3<<endl;
     
     return als3;
 }
