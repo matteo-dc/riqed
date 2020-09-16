@@ -64,7 +64,7 @@ vvvd_t oper_t::compute_sigma(vvvprop_t &jprop_inv, const int iproj, const int im
                         for(int mr=0;mr<nmr;mr++)
                             sig[i][ijack][mr]=(p_slash*jprop_inv[i][ijack][mr]).trace().imag()/p2_tilde[imom]/(12.*V);
             }
-            if(UseSigma1==1) // using "Sigma1" variant
+            if(UseSigma1==1) // using "Sigma1" variant [eq. (33) of M. Constantinou et al. - arXiv:1004.1115v1 [hep-lat]]
             {
                 prop_t sig_tmp(prop_t::Zero());
                 
