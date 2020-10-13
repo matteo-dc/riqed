@@ -183,7 +183,7 @@ int main(int narg,char **arg)
 //                    eta[b][th][m] = compute_eta_uncorr(oper_for_eta[b][th][m],oper_for_eta[b][th][(m+1)%nm_Sea[b]]);
                     eta[b][th][m].plot("eta");
 
-                    // eta[b][th][m] = eta[b][th][m].evolve_mixed(ainv[b]);
+                    eta[b][th][m] = eta[b][th][m].evolve_mixed(ainv[b]);
                     eta[b][th][m].plot("eta_evo");
 
                     etaM2[th][b][m] = eta[b][th][m].interpolate_to_p2ref(b);
