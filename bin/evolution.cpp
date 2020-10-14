@@ -449,7 +449,7 @@ oper_t oper_t::evolve_mixed(double ainv)
               (out.jZq_EM)[imom][ijack][mr] =
                 jZq_EM[imom][ijack][mr] + al0*UQCDinv_q*UQED2_q + UQCDinv_q*UQED1_q - UQED1_q;
 
-              cout<<"a2p2 = "<<p2[imom]<<"\t sub[Zq] = "<<al0*UQCDinv_q*UQED2_q + UQCDinv_q*UQED1_q - UQED1_q<<endl;
+              cout<<"imom="<<imom<<"\t a2p2 = "<<p2[imom]<<"\t sub[Zq] = "<<al0*UQCDinv_q*UQED2_q + UQCDinv_q*UQED1_q - UQED1_q<<endl;
                   }
 
         // eta_bil
