@@ -445,12 +445,11 @@ oper_t oper_t::evolve_mixed(double ainv)
                          0.25*pow(log(p2[imom]),2.0)*gamma_q_e0*gamma_q_s0/pow(4.0*M_PI,2.0);
 
         for(int ijack=0;ijack<njacks;ijack++)
-            for(int mr=0;mr<out._nmr;mr++){
+            for(int mr=0;mr<out._nmr;mr++)
               (out.jZq_EM)[imom][ijack][mr] =
                 jZq_EM[imom][ijack][mr] + al0*UQCDinv_q*UQED2_q + UQCDinv_q*UQED1_q - UQED1_q;
 
-              cout<<"imom="<<imom<<"\t a2p2 = "<<p2[imom]<<"\t sub[Zq] = "<<al0*UQCDinv_q*UQED2_q + UQCDinv_q*UQED1_q - UQED1_q<<endl;
-                  }
+      cout<<"imom="<<imom<<"\t a2p2 = "<<p2[imom]<<"\t sub[Zq] = "<<al0*UQCDinv_q*UQED2_q + UQCDinv_q*UQED1_q - UQED1_q<<endl;
 
         // eta_bil
         double UQCD_bil[5] = {
