@@ -300,12 +300,12 @@ void oper_t::create_basic(const int b, const int th, const int msea)
     allocate_val();
     if(!load_ave) allocate();
 
-    if(compute_mpcac)
+    if(compute_mpcac and !only_basic)
     {
         compute_mPCAC("");
         if(!free_analysis) compute_mPCAC("sea");
     }
-    if(UseEffMass and !free_analysis and !recompute_basic)
+    if(UseEffMass and !free_analysis and !recompute_basic and !only_basic)
     {
         eff_mass=read_eff_mass(path_to_ens+"eff_mass_array");
         eff_mass_corr=read_eff_mass_corr(path_to_ens+"eff_mass_corr_array");
