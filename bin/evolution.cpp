@@ -449,9 +449,6 @@ oper_t oper_t::evolve_mixed(double ainv)
             {
               (out.jZq_EM)[imom][ijack][mr] =
                 jZq_EM[imom][ijack][mr] + al0*UQCDinv_q*UQED2_q + UQCDinv_q*UQED1_q - UQED1_q;
-
-                if(ijack==0 && mr==0)
-                cout<<"Zq[in] = "<<jZq_EM[imom][ijack][mr]<<"  "<<"Zq[out] = "<<(out.jZq_EM)[imom][ijack][mr]<<endl;
             }
 
         // eta_bil
