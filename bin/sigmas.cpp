@@ -26,10 +26,10 @@ namespace sigma
             ins_list={LO,QED};
             ins_tag={"LO","QED"};
         }
-        
+
         proj_list={SIGMA1,SIGMA2,SIGMA3};
         proj_tag={"1","2","3"};
-        
+
         nproj=proj_list.size();
         nins=ins_list.size();
         nsigma=nproj*nins;
@@ -41,9 +41,9 @@ namespace sigma
 vvvd_t oper_t::compute_sigma(vvvprop_t &jprop_inv, const int iproj, const int imom)
 {
     using namespace sigma;
-    
+
     vvvd_t sig(vvd_t(vd_t(0.0,nmr),njacks),nins);
-    
+
     switch(iproj)
     {
         case SIGMA1:
@@ -55,7 +55,7 @@ vvvd_t oper_t::compute_sigma(vvvprop_t &jprop_inv, const int iproj, const int im
                 p_slash+=GAMMA[igam]*p_tilde[imom][igam%4];
                 if(p_tilde[imom][igam%4]!=0.) count++;
             }
-            
+
             if(UseSigma1==0) // using RI'-MOM definition
             {
 #pragma omp parallel for collapse(3)
@@ -67,7 +67,7 @@ vvvd_t oper_t::compute_sigma(vvvprop_t &jprop_inv, const int iproj, const int im
             if(UseSigma1==1) // using "Sigma1" variant [eq. (33) of M. Constantinou et al. - arXiv:1004.1115v1 [hep-lat]]
             {
                 prop_t sig_tmp(prop_t::Zero());
-                
+
 #pragma omp parallel for collapse(3)
                 for(int i=0; i<nins; i++)
                     for(int ijack=0;ijack<njacks;ijack++)
@@ -109,19 +109,19 @@ vvvd_t oper_t::compute_sigma(vvvprop_t &jprop_inv, const int iproj, const int im
 void oper_t::plot_sigmas()
 {
     using namespace sigma;
-    
+
     cout<<" Plotting sigmas"<<endl<<endl;
-    
+
     // opening files
     vector<ofstream> sigma_data(nsigma);
     for(int j=0; j<nsigma; j++)
     {
         int iproj = j%nproj;
         int ins = (j-iproj)/nproj;
-        
+
         sigma_data[j].open(path_to_ens+"plots/sigma"+proj_tag[iproj]+"_"+ins_tag[ins]+".txt");
     }
-    
+
     // reading p2
     vector<double> p2t;
     if(_linmoms==moms)
@@ -134,7 +134,7 @@ void oper_t::plot_sigmas()
         p2t.resize(_linmoms);
         read_vec(p2t,path_print+"p2_tilde_eqmoms.txt");
     }
-    
+
     // plotting averaged sigma
     sigma_tup sigma_ave_err=ave_err(sigma);
     vvvvd_t sigma_ave=get<0>(sigma_ave_err);
@@ -144,7 +144,7 @@ void oper_t::plot_sigmas()
     {
         int iproj = j%nproj;
         int ins = (j-iproj)/nproj;
-        
+
         for(int imom=0;imom<_linmoms;imom++)
             sigma_data[j]<<p2t[imom]<<"\t"
                          <<sigma_ave[imom][iproj][ins][0]<<"\t"
@@ -155,58 +155,64 @@ void oper_t::plot_sigmas()
 void oper_t::compute_sigmas()
 {
     using namespace sigma;
-    
+
+    string path_sigma;
+    if(UseSigma1==0)
+      path_sigma = path_print+"sigmas_0";
+    else if(UseSigma1==1)
+      path_sigma = path_print+"sigmas_1";
+
     ifstream sigma_data;
-    sigma_data.open(path_print+"sigmas");
-    
+    sigma_data.open(path_sigma);
+
     if(sigma_data.good())
     {
-        cout<<"Reading Sigmas from files: \""<<path_print<<"\"sigmas"<<endl;
-        read_vec_bin(sigma,path_print+"sigmas");
+        cout<<"Reading Sigmas from files: \""<<path_sigma<<"\""<<endl;
+        read_vec_bin(sigma,path_sigma);
     }
     else
     {
-        cout<<"Computing sigmas -- ";
-        
+        cout<<"Computing sigmas [UseSigma1="<<UseSigma1<<"]"<<" -- ";
+
         // array of input files to be read in a given conf
         FILE* input[combo];
         vector<string> v_path = setup_read_qprop(input);
-        
+
         for(int ilinmom=0; ilinmom<_linmoms; ilinmom++)
         {
             cout<<"\r\t linmom = "<<ilinmom+1<<"/"<<_linmoms<<endl;
-            
+
             // definition of jackknifed propagators
             jprop_t jS(vvprop_t(vprop_t(prop_t::Zero(),_nmr),njacks),jprop::nins);
-            
+
             // definition of inverse propagators
             jprop_t jS_inv(vvprop_t(vprop_t(prop_t::Zero(),_nmr),njacks),jprop::nins);
-            
+
             for(int i_in_clust=0;i_in_clust<clust_size;i_in_clust++)
                 for(int ihit=0;ihit<nhits;ihit++)
                 {
                     vvvprop_t S=read_qprop_mom(input,v_path,i_in_clust,ihit,ilinmom);
                     S=rotate(S);
-                    
+
                     build_prop(S,jS);
                 }
-            
+
             // jackknife average
             for(auto &prop : jS)
                 prop = jackknife(prop);
-            
+
             // invert propagator
             jS_inv[jprop::LO] = invert_jprop(jS[jprop::LO]);
             for(int i=1;i<jprop::nins;i++)
                 jS_inv[i] = - jS_inv[jprop::LO]*jS[i]*jS_inv[jprop::LO];
-            
+
             for(int iproj=0;iproj<nproj;iproj++)
                 sigma[ilinmom][iproj]=compute_sigma(jS_inv,iproj,ilinmom);
         } // close linmoms loop
-        
+
         // print sigmas
-        print_vec_bin(sigma,path_print+"sigmas");
+        print_vec_bin(sigma,path_sigma);
     }
-    
+
     plot_sigmas();
 }

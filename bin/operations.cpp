@@ -1489,7 +1489,11 @@ oper_t compute_eta_uncorr(voper_t in1,voper_t in2)
 
 void oper_t::print(const string suffix)
 {
-    print_vec_bin(sigma,path_print+"sigmas_"+suffix);
+    string suffix_sigma;
+    if(UseSigma1==0) suffix_sigma="0_";
+    if(UseSigma1==1) suffix_sigma="1_";
+
+    print_vec_bin(sigma,path_print+"sigmas_"+suffix_sigma+suffix);
     print_vec_bin(jG,path_print+"jG_"+suffix);
     print_vec_bin(jpr_meslep,path_print+"jpr_meslep_"+suffix);
 }
@@ -1508,14 +1512,18 @@ void oper_t::load(const string suffix)
 {
     (*this).allocate();
 
-    ifstream sigma_data(path_print+"sigmas_"+suffix);
+    string suffix_sigma;
+    if(UseSigma1==0) suffix_sigma="0_";
+    if(UseSigma1==1) suffix_sigma="1_";
+
+    ifstream sigma_data(path_print+"sigmas_"+suffix_sigma+suffix);
     ifstream jG_data(path_print+"jG_"+suffix);
     ifstream jpr_meslep_data(path_print+"jpr_meslep_"+suffix);
 
     if(sigma_data.good() and jG_data.good() and jpr_meslep_data.good())
     {
         cout<<"Loading averaged quantities from files in \""<<path_print<<"\"."<<endl;
-        read_vec_bin(sigma,path_print+"sigmas_"+suffix);
+        read_vec_bin(sigma,path_print+"sigmas_"+suffix_sigma+suffix);
         read_vec_bin(jG,path_print+"jG_"+suffix);
         read_vec_bin(jpr_meslep,path_print+"jpr_meslep_"+suffix);
     }
