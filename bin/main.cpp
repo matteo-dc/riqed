@@ -180,9 +180,9 @@ int main(int narg,char **arg)
 
                 for(int m=0; m<nm_Sea[b]; m++)
                 {
-                    eta[b][th][m] = compute_eta(oper_for_eta[b][th][m]);
-//#warning uncorrelated photons
-//                    eta[b][th][m] = compute_eta_uncorr(oper_for_eta[b][th][m],oper_for_eta[b][th][(m+1)%nm_Sea[b]]);
+                    // eta[b][th][m] = compute_eta(oper_for_eta[b][th][m]);
+#warning uncorrelated photons
+                    eta[b][th][m] = compute_eta_uncorr(oper_for_eta[b][th][m],oper_for_eta[b][th][(m+1)%nm_Sea[b]]);
                     eta[b][th][m].plot("eta");
 
                     eta[b][th][m] = eta[b][th][m].evolve_mixed(ainv[b]);
